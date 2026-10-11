@@ -44,7 +44,9 @@ pip install -r requirements.txt
 python render.py still s1_drop --t 3 14 22 --w 960 --spp 2
 python render.py preview s4_above --w 480 --spp 1
 
-# 全分辨率 HDR 帧（断点续渲，约 6 小时）
+# 一条命令完成全部流程：./make_film.sh
+
+# 全分辨率 HDR 帧（断点续渲，4 核 CPU 上约 6 小时）
 ./render_all.sh
 
 # 配乐、剪辑、片名、混音、编码
