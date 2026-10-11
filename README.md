@@ -35,17 +35,11 @@
 
 ### 运行
 
-```bash
-pip install numpy scipy numba skia-python opencv-python-headless matplotlib
-# 系统字体：fonts-noto-cjk fonts-ebgaramond fonts-lmodern fonts-dancingscript（另需 Inter、DejaVu）
-apt-get install -y libegl1 fonts-noto-cjk fonts-ebgaramond fonts-lmodern fonts-dancingscript
+详细步骤、环境要求和常见问题见 **[使用说明.md](使用说明.md)**。最快的用法：
 
-python -m studio.sims.littlewood 22                    # 预计算根的密度图（约 4 分钟，结果写入 cache/）
-python -m studio.audio output/soundtrack.wav            # 合成配乐
-python render.py stills --scene rubik --times 3 9 --scale 0.5     # 渲染某一场景的静帧
-python render.py video --scale 0.5 --step 2 --out output/preview.mp4   # 快速预览
-python render.py video --scale 1 --crf 19 --preset slow \
-       --audio output/soundtrack.wav --out output/abstract_algebra_promo_1080p.mp4
+```bash
+bash build.sh preview   # 低清预览版，约 5 分钟
+bash build.sh           # 1080p 正式版，4 核约 30 分钟
 ```
 
-`studio/timeline.py` 中的 `EDIT` 决定场景顺序和交叉淡化时长。每个场景都是 `studio/scenes/` 下的一个类，只依赖本场景内的局部时间 `t`，因此可以随意取任意时刻单独渲染。
+`studio/timeline.py` 里的 `EDIT` 决定场景顺序和交叉淡化时长。每个场景都是 `studio/scenes/` 下的一个类，只依赖本场景内的时间 `t`，所以可以随意取任意时刻单独渲染。

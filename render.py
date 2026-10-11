@@ -50,7 +50,17 @@ def _worker(args):
     return fi, render_global(t, scale, fi).tobytes()
 
 
+def prepare():
+    """Build the cached simulations once, in the main process, before any worker starts."""
+    from studio.scenes.s01_symmetry import FLAKE_PARAMS
+    from studio.sims.littlewood import density
+    from studio.sims.snowflake import freeze_field
+    freeze_field(**FLAKE_PARAMS)
+    density(22)
+
+
 def cmd_stills(a):
+    prepare()
     out = os.path.join(ROOT, "output", "stills")
     os.makedirs(out, exist_ok=True)
     for tt in a.times:
@@ -69,6 +79,7 @@ def cmd_stills(a):
 
 
 def cmd_video(a):
+    prepare()
     total = timeline.total_duration()
     t_from = a.t_from or 0.0
     t_to = min(a.t_to or total, total)
