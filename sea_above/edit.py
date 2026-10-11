@@ -77,8 +77,14 @@ def graded(entry, t_film, w):
     ts = t_film - entry["at"]
     f = int(round(ts * FPS))
     f = min(max(f, 0), shot.frame_count() - 1)
-    path = os.path.join(ROOT, "cache", f"w{w}", entry["shot"], f"{f:05d}.png")
-    if not os.path.exists(path):
+    d = os.path.join(ROOT, "cache", f"w{w}", entry["shot"])
+    path = None
+    for off in (0, -1, 1, -2, 2, -3, 3):          # a review cut may skip frames
+        p = os.path.join(d, f"{f + off:05d}.png")
+        if os.path.exists(p):
+            path = p
+            break
+    if path is None:
         return None
     hdr = post.load_hdr(path)
     return post.finish(hdr, f, shot.post_at(f / FPS))

@@ -5,3 +5,6 @@ out/preview*
 out/frames/
 *.tmp.png
 shaders/_*.glsl
+out/*.wav
+out/*.txt
+out/edit_preview*

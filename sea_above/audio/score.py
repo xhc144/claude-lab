@@ -212,8 +212,8 @@ def master(m):
     mix = np.stack([S.hp(mix[:, c], 32, 2) for c in range(2)], 1)
     # gentle glue and a soft ceiling
     peak = np.abs(mix).max()
-    mix = mix / peak * 1.25
-    mix = np.tanh(mix) * 0.89
+    mix = mix / peak * 1.9
+    mix = np.tanh(mix / 1.15) * 1.15 * 0.8
     fade = np.clip(tt / 0.8, 0, 1) * np.clip((TOTAL - tt) / 1.5, 0, 1)
     mix = mix * fade[:, None]
     return mix[:int(TOTAL * SR)]
