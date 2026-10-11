@@ -8,3 +8,4 @@ shaders/_*.glsl
 out/*.wav
 out/*.txt
 out/edit_preview*
+out/*.sh
