@@ -1,4 +1,4 @@
-# claude-video-studio · Claude 实验仓库
+# claude-lab · Claude 实验仓库
 
 这个仓库收集让 Claude 独立完成的实验项目。每个实验是根目录下一个**自成一体**的子目录：自己的 README、依赖、脚本和产物，互不依赖，所有命令都在该子目录里运行。
 
