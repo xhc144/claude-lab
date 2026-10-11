@@ -1,0 +1,7 @@
+__pycache__/
+cache/
+out/stills/
+out/preview*
+out/frames/
+*.tmp.png
+shaders/_*.glsl
