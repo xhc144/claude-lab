@@ -1,0 +1,6 @@
+numpy
+scipy
+numba
+skia-python
+opencv-python-headless
+matplotlib

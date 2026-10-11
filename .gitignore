@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+cache/
+frames/
+output/preview*
+output/*.wav
+output/stills/
+*.nbi
+*.nbc
