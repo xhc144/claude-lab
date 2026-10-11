@@ -55,10 +55,10 @@ float sdWhale(vec3 p, float phase) {
     f.y -= 0.10 * sin(phase - 0.90 * 2.2 - 0.6);
     f.yz *= rot(0.28 * cos(phase - 2.6));
     vec2 fx = vec2(abs(f.x), f.z);
-    float fl2 = sdSegCapsule2(fx, vec2(0.0, 0.0), vec2(0.30, -0.13), 0.065, 0.018);
+    float fl2 = sdSegCapsule2(fx, vec2(0.0, 0.0), vec2(0.30, -0.13), 0.08, 0.022);
     fl2 = max(fl2, -(length(fx - vec2(0.0, -0.085)) - 0.04));      // notch
     float flth = 0.013 * (1.0 - 0.55 * saturate(fx.x / 0.3));
-    float fl = max(fl2, abs(f.y) - flth);
+    float fl = max(fl2, abs(f.y) - (clamp(-fl2, 0.0, 0.05) * 0.3 + 0.003)) * 0.8;
     d = smin(d, fl, 0.025);
     // long white pectoral fins with a scalloped leading edge
     vec3 q = vec3(abs(p.x), p.y, p.z);
@@ -69,10 +69,12 @@ float sdWhale(vec3 p, float phase) {
     vec3 nrmF = cross(dirF, chord);
     vec3 rq = q - A;
     float u = dot(rq, dirF), v = dot(rq, chord), w = dot(rq, nrmF);
-    float fin2 = sdUnevenCapsule2(vec2(v, u), 0.07, 0.02, 0.60);
+    float fin2 = sdUnevenCapsule2(vec2(v, u), 0.085, 0.028, 0.60);
     float along = saturate(u / 0.6);
     fin2 -= 0.007 * smoothstep(0.0, 0.02, v) * (0.5 + 0.5 * sin(along * 55.0)) * along;
-    float fin = max(fin2, abs(w) - (0.012 * (1.0 - 0.6 * along) + 0.002));
+    // lens-shaped cross-section: thick along the middle, thin at the edges, gently curved
+    w -= 0.03 * along * along;
+    float fin = max(fin2, abs(w) - (clamp(-fin2, 0.0, 0.05) * 0.32 + 0.0025)) * 0.8;
     if (fin < d + 0.008) gWhaleMat = 1.0;
     d = smin(d, fin, 0.03);
     return d;

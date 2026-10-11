@@ -143,6 +143,8 @@ class Drop(Shot):
         st = self.drop_state(t)
         # focus rides the drop; depth of field deepens naturally as we pull away
         f = float(np.linalg.norm(st["c"] - cam["local"]))
+        # open on a soft glowing orb, then rack focus onto the drop
+        f *= 1.0 + 1.6 * (1.0 - smoothstep(0.9, 3.6, t))
         return dict(focus=f, k_px=2.8, max_px=80.0, taps=400)
 
     POST_MACRO = dict(exposure=-3.2, bloom=0.08, punch=1.0, saturation=1.3, contrast=0.4, vignette=0.35)

@@ -169,7 +169,7 @@ float traceNearDrops(vec3 ro, vec3 rd, float tmax, out vec3 nrm) {
         if (hc.x < uNearDrops) {
             float y0 = ro.y + rd.y * tEnter, y1 = ro.y + rd.y * min(tExit, best);
             float ylo = min(y0, y1) - 0.003, yhi = max(y0, y1) + 0.003;
-            float off = WT * 0.035 + hc.y * S;
+            float off = uTime * 0.012 + hc.y * S;   // shot time: these drift up even in slow motion
             float k0 = floor((ylo - off) / S), k1 = floor((yhi - off) / S);
             for (float k = k0; k <= min(k1, k0 + 8.0); k += 1.0) {
                 vec3 hk = hash33(vec3(pos, k) + 0.5);

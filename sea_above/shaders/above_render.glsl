@@ -19,7 +19,7 @@ float gHitMat;   // 0 sea, 1 stone
 float mapAbove(vec3 pb) {
     vec3 p = unfold(pb);
     float dc = sdCity(p);
-    float ds = p.y - seaRipple(p.xz);
+    float ds = max(p.y - seaRipple(p.xz), max(SEA_END - p.z, -p.y - 300.0));
     gHitMat = (dc < ds) ? 1.0 : 0.0;
     return min(dc, ds);
 }
@@ -63,11 +63,26 @@ vec3 moonDropShade(vec3 ro, vec3 rd, vec2 hit) {
     vec3 n2 = normalize(reflect(-n, t1));
     vec3 t2 = refract(t1, -n2, 1.333);
     if (dot(t2, t2) == 0.0) t2 = reflect(t1, -n2);
-    // inside: the golden world below, seen upside-down
+#ifdef MOON_HOLDS_WORLD
+    // inside: the real world below, turned upside-down by the lens of water
+    float dw;
+    vec3 inner = renderBelow(vec3(-25.0, 95.0, -70.0), t2, gl_FragCoord.xy, dw) * 0.22;
+#else
+    // inside: the golden world below, seen upside-down - gap, sun, columns, sea
     float y = -t2.y;
-    vec3 inner = mix(vec3(1.25, 0.82, 0.48), vec3(0.20, 0.55, 0.62), smoothstep(-0.05, 0.35, y));
-    inner = mix(inner, vec3(0.75, 0.62, 0.48), smoothstep(-0.02, -0.25, y));
-    inner += vec3(2.5, 1.5, 0.7) * pow(saturate(1.0 - abs(y + 0.03) * 12.0), 3.0);
+    float az = atan(t2.x, -t2.z);
+    vec3 inner = mix(vec3(1.35, 0.80, 0.42), vec3(0.10, 0.42, 0.50), smoothstep(-0.02, 0.30, y));   // sea (inverted, below)
+    inner = mix(inner, vec3(0.62, 0.50, 0.38), smoothstep(-0.03, -0.30, y));                        // land (inverted, above)
+    inner += vec3(3.0, 1.7, 0.7) * pow(saturate(1.0 - abs(y + 0.01) * 10.0), 3.0);                  // the golden gap
+    for (int i = 0; i < 5; i++) {
+        float ca = -1.1 + 0.55 * float(i) + 0.15 * sin(float(i) * 7.0);
+        float w = 0.025 + 0.01 * float(i % 2);
+        float bar = smoothstep(w, w * 0.5, abs(az - ca)) * smoothstep(-0.06, 0.0, y) * smoothstep(0.32, 0.12, y);
+        inner = mix(inner, vec3(0.20, 0.55, 0.58), bar * 0.8);
+    }
+    inner += vec3(30.0, 18.0, 8.0) * smoothstep(0.04, 0.0, length(vec2(az - 0.35, y + 0.02)));     // the low sun
+    inner *= 0.9 + 0.2 * noise2(vec2(az * 30.0, y * 40.0) + uTime * 0.2);
+#endif
     vec3 refl = skyAboveNight(reflect(rd, n));
     vec3 col = mix(inner * 1.1, refl, F);
     col += vec3(1.0, 0.9, 0.75) * pow(1.0 - saturate(dot(-rd, n)), 3.0) * 0.6;   // silver limb
@@ -83,12 +98,15 @@ vec3 skyWithMoon(vec3 ro, vec3 rd) {
     float ang = acos(clamp(dot(rd, md), -1.0, 1.0));
     float ar = asin(clamp(uMoonR / length(uMoonPos - ro), 0.0, 1.0));
     float x = max(ang - ar, 0.0);
-    col += vec3(0.55, 0.55, 0.62) * (0.30 * exp(-x * 12.0) + 0.04 * exp(-x * 3.0));
+    col += vec3(0.55, 0.55, 0.62) * (0.10 * exp(-x * 22.0) + 0.015 * exp(-x * 4.0));
     return col;
 }
 
 vec3 stoneShade(vec3 p, vec3 n, vec3 rd, vec3 pf) {
     vec3 alb = vec3(0.70, 0.67, 0.61) * (0.85 + 0.15 * noise3(pf * 0.6));
+    // warm lamplight inside the towers, seen through their arches
+    float ig = towerGlow(pf);
+    if (ig > 0.0) return alb * LANTERN * uLanterns * (1.2 + 1.8 * ig) * (0.6 + 0.4 * noise3(pf * 0.3 + uTime * 0.5)) + alb * 0.05;
     vec3 md = normalize(uMoonPos - p);
     float dif = saturate(dot(n, md));
     vec3 col = alb * MOONLIGHT * dif * 0.35;

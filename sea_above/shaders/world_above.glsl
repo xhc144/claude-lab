@@ -13,7 +13,8 @@ uniform float uMoonR;       // its radius
 uniform float uDusk;        // 0 = deep night, 1 = afterglow
 uniform float uSeaLanterns; // fraction of sea cells holding a lantern
 
-const vec3 CITY_C = vec3(190.0, 0.0, -760.0);
+const vec3 CITY_C = vec3(150.0, 0.0, -430.0);
+const float SEA_END = -2800.0;   // the sea ends here; beyond lies open sky
 const vec3 LANTERN = vec3(1.0, 0.56, 0.24);
 
 // ------------------------------------------------------------ fold
@@ -214,6 +215,26 @@ float sdCity(vec3 p) {
     return d;
 }
 
+// how much a point lies on the lit inner wall of one of the towers
+float towerGlowOne(vec3 c, float r, float h, float tiers) {
+    if (c.y < 0.0 || c.y > h) return 0.0;
+    float th = h / tiers;
+    float ty = clamp(floor(c.y / th), 0.0, tiers - 1.0);
+    float rr = r * (1.0 - 0.06 * ty);
+    float rad = length(c.xz);
+    return smoothstep(rr - 0.2, rr - 1.6, rad) * step(rad, rr + 2.0) * (0.6 + 0.4 * hash11(ty + r));
+}
+float towerGlow(vec3 p) {
+    vec3 c = p - CITY_C;
+    float g = towerGlowOne(c, 24.0, 170.0, 10.0);
+    g = max(g, towerGlowOne(c - vec3(-150.0, 0.0, 60.0), 14.0, 95.0, 6.0));
+    g = max(g, towerGlowOne(c - vec3(170.0, 0.0, -40.0), 16.0, 120.0, 7.0));
+    g = max(g, towerGlowOne(c - vec3(-60.0, 0.0, -230.0), 12.0, 70.0, 5.0));
+    g = max(g, towerGlowOne(c - vec3(300.0, 0.0, 180.0), 10.0, 60.0, 4.0));
+    g = max(g, towerGlowOne(c - vec3(-330.0, 0.0, -120.0), 11.0, 80.0, 5.0));
+    return g;
+}
+
 // lanterns: warm points along the arcades and stairs
 float lanternField(vec3 p, out vec3 lpos) {
     vec3 c = p - CITY_C;
@@ -241,6 +262,23 @@ float lanternField(vec3 p, out vec3 lpos) {
             if (dd < best) { best = dd; lpos = CITY_C + l; }
         }
     }
+    // a row of lanterns along each bridge
+    for (int b = 0; b < 2; b++) {
+        vec3 bc = (b == 0) ? vec3(-75.0, 62.0, 30.0) : vec3(85.0, 104.0, -20.0);
+        float ang = (b == 0) ? -0.38 : 0.24;
+        float hl = (b == 0) ? 64.0 : 68.0;
+        vec3 q = c - bc;
+        q.xz *= rot(ang);
+        float k = clamp(floor(q.x / 9.0 + 0.5), -floor(hl / 9.0), floor(hl / 9.0));
+        vec3 l = vec3(k * 9.0, 3.4, 0.0);
+        float dd = length(q - l);
+        if (dd < best) {
+            best = dd;
+            vec3 lw = l;
+            lw.xz *= rot(-ang);
+            lpos = CITY_C + bc + lw;
+        }
+    }
     // paper lanterns floating on the sea, everywhere
     if (p.y < 25.0) {
         const float C = 16.0;
@@ -249,7 +287,7 @@ float lanternField(vec3 p, out vec3 lpos) {
         for (int i = 0; i < 2; i++) {
             vec2 id = base + vec2(i, j);
             vec3 h = hash32(id * 1.37 + 5.1);
-            if (h.x > uSeaLanterns) continue;
+            if (h.x > uSeaLanterns || id.y * C < SEA_END + 60.0) continue;
             vec2 xz = (id + 0.2 + 0.6 * h.yz) * C;
             float y = 0.55 + 0.08 * sin(uTime * 0.9 + h.y * 40.0);
             vec3 l = vec3(xz.x, y, xz.y);

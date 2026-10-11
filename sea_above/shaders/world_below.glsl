@@ -397,7 +397,7 @@ vec3 seaInterior(vec3 p, vec3 tr) {
         vec3 exitDir = refract(tr, vec3(0, -1, 0), 1.333);
         vec3 sky = (dot(exitDir, exitDir) > 0.0) ? skyAbove(exitDir) : glowCol * 0.3;
         float c = caustic((p + tr * L).xz);
-        col = sky * att * (0.55 + 0.9 * c) + inscat;
+        col = sky * att * (0.7 + 0.5 * c) + inscat;
     }
     return col;
 }
