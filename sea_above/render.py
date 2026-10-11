@@ -50,7 +50,7 @@ def render_frame(shot, frame, w, spp=None):
     W, H = size_for(w)
     r = renderer(W, H)
     aa = W / 1920.0
-    samples = shot.samples(frame, spp, aa=1.0)
+    samples = shot.samples(frame, spp or shot.spp_for(frame), aa=1.0)
     rgb, invd = r.render(shot.shader, samples, defines=shot.defines)
     d = shot.dof(frame / FPS) if hasattr(shot, "dof") else None
     if d:

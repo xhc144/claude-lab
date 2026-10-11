@@ -84,7 +84,7 @@ class Crossing(Shot):
         return dict(uDropDensity=0.3, uDropRise=0.9,
                     uWhale0=self.whale_pos(t), uWhale1=(500.0, 600.0, -1500.0 + 7.0 * t, 0.2),
                     uWhale2=(-900.0, 640.0, -900.0 + 6.0 * t, -0.4),
-                    uBubbles=0.2 * burst, uBubbleC=tuple(p0), uBubbleOffset=tuple(self.bubble_drag(t)))
+                    uBubbles=0.0 * burst, uBubbleC=tuple(p0), uBubbleOffset=tuple(self.bubble_drag(t)))
 
     def bubble_drag(self, t):
         """Bubbles entrained by the plunge travel with the camera, then fall behind."""
