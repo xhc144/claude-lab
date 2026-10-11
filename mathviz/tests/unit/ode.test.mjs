@@ -97,6 +97,10 @@ test('finds and classifies equilibria of classic systems', () => {
   const byType = Object.fromEntries(lv.map((p) => [p.type, p]));
   assert.ok(byType.saddle && Math.hypot(byType.saddle.x, byType.saddle.y) < 1e-8);
   assert.ok(byType.center && Math.hypot(byType.center.x - 1, byType.center.y - 1) < 1e-8);
+  // a root whose Newton basin (|x| < 1/√3) falls between uniform seeds is still found
+  const narrow = findEquilibria((x, y) => [x - x ** 3, -y], { xmin: -7.3, xmax: 7.3, ymin: -6, ymax: 6 }, { seeds: 12 });
+  assert.deepEqual(narrow.map((p) => p.type).sort(), ['saddle', 'stable-node', 'stable-node']);
+  assert.ok(narrow.some((p) => Math.hypot(p.x, p.y) < 1e-9));
   // Jacobian
   const J = jacobian2((x, y) => [x * x * y, Math.sin(x) + y], 1, 2);
   assert.ok(Math.abs(J.a - 4) < 1e-7 && Math.abs(J.b - 1) < 1e-7 && Math.abs(J.c - Math.cos(1)) < 1e-7 && Math.abs(J.d - 1) < 1e-7);

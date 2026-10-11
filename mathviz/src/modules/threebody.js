@@ -2,7 +2,7 @@
 
 import { h } from '../ui/dom.js';
 import { Layer, Viewport, observeSize, attachPointer, animationLoop } from '../ui/canvas.js';
-import { drawGrid, arrow, label } from '../ui/draw.js';
+import { drawGrid, arrow, label, backdrop } from '../ui/draw.js';
 import { section, slider, toggle, button, chips, readout, iconButton, selectBox } from '../ui/controls.js';
 import { fmt, fmtVec } from '../ui/format.js';
 import { C, FONT, MONO, alpha, ramp } from '../ui/theme.js';
@@ -22,7 +22,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     rtol: 1e-10,
     speed: 1,
     playing: true,
-    trailLen: 2500,
+    trailLen: 4000,
     show: { potential: true, trails: true, velocity: false, com: true, labels: true },
     comFrame: true,
     E0: 0,
@@ -215,11 +215,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     bg.reset();
     const ctx = bg.ctx;
     const W = vp.w, H = vp.h;
-    const g = ctx.createRadialGradient(W * 0.5, H * 0.5, 0, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
-    g.addColorStop(0, '#0d1220');
-    g.addColorStop(1, '#06080d');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    backdrop(ctx, W, H, '#0d1220', '#06080d', 0.5, bg.dpr);
     if (st.show.potential) drawPotential(ctx);
     drawGrid(ctx, vp, { minor: false, alpha: 0.55 });
   }

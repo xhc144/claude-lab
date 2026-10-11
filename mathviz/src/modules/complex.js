@@ -224,13 +224,18 @@ function create({ stage, panel, toast, query, setQuery }) {
     off[which]._view = quick.view;
     blit(which, quick);
     jobs[which] = startJob(which, which === 'z' ? 1 : 0.5);
+    // while the user keeps dragging, each frame would restart (and discard) the full-resolution
+    // job: wait until input pauses so interactive frames only pay for the quick pass
+    jobHoldUntil = performance.now() + 140;
     scheduleJobs();
   }
 
+  let jobHoldUntil = 0;
   function scheduleJobs() {
     if (jobRaf) return;
     jobRaf = requestAnimationFrame(function step() {
       jobRaf = 0;
+      if (performance.now() < jobHoldUntil) { jobRaf = requestAnimationFrame(step); return; }
       let pending = false;
       for (const which of ['z', 'w']) {
         const job = jobs[which];
@@ -286,13 +291,14 @@ function create({ stage, panel, toast, query, setQuery }) {
     if (st.contour.on) {
       const { cx: ox, cy: oy, r } = st.contour;
       ctx.save();
-      ctx.lineWidth = 2.4;
-      ctx.strokeStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(0,0,0,0.6)';
-      ctx.shadowBlur = 6;
-      ctx.setLineDash([7, 5]);
       ctx.beginPath();
       ctx.arc(sx(ox), sy(oy), r * vpZ.scale, 0, 2 * Math.PI);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = 'rgba(8, 11, 17, 0.45)';
+      ctx.stroke();
+      ctx.lineWidth = 2.4;
+      ctx.strokeStyle = '#ffffff';
+      ctx.setLineDash([7, 5]);
       ctx.stroke();
       ctx.restore();
       handle(ctx, sx(ox), sy(oy), '#ffffff', { r: 5, active: st.drag === 'cc' });
@@ -363,10 +369,11 @@ function create({ stage, panel, toast, query, setQuery }) {
         ctx.moveTo(sx(l[0]), sy(l[1]));
         for (let k = 2; k < l.length; k += 2) ctx.lineTo(sx(l[k]), sy(l[k + 1]));
       }
+      ctx.lineWidth = 7;
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.16)';
+      ctx.stroke();
       ctx.lineWidth = 2.4;
       ctx.strokeStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(255,255,255,0.5)';
-      ctx.shadowBlur = 8;
       ctx.stroke();
       ctx.restore();
       // origin marker: the winding number is counted around w = 0

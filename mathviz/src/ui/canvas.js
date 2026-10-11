@@ -98,12 +98,18 @@ export class Viewport {
     this.cy += dy / this.scale;
   }
 
-  /** Show the world rectangle with a relative padding. */
-  fit(xmin, xmax, ymin, ymax, pad = 0.08) {
+  /**
+   * Show the world rectangle with a relative padding, inside the screen area left free by
+   * `insets` (CSS pixels covered by overlays: { top, right, bottom, left }).
+   */
+  fit(xmin, xmax, ymin, ymax, pad = 0.08, insets = null) {
+    const { top = 0, right = 0, bottom = 0, left = 0 } = insets || {};
+    const aw = Math.max(1, this.w - left - right), ah = Math.max(1, this.h - top - bottom);
     const w = Math.max(1e-9, xmax - xmin), hh = Math.max(1e-9, ymax - ymin);
-    this.cx = (xmin + xmax) / 2;
-    this.cy = (ymin + ymax) / 2;
-    this.scale = Math.min(this.w / (w * (1 + 2 * pad)), this.h / (hh * (1 + 2 * pad)));
+    this.scale = Math.min(aw / (w * (1 + 2 * pad)), ah / (hh * (1 + 2 * pad)));
+    // centre of the rectangle lands at the centre of the free area
+    this.cx = (xmin + xmax) / 2 - (left - right) / 2 / this.scale;
+    this.cy = (ymin + ymax) / 2 + (top - bottom) / 2 / this.scale;
   }
 
   /** Fit so that a disc of the given radius around (cx, cy) is visible. */

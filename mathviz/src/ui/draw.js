@@ -1,6 +1,57 @@
 // Canvas drawing primitives: coordinate grid with labelled axes, arrows, labels, markers.
 
-import { C, MONO, FONT } from './theme.js';
+import { C, MONO, FONT, alpha } from './theme.js';
+
+const sprites = new Map();
+/**
+ * Soft radial glow as a cached sprite. Drawing it with drawImage is far cheaper than
+ * ctx.shadowBlur, which pushes the whole canvas onto a slow raster path every frame.
+ */
+export function glow(ctx, x, y, radius, color, strength = 1) {
+  let spr = sprites.get(color);
+  if (!spr) {
+    spr = document.createElement('canvas');
+    spr.width = spr.height = 128;
+    const g = spr.getContext('2d');
+    const grd = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grd.addColorStop(0, alpha(color, 0.9));
+    grd.addColorStop(0.2, alpha(color, 0.45));
+    grd.addColorStop(0.5, alpha(color, 0.12));
+    grd.addColorStop(1, alpha(color, 0));
+    g.fillStyle = grd;
+    g.fillRect(0, 0, 128, 128);
+    sprites.set(color, spr);
+  }
+  const a = ctx.globalAlpha;
+  ctx.globalAlpha = a * strength;
+  ctx.drawImage(spr, x - radius, y - radius, 2 * radius, 2 * radius);
+  ctx.globalAlpha = a;
+}
+
+const backdrops = new Map();
+/**
+ * Fill the canvas with a soft radial vignette. The gradient is rendered once per size into an
+ * offscreen canvas and blitted afterwards — filling a full-screen gradient every frame is
+ * surprisingly expensive on software-rasterised canvases.
+ */
+export function backdrop(ctx, W, H, inner = '#0f1420', outer = '#090c13', cy = 0.45, dpr = 1) {
+  const key = `${W}x${H}|${inner}|${outer}|${cy}|${dpr}`;
+  let c = backdrops.get(key);
+  if (!c) {
+    c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(W * dpr));
+    c.height = Math.max(1, Math.round(H * dpr));
+    const g = c.getContext('2d');
+    const grd = g.createRadialGradient(c.width * 0.5, c.height * cy, 0, c.width * 0.5, c.height * 0.5, Math.hypot(c.width, c.height) * 0.62);
+    grd.addColorStop(0, inner);
+    grd.addColorStop(1, outer);
+    g.fillStyle = grd;
+    g.fillRect(0, 0, c.width, c.height);
+    if (backdrops.size > 24) backdrops.clear();
+    backdrops.set(key, c);
+  }
+  ctx.drawImage(c, 0, 0, W, H);
+}
 
 /** A 1-2-5 step in world units giving roughly `target` pixels between major grid lines. */
 export function niceStep(scale, target = 90) {
@@ -83,7 +134,7 @@ export function drawGrid(ctx, vp, opts = {}) {
 }
 
 /** Arrow from (x0, y0) to (x1, y1) in screen pixels. */
-export function arrow(ctx, x0, y0, x1, y1, { color = C.text, width = 2.5, head = 11, glow = 0 } = {}) {
+export function arrow(ctx, x0, y0, x1, y1, { color = C.text, width = 2.5, head = 11, halo = 0 } = {}) {
   const dx = x1 - x0, dy = y1 - y0;
   const len = Math.hypot(dx, dy);
   if (len < 0.5) return;
@@ -91,7 +142,18 @@ export function arrow(ctx, x0, y0, x1, y1, { color = C.text, width = 2.5, head =
   const hl = Math.min(head, len * 0.6);
   const hw = hl * 0.55;
   ctx.save();
-  if (glow) { ctx.shadowColor = color; ctx.shadowBlur = glow; }
+  if (halo) {
+    // soft halo: a wide translucent stroke under the arrow (much cheaper than shadowBlur)
+    ctx.globalAlpha = 0.2;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width + halo;
+    ctx.lineCap = 'round';
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1 - ux * hl * 0.8, y1 - uy * hl * 0.8);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
   ctx.strokeStyle = color;
   ctx.fillStyle = color;
   ctx.lineWidth = width;

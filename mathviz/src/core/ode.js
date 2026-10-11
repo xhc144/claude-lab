@@ -270,45 +270,73 @@ function eigvec(J, l) {
 
 /**
  * Find equilibria of a planar field inside bounds {xmin, xmax, ymin, ymax} by damped Newton
- * iteration from a grid of seeds. Duplicates are merged.
+ * iteration. Seeds: (1) the centre of every cell of a `bracket` × `bracket` grid in which both
+ * components change sign — a bracketing test that catches every transversal zero regardless of
+ * how narrow its Newton basin is — and (2) a uniform `seeds` × `seeds` grid for tangential
+ * zeros. Duplicates are merged.
  */
-export function findEquilibria(F, bounds, { seeds = 14, maxIter = 40, tol = 1e-10 } = {}) {
+export function findEquilibria(F, bounds, { seeds = 14, bracket = 48, maxIter = 40, tol = 1e-10 } = {}) {
   const { xmin, xmax, ymin, ymax } = bounds;
   const w = xmax - xmin, h = ymax - ymin;
   const scale = Math.max(w, h);
   const found = [];
-  for (let i = 0; i < seeds; i++) {
-    for (let j = 0; j < seeds; j++) {
-      let x = xmin + ((i + 0.5) / seeds) * w;
-      let y = ymin + ((j + 0.5) / seeds) * h;
-      let ok = false;
-      for (let it = 0; it < maxIter; it++) {
-        const [u, v] = F(x, y);
-        if (!Number.isFinite(u) || !Number.isFinite(v)) break;
-        const r = Math.hypot(u, v);
-        if (r < tol) { ok = true; break; }
-        const J = jacobian2(F, x, y);
-        const D = J.a * J.d - J.b * J.c;
-        if (!Number.isFinite(D) || Math.abs(D) < 1e-14) break;
-        let dx = (J.d * u - J.b * v) / D;
-        let dy = (-J.c * u + J.a * v) / D;
-        // damping: limit the Newton step to a fraction of the view
-        const len = Math.hypot(dx, dy);
-        if (len > 0.25 * scale) { dx *= (0.25 * scale) / len; dy *= (0.25 * scale) / len; }
-        x -= dx;
-        y -= dy;
-        if (Math.abs(x - xmin - w / 2) > 2 * w || Math.abs(y - ymin - h / 2) > 2 * h) break;
+  const starts = [];
+  {
+    const n = bracket;
+    const U = new Float64Array((n + 1) * (n + 1)), V = new Float64Array((n + 1) * (n + 1));
+    for (let j = 0; j <= n; j++) {
+      for (let i = 0; i <= n; i++) {
+        const [u, v] = F(xmin + (i / n) * w, ymin + (j / n) * h);
+        U[j * (n + 1) + i] = u;
+        V[j * (n + 1) + i] = v;
       }
-      if (!ok) {
-        const [u, v] = F(x, y);
-        ok = Math.hypot(u, v) < 1e-8;
-      }
-      if (!ok) continue;
-      if (x < xmin - 0.02 * w || x > xmax + 0.02 * w || y < ymin - 0.02 * h || y > ymax + 0.02 * h) continue;
-      if (found.some((p) => Math.hypot(p.x - x, p.y - y) < 1e-6 * scale)) continue;
-      const J = jacobian2(F, x, y);
-      found.push({ x, y, J, ...classifyEquilibrium(J) });
     }
+    const changes = (A, i, j) => {
+      const a = A[j * (n + 1) + i], b = A[j * (n + 1) + i + 1], c = A[(j + 1) * (n + 1) + i], d = A[(j + 1) * (n + 1) + i + 1];
+      if (!(Number.isFinite(a) && Number.isFinite(b) && Number.isFinite(c) && Number.isFinite(d))) return false;
+      return Math.min(a, b, c, d) <= 0 && Math.max(a, b, c, d) >= 0;
+    };
+    for (let j = 0; j < n; j++) {
+      for (let i = 0; i < n; i++) {
+        if (changes(U, i, j) && changes(V, i, j)) starts.push([xmin + ((i + 0.5) / n) * w, ymin + ((j + 0.5) / n) * h]);
+      }
+    }
+    // a whole curve of zeros (degenerate system) would flood the seed list: keep it bounded
+    if (starts.length > 400) starts.length = 400;
+  }
+  for (let i = 0; i < seeds; i++) {
+    for (let j = 0; j < seeds; j++) starts.push([xmin + ((i + 0.5) / seeds) * w, ymin + ((j + 0.5) / seeds) * h]);
+  }
+  for (const [x0, y0] of starts) {
+    let x = x0;
+    let y = y0;
+    let ok = false;
+    for (let it = 0; it < maxIter; it++) {
+      const [u, v] = F(x, y);
+      if (!Number.isFinite(u) || !Number.isFinite(v)) break;
+      const r = Math.hypot(u, v);
+      if (r < tol) { ok = true; break; }
+      const J = jacobian2(F, x, y);
+      const D = J.a * J.d - J.b * J.c;
+      if (!Number.isFinite(D) || Math.abs(D) < 1e-14) break;
+      let dx = (J.d * u - J.b * v) / D;
+      let dy = (-J.c * u + J.a * v) / D;
+      // damping: limit the Newton step to a fraction of the view
+      const len = Math.hypot(dx, dy);
+      if (len > 0.25 * scale) { dx *= (0.25 * scale) / len; dy *= (0.25 * scale) / len; }
+      x -= dx;
+      y -= dy;
+      if (Math.abs(x - xmin - w / 2) > 2 * w || Math.abs(y - ymin - h / 2) > 2 * h) break;
+    }
+    if (!ok) {
+      const [u, v] = F(x, y);
+      ok = Math.hypot(u, v) < 1e-8;
+    }
+    if (!ok) continue;
+    if (x < xmin - 0.02 * w || x > xmax + 0.02 * w || y < ymin - 0.02 * h || y > ymax + 0.02 * h) continue;
+    if (found.some((p) => Math.hypot(p.x - x, p.y - y) < 1e-6 * scale)) continue;
+    const J = jacobian2(F, x, y);
+    found.push({ x, y, J, ...classifyEquilibrium(J) });
   }
   return found;
 }

@@ -4,7 +4,7 @@
 
 import { h } from '../ui/dom.js';
 import { Layer, Viewport, observeSize, attachPointer, animationLoop } from '../ui/canvas.js';
-import { drawGrid } from '../ui/draw.js';
+import { drawGrid, glow, backdrop } from '../ui/draw.js';
 import { section, slider, toggle, button, chips, exprField } from '../ui/controls.js';
 import { fmt, fmtVec, fmtComplex } from '../ui/format.js';
 import { C, FONT, MONO, rampCss } from '../ui/theme.js';
@@ -130,7 +130,9 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     return { span, box: { cx: (b.xmin + b.xmax) / 2, cy: (b.ymin + b.ymax) / 2, r: 2.5 * span } };
   }
 
+  let trajVersion = 0;
   function recomputeTrajectories() {
+    trajVersion++;
     const { span, box } = viewBox();
     for (const tr of st.trajs) Object.assign(tr, solve(tr.x0, tr.y0, span, box));
   }
@@ -139,6 +141,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     const { span, box } = viewBox();
     const tr = { x0: x, y0: y, color: TRAJ_COLORS[st.trajs.length % TRAJ_COLORS.length], ...solve(x, y, span, box) };
     st.trajs.push(tr);
+    trajVersion++;
     if (select) st.selected = st.trajs.length - 1;
     trajCount.textContent = String(st.trajs.length);
     syncQuery();
@@ -181,11 +184,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     base.reset();
     const ctx = base.ctx;
     const W = vp.w, H = vp.h;
-    const g = ctx.createRadialGradient(W * 0.5, H * 0.4, 0, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.65);
-    g.addColorStop(0, '#0f1420');
-    g.addColorStop(1, '#090c13');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    backdrop(ctx, W, H, '#0f1420', '#090c13', 0.4, base.dpr);
     drawGrid(ctx, vp, { alpha: 0.9 });
     if (st.show.field) drawField(ctx);
     if (st.show.nullclines) {
@@ -198,7 +197,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
       }
     }
     st.trajs.forEach((tr, k) => {
-      drawPolyline(ctx, tr.pts, tr.color, k === st.selected ? 2.6 : 1.9, 3, true);
+      drawPolyline(ctx, tr.pts, tr.color, k === st.selected ? 2.6 : 1.9, 3, k === st.selected);
       arrowsAlong(ctx, tr.pts, tr.color);
       ctx.beginPath();
       ctx.arc(vp.sx(tr.x0), vp.sy(tr.y0), 3.5, 0, 2 * Math.PI);
@@ -272,7 +271,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     ctx.restore();
   }
 
-  function drawPolyline(ctx, pts, color, width, stride = 3, glow = false) {
+  function drawPolyline(ctx, pts, color, width, stride = 3, halo = false) {
     if (!pts || pts.length < 2 * stride) return;
     ctx.save();
     ctx.beginPath();
@@ -282,7 +281,13 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     }
     ctx.lineJoin = 'round';
     ctx.lineCap = 'round';
-    if (glow) { ctx.shadowColor = color; ctx.shadowBlur = 6; }
+    if (halo) {
+      ctx.globalAlpha = 0.18;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width + 5;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     ctx.strokeStyle = color;
     ctx.lineWidth = width;
     ctx.stroke();
@@ -291,6 +296,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
 
   function arrowsAlong(ctx, pts, color) {
     let acc = 60;
+    const placed = []; // closed orbits revisit the same places: keep arrowheads apart
     ctx.save();
     ctx.fillStyle = color;
     for (let k = 3; k < pts.length; k += 3) {
@@ -300,6 +306,8 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
       acc += d;
       if (acc < 150 || d < 1e-6) continue;
       if (x1 < -20 || x1 > vp.w + 20 || y1 < -20 || y1 > vp.h + 20) continue;
+      if (placed.some(([px, py]) => (px - x1) ** 2 + (py - y1) ** 2 < 70 * 70)) continue;
+      placed.push([x1, y1]);
       acc = 0;
       const ux = (x1 - x0) / d, uy = (y1 - y0) / d;
       ctx.beginPath();
@@ -329,8 +337,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     const { color, shape } = EQ_STYLE[e.type] || EQ_STYLE.degenerate;
     const x = vp.sx(e.x), y = vp.sy(e.y);
     ctx.save();
-    ctx.shadowColor = color;
-    ctx.shadowBlur = 12;
+    glow(ctx, x, y, 22, color, 0.8);
     ctx.lineWidth = 2.4;
     ctx.strokeStyle = color;
     ctx.fillStyle = shape === 'filled' ? color : '#0c1018';
@@ -354,7 +361,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   }
 
   // ------------------------------------------------------------------ particles (dynamic layer)
-  const NP = 1000, TRAIL = 14;
+  const NP = 800, TRAIL = 12;
   const P = { x: new Float64Array(NP), y: new Float64Array(NP), age: new Float32Array(NP), life: new Float32Array(NP), hx: new Float32Array(NP * TRAIL), hy: new Float32Array(NP * TRAIL), head: new Uint8Array(NP), n: new Uint8Array(NP) };
   const work = rk4Work(2);
   const Y = new Float64Array(2);
@@ -448,14 +455,11 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
         const t = (st.tAnim % span);
         const [x, y] = pointAt(tr, t);
         const px = vp.sx(x), py = vp.sy(y);
-        ctx.save();
-        ctx.shadowColor = tr.color;
-        ctx.shadowBlur = 16;
+        glow(ctx, px, py, 22, tr.color);
         ctx.fillStyle = '#fff';
         ctx.beginPath();
         ctx.arc(px, py, 4.5, 0, 2 * Math.PI);
         ctx.fill();
-        ctx.restore();
       });
     }
     if (st.hover) {
@@ -470,11 +474,36 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   }
 
   // ------------------------------------------------------------------ time series strip
+  // The plot itself only changes with the trajectory, so it is rendered once into an offscreen
+  // canvas; each frame just blits it and draws the moving time cursor.
+  const seriesCache = { canvas: document.createElement('canvas'), key: '', X: null };
   function drawSeries() {
+    const tr = st.trajs[st.selected];
+    const key = `${st.selected}|${st.trajs.length}|${trajVersion}|${stripLayer.canvas.width}x${stripLayer.canvas.height}`;
+    if (seriesCache.key !== key) renderSeriesCache();
+    seriesCache.key = key;
     stripLayer.reset();
     const ctx = stripLayer.ctx;
+    ctx.drawImage(seriesCache.canvas, 0, 0, stripLayer.w, stripLayer.h);
+    if (tr && seriesCache.X && st.show.dots && tr.t1 > 0) {
+      const x = seriesCache.X(st.tAnim % tr.t1);
+      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+      ctx.beginPath();
+      ctx.moveTo(x, 18);
+      ctx.lineTo(x, stripLayer.h - 18);
+      ctx.stroke();
+    }
+  }
+
+  function renderSeriesCache() {
+    const c = seriesCache.canvas;
+    c.width = stripLayer.canvas.width;
+    c.height = stripLayer.canvas.height;
+    const ctx = c.getContext('2d');
+    ctx.setTransform(stripLayer.dpr, 0, 0, stripLayer.dpr, 0, 0);
     const W = stripLayer.w, H = stripLayer.h;
     const tr = st.trajs[st.selected];
+    seriesCache.X = null;
     ctx.font = `11px ${FONT}`;
     if (!tr) {
       ctx.fillStyle = C.text3;
@@ -494,6 +523,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     if (!(hi > lo)) { hi = lo + 1; lo -= 1; }
     const padL = 44, padR = 14, padT = 22, padB = 18;
     const X = (t) => padL + ((t - 0) / Math.max(1e-9, tEnd)) * (W - padL - padR);
+    seriesCache.X = X;
     const Yv = (v) => H - padB - ((v - lo) / (hi - lo)) * (H - padT - padB);
     ctx.strokeStyle = 'rgba(148,163,184,0.15)';
     ctx.lineWidth = 1;
@@ -505,8 +535,9 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     ctx.font = `10px ${MONO}`;
     ctx.textAlign = 'right';
     ctx.textBaseline = 'middle';
-    ctx.fillText(fmt(hi, 2), padL - 6, Yv(hi));
-    ctx.fillText(fmt(lo, 2), padL - 6, Yv(lo));
+    const axisLabel = (v) => (Math.abs(v) < 1e-9 * (hi - lo) ? '0' : fmt(v, 2));
+    ctx.fillText(axisLabel(hi), padL - 6, Yv(hi));
+    ctx.fillText(axisLabel(lo), padL - 6, Yv(lo));
     ctx.textAlign = 'left';
     ctx.textBaseline = 'top';
     ctx.fillText(`t = ${fmt(tEnd, 1)}`, W - padR - 52, H - padB + 3);
@@ -530,15 +561,6 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     ctx.fillText('y(t)', padL + 46, 11);
     ctx.fillStyle = tr.color;
     ctx.fillText(`轨线 #${st.selected + 1}  起点 ${fmtVec(tr.x0, tr.y0)}`, padL + 90, 11);
-    // cursor at the animated time
-    if (st.show.dots && tr.t1 > 0) {
-      const t = st.tAnim % tr.t1;
-      ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-      ctx.beginPath();
-      ctx.moveTo(X(t), padT - 4);
-      ctx.lineTo(X(t), H - padB);
-      ctx.stroke();
-    }
   }
 
   // ------------------------------------------------------------------ hover / coordinates
@@ -579,22 +601,24 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   }
 
   // ------------------------------------------------------------------ scheduling
-  let structureTimer = 0;
   let baseDirty = true;
   const markBase = () => { baseDirty = true; };
+  // Slider input can fire several times per frame: record what is stale and recompute it once,
+  // at the start of the next animation frame (or immediately when asked to).
+  const pending = { traj: false, structure: false };
   function invalidateAll({ trajectories = true, structureNow = false } = {}) {
-    if (trajectories) recomputeTrajectories();
-    measureFlow();
-    if (structureNow) recomputeStructure();
-    else {
-      clearTimeout(structureTimer);
-      // equilibria/separatrices are cheap enough to update live while sliders move
-      structureTimer = setTimeout(() => { recomputeStructure(); markBase(); }, 0);
-    }
+    if (trajectories) pending.traj = true;
+    pending.structure = true;
+    if (structureNow) flushPending();
     markBase();
+  }
+  function flushPending() {
+    if (pending.traj) { pending.traj = false; recomputeTrajectories(); }
+    if (pending.structure) { pending.structure = false; measureFlow(); recomputeStructure(); }
   }
 
   const loop = animationLoop((dt) => {
+    flushPending();
     if (baseDirty) { drawBase(); baseDirty = false; }
     st.tAnim += dt * st.speed * 1.5;
     if (st.show.particles) stepParticles(dt);
@@ -638,8 +662,8 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   });
 
   function applyView(v) {
-    // keep the strip area free at the bottom when time series are shown
-    vp.fit(v[0], v[1], v[2], v[3], 0.04);
+    // keep the time-series strip from covering the region of interest
+    vp.fit(v[0], v[1], v[2], v[3], 0.04, st.show.series ? { bottom: (strip.offsetHeight || 128) + 20 } : null);
   }
 
   // ------------------------------------------------------------------ panel
@@ -699,7 +723,12 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   );
   panel.append(panelEl);
 
+  let eqKey = '';
   function updateEqList() {
+    // rebuilt only when the (rounded) content changes: DOM churn every frame forces panel layout
+    const key = st.eq.slice(0, 8).map((e) => `${e.type}${fmtVec(e.x, e.y, 3)}${eigenText(e)}`).join('|') + st.eq.length;
+    if (key === eqKey) return;
+    eqKey = key;
     eqList.textContent = '';
     if (!st.eq.length) { eqList.append(h('div', { class: 'hint' }, '视野内没有找到平衡点。')); return; }
     for (const e of st.eq.slice(0, 8)) {
@@ -818,7 +847,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     worldToClient(x, y) { const r = base.canvas.getBoundingClientRect(); return [r.left + vp.sx(x), r.top + vp.sy(y)]; },
     destroy() {
       loop.stop();
-      clearTimeout(structureTimer); clearTimeout(viewTimer); clearTimeout(qTimer);
+      clearTimeout(viewTimer); clearTimeout(qTimer);
       detach();
       stopResize();
       root.remove();

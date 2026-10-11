@@ -5,6 +5,7 @@
 
 import { h } from '../ui/dom.js';
 import { Layer, observeSize, animationLoop } from '../ui/canvas.js';
+import { glow, backdrop } from '../ui/draw.js';
 import { section, slider, toggle, button, chips, exprField } from '../ui/controls.js';
 import { fmt } from '../ui/format.js';
 import { C, FONT, MONO, MATH } from '../ui/theme.js';
@@ -16,32 +17,32 @@ const COLORS = ['#ffb454', '#5ccfe6', '#f472b6', '#bae67e', '#d4bfff', '#ffd580'
 
 export const PRESETS_3D = [
   {
-    id: 'lorenz', label: '洛伦茨', f: 'a(y - x)', g: 'x(b - z) - y', h: 'x y - c z', dt: 0.004, ic: [1, 1, 1],
+    id: 'lorenz', label: '洛伦茨', f: 'a(y - x)', g: 'x(b - z) - y', h: 'x y - c z', dt: 0.004, ic: [1, 1, 1], tps: 1.3, trail: 4000,
     params: { a: { v: 10, min: 0.1, max: 30, label: 'σ' }, b: { v: 28, min: 0.1, max: 120, label: 'ρ' }, c: { v: 8 / 3, min: 0.1, max: 10, label: 'β' } },
     note: 'Lorenz (1963) 的大气对流简化模型。σ = 10, ρ = 28, β = 8/3 时出现著名的蝴蝶形奇怪吸引子，最大李雅普诺夫指数约 0.906。ρ < 24.74 时轨线落入两个稳定平衡点之一。',
   },
   {
-    id: 'rossler', label: '罗斯勒', f: '-y - z', g: 'x + a y', h: 'b + z(x - c)', dt: 0.01, ic: [1, 1, 0],
+    id: 'rossler', label: '罗斯勒', f: '-y - z', g: 'x + a y', h: 'b + z(x - c)', dt: 0.01, ic: [1, 1, 0], tps: 7, trail: 9000,
     params: { a: { v: 0.2, min: 0, max: 0.5, label: 'a' }, b: { v: 0.2, min: 0.01, max: 2, label: 'b' }, c: { v: 5.7, min: 1, max: 14, label: 'c' } },
     note: 'Rössler (1976)：只有一个非线性项 zx 的混沌系统，轨线在平面上螺旋外扩，再被“折叠”回中心。把 c 从 2 调到 6 可以看到倍周期分岔通向混沌。',
   },
   {
-    id: 'thomas', label: '托马斯', f: 'sin(y) - a x', g: 'sin(z) - a y', h: 'sin(x) - a z', dt: 0.02, ic: [0.1, 0, 0],
+    id: 'thomas', label: '托马斯', f: 'sin(y) - a x', g: 'sin(z) - a y', h: 'sin(x) - a z', dt: 0.02, ic: [0.1, 0, 0], tps: 12, trail: 16000,
     params: { a: { v: 0.208186, min: 0.05, max: 0.33, label: 'b（耗散）' } },
     note: 'Thomas 的循环对称吸引子：在 x、y、z 轮换下不变。b 越小耗散越弱，b → 0 时成为保守的“混沌游走”。',
   },
   {
-    id: 'aizawa', label: '相泽', f: '(z - b) x - d y', g: 'd x + (z - b) y', h: '0.6 + a z - z^3/3 - (x^2 + y^2)(1 + 0.25 z) + 0.1 z x^3', dt: 0.005, ic: [0.1, 0, 0],
+    id: 'aizawa', label: '相泽', f: '(z - b) x - d y', g: 'd x + (z - b) y', h: '0.6 + a z - z^3/3 - (x^2 + y^2)(1 + 0.25 z) + 0.1 z x^3', dt: 0.008, ic: [0.1, 0, 0], tps: 5, trail: 14000,
     params: { a: { v: 0.95, min: 0.5, max: 1.2, label: 'a' }, b: { v: 0.7, min: 0.3, max: 1.2, label: 'b' }, d: { v: 3.5, min: 1, max: 6, label: 'd' } },
     note: 'Aizawa 吸引子：轨线沿球面状曲面缠绕，再从中央的“管道”穿出。',
   },
   {
-    id: 'halvorsen', label: '哈尔沃森', f: '-a x - 4y - 4z - y^2', g: '-a y - 4z - 4x - z^2', h: '-a z - 4x - 4y - x^2', dt: 0.004, ic: [-1.48, -1.51, 2.04],
-    params: { a: { v: 1.89, min: 1.2, max: 2.6, label: 'a' } },
-    note: 'Halvorsen 吸引子，同样具有 x→y→z→x 的循环对称性。',
+    id: 'halvorsen', label: '哈尔沃森', f: '-a x - 4y - 4z - y^2', g: '-a y - 4z - 4x - z^2', h: '-a z - 4x - 4y - x^2', dt: 0.004, ic: [-1.48, -1.51, 2.04], tps: 2, trail: 6000,
+    params: { a: { v: 1.27, min: 1, max: 2.2, label: 'a' } },
+    note: 'Halvorsen 吸引子（Sprott 取 a = 1.27，λ_max ≈ 0.77），具有 x→y→z→x 的循环对称性。把 a 增大到 1.6 以上，混沌让位于周期轨道（λ_max → 0）。',
   },
   {
-    id: 'chen', label: '陈氏', f: 'a(y - x)', g: '(c - a) x - x z + c y', h: 'x y - b z', dt: 0.002, ic: [-10, 0, 37],
+    id: 'chen', label: '陈氏', f: 'a(y - x)', g: '(c - a) x - x z + c y', h: 'x y - b z', dt: 0.002, ic: [-10, 0, 37], tps: 0.8, trail: 6000,
     params: { a: { v: 35, min: 20, max: 45, label: 'a' }, b: { v: 3, min: 1, max: 6, label: 'b' }, c: { v: 28, min: 15, max: 32, label: 'c' } },
     note: '陈关荣 (1999) 构造的混沌系统，与洛伦茨系统拓扑上不等价，其吸引子更为“饱满”。',
   },
@@ -55,7 +56,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
     p: { a: 0, b: 0, c: 0, d: 0 },
     count: 3,
     eps: 1e-3,
-    speed: 2,
+    speed: 1,
     trail: 4000,
     t: 0,
     autoRotate: true,
@@ -185,11 +186,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
     layer.reset();
     const ctx = layer.ctx;
     const W = layer.w, H = layer.h;
-    const g = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
-    g.addColorStop(0, '#111827');
-    g.addColorStop(1, '#07090e');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    backdrop(ctx, W, H, '#111827', '#07090e', 0.45, layer.dpr);
     const P = projector();
     const { cx: ox, cy: oy, cz: oz, s } = st.frame;
 
@@ -245,10 +242,17 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
         const i0 = c * per, i1 = Math.min(n - 1, (c + 1) * per);
         if (i1 <= i0) continue;
         ctx.beginPath();
-        for (let i = i0; i <= i1; i++) {
-          const q = (start + i) % L;
+        // older (fainter) chunks are drawn with every 2nd/3rd point: same look, fewer segments
+        const stride = c < CHUNKS / 3 ? 3 : c < (2 * CHUNKS) / 3 ? 2 : 1;
+        for (let i = i0; i <= i1; i += stride) {
+          const q = (start + Math.min(i, i1)) % L;
           const p = P(tr.buf[3 * q], tr.buf[3 * q + 1], tr.buf[3 * q + 2]);
           if (i === i0) ctx.moveTo(p[0], p[1]); else ctx.lineTo(p[0], p[1]);
+        }
+        if ((i1 - i0) % stride) {
+          const q = (start + i1) % L;
+          const p = P(tr.buf[3 * q], tr.buf[3 * q + 1], tr.buf[3 * q + 2]);
+          ctx.lineTo(p[0], p[1]);
         }
         const age = (c + 1) / CHUNKS;
         ctx.globalAlpha = 0.1 + 0.62 * age;
@@ -263,14 +267,11 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
       if (tr.n < 1) continue;
       const q = tr.head;
       const p = P(tr.buf[3 * q], tr.buf[3 * q + 1], tr.buf[3 * q + 2]);
-      ctx.save();
-      ctx.shadowColor = tr.color;
-      ctx.shadowBlur = 18;
+      glow(ctx, p[0], p[1], 24, tr.color);
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.arc(p[0], p[1], 3.6, 0, 2 * Math.PI);
       ctx.fill();
-      ctx.restore();
     }
   }
 
@@ -342,7 +343,8 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
   let infoTick = 0;
   const loop = animationLoop((dt) => {
     if (st.autoRotate && !dragging) st.cam.yaw += dt * 0.18;
-    const steps = Math.max(1, Math.round(st.speed * (0.022 / st.preset.dt) * 60 * dt));
+    const tps = st.preset.tps || 1.3; // time units per second at speed 1
+    const steps = Math.max(1, Math.round((st.speed * tps * dt) / st.preset.dt));
     advance(Math.min(steps, 4000));
     draw();
     if (st.showChart) drawChart();
@@ -411,6 +413,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
     clearTimeout(paramTimer);
     paramTimer = setTimeout(() => { autoFrame(); estimateLyapunov(); syncQuery(); }, 200);
   }
+  const trailSlider = slider({ label: '尾迹长度（点）', min: 200, max: 20000, step: 100, value: st.trail, format: (v) => String(v), onInput: (v) => { st.trail = v; } });
   const countSlider = slider({ label: '轨线条数', min: 1, max: 6, step: 1, value: st.count, format: (v) => String(v), onInput: (v) => { st.count = v; restart(false); } });
   const epsSlider = slider({ label: '初值扰动 ε', min: -9, max: -1, step: 1, value: Math.log10(st.eps), format: (v) => `10^${v}`, onInput: (v) => { st.eps = 10 ** v; restart(false); } });
 
@@ -430,7 +433,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
     ]),
     section('显示', [
       slider({ label: '速度', min: 0.1, max: 5, step: 0.05, value: st.speed, format: (v) => `${fmt(v, 2)}×`, onInput: (v) => { st.speed = v; } }).el,
-      slider({ label: '尾迹长度', min: 200, max: 20000, step: 100, value: st.trail, format: (v) => String(v), onInput: (v) => { st.trail = v; } }).el,
+      trailSlider.el,
       h('div', { class: 'toggles two' },
         toggle({ label: '自动旋转', value: st.autoRotate, onChange: (v) => { st.autoRotate = v; } }).el,
         toggle({ label: '坐标轴与地面', value: st.showAxes, onChange: (v) => { st.showAxes = v; } }).el,
@@ -448,6 +451,8 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
 
   function loadPreset(p, params = null) {
     st.preset = p;
+    st.trail = p.trail || 4000;
+    trailSlider?.set(st.trail);
     presetChips.set(p.id);
     st.src = [p.f, p.g, p.h];
     st.fns = st.src.map((s) => realFunction(s, VARS));

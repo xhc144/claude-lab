@@ -2,7 +2,7 @@
 
 import { h } from '../ui/dom.js';
 import { Layer, Viewport, observeSize, attachPointer, animationLoop } from '../ui/canvas.js';
-import { drawGrid, arrow, label, handle, niceStep } from '../ui/draw.js';
+import { drawGrid, arrow, label, handle, niceStep, backdrop } from '../ui/draw.js';
 import { section, slider, toggle, segmented, button, chips, readout } from '../ui/controls.js';
 import { fmt, fmtVec, fmtComplex, deg } from '../ui/format.js';
 import { C, FONT, MATH, alpha } from '../ui/theme.js';
@@ -77,11 +77,7 @@ function create({ stage, panel, toast, query, setQuery }) {
     const { ctx } = layer;
     layer.reset();
     const W = vp.w, H = vp.h;
-    const g = ctx.createRadialGradient(W * 0.5, H * 0.45, 0, W * 0.5, H * 0.5, Math.hypot(W, H) * 0.6);
-    g.addColorStop(0, '#0f1420');
-    g.addColorStop(1, '#090c13');
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
+    backdrop(ctx, W, H, '#0f1420', '#090c13', 0.45, layer.dpr);
 
     const m = M();
     const b = vp.bounds;
@@ -196,16 +192,16 @@ function create({ stage, panel, toast, query, setQuery }) {
       ctx.stroke();
       ctx.restore();
       arrow(ctx, sx(0), sy(0), sx(vx), sy(vy), { color: alpha(C.cyan, 0.45), width: 2 });
-      arrow(ctx, sx(0), sy(0), sx(wx), sy(wy), { color: C.cyan, width: 2.6, glow: 8 });
+      arrow(ctx, sx(0), sy(0), sx(wx), sy(wy), { color: C.cyan, width: 2.6, halo: 5 });
       handle(ctx, sx(vx), sy(vy), C.cyan, { active: st.drag === 'v' || st.hover === 'v', r: 5.5 });
       label(ctx, 'v', sx(vx) + 9, sy(vy) - 11, { color: C.cyan, font: `italic 15px ${MATH}`, bg: null });
-      label(ctx, 'Av', sx(wx) + 9, sy(wy) - 11, { color: C.cyan, font: `italic 15px ${MATH}`, bg: null });
+      label(ctx, st.t < 1 ? 'A(t)v' : 'Av', sx(wx) + 9, sy(wy) - 11, { color: C.cyan, font: `italic 15px ${MATH}`, bg: null });
     }
 
     // basis vectors (columns of M)
     const [ix, iy] = apply(m, 1, 0), [jx, jy] = apply(m, 0, 1);
-    arrow(ctx, sx(0), sy(0), sx(ix), sy(iy), { color: C.i, width: 3, head: 13, glow: 10 });
-    arrow(ctx, sx(0), sy(0), sx(jx), sy(jy), { color: C.j, width: 3, head: 13, glow: 10 });
+    arrow(ctx, sx(0), sy(0), sx(ix), sy(iy), { color: C.i, width: 3, head: 13, halo: 6 });
+    arrow(ctx, sx(0), sy(0), sx(jx), sy(jy), { color: C.j, width: 3, head: 13, halo: 6 });
     handle(ctx, sx(ix), sy(iy), C.i, { active: st.drag === 'i' || st.hover === 'i' });
     handle(ctx, sx(jx), sy(jy), C.j, { active: st.drag === 'j' || st.hover === 'j' });
     const lab = (txt, x, y, col, dx, dy) => label(ctx, txt, sx(x) + dx, sy(y) + dy, { color: col, font: `600 12px ${FONT}`, border: alpha(col, 0.3) });
@@ -214,8 +210,9 @@ function create({ stage, panel, toast, query, setQuery }) {
       return [(x / n) * 16 + 4, (-y / n) * 16 - 4];
     };
     const [oix, oiy] = off(ix, iy), [ojx, ojy] = off(jx, jy);
-    lab(`Aî ${fmtVec(ix, iy)}`, ix, iy, C.i, oix, oiy);
-    lab(`Aĵ ${fmtVec(jx, jy)}`, jx, jy, C.j, ojx, ojy);
+    const nm = st.t < 1 ? 'A(t)' : 'A';
+    lab(`${nm}î ${fmtVec(ix, iy)}`, ix, iy, C.i, oix, oiy);
+    lab(`${nm}ĵ ${fmtVec(jx, jy)}`, jx, jy, C.j, ojx, ojy);
 
     // origin
     ctx.beginPath();
@@ -300,7 +297,7 @@ function create({ stage, panel, toast, query, setQuery }) {
     overlay.append(
       h('div', { class: 'title' }, st.t < 1 ? `动画中  t = ${fmt(st.t, 2)}` : '当前矩阵 A'),
       h('div', { style: { display: 'flex', alignItems: 'center', gap: '10px' } },
-        h('span', { style: { fontFamily: MATH, fontStyle: 'italic', fontSize: '16px' } }, 'A ='),
+        h('span', { style: { fontFamily: MATH, fontStyle: 'italic', fontSize: '16px' } }, st.t < 1 ? 'A(t) =' : 'A ='),
         h('div', { class: 'mini-matrix' },
           h('span', { style: { color: C.i } }, fmt(m.a, 2)), h('span', { style: { color: C.j } }, fmt(m.b, 2)),
           h('span', { style: { color: C.i } }, fmt(m.c, 2)), h('span', { style: { color: C.j } }, fmt(m.d, 2)))),
