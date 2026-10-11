@@ -2,7 +2,7 @@
 
 一部约 71 秒的程序化三维短片。主题：一个不可能存在、却令人向往的世界 —— 海洋悬在天上，水往高处流，世界会卷起来，月亮是一滴水。
 
-**成片**：`out/the_sea_above.mp4`（1920×1080，24 fps，2.35:1 画幅，立体声）
+**成片**：`out/the_sea_above.mp4`（1920×1080，24 fps，2.35:1 画幅，立体声）。成片没有提交到仓库，需要在本目录运行 `./make_film.sh` 从源码生成。
 
 所有画面都由本目录里的着色器逐像素计算出来，所有声音都由 `audio/` 里的合成器生成。没有使用任何外部模型、贴图、HDRI、音色或录音。
 
@@ -37,6 +37,7 @@
 ## 复现
 
 ```bash
+cd sea-above   # 以下命令都在本目录运行
 apt-get install -y libegl1 libegl-mesa0 libgl1-mesa-dri fonts-noto-cjk fonts-noto-cjk-extra
 pip install -r requirements.txt
 

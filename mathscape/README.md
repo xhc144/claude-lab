@@ -18,7 +18,7 @@
 需要一个现代浏览器（Chrome / Edge 99+、Firefox 112+、Safari 16+）。因为使用 ES 模块，页面必须通过 HTTP 访问，不能直接双击 `index.html`（`file://`）打开。
 
 ```bash
-cd mathviz
+cd mathscape
 npm start                 # 零依赖静态服务器（Node ≥ 18），打开 http://127.0.0.1:5173/
 # 或：node scripts/serve.mjs --port 8080 --host 0.0.0.0
 # 或任何静态服务器，例如：python3 -m http.server 5173
@@ -45,7 +45,7 @@ npm start                 # 零依赖静态服务器（Node ≥ 18），打开 h
 ## 测试
 
 ```bash
-cd mathviz
+cd mathscape
 npm install                    # 仅安装测试工具 @playwright/test
 npx playwright install chromium   # 首次运行端到端测试前下载浏览器
 npm test                       # = 单元测试 + 端到端测试
@@ -117,7 +117,7 @@ G = 1 的平面牛顿引力（可选 Plummer 软化，力与势一致）。积�
 ## 目录结构
 
 ```
-mathviz/
+mathscape/
 ├── index.html, css/app.css      页面骨架与设计系统（深色主题，响应式，移动端底部导航）
 ├── src/
 │   ├── main.js                  外壳：导航、路由、帮助、导出、快捷键
