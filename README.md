@@ -4,7 +4,7 @@
 
 一支约 3 分 40 秒、1080p / 30fps 的抽象代数（但不止抽象代数）宣传片。全部画面与配乐都由本仓库的代码程序化生成，没有使用任何外部素材。
 
-成片：`output/abstract_algebra_promo_1080p.mp4`
+成片：`output/abstract_algebra_promo_web.mp4`（1080p，约 95 MB 的网络版。用下文命令可以重新渲染出约 220 MB 的高码率母版 `output/abstract_algebra_promo_1080p.mp4`）
 
 ### 分镜
 

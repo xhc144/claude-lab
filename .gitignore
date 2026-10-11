@@ -7,3 +7,5 @@ output/*.wav
 output/stills/
 *.nbi
 *.nbc
+# full-quality master (~220 MB) exceeds GitHub's 100 MB limit; the repo keeps the web encode
+output/abstract_algebra_promo_1080p.mp4
