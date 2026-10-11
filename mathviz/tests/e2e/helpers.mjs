@@ -8,9 +8,14 @@ export function watchErrors(page) {
   return () => expect(errors, errors.join('\n\n')).toEqual([]);
 }
 
+/**
+ * Navigate to an app hash and wait until the module for exactly this navigation is mounted
+ * (hash-only navigations are same-document, so "some module is mounted" is not enough).
+ */
 export async function open(page, hash) {
-  await page.goto(`/${hash}`);
-  await page.waitForFunction(() => window.__mathscape?.current != null);
+  const expected = hash || '#/matrix';
+  await page.goto(`/${hash}`, { waitUntil: 'commit' });
+  await page.waitForFunction((h) => window.__mathscape?.mountedFor === h && window.__mathscape.current != null, expected);
   // let ResizeObserver + first animation frames settle
   await page.waitForTimeout(300);
 }

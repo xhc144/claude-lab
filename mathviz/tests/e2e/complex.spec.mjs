@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test';
 import { watchErrors, open, state, pixel, drag } from './helpers.mjs';
 
+/** Parse the readout format "a + bi" / "a − bi" / "a" / "bi" (Unicode minus) into [re, im]. */
+function parseComplex(text) {
+  const s = text.trim().replace(/−/g, '-');
+  const m = /^(.*\S)\s([+-])\s(.*)i$/.exec(s);
+  if (m) return [Number(m[1]), Number(`${m[2]}${m[3] || '1'}`)];
+  if (s.endsWith('i')) { const b = s.slice(0, -1); return [0, b === '' ? 1 : b === '-' ? -1 : Number(b)]; }
+  return [Number(s), 0];
+}
+
 test.describe('complex map module', () => {
   test('domain colouring: pixel hue matches arg f(z)', async ({ page }) => {
     const check = watchErrors(page);
@@ -39,9 +48,17 @@ test.describe('complex map module', () => {
     const [x, y] = await page.evaluate(() => window.__mathscape.current.worldToClient(2, 0));
     await page.mouse.click(x, y);
     const r = page.locator('#probe-readout');
-    await expect(r.locator('dd[data-key="w"]')).toHaveText(/^0\.5$|^0\.5000/);
-    await expect(r.locator('dd[data-key="dz"]')).toHaveText(/^−0\.25/); // f′(z) = −1/z²
     await expect(r.locator('dd[data-key="dzb"]')).toContainText('满足 C–R');
+    // the click lands on a pixel, so compare with the exact formulas at the probe's actual z
+    const [zr, zi] = (await state(page)).probe;
+    expect(Math.hypot(zr - 2, zi)).toBeLessThan(0.02);
+    const w = parseComplex(await r.locator('dd[data-key="w"]').textContent());
+    const dz = parseComplex(await r.locator('dd[data-key="dz"]').textContent());
+    const m2 = zr * zr + zi * zi;
+    const inv = [zr / m2, -zi / m2]; // 1/z
+    const dinv = [-(inv[0] ** 2 - inv[1] ** 2), -2 * inv[0] * inv[1]]; // −1/z²
+    expect(Math.hypot(w[0] - inv[0], w[1] - inv[1])).toBeLessThan(1e-4);
+    expect(Math.hypot(dz[0] - dinv[0], dz[1] - dinv[1])).toBeLessThan(1e-4);
     await page.locator('#fz-input').fill('conj(z)');
     await page.mouse.click(x, y);
     await expect(r.locator('dd[data-key="dzb"]')).toContainText('非解析');

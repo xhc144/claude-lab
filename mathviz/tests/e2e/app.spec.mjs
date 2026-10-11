@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { watchErrors, open, canvasStats } from './helpers.mjs';
+import { watchErrors, open, canvasStats, state } from './helpers.mjs';
 
 test('loads, shows four modules and switches by click, hash and keyboard', async ({ page }) => {
   const check = watchErrors(page);
@@ -73,6 +73,22 @@ test('state is kept in the URL and restored', async ({ page }) => {
   await expect(page.locator('#fz-input')).toHaveValue('1/z');
   await open(page, '#/threebody?p=pythagorean');
   await expect(page.locator('#nbody-presets .chip.on')).toHaveText('毕达哥拉斯问题');
+});
+
+test('a shared link opened in the same tab applies its state even within the same module', async ({ page }) => {
+  const check = watchErrors(page);
+  await open(page, '#/ode');
+  expect((await state(page)).mode).toBe('2d');
+  await open(page, '#/ode?mode=3d&p=rossler');
+  expect((await state(page)).mode).toBe('3d');
+  expect((await state(page)).preset).toBe('rossler');
+  await open(page, '#/matrix?m=1,0,0,1');
+  await open(page, '#/matrix?m=0,-1,1,0');
+  await expect(page.locator('#matrix-tags')).toContainText('旋转 90°');
+  // clicking the nav item of the open module keeps its state
+  await page.locator('.nav-item[data-module="matrix"]').click();
+  await expect(page.locator('#matrix-tags')).toContainText('旋转 90°');
+  check();
 });
 
 test('mobile layout: panel stacks under the stage without horizontal overflow', async ({ browser }) => {

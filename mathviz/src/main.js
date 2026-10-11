@@ -26,7 +26,11 @@ function toast(msg, ms = 2200) {
 // ---- layout
 const nav = h('nav', { class: 'nav', 'aria-label': '模块' });
 MODULES.forEach((m, k) => {
-  nav.append(h('a', { class: 'nav-item', href: `#/${m.id}`, 'data-module': m.id, title: `${m.title}（${k + 1}）` },
+  nav.append(h('a', {
+    class: 'nav-item', href: `#/${m.id}`, 'data-module': m.id, title: `${m.title}（${k + 1}）`,
+    // clicking the module that is already open keeps its state instead of resetting it
+    onClick: (e) => { if (current?.def.id === m.id) e.preventDefault(); },
+  },
     icon(ICONS[m.icon]), h('span', null, m.short), h('span', { class: 'key' }, String(k + 1))));
 });
 const helpBtn = iconButton({ iconName: 'help', title: '帮助与快捷键（?）', onClick: () => openHelp(), id: 'help-btn' });
@@ -66,11 +70,18 @@ function setQuery(params) {
   const s = q.toString();
   const hash = `#/${current.def.id}${s ? `?${s}` : ''}`;
   if (location.hash !== hash) history.replaceState(null, '', hash);
+  lastHash = location.hash;
 }
+
+// Hash written by the app itself (replaceState never fires hashchange). Any other hash change —
+// a pasted share link, a manual edit, back/forward — remounts the module with the new state,
+// even when the module stays the same.
+let lastHash = '';
 
 function mount() {
   const { id, query } = parseHash();
-  if (current && current.def.id === id) return;
+  if (current && current.def.id === id && location.hash === lastHash) return;
+  window.__mathscape.mountedFor = location.hash;
   if (current) {
     try { current.inst.destroy?.(); } catch (e) { console.error(e); }
   }
@@ -90,6 +101,7 @@ function mount() {
   current.inst = def.create({ stage, panel, actions: moduleActions, toast, query, setQuery });
   window.__mathscape.current = current.inst;
   window.__mathscape.module = id;
+  lastHash = location.hash; // create() may already have rewritten it via setQuery
 }
 
 window.__mathscape = { modules: MODULES.map((m) => m.id), current: null, module: null, errors: [] };

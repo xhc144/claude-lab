@@ -133,14 +133,19 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     }
   }
 
-  /** Advance by `duration` in small chunks so trails stay smooth; returns false on failure. */
-  function simulate(duration) {
+  /**
+   * Advance by `duration` in small chunks so trails stay smooth; returns false on failure.
+   * With `realtime` (the playback loop) a frame stops after ~24 ms of work, so a hard stretch
+   * such as a close encounter plays in slow motion instead of freezing the page. Explicit steps
+   * (step button, →, the test hook) always advance by exactly `duration`.
+   */
+  function simulate(duration, { realtime = false } = {}) {
     const sys = st.sys;
     const chunk = 0.004;
-    const n = Math.min(400, Math.max(1, Math.ceil(duration / chunk)));
+    const n = realtime ? Math.min(400, Math.max(1, Math.ceil(duration / chunk))) : Math.max(1, Math.ceil(duration / chunk));
     const t0 = performance.now();
     for (let k = 0; k < n; k++) {
-      const r = sys.advance(duration / n, st.method, { dt: st.dt, budget: 40000 });
+      const r = sys.advance(duration / n, st.method, { dt: st.dt, budget: realtime ? 40000 : Infinity });
       st.steps += r.steps;
       if (!r.ok) {
         setPlaying(false);
@@ -148,7 +153,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
         break;
       }
       recordTrails();
-      if (performance.now() - t0 > 24) break; // keep the frame responsive
+      if (realtime && performance.now() - t0 > 24) break; // keep the frame responsive
     }
     const E = sys.energy();
     const rel = Math.abs((E - st.E0) / st.E0);
@@ -390,7 +395,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
   const loop = animationLoop((dt) => {
     if (st.playing && !st.drag) {
       const before = st.steps;
-      simulate(dt * st.speed);
+      simulate(dt * st.speed, { realtime: true });
       stepAcc += st.steps - before;
       timeAcc += dt;
       if (timeAcc > 0.5) { st.stepsPerSec = stepAcc / timeAcc; stepAcc = 0; timeAcc = 0; }
