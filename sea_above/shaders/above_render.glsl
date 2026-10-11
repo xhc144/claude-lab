@@ -44,7 +44,7 @@ float marchAbove(vec3 ro, vec3 rd, float tmax, int steps, out vec3 glow) {
             vec3 lp;
             float ld = lanternField(unfold(p), lp);
             float s = max(d * stepScale, 0.02 * t);
-            glow += LANTERN * exp(-ld * 2.4) * 4.5 * min(s, 6.0) * 0.12 * exp(-t * 0.0006);
+            glow += LANTERN * exp(-ld * 2.4) * 4.5 * min(s, 6.0) * 0.12 * exp(-t * 0.00028);
         }
         if (abs(d) < 0.0015 * t + 0.002) return t;
         if (t > tmax) break;
@@ -168,7 +168,7 @@ vec3 renderAbove(vec3 ro, vec3 rd, vec2 px, out float depth) {
         }
         // night mist
         float fog = 1.0 - exp(-t * 0.00022);
-        col = mix(col, vec3(0.020, 0.028, 0.055), fog);
+        col = mix(col, vec3(0.008, 0.012, 0.03), fog);
         depth = t;
     } else {
         col = skyWithMoon(ro, rd);
