@@ -80,11 +80,26 @@ class Crossing(Shot):
 
     def uniforms(self, t):
         p0, _ = self._outside(self.T_CROSS)
-        burst = smoothstep(self.T_CROSS - 0.05, self.T_CROSS + 0.1, t) * (1 - smoothstep(self.T_CROSS + 0.8, self.T_CROSS + 3.0, t))
+        burst = smoothstep(self.T_CROSS - 0.05, self.T_CROSS + 0.1, t) * (1 - smoothstep(self.T_CROSS + 0.5, self.T_CROSS + 1.8, t))
         return dict(uDropDensity=0.3, uDropRise=0.9,
                     uWhale0=self.whale_pos(t), uWhale1=(500.0, 600.0, -1500.0 + 7.0 * t, 0.2),
                     uWhale2=(-900.0, 640.0, -900.0 + 6.0 * t, -0.4),
-                    uBubbles=0.32 * burst, uBubbleC=tuple(p0))
+                    uBubbles=0.2 * burst, uBubbleC=tuple(p0), uBubbleOffset=tuple(self.bubble_drag(t)))
+
+    def bubble_drag(self, t):
+        """Bubbles entrained by the plunge travel with the camera, then fall behind."""
+        if t <= self.T_CROSS:
+            return np.zeros(3)
+        dt = 1.0 / 240.0
+        off = np.zeros(3)
+        prev = self.camera(self.T_CROSS)["pos"]
+        tau = self.T_CROSS
+        while tau < t:
+            nxt = min(tau + dt, t)
+            cur = self.camera(nxt)["pos"]
+            off += (cur - prev) * math.exp(-(tau - self.T_CROSS) / 0.45)
+            prev, tau = cur, nxt
+        return off
 
     def post_at(self, t):
         under = smoothstep(self.T_CROSS, self.T_CROSS + 0.3, t)
