@@ -1,0 +1,20 @@
+{
+  "name": "mathscape",
+  "version": "1.0.0",
+  "description": "数境 MathScape：矩阵线性变换、复变函数映射、常微分方程轨线与三体运动的交互式可视化",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test",
+    "lint": "node scripts/check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}
