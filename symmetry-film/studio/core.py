@@ -168,12 +168,48 @@ _FONT_FILES = {
 _FALLBACK = ["serif_cn", "math", "dejavu_serif", "dejavu"]
 
 
+# When a font file above is missing (e.g. on macOS / Windows), look the font up
+# by family name instead: (candidate families, weight, italic).
+_SERIF_CN = ["Noto Serif CJK SC", "Source Han Serif SC", "Songti SC", "STSong", "SimSun"]
+_SANS_CN = ["Noto Sans CJK SC", "Source Han Sans SC", "PingFang SC", "Microsoft YaHei", "SimHei"]
+_GARAMOND = ["EB Garamond", "EB Garamond 12", "Garamond", "Georgia", "Times New Roman"]
+_LMODERN = ["Latin Modern Roman", "LM Roman 10", "CMU Serif", "Times New Roman"]
+_INTER = ["Inter", "Inter Display", "Helvetica Neue", "Helvetica", "Arial"]
+_FONT_FAMILIES = {
+    "serif_cn_black": (_SERIF_CN, 900, False), "serif_cn_bold": (_SERIF_CN, 700, False),
+    "serif_cn_semibold": (_SERIF_CN, 600, False), "serif_cn": (_SERIF_CN, 400, False),
+    "serif_cn_light": (_SERIF_CN, 300, False), "sans_cn": (_SANS_CN, 400, False),
+    "sans_cn_light": (_SANS_CN, 300, False), "sans_cn_thin": (_SANS_CN, 100, False),
+    "sans_cn_bold": (_SANS_CN, 700, False), "garamond": (_GARAMOND, 400, False),
+    "garamond_it": (_GARAMOND, 400, True), "garamond_bold": (_GARAMOND, 700, False),
+    "script": (["Dancing Script", "Apple Chancery", "Brush Script MT", "Segoe Script"], 400, False),
+    "math": (_LMODERN, 400, False), "math_it": (_LMODERN, 400, True),
+    "inter_light": (_INTER, 300, False), "inter": (_INTER, 400, False), "inter_thin": (_INTER, 100, False),
+    "inter_display_light": (_INTER, 300, False), "inter_bold": (_INTER, 700, False),
+    "mono": (["DejaVu Sans Mono", "Menlo", "Consolas", "Courier New"], 400, False),
+    "dejavu": (["DejaVu Sans", "Arial Unicode MS", "Arial"], 400, False),
+    "dejavu_serif": (["DejaVu Serif", "Times New Roman"], 400, False),
+}
+
+
 @functools.lru_cache(maxsize=None)
 def typeface(key):
     path, idx = _FONT_FILES[key]
-    tf = skia.Typeface.MakeFromFile(path, idx)
+    tf = skia.Typeface.MakeFromFile(path, idx) if os.path.exists(path) else None
     if tf is None:
-        raise RuntimeError(f"cannot load font {key}")
+        families, weight, italic = _FONT_FAMILIES[key]
+        slant = skia.FontStyle.kItalic_Slant if italic else skia.FontStyle.kUpright_Slant
+        style = skia.FontStyle(weight, 5, slant)
+        mgr = skia.FontMgr()
+        for fam in families:
+            tf = mgr.matchFamilyStyle(fam, style)
+            if tf is not None:
+                break
+        if tf is None:
+            tf = mgr.legacyMakeTypeface("", style)
+        if tf is None:
+            raise RuntimeError(f"cannot load font {key}: install the fonts listed in 使用说明.md")
+        print(f"[font] {path} not found; using '{tf.getFamilyName()}' for {key}", flush=True)
     return tf
 
 

@@ -1,6 +1,6 @@
 numpy
 scipy
-numba
-skia-python
+moderngl
+glcontext
 opencv-python-headless
-matplotlib
+pillow
