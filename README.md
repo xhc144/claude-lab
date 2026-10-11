@@ -1,5 +1,12 @@
 # claude-video-studio
 
+本仓库中的影片全部由代码程序化生成（画面与声音），不使用任何外部素材。
+
+| 影片 | 时长 | 目录 |
+| --- | --- | --- |
+| 《倒悬之海》The Sea Above —— 一个不可能存在、却令人向往的世界 | 71 秒 | [`sea_above/`](sea_above/)（成片 `sea_above/out/the_sea_above.mp4`） |
+| 《对称的语言》—— 抽象代数宣传片 | 3 分 40 秒 | 仓库根目录（成片 `output/abstract_algebra_promo_web.mp4`） |
+
 > 本仓库还包含 **[数境 MathScape](mathviz/README.md)**：一个零依赖的交互式数学可视化网页应用（矩阵线性变换、复变函数映射、常微分方程轨线、三体运动），带单元测试与端到端测试。运行：`cd mathviz && npm start`，然后打开 http://127.0.0.1:5173/ 。
 
 ## 《对称的语言》—— 抽象代数宣传片

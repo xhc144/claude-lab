@@ -1,0 +1,6 @@
+numpy
+scipy
+moderngl
+glcontext
+opencv-python-headless
+pillow
