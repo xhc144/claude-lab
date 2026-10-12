@@ -94,19 +94,8 @@ export class Game {
   }
 
   findSpawn() {
-    // spiral outward from the origin to the first comfortable dry land
-    for (let r = 0; r < 600; r += 8) {
-      const steps = Math.max(1, Math.floor(r * 0.8));
-      for (let k = 0; k < steps; k++) {
-        const a = (k / steps) * Math.PI * 2;
-        const x = Math.round(Math.cos(a) * r), z = Math.round(Math.sin(a) * r);
-        const c = this.gen.column(x, z);
-        const key = BIOMES[c.biome].key;
-        if (c.h > SEA + 1 && c.h < SEA + 30 && (key === 'meadow' || key === 'forest' || key === 'blossom') && c.island < 0.05) return [x, c.h + 2, z];
-      }
-    }
-    const c = this.gen.column(0, 0);
-    return [0, Math.max(c.h, SEA) + 2, 0];
+    const [x, h, z] = this.gen.spawnPoint();
+    return [x, h + 2, z];
   }
 
   settleOnGround() {

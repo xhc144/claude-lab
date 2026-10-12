@@ -238,6 +238,7 @@ export class InventoryScreen extends Screen {
     if (left) g.dropStack({ id: r.out, n: left });
     g.audio && g.audio.play('craft');
     g.onCrafted && g.onCrafted(r.out, total);
+    g.emit('crafted', r.out, total);
     this.refresh();
   }
 

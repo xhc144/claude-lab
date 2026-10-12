@@ -190,6 +190,7 @@ export class Interaction {
     w.setBlock(r.x, r.y, r.z, r.v, { cause: 'player' });
     for (const [x, y, z, v] of r.extra) w.setBlock(x, y, z, v, { cause: 'player' });
     g.onBlockPlaced && g.onBlockPlaced(r.x, r.y, r.z, r.v);
+    g.emit('blockPlaced', r.x, r.y, r.z, r.v);
     g.audio && g.audio.place(blockId, { x: r.x + 0.5, y: r.y + 0.5, z: r.z + 0.5 });
     return true;
   }

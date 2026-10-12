@@ -110,6 +110,30 @@ export class WorldGen {
 
   biomeAt(x, z) { return this.column(Math.floor(x), Math.floor(z)).biome; }
 
+  // Where a new player wakes up: the first comfortable meadow/forest found spiralling out from
+  // the origin. Deterministic, so the generator workers can build the Heart Shrine next to it.
+  spawnPoint() {
+    if (this._spawn) return this._spawn;
+    const ok = (x, z) => {
+      const c = this.column(x, z);
+      const key = BIOMES[c.biome].key;
+      if (!(c.h > SEA + 1 && c.h < SEA + 26 && (key === 'meadow' || key === 'forest' || key === 'blossom') && c.island < 0.05)) return false;
+      // the shrine 16 blocks north must be on dry land too
+      const s = this.column(x, z - 16);
+      return s.h > SEA + 1 && Math.abs(s.h - c.h) < 8 && s.island < 0.05;
+    };
+    for (let r = 0; r < 800; r += 8) {
+      const steps = Math.max(1, Math.floor(r * 0.8));
+      for (let k = 0; k < steps; k++) {
+        const a = (k / steps) * Math.PI * 2;
+        const x = Math.round(Math.cos(a) * r), z = Math.round(Math.sin(a) * r);
+        if (ok(x, z)) { this._spawn = [x, this.column(x, z).h, z]; return this._spawn; }
+      }
+    }
+    this._spawn = [0, Math.max(this.column(0, 0).h, SEA), 0];
+    return this._spawn;
+  }
+
   // ---------------------------------------------------------------- 3D fields on a coarse grid
   // Trilinear interpolation of noise sampled every 4 (xz) × 8 (y) blocks.
   grid3(fn, cx, cz, y0, y1) {

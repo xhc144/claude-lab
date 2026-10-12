@@ -15,6 +15,9 @@ import { installEvents } from './events.js';
 import { installCircuits } from './circuits.js';
 import { installMachines } from './machines.js';
 import { installTransport } from './transport.js';
+import { installAdventure } from './adventure.js';
+import { installWorldMap } from './worldmap.js';
+import { installCodex } from './codex.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -46,6 +49,9 @@ export function installSystems(game, state) {
   installCircuits(game);
   installMachines(game);
   installTransport(game);
+  installAdventure(game, state);
+  installWorldMap(game, state);
+  installCodex(game, state);
 
   // entity ticking, particles, audio, rendering
   game.addSystem({
