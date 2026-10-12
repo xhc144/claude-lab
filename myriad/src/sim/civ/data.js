@@ -73,7 +73,7 @@ export const TECHS = [
 
 export const TECH = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 export const NTECH = TECHS.length;
-export const techCost = (t) => 50 * Math.pow(2.45, t.era) * (1 + t.req.length * 0.1);
+export const techCost = (t) => 60 * Math.pow(2.8, t.era) * (1 + t.req.length * 0.1);
 
 // buildings: id, name, tech, production cost, description
 export const BUILDINGS = [

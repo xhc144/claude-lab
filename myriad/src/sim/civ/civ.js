@@ -11,7 +11,7 @@ import { createNation, rel } from './nation.js';
 import { foundCity, tierOf, TIERS, destroyCity, developLand, tileFood } from './city.js';
 import { findPath, labelLandmasses } from './path.js';
 import { computeTerritory } from './territory.js';
-import { techFlags, addResearch, grantTech, grantUpToEra } from './tech.js';
+import { techFlags, addResearch, grantTech, grantUpToEra, effectiveCost } from './tech.js';
 import { computeAccess, updateTrade, tradeIncome, connectCities } from './economy.js';
 import { folkReligion, stepMythogenesis, spreadReligions, updateStateReligion, maybeSchism, updatePrayers, createReligion, normalize } from './religion.js';
 import { stepIdeaOrigins, spreadIdeas, stepNationIdeas } from './ideas.js';
@@ -50,7 +50,7 @@ function settleSpot(w, x, y, sp, rng, r = 10) {
     const px = Math.round(x + (rng.next() - 0.5) * 2 * r), py = Math.round(y + (rng.next() - 0.5) * 2 * r);
     if (px < 2 || py < 2 || px >= w.W - 2 || py >= w.H - 2) continue;
     const c = py * w.W + px;
-    if (w.elev[c] < w.seaLevel || w.lake[c] > 0 || w.lava[c] > 0) continue;
+    if (w.elev[c] < w.seaLevel + 0.003 || w.lake[c] > 0 || w.lava[c] > 0) continue;
     if (w.cities.some((k) => k.alive && Math.abs(k.x - px) < 4 && Math.abs(k.y - py) < 4)) continue;
     const T = w.baseTemp[c] + w.climate.offset;
     const topt = sp ? -16 + sp.ref[G.warmth] * 50 : 15;
@@ -328,7 +328,7 @@ function chooseSite(w, n, src, rng) {
     const x = Math.round(src.x + Math.cos(a) * d), y = Math.round(src.y + Math.sin(a) * d);
     if (x < 2 || y < 2 || x >= w.W - 2 || y >= w.H - 2) continue;
     const c = y * w.W + x;
-    if (w.elev[c] < w.seaLevel || w.lake[c] > 0 || w.lava[c] > 0 || w.rad[c] > 0.2) continue;
+    if (w.elev[c] < w.seaLevel + 0.003 || w.lake[c] > 0 || w.lava[c] > 0 || w.rad[c] > 0.2) continue;
     if (w.owner[c] >= 0 && w.owner[c] !== n.id) continue;
     if (w.cities.some((k) => k.alive && Math.abs(k.x - x) < 5 && Math.abs(k.y - y) < 5 && Math.hypot(k.x - x, k.y - y) < 4.6)) continue;
     const overseas = w.landmass[c] !== srcLand;
@@ -348,6 +348,24 @@ function chooseSite(w, n, src, rng) {
     if (s > bs) { bs = s; best = { x, y, overseas }; }
   }
   return bs > 3 ? best : null;
+}
+
+/** found count cities for nation n right away (scenario starts) */
+export function expandNation(w, n, count, pop = 2000) {
+  const rng = w.rng;
+  if (!w.landmass || w.landmassVersion !== w.elevVersion) labelLandmasses(w);
+  computeTerritory(w);
+  let made = 0;
+  for (let k = 0; k < count * 4 && made < count; k++) {
+    const src = w.cities[rng.pick(n.cities)];
+    const site = chooseSite(w, n, src, rng);
+    if (!site || site.overseas) continue;
+    const city = foundCity(w, n, site.x, site.y, pop * (0.6 + rng.next() * 0.8));
+    if (n.religion != null) city.religion[n.religion] = 0.9;
+    computeTerritory(w);
+    made++;
+  }
+  return made;
 }
 
 function expansion(w, rng) {
@@ -511,7 +529,8 @@ export function applyImpactsToCiv(w, impacts) {
 function checkDrowned(w) {
   for (const c of w.cities) {
     if (!c.alive) continue;
-    if (w.elev[c.y * w.W + c.x] < w.seaLevel) {
+    // dykes hold back a little water; modern ones a little more
+    if (w.elev[c.y * w.W + c.x] < w.seaLevel - (w.nations[c.nation].tf.industry ? 0.004 : 0.0015)) {
       const n = w.nations[c.nation];
       destroyCity(w, c, '沉入了上涨的海水', { cat: 'nature', text: `海平面上涨，${n.name}的${c.name.z}沉入大海，只留下水下的废墟。` });
       w.flags.drownedCity = true;
@@ -552,7 +571,11 @@ function greatPeople(w, n, rng) {
   switch (role) {
     case 'scientist': {
       const t = n.research ? TECH[n.research] : null;
-      if (t) { grantTech(w, n, t.id, 'genius'); p.deeds.push(`发明「${t.name}」`); text = `${city.name.z}的天才学者${name}完成了「${t.name}」的研究。`; }
+      if (t) {
+        n.researchPts += effectiveCost(w, n, t) * 0.45;
+        p.deeds.push(`推动「${t.name}」的研究`);
+        text = `${city.name.z}的天才学者${name}在「${t.name}」上取得了重大突破。`;
+      }
       break;
     }
     case 'artist': city.culture += 400; p.deeds.push('传世杰作'); text = `${city.name.z}的艺术家${name}创作出传世之作，${n.adj}文化之名远播四方。`; break;

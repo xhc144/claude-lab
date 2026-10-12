@@ -11,7 +11,7 @@ import { stepVegetation, stepSoil, stepFire, vegCapacity } from './vegetation.js
 import { stepVolcanoes, stepLava, maybeEarthquake, maybeMeteor, meteorImpact, stepGeologyYear } from './geology.js';
 import { initLife, seedLife, stepCreatures, applyImpactsToLife, seedPopulation, findHome } from './life/creatures.js';
 import { ARCHETYPES } from './life/genome.js';
-import { initCiv, stepCiv, applyImpactsToCiv, foundTribe } from './civ/civ.js';
+import { initCiv, stepCiv, applyImpactsToCiv, foundTribe, expandNation } from './civ/civ.js';
 import { labelLandmasses } from './civ/path.js';
 import { log } from './chronicle.js';
 import { prof, now } from '../core/prof.js';
@@ -103,10 +103,26 @@ export function seedPeoples(w, era = null) {
       const spot = i === 0 ? home : findHome(w, k.genes, rng, 300);
       if (!spot) continue;
       const nat = foundTribe(w, sp.id, spot.x, spot.y, { silent: true, era, gov: era ? 'monarchy' : 'tribe', pop: era ? 4000 : 120, r: 14 });
-      if (nat) tribes++;
+      if (nat) { tribes++; if (era) expandNation(w, nat, 2 + rng.int(3), era >= 6 ? 20000 : 2500); }
     }
   }
   return tribes;
+}
+
+/** a small terrain-only world for previews on the start screen */
+export function createPreview(opts = {}) {
+  const w = allocWorld(opts.W || 112, opts.H || 70, typeof opts.seed === 'number' ? opts.seed >>> 0 : hashStr(String(opts.seed ?? 1)));
+  const preset = PRESETS[opts.preset] || PRESETS.continents;
+  w.climate.bias = preset.temp;
+  w.climate.wetness = preset.wet;
+  generateTerrain(w, opts);
+  w.veg.fill(0.5);
+  computeClimate(w);
+  computeHydrology(w);
+  computeClimate(w);
+  for (let c = 0; c < w.N; c++) { w.fert[c] = 0.6; w.veg[c] = vegCapacity(w, c) * 0.92; }
+  computeClimate(w);
+  return w;
 }
 
 /** recompute climate and rivers right away (used while the player edits a paused world) */

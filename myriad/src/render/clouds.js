@@ -22,41 +22,43 @@ export class CloudLayer {
     this.noise2 = makeNoise2D(world.seed ^ 0x99);
     this.t = 0;
     this.row = 0;
-    this.offsets = new Float32Array(this.ch);
   }
 
-  /** zonal wind speed at cloud row y (cells per unit time), smooth across bands */
-  wind(y) {
+  /** share of eastward flow at cloud row y (westerlies) vs westward (trade winds, polar easterlies) */
+  eastShare(y) {
     const a = Math.abs(((y + 0.5) / this.ch) * 2 - 1);
-    return -Math.cos(a * Math.PI * 3) * 1.0;
+    return 0.5 - 0.5 * Math.cos(a * Math.PI * 3);
   }
 
   update(dt, tps) {
-    const speed = 0.6 + Math.min(6, tps * 0.15);
+    const speed = 0.5 + Math.min(5, tps * 0.12);
     this.t += dt * speed;
-    for (let y = 0; y < this.ch; y++) this.offsets[y] += this.wind(y) * dt * speed * 0.9;
-    // refresh a band of rows per frame (the whole sky every ~10 frames)
-    const rows = Math.ceil(this.ch / 10);
+    // refresh a third of the sky per frame
+    const rows = Math.ceil(this.ch / 3);
     const d = this.img.data, sd = this.simg.data;
     const w = this.w;
     const n = this.noise, n2 = this.noise2;
-    const tt = this.t * 0.012;
+    const drift = this.t * 0.9;
+    const tt = this.t * 0.01;
+    const dust = clamp(w.climate.dust, 0, 1);
     for (let k = 0; k < rows; k++) {
       const y = this.row;
       this.row = (this.row + 1) % this.ch;
-      const off = this.offsets[y];
+      const e = this.eastShare(y);
       const wy = Math.min(w.H - 1, y * RES);
+      const fy = y * 0.045;
       for (let x = 0; x < this.cw; x++) {
-        const fx = (x - off) * 0.035, fy = y * 0.05;
-        let v = n(fx, fy + tt) * 0.55 + n(fx * 2.1 + 3.3, fy * 2.1 - tt * 1.7) * 0.3 + n2(fx * 4.3, fy * 4.3 + tt * 2) * 0.15;
+        // two fields drifting in opposite directions, blended by latitude: no shear accumulates
+        const fe = (x - drift) * 0.045, fw = (x + drift) * 0.045;
+        const ve = n(fe, fy + tt) * 0.6 + n2(fe * 2.3, fy * 2.3 - tt) * 0.4;
+        const vw = n(fw + 40, fy - tt) * 0.6 + n2(fw * 2.3 + 17, fy * 2.3 + tt) * 0.4;
+        let v = ve * e + vw * (1 - e);
         const c = wy * w.W + Math.min(w.W - 1, x * RES);
-        const wet = w.rain[c];
-        v += (wet - 0.45) * 0.55 + clamp(w.climate.dust * 0.4, 0, 0.5);
-        const a = smoothstep(0.08, 0.6, v);
+        v += (w.rain[c] - 0.5) * 0.7 + dust * 0.4;
+        const a = smoothstep(0.12, 0.62, v);
         const o = (y * this.cw + x) * 4;
-        const dust = clamp(w.climate.dust, 0, 1);
         d[o] = 246 - dust * 80; d[o + 1] = 248 - dust * 90; d[o + 2] = 252 - dust * 100;
-        d[o + 3] = a * 235;
+        d[o + 3] = a * 225;
         sd[o] = 10; sd[o + 1] = 14; sd[o + 2] = 30; sd[o + 3] = a * 255;
       }
     }
@@ -66,7 +68,7 @@ export class CloudLayer {
 
   draw(ctx, cam, dt, tps, time) {
     this.update(dt, tps);
-    const alpha = clamp(1.25 - cam.zoom / 14, 0.12, 0.8);
+    const alpha = clamp(0.95 - cam.zoom / 16, 0.1, 0.6);
     if (alpha <= 0.01) return;
     const [x0, y0] = cam.toScreen(0, 0);
     const mw = this.w.W * cam.zoom, mh = this.w.H * cam.zoom;

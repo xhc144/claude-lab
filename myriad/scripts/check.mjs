@@ -50,6 +50,13 @@ function exportsOf(file) {
   return names;
 }
 
+// the single-file bundler only understands `export function|class|const|let NAME` with one name
+for (const f of files.filter((f) => f.includes('/src/'))) {
+  const src = readFileSync(f, 'utf8');
+  if (/^export\s*\{/m.test(src)) problems.push(`${relative(ROOT, f)}: "export { … }" is not supported by scripts/build.mjs`);
+  for (const m of src.matchAll(/^export\s+(?:const|let|var)\s+[A-Za-z_$][\w$]*\s*=[^;\n()=>]*,\s*[A-Za-z_$][\w$]*\s*=/gm)) problems.push(`${relative(ROOT, f)}: one export per declaration please: ${m[0].slice(0, 60)}`);
+}
+
 for (const f of files) {
   const src = readFileSync(f, 'utf8');
   for (const m of src.matchAll(/^import\s+([^;'"]*?)\s+from\s+['"](\.{1,2}\/[^'"]+)['"]/gm)) {

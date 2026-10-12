@@ -71,6 +71,7 @@ export function foundCity(w, n, x, y, pop, opts = {}) {
     starving: 0,
     prayer: null,
     lastConquest: -1e9,
+    siege: -1e9,
     garrison: 0,
     blessed: 0,
     inspired: 0,

@@ -7,10 +7,10 @@ import { log } from './chronicle.js';
 import { pushFx, forDisk, year } from './state.js';
 import { rel } from './civ/nation.js';
 import { newRuler, fullName } from './civ/people.js';
-import { loseTechs, grantTech, available } from './civ/tech.js';
+import { loseTechs, grantTech, available, effectiveCost } from './civ/tech.js';
 import { IDEAS, TECH } from './civ/data.js';
 import { forCreaturesNear } from './life/creatures.js';
-import { B } from './constants.js';
+
 
 const aliveCities = (w) => w.cities.filter((c) => c.alive);
 const aliveNations = (w) => w.nations.filter((n) => n.alive && n.cities.length);
@@ -124,8 +124,8 @@ export const EVENTS = [
       const n = pickNation(w, rng);
       if (!n || !n.research) return false;
       const t = TECH[n.research];
-      grantTech(w, n, t.id, 'accident');
-      log(w, 'science', `一次失败的实验意外成功——${n.adj}提前掌握了「${t.name}」。`, { imp: 1, nations: [n.id] });
+      n.researchPts += effectiveCost(w, n, t) * 0.4;
+      log(w, 'science', `一次失败的实验意外带来了启发——${n.adj}在「${t.name}」上进展神速。`, { imp: 1, nations: [n.id] });
       return true;
     },
   },
@@ -384,4 +384,3 @@ export function runEvent(w, id) {
   return e ? e.run(w, w.rng) : false;
 }
 
-export { B };
