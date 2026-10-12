@@ -90,6 +90,8 @@ export function describeTraits(sp) {
 
 /** called when a species' population hits zero */
 export function markExtinct(w, sp) {
+  // a sapient species lives on in its cities even when none roam the wild
+  if (sp.sapient && w.nations && sp.nations.some((id) => w.nations[id] && w.nations[id].alive)) { sp.pop = 0; return; }
   sp.extinct = w.tick;
   sp.pop = 0;
   sp.hist.push([w.tick, 0]);

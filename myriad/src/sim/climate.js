@@ -72,11 +72,11 @@ export function computeClimate(w) {
       const c = y * W + x;
       const h = elev[c] - seaLevel;
       if (h < 0) {
-        w.baseTemp[c] = Math.max(-2, t0 * 0.9 + 2.5) + bias;
+        w.baseTemp[c] = Math.max(-2, t0 * 0.9 + 2.5 + w.tempMod[c] * 0.5) + bias;
         w.seasonAmp[c] = amp0 * 0.3 * hemi;
       } else {
         const cont = clamp(w.coastDist[c] / 22, 0, 1);
-        w.baseTemp[c] = t0 - 30 * h + bias - 1.5 * cont;
+        w.baseTemp[c] = t0 - 30 * h + bias - 1.5 * cont + w.tempMod[c];
         w.seasonAmp[c] = amp0 * (0.4 + 0.6 * cont) * hemi;
       }
     }
@@ -131,7 +131,7 @@ function computeRain(w) {
   }
   blur(rain, W, H, 2);
   blur(rain, W, H, 3);
-  for (let c = 0; c < w.N; c++) rain[c] = clamp(rain[c], 0, 1);
+  for (let c = 0; c < w.N; c++) rain[c] = clamp(rain[c] + w.rainMod[c], 0, 1);
 }
 
 /** separable box blur in place */
@@ -199,7 +199,7 @@ export function computeBiomes(w) {
 export function updateGlobalClimate(w, vegFraction) {
   const cl = w.climate;
   // the carbon cycle: excess CO₂ is slowly taken up by plants and the ocean
-  cl.co2 -= (cl.co2 - 280) * (0.003 + 0.008 * vegFraction);
+  cl.co2 -= (cl.co2 - 280) * (0.006 + 0.012 * vegFraction);
   cl.co2 = clamp(cl.co2, 120, 4000);
   cl.dust *= 0.82; // aerosols wash out within a few years
   if (cl.dust < 1e-4) cl.dust = 0;

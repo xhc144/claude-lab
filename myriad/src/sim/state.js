@@ -7,7 +7,7 @@ import { TICKS_PER_YEAR, B } from './constants.js';
 
 export const FIELDS_F32 = [
   'elev', 'baseTemp', 'seasonAmp', 'rain', 'veg', 'fert', 'flow', 'lake', 'flood', 'lava',
-  'rad', 'pollution', 'coastDist', 'stress', 'magic',
+  'rad', 'pollution', 'coastDist', 'stress', 'magic', 'tempMod', 'rainMod',
 ];
 export const FIELDS_U8 = ['biome', 'fire', 'res', 'impr', 'road', 'plate', 'scorch'];
 export const FIELDS_I16 = ['owner', 'ownerCity'];
@@ -44,6 +44,7 @@ export function allocWorld(W, H, seed) {
     dirty: { climate: true, hydro: true, terrainRender: true },
     // incremented whenever terrain changes, so the renderer knows to refresh
     terrainVersion: 0,
+    elevVersion: 0, // bumped only when elevation / sea level changes
     flags: {}, // one-off world milestones (first landfall, first city, …)
     speciesAliveCount: 0,
     species: [],
@@ -107,10 +108,18 @@ export function forDisk(w, x, y, r, fn) {
   }
 }
 
+/** time runs this many times faster at (x, y) (time bubbles) */
+export function timeFactor(w, x, y) {
+  let k = 1;
+  if (w.bubbles) for (const b of w.bubbles) if ((x - b.x) ** 2 + (y - b.y) ** 2 < b.r * b.r) k = Math.max(k, b.k);
+  return k;
+}
+
 export function markTerrainChanged(w) {
   w.dirty.climate = true;
   w.dirty.hydro = true;
   w.terrainVersion++;
+  w.elevVersion++;
 }
 
 export function pushFx(w, fx) {

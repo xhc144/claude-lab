@@ -458,7 +458,7 @@ export function census(w) {
     const sp = w.species[s];
     if (sp.extinct !== null) continue;
     sp.pop = cnt[s];
-    if (cnt[s] === 0) { markExtinct(w, sp); continue; }
+    if (cnt[s] === 0) { markExtinct(w, sp); if (sp.extinct === null) alive++; continue; }
     alive++;
     for (let k = 0; k < NG; k++) sp.ref[k] = sums[s * NG + k] / cnt[s];
     sp.x = sx[s] / cnt[s]; sp.y = sy[s] / cnt[s];
