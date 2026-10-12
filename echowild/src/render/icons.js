@@ -325,6 +325,7 @@ const SPRITES = {
   glider: (i) => wingSprite(i, '#e8f0ff', '#9fc8e8'), star_wings: (i) => wingSprite(i, '#c19df0', '#7cefff'),
   grapple: hookSprite, echo_compass: compassSprite, spyglass: spyglassSprite, cart: cartSprite,
   waystone_key: (i) => { disc(i, 8, 8, 5, hex('#4d6e78')); for (let a = 0; a < 6; a++) px(i, Math.round(8 + Math.cos(a) * 3), Math.round(8 + Math.sin(a) * 3), hex('#7cefff')); },
+  shard_chart: (i) => { for (let y = 3; y <= 12; y++) for (let x = 2; x <= 13; x++) px(i, x, y, (x + y) % 7 === 0 ? hex('#c8b080') : hex('#e8d8a8')); lineP(i, 4, 10, 7, 6, hex('#8a6a3a')); lineP(i, 7, 6, 11, 8, hex('#8a6a3a')); px(i, 11, 8, hex('#c84a3a')); px(i, 10, 7, hex('#c84a3a')); lineP(i, 2, 3, 2, 12, hex('#a88a58')); lineP(i, 13, 3, 13, 12, hex('#a88a58')); },
   feather_charm: (i) => { disc(i, 8, 10, 4, hex('#c8a24a')); lineP(i, 8, 2, 8, 6, hex('#e8e0c8')); px(i, 8, 10, hex('#e8f0ff')); },
   lantern_staff: (i) => { lineP(i, 3, 14, 10, 5, WOOD[1]); disc(i, 11, 4, 2.5, hex('#7ef0d8')); },
   shard_sky: (i) => shardSprite(i, '#e8f4ff', '#8fc6ff'), shard_abyss: (i) => shardSprite(i, '#7cefff', '#1a6a8a'),

@@ -3,7 +3,7 @@
 // one consistent hand-made look. Gray pixels in tinted textures (grass, foliage, water) are later
 // multiplied by the biome colour in the shader; alpha 128..250 marks glowing pixels (GLOW_TEX).
 
-import { TEXTURE_NAMES, GLOW_TEX, COLORS } from '../world/blocks.js';
+import { TEXTURE_NAMES, GLOW_TEX, COLORS, texLayer } from '../world/blocks.js';
 import { RNG, hashString, tileNoise } from '../core/noise.js';
 
 export const S = 16;
@@ -1193,3 +1193,13 @@ export function buildMips(data, layers, size) {
 }
 
 export { TEX as TEXTURE_PAINTERS };
+
+// Extra (non-block) texture layers, e.g. creature skins. Must be registered before the renderer
+// builds the texture array. Returns the layer index.
+export function registerTexture(name, painter, { glow = false } = {}) {
+  if (built) throw new Error(`registerTexture(${name}) after textures were built`);
+  TEX[name] = painter;
+  if (glow) GLOW_TEX.add(name);
+  return texLayer(name);
+}
+export { field, noisy, speckle, voronoi, blob, line, P as PALETTE };

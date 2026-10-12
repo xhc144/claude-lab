@@ -169,7 +169,7 @@ export class Renderer {
     const gl = this.gl;
     this.resize();
     const aspect = this.width / this.height;
-    const far = Math.max(160, (this.renderDist + 1.5) * 16 * 1.25);
+    const far = 2600; // the cloud layer extends far beyond the terrain
     perspective(this.proj, cam.fov || this.fov, aspect, 0.06, far);
     fpsView(this.view, 0, 0, 0, cam.yaw, cam.pitch);
     if (cam.roll) {
@@ -278,7 +278,7 @@ export class Renderer {
     p.m4('u_vp', this.vp);
     p.f3('u_cam', cam.x, cam.y, cam.z);
     p.f1('u_cloudY', 196);
-    const ext = Math.max(400, this.renderDist * 16 * 2.5);
+    const ext = 1800;
     p.f1('u_extent', ext);
     p.f1('u_time', env.time);
     p.f1('u_cover', env.cloudCover);

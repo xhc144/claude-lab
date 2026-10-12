@@ -6,6 +6,12 @@ import { ItemMeshes } from '../render/itemmesh.js';
 import { Audio } from '../audio/audio.js';
 import { installSurvival } from './survival.js';
 import { installHand } from './hand.js';
+import { installMobs } from '../entity/mobs.js';
+import { installFishing } from './fishing.js';
+import { installFluids } from './fluids.js';
+import { installPlants } from './plants.js';
+import { installWeather } from './weather.js';
+import { installEvents } from './events.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -28,6 +34,12 @@ export function installSystems(game, state) {
 
   installSurvival(game, state);
   installHand(game);
+  installMobs(game);
+  installFishing(game);
+  installFluids(game);
+  installPlants(game);
+  installWeather(game, state);
+  installEvents(game, state);
 
   // entity ticking, particles, audio, rendering
   game.addSystem({

@@ -39,7 +39,7 @@ export function skyState(dayTime, weather = { rain: 0, storm: 0 }, biome = null,
 
   const sunGlow = [1.0 * tw + 0.08 * daylight, 0.55 * tw + 0.07 * daylight, 0.25 * tw + 0.05 * daylight].map((v) => v * (1 - rain * 0.8));
   const dl = daylight * (1 - rain * 0.3 - storm * 0.25);
-  let skyColor = mix3([0.2, 0.235, 0.36], [1.0, 0.985, 0.95], dl);
+  let skyColor = mix3([0.25, 0.29, 0.43], [1.0, 0.985, 0.95], dl);
   skyColor = mix3(skyColor, [1.0, 0.78, 0.6], tw * 0.35 * daylight);
   if (flash > 0) skyColor = mix3(skyColor, [1.6, 1.6, 1.8], flash);
 

@@ -307,6 +307,10 @@ def('heart_altar', '织心祭坛', stoneLike({ shape: 'altar', tex: { top: 'alta
 def('gloom_nest', '暗影巢', stoneLike({ tex: 'gloom_nest', opaque: false, layer: L_CUTOUT, hardness: 5, drops: null, cat: 'ancient', item: false }));
 def('loot_urn', '古陶罐', { shape: 'urn', tex: { top: 'urn_top', side: 'urn_side', bottom: 'urn_top' }, solid: true, opaque: false, layer: L_OPAQUE, hardness: 0.2, sound: 'glass', drops: { loot: 'urn' }, cat: 'ancient' });
 
+// invisible light carried by the player (held torches, glowing effects)
+def('glow_air', '光', { shape: 'none', solid: false, opaque: false, layer: L_NONE, replaceable: true, item: false, hardness: 0, light: [13, 10, 6], drops: null });
+def('glow_air_cool', '冷光', { shape: 'none', solid: false, opaque: false, layer: L_NONE, replaceable: true, item: false, hardness: 0, light: [6, 11, 14], drops: null });
+
 // ---------------------------------------------------------------- derived lookups
 export const LIGHT_PASS = new Uint8Array(MAX_BLOCKS); // 1 if light can enter the cell at all
 for (let i = 0; i < BLOCKS.length; i++) LIGHT_PASS[i] = OPAQUE[i] ? 0 : 1;

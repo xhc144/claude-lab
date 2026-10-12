@@ -143,6 +143,7 @@ export function resolvePlacement(world, blockId, hit, player) {
     meta = 1 << WALL_OF_FACE[face];
   }
   if (d.name === 'crystal_cluster' || d.name === 'crystal_bud') meta = face;
+  if (d.leaves) meta = 1; // player-placed leaves never decay
   if (d.shape === 'rail') meta = (yi & 1) ? 1 : 0;
   if (d.name === 'repeater') meta = (yi + 2) & 3;
   if (d.name === 'conveyor') meta = yi;

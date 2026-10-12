@@ -235,3 +235,10 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #070a12; col
 .tt-line.food { color: #ffc98a; }
 .tt-line.dim { color: var(--ink-dim); }
 .tt-desc { color: var(--ink-dim); font-size: 12px; margin-top: 5px; line-height: 1.5; }
+.trade-list { display: flex; flex-direction: column; gap: 6px; min-width: 560px; }
+.trade-row { display: grid; grid-template-columns: 1fr 24px 1fr auto; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.06); }
+.trade-row.off { opacity: 0.55; }
+.tr-side { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.tr-side img { width: 30px; height: 30px; image-rendering: pixelated; }
+.tr-side b { font-weight: 400; font-size: 12px; }
+.tr-arrow { color: var(--gold); text-align: center; }

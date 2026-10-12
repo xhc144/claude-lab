@@ -311,6 +311,7 @@ export class Game {
     this.cam = cam;
     r.beginFrame(cam, env);
     r.drawSky();
+    for (const s of this.systems) if (s.renderSky) s.renderSky(this, r);
     r.drawTerrain(0);
     for (const s of this.systems) if (s.renderOpaque) s.renderOpaque(this, r);
     r.drawClouds();

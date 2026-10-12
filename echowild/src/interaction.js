@@ -60,7 +60,7 @@ export class Interaction {
     const test = (v) => {
       const id = v & ID_MASK;
       if (LIQUID[id]) return false;
-      if (id === B.air) return false;
+      if (id === B.air || BLOCKS[id].shape === 'none') return false;
       return true;
     };
     test.detail = (v, x, y, z) => {

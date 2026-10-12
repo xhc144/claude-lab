@@ -190,7 +190,7 @@ export class Projectile extends Entity {
     const sp = Math.hypot(this.vx, this.vy, this.vz);
     if (target === 'player') {
       const p = game.player;
-      if (this.owner !== 'player') p.damage(this.damage || 1, 'projectile', this);
+      if (this.owner !== 'player') { p.damage(this.damage || 1, 'projectile', this.owner && this.owner.def ? this.owner : this); if (this.fire) p.fireTime = Math.max(p.fireTime, 3); }
     } else if (target.hurt) {
       const dmg = this.damage ? Math.ceil(this.damage * Math.min(1.4, sp / 28)) : 0.5;
       target.hurt(game, dmg, this.owner === 'player' ? 'player' : 'projectile', this);

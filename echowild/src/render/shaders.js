@@ -263,8 +263,9 @@ void main() {
   float thick = smoothstep(u_cover, u_cover + 0.4, n);
   vec3 c = mix(u_cloudLit, u_cloudShade, thick * 0.65);
   float d = length(v_rel.xz);
-  float fade = 1.0 - smoothstep(u_extent * 0.45, u_extent * 0.95, d);
-  c = mix(c, u_fogColor, smoothstep(u_extent * 0.2, u_extent * 0.9, d) * 0.7);
+  float elev = abs(v_rel.y) / max(1.0, length(v_rel));
+  float fade = (1.0 - smoothstep(u_extent * 0.6, u_extent * 0.98, d)) * smoothstep(0.015, 0.22, elev);
+  c = mix(c, u_fogColor, (1.0 - smoothstep(0.03, 0.35, elev)) * 0.75);
   c = pow(c, vec3(u_gamma));
   o = vec4(c, a * fade * 0.9);
 }`;
@@ -314,6 +315,7 @@ uniform sampler2DArray u_tex;
 uniform vec4 u_light;      // sky, r, g, b (0..1)
 uniform vec4 u_overlay;    // rgb + strength (damage flash)
 uniform float u_emissive;
+uniform float u_glowMask;
 ${LIGHTING}
 in vec4 v_col;
 in vec3 v_uvl;
@@ -322,14 +324,16 @@ in float v_shade;
 out vec4 o;
 void main() {
   vec4 c = v_col;
+  float em = u_emissive;
   if (v_uvl.z >= 0.0) {
     vec4 t = texture(u_tex, v_uvl);
     if (t.a < 0.3) discard;
     c.rgb *= t.rgb;
+    if (u_glowMask > 0.5 && t.a < 0.985) em = max(em, clamp((1.0 - t.a) * 2.05, 0.0, 1.0));
   }
   if (c.a < 0.05) discard;
   vec3 L = lightColor(u_light) * v_shade;
-  vec3 col = mix(c.rgb * L, c.rgb, u_emissive);
+  vec3 col = mix(c.rgb * L, c.rgb * 1.05, em);
   col = mix(col, u_overlay.rgb, u_overlay.a);
   col = applyFog(col, length(v_rel));
   col = pow(col, vec3(u_gamma));

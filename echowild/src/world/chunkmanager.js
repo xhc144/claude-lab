@@ -114,6 +114,7 @@ export class ChunkManager {
       if (m.type === 'gen') {
         c.biomes = m.biomes; c.heights = m.heights; c.tints = m.tints;
         c.features = m.features;
+        c.generated = true;
       } else {
         const rec = p.rec;
         c.biomes = rec.biomes; c.tints = rec.tints;

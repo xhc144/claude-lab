@@ -172,7 +172,7 @@ export function installSurvival(game, state) {
       w.setBlock(bx, by, bz, 0, { cause: 'explosion' });
       if (Math.random() < 0.3) drops.push([bx, by, bz, v]);
     }
-    for (const [bx, by, bz, v] of drops) game.harvestDrops && game.harvestDrops(bx, by, bz, v);
+    if (!opts.noDrops) for (const [bx, by, bz, v] of drops) game.harvestDrops && game.harvestDrops(bx, by, bz, v);
     // damage and fling
     const p = game.player;
     const pd = Math.hypot(p.x - x, p.y + 0.9 - y, p.z - z);

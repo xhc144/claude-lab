@@ -140,6 +140,7 @@ item('cart', '矿车', { stack: 1, cat: 'mech', use: 'cart' });
 item('waystone_key', '回响印记', { stack: 1, cat: 'gear', desc: '记录着你激活过的回响石碑。' });
 item('star_wings', '织星之翼', { stack: 1, cat: 'gear', desc: '织界的馈赠。装备在副手栏，可以在空中自由飞翔（双击跳跃）。' });
 item('feather_charm', '羽落护符', { stack: 1, cat: 'gear', desc: '放在背包里时，摔落伤害减半。' });
+item('shard_chart', '织界残图', { stack: 1, cat: 'gear', use: 'chart', desc: '游商手绘的古老地图。右键展开，标出一座尚未探索的碎片神殿。' });
 item('lantern_staff', '萤灯杖', { stack: 1, cat: 'gear', use: 'lightorb', desc: '右键放出一枚漂浮的光球，照亮周围一段时间。' });
 
 // ---- the five echo shards
