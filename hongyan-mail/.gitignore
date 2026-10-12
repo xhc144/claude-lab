@@ -1,0 +1,7 @@
+node_modules/
+dist/
+release/
+out/
+*.log
+.vite/
+tests/e2e/screenshots/
