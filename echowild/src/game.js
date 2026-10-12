@@ -23,6 +23,7 @@ export const TICK = 0.05;
 export class Game {
   constructor(opts) {
     this.opts = opts;
+    this.app = opts.app || null;
     this.settings = opts.settings;
     this.meta = opts.meta;               // world metadata { id, name, seed, mode, created }
     this.canvas = opts.canvas;

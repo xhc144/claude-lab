@@ -168,6 +168,8 @@ void main() {
   float h = d.y;
   vec3 col = mix(u_horizon, u_zenith, pow(clamp(h, 0.0, 1.0), 0.5));
   if (h < 0.0) col = mix(u_horizon, u_horizon * vec3(0.55, 0.6, 0.7), clamp(-h * 2.5, 0.0, 1.0));
+  // the band near the horizon fades into the fog colour so distant terrain melts into the sky
+  col = mix(u_fogColor, col, smoothstep(-0.02, 0.22, h));
   float sd = dot(d, u_sunDir);
   // sunrise / sunset glow around the sun
   col += u_sunGlow * pow(max(sd, 0.0), 6.0) * 0.75 * (1.0 - clamp(h * 1.5, 0.0, 1.0));
@@ -184,7 +186,8 @@ void main() {
     float lit = smoothstep(-0.2, 0.2, x * cos(u_moonPhase * 6.2832) + sin(u_moonPhase * 6.2832) * 0.5 + 0.5 - 0.5);
     float disc = smoothstep(0.9990, 0.9993, mdd);
     vec3 mc = mix(vec3(0.18, 0.2, 0.28), vec3(0.92, 0.94, 1.0), max(lit, 0.08));
-    mc *= 0.85 + 0.15 * n2(d.xz * 400.0);
+    vec2 mq = vec2(dot(d - md, side), dot(d - md, cross(side, md))) * 60.0;
+    mc *= 0.86 + 0.14 * n2(mq * 1.5) + 0.06 * n2(mq * 4.0);
     col = mix(col, mc, disc * (1.0 - u_rain * 0.8));
   }
   col += vec3(0.5, 0.6, 0.9) * pow(max(mdd, 0.0), 300.0) * 0.25 * u_night;
@@ -202,8 +205,9 @@ void main() {
       col += sc * s * u_night * (1.0 - u_rain) * smoothstep(0.0, 0.15, h);
     }
     // a faint band of stardust
-    float band = exp(-pow(dot(d, normalize(vec3(0.3, 0.6, -0.74))) * 4.0, 2.0));
-    col += vec3(0.35, 0.3, 0.55) * band * n2(d.xy * 30.0 + d.z * 11.0) * 0.12 * u_night * (1.0 - u_rain);
+    float band = exp(-pow(dot(d, normalize(vec3(0.3, 0.6, -0.74))) * 3.2, 2.0));
+    vec2 bq = vec2(atan(d.z, d.x) * 3.0, d.y * 6.0);
+    col += vec3(0.32, 0.28, 0.5) * band * (0.55 + 0.45 * n2(bq * 2.0)) * 0.09 * u_night * (1.0 - u_rain);
   }
   // aurora curtains
   if (u_aurora > 0.01 && h > 0.02) {

@@ -63,6 +63,9 @@ export class Input {
 
   lock() {
     if (this.locked) return;
+    const now = performance.now();
+    if (this._lockReq && now - this._lockReq < 400) return;
+    this._lockReq = now;
     try {
       const p = this.el.requestPointerLock({ unadjustedMovement: true });
       if (p && p.catch) p.catch(() => { try { this.el.requestPointerLock(); } catch { /* ignore */ } });

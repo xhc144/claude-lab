@@ -120,7 +120,7 @@ const P = {
   teal: pal('#1d6b66', '#26877f', '#33a598', '#4cc4b3', '#8ae8d6'),
   obsidian: pal('#120d1c', '#1b1428', '#241b34', '#2e2342', '#3b2d55'),
   mycel: pal('#3a2f4a', '#463858', '#524266', '#5f4d75'),
-  pale: pal('#c9cfd8', '#d3d9e1', '#dde2e9', '#e7ebf0'),
+  pale: pal('#9fa9ba', '#aab4c4', '#b5becd', '#c0c9d6'),
   mud: pal('#3b3026', '#45382c', '#4f4032', '#594838'),
   terracotta: pal('#93573f', '#9d5f45', '#a6674c', '#b07052'),
 };

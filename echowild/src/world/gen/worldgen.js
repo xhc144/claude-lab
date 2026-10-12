@@ -612,8 +612,10 @@ export class WorldGen {
           if (y < 48) {
             blocks[idx(x, y - 1, z)] = B.mycel;
             const p = rng.next();
-            if (p < 0.08) blocks[i] = B.glowshroom;
-            else if (p < 0.1) blocks[i] = B.red_mushroom;
+            const wx = cx * 16 + x, wz = cz * 16 + z;
+            const patch = this.nPatch.noise2(wx / 9, wz / 9 + y * 0.3);
+            if (p < (patch > 0.35 ? 0.16 : 0.006)) blocks[i] = B.glowshroom;
+            else if (p > 0.995) blocks[i] = B.red_mushroom;
           } else if (rng.next() < 0.015) blocks[i] = B.glowshroom;
         }
         const aboveB = y < 255 ? blocks[idx(x, y + 1, z)] : 0;
