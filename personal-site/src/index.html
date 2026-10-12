@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>XHC144 · 0 → ∞</title>
+<meta name="description" content="xhc144 的个人数字空间：一个高二学生的数学、物理、人工智能与计算机科学交互实验室。从 0 维的奇点出发，穿过复平面、三叶结的 Seifert 曲面、时空与隐空间，抵达无穷维。">
+<meta name="theme-color" content="#050508">
+<meta property="og:title" content="XHC144 · 0 → ∞">
+<meta property="og:description" content="把好奇心，编译成可以运行的数学。一个从 0 维到 ∞ 维的交互式个人网站。">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body class="is-booting">
+
+<canvas id="universe" aria-hidden="true"></canvas>
+<div id="universe-fallback" aria-hidden="true"></div>
+<div id="hotspots" aria-hidden="true"></div>
+<div id="letterbox" aria-hidden="true"><i></i><i></i></div>
+<div id="sweep" aria-hidden="true"></div>
+
+<!-- ============================== BOOT ============================== -->
+<div id="boot" role="dialog" aria-label="启动">
+  <div class="boot-frame"><i></i><i></i><i></i><i></i></div>
+  <div class="boot-top mono">
+    <span>XHC144 OBSERVATORY OS</span><span class="boot-build">BUILD 2026.10 · ℝ³ × t</span>
+  </div>
+  <pre class="boot-log mono" aria-hidden="true"></pre>
+  <div class="boot-core">
+    <div class="boot-count mono"><span class="boot-pct">000</span><small>%</small></div>
+    <div class="boot-bar"><i></i></div>
+    <h1 class="boot-title"><span data-scramble>XHC144</span><small>0 → ∞</small></h1>
+    <div class="boot-actions">
+      <button class="btn btn-primary" data-enter="sound"><span>进入 · 开启声音</span><kbd>Enter</kbd></button>
+      <button class="btn" data-enter="silent"><span>静音进入</span><kbd>Esc</kbd></button>
+    </div>
+    <p class="boot-hint">桌面浏览器 + 耳机体验最佳 · 页面中藏着 <b class="egg-total">12</b> 处彩蛋</p>
+  </div>
+</div>
+
+<!-- ============================== HUD ============================== -->
+<header id="hud" aria-label="导航">
+  <a class="hud-brand mono" href="#hero" data-nav="hero"><span class="hud-dot"></span>XHC144<em>/ OBSERVATORY</em></a>
+  <div class="hud-chapter mono" aria-live="polite"><span class="hud-chapter-dim">ORIGIN</span><span class="hud-chapter-name">起点</span></div>
+  <div class="hud-actions">
+    <button class="hud-btn mono" id="egg-btn" title="已发现的彩蛋"><span class="ico">✶</span><span id="egg-count">00</span>/<span class="egg-total">12</span></button>
+    <button class="hud-btn mono" id="sound-btn" aria-pressed="false" title="声音"><span class="eq"><i></i><i></i><i></i><i></i></span><span class="lbl">SOUND OFF</span></button>
+    <button class="hud-btn mono" id="term-btn" title="终端（按 / 键）"><span class="ico">&gt;_</span><span class="lbl">终端</span></button>
+  </div>
+  <nav class="ladder" aria-label="维度">
+    <a href="#hero" data-nav="hero"><b>·</b><span>起点</span></a>
+    <a href="#dim0" data-nav="dim0"><b>0</b><span>奇点</span></a>
+    <a href="#dim1" data-nav="dim1"><b>1</b><span>轨迹</span></a>
+    <a href="#dim2" data-nav="dim2"><b>2</b><span>复平面</span></a>
+    <a href="#dim3" data-nav="dim3"><b>3</b><span>纽结</span></a>
+    <a href="#dim4" data-nav="dim4"><b>3+1</b><span>时空</span></a>
+    <a href="#dimn" data-nav="dimn"><b>n</b><span>隐空间</span></a>
+    <a href="#archive" data-nav="archive"><b>Σ</b><span>档案</span></a>
+    <a href="#diminf" data-nav="diminf"><b>∞</b><span>无穷维</span></a>
+    <i class="ladder-rail"><i></i></i>
+  </nav>
+  <div class="hud-bl mono">
+    <span class="rec" id="rec" title="REC"><i></i>REC</span><span id="timecode">00:00:00:00</span>
+    <span class="hud-z">z = <b id="zcoord">0.000 + 0.000i</b></span>
+  </div>
+  <div class="hud-br mono">
+    <span>ALT <b id="alt">00.0</b>%</span><span><b id="fps">60</b> FPS</span><span><b id="pcount">0</b> PTS</span>
+  </div>
+</header>
+
+<div id="cursor" aria-hidden="true"><i class="c-ring"></i><i class="c-dot"></i><span class="c-label mono"></span></div>
+<div id="toasts" aria-live="polite"></div>
+
+<main id="main">
+
+<!-- ============================== HERO ============================== -->
+<section id="hero" class="chapter" data-chapter="hero" data-shape="galaxy" data-dim="ORIGIN" data-name="起点">
+  <div class="hero-inner">
+    <p class="eyebrow mono reveal">FILE 00 · PERSONAL OBSERVATORY · 个人观测站</p>
+    <h1 class="hero-title" aria-label="XHC144">
+      <span class="ht-row"><span class="ht" data-scramble>XHC</span></span>
+      <span class="ht-row"><span class="ht ht-num" data-scramble>144</span><button class="ht-note mono" data-tip="f144" aria-label="关于 144"><span data-tex="144 = F_{12} = 12^2"></span></button></span>
+    </h1>
+    <p class="hero-tag reveal">把好奇心，编译成可以运行的数学。</p>
+    <p class="hero-sub reveal">我是一名高二学生，学习数学、物理、人工智能与计算机科学，正在备考 2027 年清华大学求真书院数学领军计划。这里不是一份简历，而是一次从 <b>0 维</b>到 <b>∞ 维</b>的旅行——每一维都是一台可以亲手操作的仪器。</p>
+    <ul class="hero-meta mono reveal">
+      <li><span>STATUS</span><b>高二在读</b></li>
+      <li><span>FIELDS</span><b>数学 × 物理 × AI × CS</b></li>
+      <li><span>TARGET</span><b>2027 · 清华求真书院 · 数学领军计划</b></li>
+    </ul>
+    <div class="hero-cta reveal">
+      <a class="btn btn-primary" href="#dim0" data-nav="dim0"><span>开始旅行 · 维度 +1</span><kbd>↓</kbd></a>
+      <a class="btn" href="https://github.com/xhc144" target="_blank" rel="noopener"><span>GitHub / xhc144</span><kbd>↗</kbd></a>
+    </div>
+  </div>
+  <aside class="hero-side mono reveal" aria-label="图注">
+    <p><b>FIG. 0</b> 向日葵模型 · Vogel 1979</p>
+    <p>2584 颗种子，第 k 颗位于半径 √k、转角 k·137.508° 处。可见的螺旋臂条数总是相邻的斐波那契数。</p>
+    <p class="dim">第 144 的倍数号种子排成一条近乎笔直的射线——因为 144 是斐波那契数。</p>
+  </aside>
+  <div class="marquee mono" aria-hidden="true"><div class="marquee-track"></div></div>
+  <div class="scroll-cue mono" aria-hidden="true"><span>SCROLL</span><i></i></div>
+</section>
+
+<!-- ============================== DIM 0 ============================== -->
+<section id="dim0" class="chapter" data-chapter="dim0" data-shape="singularity" data-dim="DIM 0" data-name="奇点">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">0</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 01 / 08 · dim = 0</p>
+        <h2 class="op-title">奇点</h2>
+        <p class="op-en mono">SINGULARITY</p>
+        <p class="op-lede">零维空间里只有一个点。<br>所有的故事，都从一个点开始。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap grid-2">
+      <div class="dossier panel reveal" aria-label="观测者档案">
+        <div class="panel-head mono"><span>OBSERVER FILE</span><span class="barcode" data-barcode="xhc144"></span></div>
+        <dl class="dossier-list">
+          <div><dt class="mono">HANDLE</dt><dd>xhc144</dd></div>
+          <div><dt class="mono">GRADE</dt><dd>高二</dd></div>
+          <div><dt class="mono">PRIMARY</dt><dd>数学</dd></div>
+          <div><dt class="mono">CROSS</dt><dd>物理 · 人工智能 · 计算机科学</dd></div>
+          <div><dt class="mono">TARGET</dt><dd>2027 清华大学求真书院数学领军计划<em class="tag tag-live">备考中</em></dd></div>
+          <div><dt class="mono">TOOLS</dt><dd>AI 编程 · 智能体 · 数学可视化 · 自动化工具</dd></div>
+          <div><dt class="mono">SIGNAL</dt><dd><a href="https://github.com/xhc144" target="_blank" rel="noopener">github.com/xhc144 ↗</a></dd></div>
+        </dl>
+        <p class="panel-foot mono">STATUS: <span class="blink">●</span> ACTIVE · LAST SYNC <span data-today></span></p>
+      </div>
+      <div class="manifesto reveal">
+        <p class="kicker mono">// 自述</p>
+        <p class="big">我的主线是<b>数学</b>：数学分析、高等代数、群表示论、拓扑、概率论，还有数学竞赛。</p>
+        <p>物理是我理解世界的第二种语言——从经典力学到电动力学，再到量子力学。人工智能和计算机科学则是我的工具箱：我用 AI 编程、搭建智能体和自动化工具，把讲义的生成与审校、资料的整理、可视化的制作交给代码。</p>
+        <p>我喜欢把抽象的东西变成看得见、摸得着的东西。所以这个网站里的每一幅画面——三叶结的 Seifert 曲面、复函数的相位、双摆的混沌、正在训练的神经网络——都不是视频，而是此刻在你的浏览器里实时计算出来的。</p>
+        <p class="hint mono">提示：试着点一下画面中央的奇点。</p>
+      </div>
+    </div>
+    <div class="orbit-wrap reveal" aria-label="兴趣方向">
+      <div class="orbit" data-orbit>
+        <span>数学分析</span><span>高等代数</span><span>群表示论</span><span>拓扑</span><span>概率论</span><span>数学竞赛</span>
+        <span>经典力学</span><span>电动力学</span><span>量子力学</span><span>AI 编程</span><span>智能体</span><span>数学可视化</span><span>自动化工具</span>
+      </div>
+      <p class="orbit-caption mono">13 个兴趣方向 · 围绕同一个点旋转</p>
+    </div>
+  </div>
+  <button class="singularity-hit" data-egg-hit="bang" aria-label="点击奇点"></button>
+</section>
+
+<!-- ============================== DIM 1 ============================== -->
+<section id="dim1" class="chapter" data-chapter="dim1" data-shape="filament" data-dim="DIM 1" data-name="轨迹">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">1</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 02 / 08 · dim = 1</p>
+        <h2 class="op-title">轨迹</h2>
+        <p class="op-en mono">TRAJECTORY</p>
+        <p class="op-lede">一维是一条有方向的曲线。<br>参数 t 不是日期，而是理解的深度。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="track" id="track" data-progress>
+    <div class="track-stage">
+      <div class="track-head wrap">
+        <p class="kicker mono">KNOWLEDGE TRAJECTORY · γ : [0, 1] → 我</p>
+        <p class="track-t mono">t = <b id="track-t">0.000</b></p>
+      </div>
+      <div class="track-rail">
+        <svg class="track-svg" viewBox="0 0 3200 560" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <linearGradient id="trackGrad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stop-color="#4fe3ff"/><stop offset="0.5" stop-color="#9b7bff"/><stop offset="1" stop-color="#ff5b1f"/>
+            </linearGradient>
+          </defs>
+          <path class="track-ghost" d=""/>
+          <path class="track-path" d="" stroke="url(#trackGrad)"/>
+        </svg>
+        <ol class="stations">
+          <li class="station" data-at="0.04">
+            <span class="st-n mono">t = 0.0</span>
+            <h3>起点 · 中学数学与竞赛</h3>
+            <p>代数 · 几何 · 数论 · 组合。竞赛题是我遇见的第一批“结构”。</p>
+          </li>
+          <li class="station" data-at="0.19">
+            <span class="st-n mono">t = 0.2</span>
+            <h3>数学分析</h3>
+            <p>实数 · 极限 · 连续 · 微积分 · 级数 · 一致收敛。<span data-tex="\forall\varepsilon>0,\ \exists\delta>0"></span></p>
+          </li>
+          <li class="station" data-at="0.33">
+            <span class="st-n mono">t = 0.3</span>
+            <h3>高等代数</h3>
+            <p>线性空间 · 线性映射 · 特征值 · Jordan 标准形 · 二次型。<span data-tex="A=PJP^{-1}"></span></p>
+          </li>
+          <li class="station" data-at="0.48">
+            <span class="st-n mono">t = 0.5</span>
+            <h3>结构之上</h3>
+            <p>群表示论（特征标、Schur 引理）· 拓扑（基本群、纽结、曲面）· 概率论（极限定理、鞅）。</p>
+          </li>
+          <li class="station" data-at="0.63">
+            <span class="st-n mono">t = 0.6</span>
+            <h3>物理主线</h3>
+            <p>经典力学 → 电动力学 → 量子力学。<span data-tex="L = T - V"></span></p>
+          </li>
+          <li class="station" data-at="0.78">
+            <span class="st-n mono">t = 0.8</span>
+            <h3>机器与智能</h3>
+            <p>AI 编程 · 智能体 · 自动化工具 · 论文研读：让代码成为研究数学的协作者。</p>
+          </li>
+          <li class="station station-goal" data-at="0.95">
+            <span class="st-n mono">t → 1</span>
+            <h3>2027 · 求真书院</h3>
+            <p>清华大学求真书院数学领军计划。目标已锁定，轨迹仍在延伸。</p>
+          </li>
+        </ol>
+      </div>
+      <p class="track-note wrap mono">注：这是一条知识轨迹，不是履历——不标日期，也不表示“已经学完”。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DIM 2 ============================== -->
+<section id="dim2" class="chapter" data-chapter="dim2" data-shape="landscape" data-dim="DIM 2" data-name="复平面">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">2</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 03 / 08 · dim = 2</p>
+        <h2 class="op-title">复平面</h2>
+        <p class="op-en mono">THE COMPLEX PLANE · ℂ ≅ ℝ²</p>
+        <p class="op-lede">平面上的每一点都是一个复数。<br>给它一个函数，平面就会显出颜色、旋涡和奇点。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap">
+      <div class="lab-head reveal">
+        <p class="kicker mono">EXP-01 · PHASE PORTRAIT LAB</p>
+        <h3 class="lab-title">相位肖像实验室</h3>
+        <p class="lab-desc">颜色表示辐角 <span data-tex="\arg f(z)"></span>，明暗台阶表示 <span data-tex="|f(z)|"></span> 每翻一倍。零点周围颜色逆时针转一圈，极点周围反过来——数一数颜色转了几圈，就知道零点与极点的阶数（幅角原理）。</p>
+      </div>
+      <div class="instrument ins-domain panel reveal" data-instrument="domain">
+        <canvas></canvas>
+        <div class="ins-overlay mono">
+          <span>z = <b data-readout="z">—</b></span>
+          <span>f(z) = <b data-readout="fz">—</b></span>
+          <span>|f| = <b data-readout="mod">—</b></span>
+          <span>arg f = <b data-readout="arg">—</b></span>
+        </div>
+        <div class="ins-controls">
+          <div class="chips" data-presets></div>
+          <label class="fx-input mono"><span>f(z) =</span><input type="text" spellcheck="false" autocomplete="off" aria-label="自定义函数 f(z)" value="(z^2-1)*(z-2-i)^2/(z^2+2+2i)"><em class="fx-err"></em></label>
+          <p class="ins-tip mono">拖动平移 · 滚轮缩放 · 支持 + − × ÷ ^ 与 sin cos tan exp log sqrt sinh cosh conj</p>
+        </div>
+      </div>
+
+      <div class="section-head reveal">
+        <p class="kicker mono">SIX INSTRUMENTS · 我的数学兴趣</p>
+        <h3 class="sec-title">六台仪器，六个方向</h3>
+      </div>
+      <div class="ins-grid">
+        <article class="card instrument reveal" data-instrument="fourier">
+          <header class="card-head"><span class="mono">01 · ANALYSIS</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>数学分析 · 傅里叶本轮</h4>
+            <p class="formula" data-tex="\gamma(t)=\sum_{n=-N}^{N} c_n e^{int}"></p>
+            <p>用 2N+1 个旋转的圆去逼近一条闭曲线——这里画的是三叶结的平面投影。项数越多，逼近越好。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+        <article class="card instrument reveal" data-instrument="linear">
+          <header class="card-head"><span class="mono">02 · LINEAR ALGEBRA</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>高等代数 · 线性变换</h4>
+            <p class="formula" data-tex="A\mathbf v=\lambda\mathbf v"></p>
+            <p>矩阵把网格变成网格。特征向量是那些只被拉伸、不被转动的方向；行列式是面积的缩放比。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+        <article class="card instrument reveal" data-instrument="rep">
+          <header class="card-head"><span class="mono">03 · REPRESENTATIONS</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>群表示论 · S₃ 的特征标</h4>
+            <p class="formula" data-tex="|G|=\sum_{\rho}(\dim\rho)^2:\ 6=1^2+1^2+2^2"></p>
+            <p>正三角形的 6 个对称构成群 S₃。它恰有 3 个不可约表示；当前对称所在共轭类的特征标在表中高亮。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+        <article class="card instrument reveal" data-instrument="topo">
+          <header class="card-head"><span class="mono">04 · TOPOLOGY</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>拓扑 · Möbius 带</h4>
+            <p class="formula" data-tex="\chi=V-E+F"></p>
+            <p>沿 Möbius 带走一圈，法向量会反过来——它只有一个面。正因如此，Seifert 曲面要求“可定向”。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+        <article class="card instrument reveal" data-instrument="galton">
+          <header class="card-head"><span class="mono">05 · PROBABILITY</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>概率论 · 中心极限定理</h4>
+            <p class="formula" data-tex="\frac{S_n-n\mu}{\sigma\sqrt n}\Rightarrow\mathcal N(0,1)"></p>
+            <p>每颗小球在每颗钉子处向左、向右各 1/2。球足够多以后，二项分布长成了钟形曲线。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+        <article class="card instrument reveal" data-instrument="pascal">
+          <header class="card-head"><span class="mono">06 · OLYMPIAD</span><button class="expand mono" data-expand>展开 ↗</button></header>
+          <canvas></canvas>
+          <div class="card-body">
+            <h4>数学竞赛 · 杨辉三角 mod p</h4>
+            <p class="formula" data-tex="\binom{n}{k}\equiv\prod_i\binom{n_i}{k_i}\pmod p"></p>
+            <p>把组合数按模 p 的余数着色，三角形里长出分形。Lucas 定理解释了它的自相似结构。</p>
+            <div class="ins-controls"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DIM 3 ============================== -->
+<section id="dim3" class="chapter" data-chapter="dim3" data-shape="fiber" data-dim="DIM 3" data-name="纽结">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">3</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 04 / 08 · dim = 3</p>
+        <h2 class="op-title">纽结</h2>
+        <p class="op-en mono">KNOTS &amp; SEIFERT SURFACES</p>
+        <p class="op-lede">三维空间里的一根闭合绳子，<br>可能永远也解不开。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="knot-stage" id="knot-stage" data-progress>
+    <div class="knot-sticky">
+      <div class="knot-drag" data-drag aria-label="拖动旋转三维视图"></div>
+      <div class="knot-steps">
+        <article class="kstep" data-step="0">
+          <p class="kicker mono">STEP 1 / 4 · THE TREFOIL</p>
+          <h3>三叶结 <span data-tex="3_1"></span></h3>
+          <p>最简单的非平凡纽结。交叉数为 3；它是 (2, 3) 环面纽结——在环面上绕轴 2 圈、绕管 3 圈。它有手性：左手三叶结与右手三叶结不能互相变形。</p>
+        </article>
+        <article class="kstep" data-step="1">
+          <p class="kicker mono">STEP 2 / 4 · SEIFERT SURFACE</p>
+          <h3>以纽结为边界的曲面</h3>
+          <p>Seifert（1934）：任何纽结都是某个连通、<b>可定向</b>曲面的边界。三叶结的最小 Seifert 曲面是挖去一个圆盘的环面，亏格 <span data-tex="g=1"></span>。你看到的每个光点都满足</p>
+          <p class="formula" data-tex="(z,w)\in S^3,\quad \arg\!\left(z^2+w^3\right)=\theta"></p>
+        </article>
+        <article class="kstep" data-step="2">
+          <p class="kicker mono">STEP 3 / 4 · OPEN BOOK</p>
+          <h3>翻书：纤维化</h3>
+          <p>三叶结是<b>纤维纽结</b>：从 <span data-tex="S^3"></span> 中挖掉三叶结，剩下的空间恰好被一族 Seifert 曲面 <span data-tex="F_\theta"></span> 填满。θ 每转一圈，曲面绕着纽结翻过一页（Milnor, 1968）。</p>
+        </article>
+        <article class="kstep" data-step="3">
+          <p class="kicker mono">STEP 4 / 4 · INVARIANTS</p>
+          <h3>无法解开的证据</h3>
+          <p>由 Seifert 矩阵算出 Alexander 多项式，它不等于 1，所以三叶结不是平凡结：</p>
+          <p class="formula" data-tex="V=\begin{pmatrix}-1&1\\0&-1\end{pmatrix},\ \ \Delta(t)=\det(V-tV^{\mathsf T})=t^2-t+1"></p>
+          <p class="mono small">亏格 g = 1 · 签名 σ = −2 · 单值化的阶 = 6</p>
+        </article>
+      </div>
+      <aside class="knot-side panel">
+        <div class="panel-head mono"><span>SEIFERT'S ALGORITHM</span><span data-readout-knot="algo">1/4</span></div>
+        <svg class="seifert-svg" viewBox="-130 -130 260 260" aria-label="Seifert 算法示意"></svg>
+        <p class="seifert-cap mono"></p>
+        <div class="knot-controls">
+          <label class="range mono"><span>θ</span><input type="range" min="0" max="12.566" step="0.01" value="0" data-knot="theta" aria-label="纤维角 θ"><b data-readout-knot="theta">0.00</b></label>
+          <div class="btn-row">
+            <button class="chip mono is-on" data-knot="auto">自动旋转 θ</button>
+            <button class="chip mono" data-knot="book">开卷模式</button>
+            <button class="chip mono is-on" data-knot="tube">显示纽结</button>
+          </div>
+          <div class="btn-row">
+            <button class="chip mono" data-knot="untie">尝试解开</button>
+            <button class="chip mono" data-knot="reset">重置视角</button>
+          </div>
+        </div>
+        <p class="side-note">这是我的探索项目之一（持续开发中）。本页的交互版本为网站重新实现：曲面上约 5.8 万个光点由 GPU 按 Milnor 纤维化公式逐帧计算。拖动画面可旋转。</p>
+      </aside>
+      <div class="knot-progress mono"><span data-knot-step-label>01</span><i><i></i></i><span>04</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DIM 3+1 ============================== -->
+<section id="dim4" class="chapter" data-chapter="dim4" data-shape="lorenz" data-dim="DIM 3+1" data-name="时空">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph op-glyph-wide" aria-hidden="true">3+1</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 05 / 08 · dim = 3 + 1</p>
+        <h2 class="op-title">时空</h2>
+        <p class="op-en mono">SPACETIME · PHYSICS LAB</p>
+        <p class="op-lede">给空间加上时间，方程就开始运动。<br>背景是洛伦茨吸引子：确定的方程，不可预测的轨道。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap">
+      <div class="bay reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-02 · CLASSICAL MECHANICS</p>
+          <h3 class="lab-title">混沌扇</h3>
+          <p><b data-readout-for="pendulum" data-readout="n">200</b> 个双摆同时释放，初始角度依次只差 <span data-tex="10^{-4}"></span> rad。起初它们像一根摆，几秒之后便各奔东西：确定性不等于可预测。</p>
+          <p class="formula" data-tex="\mathcal L=\tfrac12(m_1+m_2)\ell_1^2\dot\theta_1^2+\tfrac12 m_2\ell_2^2\dot\theta_2^2+m_2\ell_1\ell_2\dot\theta_1\dot\theta_2\cos(\theta_1-\theta_2)+\dots"></p>
+          <dl class="readouts mono">
+            <div><dt>t</dt><dd data-readout-for="pendulum" data-readout="t">0.00 s</dd></div>
+            <div><dt>最大角度差</dt><dd data-readout-for="pendulum" data-readout="spread">0</dd></div>
+            <div><dt>能量相对误差 (RK4)</dt><dd data-readout-for="pendulum" data-readout="energy">0</dd></div>
+          </dl>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="pendulum"><canvas></canvas><div class="ins-controls"></div></div>
+      </div>
+
+      <div class="bay bay-flip reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-03 · ELECTRODYNAMICS</p>
+          <h3 class="lab-title">场线与辐射</h3>
+          <p>拖动电荷看电场线重新连接；切换到<b>偶极辐射</b>，看电场线如何从振荡的偶极子上“脱落”，以光速向外传播。</p>
+          <p class="formula" data-tex="\nabla\cdot\mathbf E=\frac{\rho}{\varepsilon_0},\qquad \Psi=\sin^2\!\vartheta\left[\frac{\cos(kr-\omega t)}{kr}-\sin(kr-\omega t)\right]"></p>
+          <p class="small">辐射模式中的曲线是 Hertz 流函数 Ψ 的等值线，即振荡偶极子在子午面内的电场线。</p>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="field"><canvas></canvas><div class="ins-controls"></div></div>
+      </div>
+
+      <div class="bay reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-04 · QUANTUM MECHANICS</p>
+          <h3 class="lab-title">波包</h3>
+          <p>含时薛定谔方程，用分步傅里叶法实时求解。颜色是波函数的相位，高度是概率密度 <span data-tex="|\psi|^2"></span>。一维模式下，波包撞上势垒，一部分<b>隧穿</b>过去；二维模式下，它穿过双缝，与自己干涉。</p>
+          <p class="formula" data-tex="i\hbar\frac{\partial\psi}{\partial t}=-\frac{\hbar^2}{2m}\nabla^2\psi+V\psi"></p>
+          <dl class="readouts mono">
+            <div><dt>透射概率</dt><dd data-readout-for="quantum" data-readout="T">—</dd></div>
+            <div><dt>反射概率</dt><dd data-readout-for="quantum" data-readout="R">—</dd></div>
+            <div><dt>归一化</dt><dd data-readout-for="quantum" data-readout="norm">—</dd></div>
+          </dl>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="quantum"><canvas></canvas><div class="ins-controls"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DIM n ============================== -->
+<section id="dimn" class="chapter" data-chapter="dimn" data-shape="latent" data-dim="DIM n" data-name="隐空间">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">n</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 06 / 08 · dim = n</p>
+        <h2 class="op-title">隐空间</h2>
+        <p class="op-en mono">LATENT SPACE · ARTIFICIAL INTELLIGENCE</p>
+        <p class="op-lede">维度多到无法想象的时候，<br>我们让机器去学习它的形状。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap">
+      <div class="bay reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-05 · NEURAL NETWORK, LIVE</p>
+          <h3 class="lab-title">正在你浏览器里训练的网络</h3>
+          <p>一个 2 → 16 → 16 → 1 的多层感知机，tanh 激活，Adam 优化，交叉熵损失。没有预训练权重：每一步反向传播都发生在此刻。背景颜色是它对平面上每一点的判断。</p>
+          <p class="formula" data-tex="\theta\leftarrow\theta-\eta\,\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}"></p>
+          <dl class="readouts mono">
+            <div><dt>迭代</dt><dd data-readout-for="mlp" data-readout="step">0</dd></div>
+            <div><dt>损失</dt><dd data-readout-for="mlp" data-readout="loss">—</dd></div>
+            <div><dt>准确率</dt><dd data-readout-for="mlp" data-readout="acc">—</dd></div>
+          </dl>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="mlp"><canvas></canvas><div class="ins-controls"></div></div>
+      </div>
+
+      <div class="bay bay-flip reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-06 · ATTENTION, DISSECTED</p>
+          <h3 class="lab-title">注意力机制解剖</h3>
+          <p>Transformer 的核心只有一行公式。这里用随机初始化的小向量（不是训练好的模型）演示它的计算过程：查询与键做点积、缩放、因果遮罩、softmax，再对值加权求和。拖动温度，看注意力如何变尖锐或变平均。</p>
+          <p class="formula" data-tex="\mathrm{Attn}(Q,K,V)=\mathrm{softmax}\!\left(\frac{QK^{\mathsf T}}{\sqrt{d}}+M\right)V"></p>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="attention"><canvas></canvas><div class="ins-controls"></div></div>
+      </div>
+
+      <div class="bay reveal">
+        <div class="bay-text">
+          <p class="kicker mono">EXP-07 · AGENT WORKFLOW (SCHEMATIC)</p>
+          <h3 class="lab-title">讲义智能体流水线</h3>
+          <p>我的“数学 LaTeX 讲义生成与审校 Skills”想解决的问题：让智能体按规范起草讲义、编译、逐项审校数学与排版，不通过就退回修订，直到可以交付。右图是这类流程的示意动画，不是某次真实运行的记录。</p>
+        </div>
+        <div class="instrument bay-canvas panel" data-instrument="agent"><canvas></canvas></div>
+      </div>
+
+      <div class="papers reveal">
+        <div class="section-head">
+          <p class="kicker mono">PAPER CONSTELLATION · ai-self-study</p>
+          <h3 class="sec-title">论文星图</h3>
+          <p class="sec-desc">我的公开仓库 <a href="https://github.com/xhc144/ai-self-study" target="_blank" rel="noopener">ai-self-study</a> 从语言模型的数学与训练出发，读懂近年的基础模型论文：11 个学习单元、3 个数学附录、9 篇指定许可版本的中文全文译文（机器辅助、经 AI 对照审查的非官方译本）。下面每颗星是一篇论文，大小对应译文页数。</p>
+        </div>
+        <div class="constellation" id="constellation"></div>
+        <ol class="route mono" id="route"></ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== ARCHIVE ============================== -->
+<section id="archive" class="chapter" data-chapter="archive" data-shape="archive" data-dim="Σ" data-name="档案">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">Σ</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 07 / 08 · Σ projects</p>
+        <h2 class="op-title">档案</h2>
+        <p class="op-en mono">ARCHIVE · GITHUB / XHC144</p>
+        <p class="op-lede">把散落的探索加起来。<br>背景里的 24 根光柱，是 24 册已交付的中文讲义，高度正比于页数。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap">
+      <div class="sync-bar mono reveal">
+        <span class="sync-dot" id="sync-dot"></span><span id="sync-text">正在连接 api.github.com …</span>
+        <span class="sync-meta" id="sync-meta"></span>
+      </div>
+      <div class="repo-grid" id="repo-grid"></div>
+
+      <div class="section-head reveal">
+        <p class="kicker mono">FIG. Σ1 · mit-ocw-notes</p>
+        <h3 class="sec-title">24 册中文讲义，按页数排列</h3>
+        <p class="sec-desc">数据来自公开仓库 README（快照 <span data-snapshot></span>）。数学：<b data-count="1660">0</b> 页 / 15 册；物理：<b data-count="912">0</b> 页 / 9 科（已验交付）。另有若干物理专题初稿仍在审核修订中，未计入。</p>
+      </div>
+      <div class="bars panel reveal" id="ocw-bars"></div>
+
+      <div class="section-head reveal">
+        <p class="kicker mono">FIG. Σ2 · IN PROGRESS</p>
+        <h3 class="sec-title">进行中的探索</h3>
+        <p class="sec-desc">这些项目由我维护，多数保存在私有仓库中，这里只列出名字与方向。</p>
+      </div>
+      <div class="own-grid" id="own-grid"></div>
+
+      <div class="section-head reveal">
+        <p class="kicker mono">FIG. Σ3 · COMMIT SPECTRUM</p>
+        <h3 class="sec-title">公开仓库提交频谱</h3>
+        <p class="sec-desc">四个公开仓库每天的提交数（git log，UTC）。它记录的是仓库的活动，不代表每次提交都由我亲手键入——其中很多工作是我和 AI 协作完成的。</p>
+      </div>
+      <div class="spectrum panel reveal" id="spectrum"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================== DIM ∞ ============================== -->
+<section id="diminf" class="chapter" data-chapter="diminf" data-shape="hopf" data-dim="DIM ∞" data-name="无穷维">
+  <div class="opener" data-progress>
+    <div class="opener-stage">
+      <div class="op-glyph" aria-hidden="true">∞</div>
+      <div class="op-meta">
+        <p class="op-index mono">CHAPTER 08 / 08 · dim = ∞</p>
+        <h2 class="op-title">无穷维</h2>
+        <p class="op-en mono">HILBERT SPACE · WHAT COMES NEXT</p>
+        <p class="op-lede">希尔伯特空间有无穷多个方向，未来也是。<br>背景是 Hopf 纤维化：每一个圆对应球面上的一个点，任意两个圆都恰好链接一次。</p>
+      </div>
+      <div class="op-ruler mono" aria-hidden="true"></div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <div class="wrap">
+      <div class="mission panel reveal">
+        <div class="panel-head mono"><span>MISSION · T-MINUS</span><span>LOCKED</span></div>
+        <p class="mission-target">2027 · 清华大学求真书院 · 数学领军计划</p>
+        <div class="countdown mono" id="countdown" aria-label="距离 2027 年">
+          <div><b data-cd="d">000</b><span>天</span></div><div><b data-cd="h">00</b><span>时</span></div>
+          <div><b data-cd="m">00</b><span>分</span></div><div><b data-cd="s">00</b><span>秒</span></div>
+        </div>
+        <p class="mission-note mono">距离 2027 年 1 月 1 日 · 北京时间</p>
+      </div>
+      <div class="section-head reveal">
+        <p class="kicker mono">BASIS VECTORS · 下一阶段的方向</p>
+        <h3 class="sec-title">一组正交基</h3>
+      </div>
+      <div class="basis">
+        <article class="basis-v reveal"><b class="mono" data-tex="e_1"></b><h4>数学</h4><p>继续推进数学分析与高等代数，深入群表示论、拓扑、概率论，保持竞赛训练，为领军计划做准备。</p></article>
+        <article class="basis-v reveal"><b class="mono" data-tex="e_2"></b><h4>物理</h4><p>沿经典力学 → 电动力学 → 量子力学的主线，用模拟和推导互相检验。</p></article>
+        <article class="basis-v reveal"><b class="mono" data-tex="e_3"></b><h4>人工智能</h4><p>继续开发智能体与自动化工具，研读论文、复现实验，让 AI 成为学习和研究的协作者。</p></article>
+        <article class="basis-v reveal"><b class="mono" data-tex="e_4"></b><h4>创造</h4><p>把更多数学变成可交互的作品：Seifert 曲面与三叶结可视化等项目仍在持续开发。</p></article>
+      </div>
+      <div class="finale reveal">
+        <p class="finale-line" data-tex="\langle \text{好奇心},\ \text{未来}\rangle \neq 0"></p>
+        <p class="finale-sub">谢谢你走完这 ∞ 维。</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="https://github.com/xhc144" target="_blank" rel="noopener"><span>在 GitHub 找到我</span><kbd>↗</kbd></a>
+          <a class="btn" href="#hero" data-nav="hero"><span>回到起点</span><kbd>↺</kbd></a>
+          <button class="btn" data-open-terminal><span>打开终端</span><kbd>/</kbd></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="credits" data-chapter="credits" data-shape="galaxy" data-dim="FIN" data-name="回环">
+  <div class="credits-roll mono" aria-label="片尾">
+    <p class="cr-title">XHC144 · 0 → ∞</p>
+    <p><span>OBSERVER</span><b>xhc144</b></p>
+    <p><span>MATHEMATICS BY</span><b>Fibonacci · Riemann · Seifert · Milnor · Hopf · Lorenz</b></p>
+    <p><span>PHYSICS BY</span><b>Lagrange · Maxwell · Hertz · Schrödinger</b></p>
+    <p><span>RENDERING</span><b>WebGL · three.js · KaTeX · 全部画面实时计算，没有预渲染素材</b></p>
+    <p><span>BUILT WITH</span><b>与 Claude 协作开发 · 源码见 claude-lab/personal-site</b></p>
+  </div>
+  <div class="footer-bar mono">
+    <span>© 2026 xhc144</span>
+    <span>数据快照 <span data-snapshot></span> · 私有仓库内容未公开</span>
+    <button class="epsilon" data-egg-hit="epsilon" aria-label="ε">ε</button>
+  </div>
+</footer>
+
+</main>
+
+<!-- ============================== OVERLAYS ============================== -->
+<div id="terminal" role="dialog" aria-label="终端" aria-hidden="true">
+  <div class="term-win">
+    <div class="term-bar mono"><i></i><i></i><i></i><span>xhc144@observatory: ~</span><button class="term-close" aria-label="关闭">×</button></div>
+    <div class="term-body mono" id="term-out"></div>
+    <label class="term-line mono"><span class="term-ps">xhc144@∞:~$</span><input id="term-in" type="text" autocomplete="off" spellcheck="false" aria-label="命令"></label>
+  </div>
+</div>
+
+<div id="lab" role="dialog" aria-label="实验" aria-hidden="true">
+  <div class="lab-win">
+    <div class="lab-bar mono"><span class="lab-name"></span><button class="lab-close" aria-label="关闭">ESC ×</button></div>
+    <div class="lab-body"></div>
+  </div>
+</div>
+
+<div id="eggs-panel" role="dialog" aria-label="彩蛋" aria-hidden="true">
+  <div class="eggs-win panel">
+    <div class="panel-head mono"><span>HIDDEN SIGNALS</span><button class="eggs-close" aria-label="关闭">×</button></div>
+    <ol class="eggs-list" id="eggs-list"></ol>
+  </div>
+</div>
+
+<div id="screensaver" aria-hidden="true"><canvas></canvas><p class="mono">SYSTEM IDLE · 混沌仍在演化 · 移动鼠标返回</p></div>
+<div id="fx-layer" aria-hidden="true"></div>
+
+<noscript><p class="noscript">这个网站的画面都由 JavaScript 实时计算，请启用 JavaScript。</p></noscript>
+<script src="assets/app.js"></script>
+</body>
+</html>
