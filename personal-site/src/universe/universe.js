@@ -17,11 +17,11 @@ const PAGES = 5;
 
 // Camera + motion settings per shape.
 export const RIGS = {
-  galaxy: { cam: [0, 2.2, 7.4], look: [0, -0.2, 0], tilt: 0.95, rot: 0.035, spin: 0, pulse: 0.35, pf: 1.0, ps: 1.4, size: 1.25, gain: 1.7 },
+  galaxy: { cam: [-2.0, 2.2, 7.4], look: [-2.0, -0.2, 0], tilt: 0.95, rot: 0.035, spin: 0, pulse: 0.35, pf: 1.0, ps: 1.4, size: 1.25, gain: 1.7 },
   singularity: { cam: [0, 1.0, 6.6], look: [0, 0, 0], tilt: 0.3, rot: 0.0, spin: 1.4, pulse: 0.6, pf: 3.0, ps: 3.0, size: 1.0, gain: 0.85 },
   filament: { cam: [0, 0.2, 7.6], look: [0, 0, 0], tilt: 0.25, rot: 0.07, spin: 0, pulse: 1.0, pf: 1.0, ps: 2.2, size: 1.0, gain: 0.85 },
-  landscape: { cam: [0, 4.4, 5.6], look: [0, -0.5, 0], tilt: 0.0, rot: 0.025, spin: 0, pulse: 0.25, pf: 3.1416, ps: 1.0, size: 0.95, gain: 1.1 },
-  fiber: { cam: [0, 0, 7.6], look: [0, 0, 0], tilt: -0.35, rot: 0.06, spin: 0, pulse: 0.5, pf: 1.0, ps: 2.0, size: 0.9, gain: 0.68 },
+  landscape: { cam: [0, 4.4, 5.6], look: [0, -0.5, 0], tilt: 0.0, rot: 0.025, spin: 0, pulse: 0.25, pf: 3.1416, ps: 1.0, size: 1.0, gain: 1.45 },
+  fiber: { cam: [0, 0, 10.2], look: [0, 0, 0], tilt: -0.35, rot: 0.06, spin: 0, pulse: 0.5, pf: 1.0, ps: 2.0, size: 0.95, gain: 0.62, bloom: 0.42 },
   lorenz: { cam: [0, 0.3, 6.4], look: [0, 0.3, 0], tilt: 0.12, rot: 0.06, spin: 0, pulse: 1.0, pf: 1.0, ps: 3.0, size: 0.95, gain: 0.8 },
   latent: { cam: [0, 0.6, 7.0], look: [0, 0, 0], tilt: 0.15, rot: 0.05, spin: 0, pulse: 0.8, pf: 1.0, ps: 2.4, size: 1.05, gain: 0.85 },
   archive: { cam: [0, 2.4, 7.6], look: [0, 0.0, 0], tilt: 0.06, rot: 0.045, spin: 0, pulse: 1.0, pf: 1.0, ps: 2.6, size: 0.95, gain: 0.8 },
@@ -134,7 +134,7 @@ varying vec3 vView;
 void main() {
   float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vView))), 1.6);
   float pulse = pow(0.5 + 0.5 * sin(vUv.x * 18.85 - uTime * 2.4), 24.0);
-  vec3 col = mix(vec3(1.0, 0.42, 0.14), vec3(1.0, 0.94, 0.84), 0.25 + 0.75 * fres) * (0.55 + 2.8 * pulse);
+  vec3 col = mix(vec3(1.0, 0.42, 0.14), vec3(1.0, 0.94, 0.84), 0.25 + 0.75 * fres) * (0.32 + 1.7 * pulse);
   gl_FragColor = vec4(pow(col, vec3(2.2)) * uOpacity, 1.0);
 }`;
 
@@ -234,7 +234,7 @@ export class Universe {
   _initKnot() {
     const pts = knotCurve(900).map((p) => new THREE.Vector3(p[0], p[1], p[2]));
     const curve = new THREE.CatmullRomCurve3(pts, true, 'centripetal');
-    const geo = new THREE.TubeGeometry(curve, 900, 0.032, 10, true);
+    const geo = new THREE.TubeGeometry(curve, 900, 0.028, 10, true);
     this.knotUniforms = { uTime: { value: 0 }, uOpacity: { value: 0 }, uWobble: { value: 0 } };
     const mat = new THREE.ShaderMaterial({
       uniforms: this.knotUniforms, vertexShader: TUBE_VERT, fragmentShader: TUBE_FRAG,
@@ -274,7 +274,7 @@ export class Universe {
           gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
         }`,
       fragmentShader: `uniform float uOpacity; varying vec3 vC; varying float vF;
-        void main(){ gl_FragColor = vec4(pow(vC, vec3(2.2)) * 0.55 * uOpacity * vF, 1.0); }`,
+        void main(){ gl_FragColor = vec4(pow(vC, vec3(2.2)) * 0.36 * uOpacity * vF, 1.0); }`,
       transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
     });
     this.hopfLines = new THREE.LineSegments(g, mat);
@@ -430,6 +430,9 @@ export class Universe {
     this.camera.position.set(...rig.cam);
     this.look.set(...rig.look);
     this.camera.lookAt(this.look);
+    s.knotVis = this.shape === 'fiber' && s.knotWanted ? 1 : 0;
+    this.hopfLineUniforms.uOpacity.value = this.shape === 'hopf' ? s.focus : 0;
+    this.bloomBase = rig.bloom ?? 0.7;
   }
 
   setFocus(v) { this.state.focusTarget = v; }
@@ -537,7 +540,8 @@ export class Universe {
     if (this.composer) {
       this.film.uniforms.uTime.value = time;
       this.film.uniforms.uCA.value = damp(this.film.uniforms.uCA.value, s.warp * 0.03, 6, dt);
-      this.bloom.strength = 0.7 + s.warp * 0.6;
+      this.bloomBase = damp(this.bloomBase ?? 0.7, rig.bloom ?? 0.7, 2, dt);
+      this.bloom.strength = this.bloomBase + s.warp * 0.6;
       this.composer.render(dt);
     } else {
       this.renderer.render(this.scene, this.camera);

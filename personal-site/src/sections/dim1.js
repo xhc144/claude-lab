@@ -41,12 +41,16 @@ export function initDim1() {
   path.style.strokeDasharray = `${len}`;
 
   // map pinned progress p → which fraction of the rail sits at the screen centre
-  track(stage, (p) => {
+  let lastP = 0;
+  const update = (p) => {
+    lastP = p;
     const frac = 0.03 + p * 0.94;
     const railW = rail.offsetWidth;
     rail.style.transform = `translateX(${(innerWidth * 0.5 - frac * railW).toFixed(1)}px)`;
     path.style.strokeDashoffset = `${len * (1 - frac)}`;
     tOut.textContent = frac.toFixed(3);
     for (const s of stations) s.classList.toggle('is-lit', Number(s.dataset.at) <= frac + 0.01);
-  }, 'pin');
+  };
+  track(stage, update, 'pin');
+  addEventListener('resize', () => update(lastP));
 }

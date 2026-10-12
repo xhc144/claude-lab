@@ -9,6 +9,8 @@
 <meta property="og:title" content="XHC144 · 0 → ∞">
 <meta property="og:description" content="把好奇心，编译成可以运行的数学。一个从 0 维到 ∞ 维的交互式个人网站。">
 <meta property="og:type" content="website">
+<meta property="og:image" content="og.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/app.css">
 </head>
@@ -271,7 +273,7 @@
           <div class="card-body">
             <h4>数学分析 · 傅里叶本轮</h4>
             <p class="formula" data-tex="\gamma(t)=\sum_{n=-N}^{N} c_n e^{int}"></p>
-            <p>用 2N+1 个旋转的圆去逼近一条闭曲线——这里画的是三叶结的平面投影。项数越多，逼近越好。</p>
+            <p>用旋转的圆去逼近一条闭曲线。三叶结的平面投影恰好只需要 2 个圆；换成正方形或七角星，项数越多才逼近得越好。</p>
             <div class="ins-controls"></div>
           </div>
         </article>
@@ -377,7 +379,7 @@
         <svg class="seifert-svg" viewBox="-130 -130 260 260" aria-label="Seifert 算法示意"></svg>
         <p class="seifert-cap mono"></p>
         <div class="knot-controls">
-          <label class="range mono"><span>θ</span><input type="range" min="0" max="12.566" step="0.01" value="0" data-knot="theta" aria-label="纤维角 θ"><b data-readout-knot="theta">0.00</b></label>
+          <label class="range mono"><span>θ</span><input type="range" min="0" max="37.699" step="0.01" value="0" data-knot="theta" aria-label="纤维角 θ（0 到 12π）"><b data-readout-knot="theta">0.00</b></label>
           <div class="btn-row">
             <button class="chip mono is-on" data-knot="auto">自动旋转 θ</button>
             <button class="chip mono" data-knot="book">开卷模式</button>
@@ -587,7 +589,7 @@
           <div><b data-cd="d">000</b><span>天</span></div><div><b data-cd="h">00</b><span>时</span></div>
           <div><b data-cd="m">00</b><span>分</span></div><div><b data-cd="s">00</b><span>秒</span></div>
         </div>
-        <p class="mission-note mono">距离 2027 年 1 月 1 日 · 北京时间</p>
+        <p class="mission-note mono">距离 2027 年 1 月 1 日 · 北京时间 · 顺便一提，2027 是一个质数</p>
       </div>
       <div class="section-head reveal">
         <p class="kicker mono">BASIS VECTORS · 下一阶段的方向</p>

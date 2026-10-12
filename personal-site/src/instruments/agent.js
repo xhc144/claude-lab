@@ -79,20 +79,20 @@ export class Agent extends Instrument {
     for (const n of NODES) {
       const [x, y] = [n.x * w, n.y * h];
       const on = n.id === this.at;
-      const bw = Math.min(104, w * 0.15), bh = 42;
+      const bw = Math.min(124, w * 0.16), bh = 50;
       ctx.fillStyle = on ? 'rgba(255,91,31,0.18)' : 'rgba(9,9,15,0.92)';
       ctx.strokeStyle = on ? PAL.signal : PAL.ink3;
       ctx.beginPath(); ctx.rect(x - bw / 2, y - bh / 2, bw, bh); ctx.fill(); ctx.stroke();
       ctx.textAlign = 'center';
-      ctx.font = `9px ${MONO}`; ctx.fillStyle = on ? PAL.signal : PAL.ink3; ctx.fillText(n.sub, x, y - 5);
-      ctx.font = `12px ${MONO}`; ctx.fillStyle = PAL.ink; ctx.fillText(n.label, x, y + 12);
+      ctx.font = `9.5px ${MONO}`; ctx.fillStyle = on ? PAL.signal : PAL.ink3; ctx.fillText(n.sub, x, y - 7);
+      ctx.font = `13px ${MONO}`; ctx.fillStyle = PAL.ink; ctx.fillText(n.label, x, y + 13);
       ctx.textAlign = 'left';
       if (on) { ctx.fillStyle = PAL.acid; ctx.beginPath(); ctx.arc(x + bw / 2 - 6, y - bh / 2 + 6, 2.5 + Math.sin(time * 8), 0, TAU); ctx.fill(); }
     }
     // log
-    ctx.font = `10.5px ${MONO}`;
-    const ly = h * 0.78;
-    this.lines.forEach((l, i) => { ctx.fillStyle = i === this.lines.length - 1 ? PAL.ink : PAL.ink3; ctx.fillText(l, 14, ly + i * 15 - (this.lines.length - 1) * 15 + 30); });
+    ctx.font = `11.5px ${MONO}`;
+    const ly = h * 0.8;
+    this.lines.forEach((l, i) => { ctx.fillStyle = i === this.lines.length - 1 ? PAL.ink : PAL.ink3; ctx.fillText(l, 14, ly + i * 17 - (this.lines.length - 1) * 17 + 34); });
     ctx.fillStyle = PAL.ink3; ctx.font = `10px ${MONO}`;
     ctx.fillText(`SCHEMATIC · 示意动画 · 讲义 #${this.doc} · 审校第 ${this.iter} 轮`, 14, 18);
   }

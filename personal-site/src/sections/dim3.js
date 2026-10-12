@@ -142,7 +142,7 @@ export function initDim3(universe) {
     stepLabel.textContent = String(k + 1).padStart(2, '0');
     if (!universe) return;
     universe.setOpenBook(k === 2);
-    universe.setZoom(k === 1 ? 0.6 : k === 3 ? 0.25 : 0);
+    universe.setZoom(k === 1 ? 0.45 : k === 3 ? 0.2 : 0);
     universe.state.thetaSpeed = k === 2 ? 0.35 : 0.22;
     btn('book').classList.toggle('is-on', k === 2);
     audio.blip();

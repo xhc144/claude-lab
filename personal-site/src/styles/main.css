@@ -58,7 +58,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 input { font: inherit; color: inherit; }
 :focus-visible { outline: 1px solid var(--signal); outline-offset: 3px; }
 .wrap { width: 100%; max-width: 1360px; margin: 0 auto; padding: 0 var(--gutter); }
-.katex { font-size: 1.04em; }
+.katex { font-size: 1.04em; letter-spacing: 0; }
 
 /* ---------- universe canvas ---------- */
 #universe, #universe-fallback { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; display: block; }
@@ -85,7 +85,7 @@ main { position: relative; z-index: 2; }
 
 /* ---------- boot ---------- */
 #boot {
-  position: fixed; inset: 0; z-index: 100; background: #030305; display: grid; place-items: center;
+  position: fixed; inset: 0; z-index: 100; background: rgba(3, 3, 5, 0.84); backdrop-filter: blur(2px); display: grid; place-items: center;
   padding: var(--gutter); transition: opacity 0.9s var(--ease), visibility 0.9s;
 }
 #boot.leaving { opacity: 0; visibility: hidden; }
@@ -310,11 +310,10 @@ body.has-cursor #cursor { display: block; }
 .manifesto .big b { color: var(--signal); }
 .manifesto .hint { font-size: 11.5px; color: var(--ink-3); margin-top: 26px; }
 .orbit-wrap { position: relative; height: 380px; margin-top: 12vh; perspective: 1100px; display: grid; place-items: center; }
-.orbit { position: relative; width: 1px; height: 1px; transform-style: preserve-3d; animation: orbit 46s linear infinite; }
-.orbit span { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: var(--cn); font-size: clamp(16px, 1.5vw, 22px); color: var(--ink); transform: translate(-50%, -50%) rotateY(var(--a)) translateZ(var(--r, 420px)) ; backface-visibility: visible; text-shadow: 0 0 18px rgba(255, 91, 31, 0.4); }
+.orbit { position: relative; width: 1px; height: 1px; }
+.orbit span { position: absolute; left: 0; top: 0; white-space: nowrap; font-family: var(--cn); font-size: clamp(16px, 1.5vw, 22px); color: var(--ink); will-change: transform, opacity; text-shadow: 0 0 18px rgba(255, 91, 31, 0.4); }
 .orbit span:nth-child(3n) { color: var(--ion); }
 .orbit span:nth-child(3n + 1) { color: var(--signal); }
-@keyframes orbit { from { transform: rotateX(-14deg) rotateY(0); } to { transform: rotateX(-14deg) rotateY(360deg); } }
 .orbit-caption { position: absolute; bottom: 0; font-size: 10.5px; color: var(--ink-3); letter-spacing: 0.2em; }
 .singularity-hit { position: fixed; left: 50%; top: 50%; width: 90px; height: 90px; margin: -45px 0 0 -45px; border-radius: 50%; z-index: 3; opacity: 0; pointer-events: none; }
 body.chapter-dim0.op-active .singularity-hit { pointer-events: auto; }
@@ -375,6 +374,7 @@ body.chapter-dim0.op-active .singularity-hit { pointer-events: auto; }
 .range b { color: var(--ink); font-weight: 500; min-width: 3.5em; text-align: right; font-variant-numeric: tabular-nums; }
 
 .bay { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(24px, 4vw, 64px); align-items: center; margin: 0 0 16vh; }
+.bay-flip { grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); }
 .bay-flip .bay-text { order: 2; }
 .bay-text > p { color: var(--ink-2); }
 .bay-canvas canvas { aspect-ratio: 16 / 11; }
@@ -569,7 +569,7 @@ body.director #credits .credits-roll { animation: roll 18s linear; }
   .ins-grid, .repo-grid, .basis, .own-grid, .bars { grid-template-columns: minmax(0, 1fr); }
   .readouts { grid-template-columns: minmax(0, 1fr); }
   .orbit-wrap { height: 300px; }
-  .orbit span { --r: 220px !important; font-size: 15px; }
+  .orbit span { font-size: 14px; }
   .track-rail { width: 520vw; transform: translateX(calc(var(--p, 0) * -440vw + 6vw)); }
   .knot-steps { left: var(--gutter); right: var(--gutter); width: auto; top: auto; bottom: 10vh; transform: none; }
   .kstep { top: auto; bottom: 0; transform: translateY(30px); padding: 16px 18px; }

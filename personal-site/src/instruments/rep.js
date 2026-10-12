@@ -6,7 +6,7 @@ import { Instrument, TAU, PAL, MONO } from './base.js';
 const S3 = Math.sqrt(3) / 2;
 // kind: 'rot' (angle) or 'ref' (axis angle). perm acts on positions 0,1,2 (vertices at 90°, 210°, 330°).
 const ELEMENTS = [
-  { name: 'e', cyc: 'e', kind: 'rot', a: 0, cls: 0, mat: [1, 0, 0, 1] },
+  { name: 'e', cyc: '(1)(2)(3)', kind: 'rot', a: 0, cls: 0, mat: [1, 0, 0, 1] },
   { name: 'r', cyc: '(1 2 3)', kind: 'rot', a: TAU / 3, cls: 2, mat: [-0.5, -S3, S3, -0.5] },
   { name: 'r²', cyc: '(1 3 2)', kind: 'rot', a: (2 * TAU) / 3, cls: 2, mat: [-0.5, S3, -S3, -0.5] },
   { name: 's₁', cyc: '(2 3)', kind: 'ref', a: Math.PI / 2, cls: 1, mat: [-1, 0, 0, 1] },
@@ -101,14 +101,15 @@ export class Rep extends Instrument {
     // character table
     const cls = (g || cur).cls;
     const tx = wide ? w * 0.55 : 14, ty = wide ? h * 0.3 : h * 0.68;
-    const cw = wide ? Math.min(62, (w * 0.42) / 4) : (w - 28) / 4, rh = 20;
+    const lw = 56, cw = wide ? Math.min(52, (w - tx - lw - 10) / 3) : (w - 28 - lw) / 3, rh = 20;
+    const colX = (c) => (c === 0 ? tx : tx + lw + cw * (c - 1));
     ctx.fillStyle = 'rgba(255,91,31,0.16)';
-    ctx.fillRect(tx + cw * (cls + 1) - 4, ty - 15, cw, rh * 5 + 6);
+    ctx.fillRect(colX(cls + 1) - 6, ty - 15, cw, rh * 5 + 6);
     ctx.font = `11px ${MONO}`;
     const rows = [TABLE.head, ...TABLE.rows, TABLE.size];
     rows.forEach((row, r) => row.forEach((v, c) => {
       ctx.fillStyle = r === 0 || c === 0 ? PAL.ink3 : r === 3 && c === cls + 1 ? PAL.signal : PAL.ink;
-      ctx.fillText(String(v).replace('-', '−'), tx + cw * c, ty + rh * r);
+      ctx.fillText(String(v).replace('-', '−'), colX(c), ty + rh * r);
     }));
     ctx.fillStyle = PAL.ink3;
     ctx.fillText('6 = 1² + 1² + 2²', tx, ty + rh * 5 + 8);
