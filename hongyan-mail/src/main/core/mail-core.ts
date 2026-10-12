@@ -82,6 +82,7 @@ export class MailCore {
   private outboxBusy = false;
   private online = true;
   private log: Logger;
+  private attachmentKey = crypto.randomBytes(32);
 
   constructor(private platform: Platform) {
     this.log = platform.log;
@@ -494,6 +495,17 @@ export class MailCore {
     }
   }
 
+  /** Unguessable per-message token so that one e-mail cannot load another e-mail's inline images. */
+  attachmentToken(messageId: number): string {
+    return crypto.createHmac('sha256', this.attachmentKey).update(String(messageId)).digest('hex').slice(0, 24);
+  }
+
+  verifyAttachmentToken(messageId: number, token: string | null): boolean {
+    const want = Buffer.from(this.attachmentToken(messageId));
+    const got = Buffer.from(token || '');
+    return got.length === want.length && crypto.timingSafeEqual(got, want);
+  }
+
   attachmentInfos(mail: ParsedMail): AttachmentInfo[] {
     const html = typeof mail.html === 'string' ? mail.html : '';
     return mail.attachments.map((a, index) => {
@@ -547,7 +559,8 @@ export class MailCore {
       listUnsubscribe: row.list_unsubscribe,
       trustedSender: from ? this.store.isTrusted(from.address) : false,
       folderPath: folder?.path || '',
-      folderSpecialUse: folder?.special_use || null
+      folderSpecialUse: folder?.special_use || null,
+      attachmentToken: this.attachmentToken(row.id)
     };
   }
 

@@ -5,7 +5,7 @@ import { buildEmailDoc, type EmailDocOptions } from '../lib/sanitize';
 export function EmailFrame(props: EmailDocOptions & { onRemoteCount?: (n: number) => void; onLinkHover?: (url: string | null) => void }) {
   const ref = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(120);
-  const { doc, remoteCount, themed } = React.useMemo(() => buildEmailDoc(props), [props.html, props.text, props.allowRemote, props.dark, props.darkMode, props.messageId, props.collapseQuotes]);
+  const { doc, remoteCount, themed } = React.useMemo(() => buildEmailDoc(props), [props.html, props.text, props.allowRemote, props.dark, props.darkMode, props.messageId, props.collapseQuotes, props.attachmentToken]);
 
   useEffect(() => { props.onRemoteCount?.(remoteCount); }, [remoteCount]);
 

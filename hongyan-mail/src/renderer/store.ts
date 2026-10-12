@@ -587,6 +587,7 @@ function handleEvent(e: AppEvent) {
       s.compose(e.prefill);
       break;
     case 'open-message':
+      if (s.view.kind !== 'unified' || s.view.box !== 'inbox') s.setView({ kind: 'unified', box: 'inbox' });
       useApp.setState({ panel: 'mail', openId: e.messageId, selection: [e.messageId], anchor: e.messageId });
       break;
     case 'navigate':

@@ -6,6 +6,7 @@ export interface EmailDocOptions {
   html: string | null;
   text: string | null;
   messageId: number;
+  attachmentToken: string;
   attachments: AttachmentInfo[];
   allowRemote: boolean;
   dark: boolean;
@@ -132,7 +133,7 @@ export function buildEmailDoc(o: EmailDocOptions): EmailDoc {
   for (const a of o.attachments) if (a.contentId) cidMap.set(a.contentId.toLowerCase(), a.index);
   const resolveCid = (v: string) => {
     const idx = cidMap.get(v.slice(4).trim().toLowerCase());
-    return idx !== undefined ? `hy-att://m/${o.messageId}/${idx}` : '';
+    return idx !== undefined ? `hy-att://m/${o.messageId}/${idx}?t=${o.attachmentToken}` : '';
   };
 
   DOMPurify.removeAllHooks();

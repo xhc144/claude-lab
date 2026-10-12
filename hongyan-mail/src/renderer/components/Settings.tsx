@@ -218,6 +218,11 @@ export function SettingsModal({ section: initialSection, accountId }: { section?
             </Row>
             <Row title="永久删除前确认"><Switch checked={st.confirmDelete} onChange={(v) => set({ confirmDelete: v })} /></Row>
           </Group>
+          <Group title="系统">
+            <Row title="设为默认邮件程序" desc="点击网页中的邮箱链接（mailto:）时用鸿雁写信。Windows 会打开「默认应用」，请在其中选择鸿雁邮箱。">
+              <Button size="s" onClick={() => api.setDefaultMailClient().then((ok) => s.toast({ kind: ok ? 'success' : 'error', message: ok ? '已注册为邮件程序' : '注册失败' }))}>设置</Button>
+            </Row>
+          </Group>
         </>
       );
       break;

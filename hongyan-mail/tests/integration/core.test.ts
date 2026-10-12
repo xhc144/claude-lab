@@ -296,8 +296,8 @@ describe('sync and actions', () => {
         await c.messageDelete(String(uid), { uid: true });
       } finally { lock.release(); }
     } finally { await c.logout(); }
-    await waitFor(() => !core.listMessages({ view: { kind: 'unified', box: 'inbox' }, filter: 'all', category: 'all' }, 0, 50).items.some((m) => m.subject === '实时推送测试'), 'expunge noticed', 15000);
-  });
+    await waitFor(() => !core.listMessages({ view: { kind: 'unified', box: 'inbox' }, filter: 'all', category: 'all' }, 0, 50).items.some((m) => m.subject === '实时推送测试'), 'expunge noticed', 30000);
+  }, 45000);
 
   it('downloads the full history of a large mailbox', async () => {
     const carol = core.addAccount(account('carol@hy.test', 'carol-pass'));

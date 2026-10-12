@@ -119,6 +119,8 @@ export interface MessageDetail extends MessageSummary {
   trustedSender: boolean;
   folderPath: string;
   folderSpecialUse: SpecialUse | null;
+  /** Capability token required by hy-att:// URLs for this message's attachments. */
+  attachmentToken: string;
 }
 
 export type UnifiedBox = 'inbox' | 'starred' | 'unread' | 'sent' | 'drafts' | 'attachments' | 'archive' | 'trash' | 'junk';

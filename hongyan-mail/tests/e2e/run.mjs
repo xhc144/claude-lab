@@ -53,7 +53,8 @@ try {
   const win = await app.firstWindow();
   win.on('console', (m) => { if (m.type() === 'error') console.log('    [renderer error]', m.text()); });
   win.on('pageerror', (e) => console.log('    [page error]', e.message));
-  const shot = async (name) => {
+  const shot = async (name, { keepToasts = false } = {}) => {
+    if (!keepToasts) await win.evaluate(() => document.querySelectorAll('.toast-close').forEach((b) => b.click()));
     await win.waitForTimeout(450);
     await win.screenshot({ path: path.join(shotsDir, `${name}.png`) });
   };
@@ -121,6 +122,19 @@ try {
     if (!atts.includes('Q4 路线图草案.pdf')) throw new Error('attachments: ' + atts);
   });
 
+  await step('image attachments preview through tokened hy-att URLs only', async () => {
+    await win.locator('.row', { hasText: '合同扫描件' }).click();
+    await win.waitForFunction(() => { const img = document.querySelector('.att-thumb img'); return img && img.complete && img.naturalWidth > 0; }, null, { timeout: 15000 });
+    const blocked = await win.evaluate(async () => {
+      const src = document.querySelector('.att-thumb img').getAttribute('src');
+      const bare = src.split('?')[0];
+      const load = (u) => new Promise((res) => { const i = new Image(); i.onload = () => res('loaded'); i.onerror = () => res('refused'); i.src = u + (u.includes('?') ? '&' : '?') + 'nocache=' + Math.random(); });
+      return { ok: await load(src), bad: await load(bare), forged: await load(bare + '?t=0123456789abcdef01234567') };
+    });
+    if (blocked.ok !== 'loaded' || blocked.bad !== 'refused' || blocked.forged !== 'refused') throw new Error('attachment token check: ' + JSON.stringify(blocked));
+    await shot('06b-image-attachment');
+  });
+
   await step('threads group replies with the original', async () => {
     await win.locator('.row', { hasText: '周五团建' }).first().click();
     await win.waitForFunction(() => document.querySelectorAll('.msg-card').length === 2, null, { timeout: 10000 });
@@ -165,7 +179,7 @@ try {
     await shot('11-composer');
     await win.keyboard.press('Control+Enter');
     await win.waitForSelector('.toast.is-progress');
-    await shot('12-sending-undo');
+    await shot('12-sending-undo', { keepToasts: true });
     const t0 = Date.now();
     while (!srv.delivered.some((d) => d.rcpts.includes('bob@hy.test') && d.raw.toString().includes('Subject:'))) {
       if (Date.now() - t0 > 30000) throw new Error('mail not delivered');
@@ -232,6 +246,70 @@ try {
     await win.waitForFunction(() => [...document.querySelectorAll('.row-subject')].some((e) => e.textContent.includes('Lunch tomorrow')), null, { timeout: 30000 });
     await win.locator('.row', { hasText: 'Lunch tomorrow' }).click();
     await shot('19-unified-two-accounts');
+  });
+
+  await step('reply quotes the original message', async () => {
+    await win.locator('.row', { hasText: 'Q4 产品路线图' }).click();
+    await win.keyboard.press('r');
+    await win.waitForSelector('.composer .hy-quote');
+    await shot('20-reply');
+    await win.locator('.composer-head-actions button').last().click();
+    await win.waitForSelector('.composer', { state: 'detached' });
+  });
+
+  await step('bulk selection and context menu', async () => {
+    await win.locator('.row', { hasText: 'GitHub' }).click();
+    await win.locator('.row', { hasText: '京东' }).click({ modifiers: ['Control'] });
+    await win.locator('.row', { hasText: '招商银行' }).click({ modifiers: ['Control'] });
+    await win.waitForSelector('.bulk-panel');
+    await shot('21-bulk');
+    await win.locator('.row', { hasText: '王芳' }).click({ button: 'right' });
+    await win.waitForSelector('.menu');
+    await shot('22-context-menu');
+    await win.keyboard.press('Escape');
+  });
+
+  await step('compact density, collapsed sidebar and empty states', async () => {
+    await win.evaluate(() => window.hy.invoke('updateSettings', { density: 'compact', sidebarCollapsed: true }));
+    await win.locator('.row', { hasText: '李娜' }).first().click();
+    await shot('23-compact-collapsed');
+    await win.evaluate(() => window.hy.invoke('updateSettings', { density: 'comfortable', sidebarCollapsed: false }));
+    await win.locator('.nav-item', { hasText: '星标' }).first().click();
+    await win.waitForSelector('.empty-state');
+    await shot('24-empty-starred');
+    await win.locator('.nav-item', { hasText: '收件箱' }).first().click();
+  });
+
+  await step('account errors surface in the sidebar with a diagnosis', async () => {
+    const bobId = await win.evaluate(async () => (await window.hy.invoke('listAccounts')).value.find((a) => a.email === 'bob@hy.test').id);
+    await win.evaluate((id) => window.hy.invoke('updateAccount', id, { credentials: { authType: 'password', password: 'wrong-password' } }), bobId);
+    await win.waitForSelector('.acct-error', { timeout: 30000 });
+    await shot('25-account-error');
+    await win.locator('.acct-error').click();
+    await win.waitForSelector('.diag-card', { timeout: 30000 });
+    await shot('26-diagnose-auth-failure');
+    await win.keyboard.press('Escape');
+    await win.evaluate((id) => window.hy.invoke('updateAccount', id, { credentials: { authType: 'password', password: 'bob-pass' } }), bobId);
+  });
+
+  await step('failed sends wait in the outbox with the reason', async () => {
+    const aliceId = await win.evaluate(async () => (await window.hy.invoke('listAccounts')).value.find((a) => a.email === 'alice@hy.test').id);
+    await win.evaluate((id) => window.hy.invoke('updateAccount', id, { smtp: { host: '127.0.0.1', port: 1, security: 'tls' } }), aliceId);
+    await win.evaluate((id) => window.hy.invoke('send', { accountId: id, to: [{ name: 'Bob', address: 'bob@hy.test' }], cc: [], bcc: [], subject: '会议纪要（待发送）', html: '<p>x</p>', attachments: [] }, Date.now()), aliceId);
+    await win.waitForSelector('.toast.is-error', { timeout: 30000 });
+    await win.locator('.nav-item', { hasText: '发件箱' }).click();
+    await win.waitForSelector('.outbox-item.is-failed');
+    await shot('27-outbox-failed');
+    await win.evaluate((id) => window.hy.invoke('updateAccount', id, { smtp: { host: '127.0.0.1', port: 31465, security: 'tls' } }), aliceId);
+    await win.getByRole('button', { name: '重试' }).click();
+    await win.waitForSelector('.outbox-item', { state: 'detached', timeout: 30000 });
+  });
+
+  await step('OAuth settings explain the one-time setup', async () => {
+    await win.keyboard.press('Control+,');
+    await win.locator('.settings-nav-item', { hasText: 'OAuth' }).click();
+    await shot('28-settings-oauth');
+    await win.keyboard.press('Escape');
   });
 } catch (e) {
   if (e.message !== 'stop') console.error('E2E aborted:', e.message);

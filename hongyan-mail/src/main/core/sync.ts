@@ -360,6 +360,10 @@ export class AccountSync {
       c.on('error', (err: any) => this.deps.log.warn(`account ${this.id}: imap error ${err?.code || ''} ${err?.message}`));
       c.on('close', () => { if (this.client === c) this.client = null; });
       await c.connect();
+      if (this.stopped) {
+        try { c.close(); } catch { /* ignore */ }
+        throw new Error('同步已停止');
+      }
       this.client = c;
       this.armKeepAlive();
       return c;

@@ -7,6 +7,7 @@
 | [《对称的语言》](symmetry-film/) | 程序化影片 | 约 3 分 40 秒的抽象代数宣传片，画面（skia + numba 着色器）与配乐全部由代码生成；成片已提交 | `cd symmetry-film && bash build.sh preview` |
 | [《倒悬之海》The Sea Above](sea-above/) | 程序化影片 | 约 71 秒的三维短片：悬在天上的海洋。GLSL 着色器逐像素渲染，合成器配乐；成片未提交，需从源码生成 | `cd sea-above && ./make_film.sh` |
 | [数境 MathScape](mathscape/) | 交互式网页应用 | 矩阵线性变换、复变函数映射、常微分方程轨线、三体运动四个可视化模块；零运行时依赖，带单元测试与端到端测试 | 下载 [`mathscape/dist/mathscape.html`](mathscape/dist/mathscape.html) 双击打开；或 `cd mathscape && npm start` |
+| [鸿雁邮箱 Hongyan Mail](hongyan-mail/) | Windows 桌面应用 | 本地运行的多账户邮件客户端：Gmail / Outlook / QQ / 网易 / GMX 等统一收件箱、IDLE 实时推送、完整历史同步、中文全文搜索、智能分类、撤销发送与定时发送、逐项连接诊断；凭据经 DPAPI 加密保存在本机，直连邮件服务器。Electron + React，带单元 / Dovecot 集成 / 端到端测试 | 下载 [`hongyan-mail/release/HongyanMail-Setup-1.0.0.exe`](hongyan-mail/release/HongyanMail-Setup-1.0.0.exe) 安装；或 `cd hongyan-mail && npm install && npm run dev` |
 
 ## 约定
 

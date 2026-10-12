@@ -59,8 +59,8 @@ function Attachments({ detail }: { detail: MessageDetail }) {
           return (
             <div key={a.index} className="att-card" onDoubleClick={() => run(api.openAttachment(detail.id, a.index))} title={a.filename}>
               {isImage ? (
-                <button className="att-thumb" onClick={() => s.openModal({ type: 'image', src: `hy-att://m/${detail.id}/${a.index}`, name: a.filename, messageId: detail.id, index: a.index })}>
-                  <img src={`hy-att://m/${detail.id}/${a.index}`} alt="" loading="lazy" />
+                <button className="att-thumb" onClick={() => s.openModal({ type: 'image', src: `hy-att://m/${detail.id}/${a.index}?t=${detail.attachmentToken}`, name: a.filename, messageId: detail.id, index: a.index })}>
+                  <img src={`hy-att://m/${detail.id}/${a.index}?t=${detail.attachmentToken}`} alt="" loading="lazy" />
                 </button>
               ) : (
                 <span className={cx('att-icon', fileTone(a))}><Icon size={20} strokeWidth={1.7} /></span>
@@ -70,7 +70,7 @@ function Attachments({ detail }: { detail: MessageDetail }) {
                 <span className="att-size">{fileSize(a.size)}</span>
               </div>
               <div className="att-actions">
-                {isImage && <IconButton size="s" tip="预览" onClick={() => s.openModal({ type: 'image', src: `hy-att://m/${detail.id}/${a.index}`, name: a.filename, messageId: detail.id, index: a.index })}><Eye size={15} /></IconButton>}
+                {isImage && <IconButton size="s" tip="预览" onClick={() => s.openModal({ type: 'image', src: `hy-att://m/${detail.id}/${a.index}?t=${detail.attachmentToken}`, name: a.filename, messageId: detail.id, index: a.index })}><Eye size={15} /></IconButton>}
                 <IconButton size="s" tip="打开" onClick={() => run(api.openAttachment(detail.id, a.index))}><ExternalLink size={15} /></IconButton>
                 <IconButton size="s" tip="另存为" onClick={() => run(api.saveAttachment(detail.id, a.index), '已保存')}><Download size={15} /></IconButton>
               </div>
@@ -135,6 +135,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
       <button className="msg-card is-collapsed" onClick={onToggle}>
         <Avatar name={from?.name || ''} address={from?.address || '?'} size={30} />
         <span className="mc-from">{displayName(from, me)}</span>
+        {base?.draft && <span className="row-tag is-draft">草稿</span>}
         <span className="mc-snippet">{base?.snippet || ''}</span>
         <span className="mc-date">{base ? listTime(base.date) : ''}</span>
       </button>
@@ -170,6 +171,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
             <div className="mc-line">
               <span className="mc-name">{displayName(from, me)}</span>
               {from && from.name && <span className="mc-addr">{from.address}</span>}
+              {base?.draft && <span className="row-tag is-draft">草稿</span>}
             </div>
             <div className="mc-to" onClick={(e) => { e.stopPropagation(); setShowDetails(!showDetails); }}>
               发给 {base ? addressLine(base.to, me, 3) || '（未填写）' : ''}{base && base.cc.length ? `，抄送 ${addressLine(base.cc, me, 2)}` : ''}
@@ -226,6 +228,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
               html={d.html}
               text={d.text}
               messageId={d.id}
+              attachmentToken={d.attachmentToken}
               attachments={d.attachments}
               allowRemote={allowRemote}
               dark={s.dark}
@@ -260,6 +263,11 @@ function ThreadView({ openId }: { openId: number }) {
   const me = useMemo(() => new Set(s.accounts.map((a) => a.email)), [s.accounts]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const current = s.itemAt(s.indexOf(openId)) || summaries[openId];
+
+  // New replies arriving while a conversation is open join it.
+  useEffect(() => {
+    api.getThread(openId).then((t) => setThread((cur) => (t.ids.length !== cur.length ? t.ids : cur))).catch(() => {});
+  }, [s.readerVersion]);
 
   useEffect(() => {
     let alive = true;

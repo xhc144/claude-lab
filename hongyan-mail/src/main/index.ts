@@ -1,7 +1,7 @@
 // Electron entry point: window, tray, notifications, protocols and the IPC bridge to MailCore.
 import {
   app, BrowserWindow, Menu, Notification, Tray, dialog, ipcMain, nativeImage, nativeTheme, net, powerMonitor, protocol,
-  session, shell, type MenuItemConstructorOptions
+  screen, session, shell, type MenuItemConstructorOptions
 } from 'electron';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -18,10 +18,16 @@ const APP_ID = 'com.hongyan.mail';
 const IS_DEV = !!process.env.HY_DEV;
 const RENDERER_URL = process.env.HY_RENDERER_URL;
 
-// Optional overrides used by the end-to-end tests.
-if (process.env.HY_USER_DATA) app.setPath('userData', process.env.HY_USER_DATA);
 app.setName('Hongyan Mail');
+// Portable mode: a "portable.txt" next to the executable keeps all data in ./data beside it.
+const PORTABLE = app.isPackaged && fs.existsSync(path.join(path.dirname(process.execPath), 'portable.txt'));
+if (PORTABLE) app.setPath('userData', path.join(path.dirname(process.execPath), 'data'));
+// Optional override used by the end-to-end tests.
+if (process.env.HY_USER_DATA) app.setPath('userData', process.env.HY_USER_DATA);
 if (process.platform === 'win32') app.setAppUserModelId(APP_ID);
+
+// The app never uses WebGPU; the Windows package omits its shader compiler (dxcompiler.dll).
+app.commandLine.appendSwitch('disable-features', 'WebGPUService,WebGPU');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
@@ -68,9 +74,15 @@ function themeColors() {
 
 // ------------------------------------------------------------------ window
 
-function restoreBounds(): Electron.Rectangle | null {
+function restoreBounds(): Partial<Electron.Rectangle> | null {
   const b = core?.settings.getValue<Electron.Rectangle | null>('windowBounds', null);
-  return b && b.width > 600 && b.height > 400 ? b : null;
+  if (!b || b.width < 600 || b.height < 400) return null;
+  // Ignore saved positions on a monitor that is no longer connected.
+  const visible = screen.getAllDisplays().some((d) => {
+    const a = d.workArea;
+    return b.x + 120 > a.x && b.x < a.x + a.width - 120 && b.y + 40 > a.y && b.y < a.y + a.height - 40;
+  });
+  return visible ? b : { width: b.width, height: b.height };
 }
 
 function createWindow(showOnReady = true) {
@@ -120,6 +132,9 @@ function createWindow(showOnReady = true) {
     }
   });
   win.on('closed', () => { win = null; rendererReady = false; });
+  // Never hold up Windows shutdown / sign-out by hiding to the tray.
+  win.on('query-session-end', () => { quitting = true; });
+  win.on('session-end', () => { quitting = true; app.quit(); });
   const sendState = () => emit({ type: 'window-state', maximized: !!win?.isMaximized(), focused: !!win?.isFocused() });
   win.on('maximize', sendState);
   win.on('unmaximize', sendState);
@@ -240,6 +255,7 @@ function ensureShortcutAumid() {
     const lnk = path.join(dir, '鸿雁邮箱.lnk');
     const opts = { target: process.execPath, appUserModelId: APP_ID, description: '鸿雁邮箱', icon: process.execPath, iconIndex: 0 };
     if (fs.existsSync(lnk)) shell.writeShortcutLink(lnk, 'update', opts);
+    else if (PORTABLE) return;
     else if (!fs.existsSync(path.join(process.env.ProgramData || 'C:\\ProgramData', 'Microsoft', 'Windows', 'Start Menu', 'Programs', '鸿雁邮箱.lnk'))) shell.writeShortcutLink(lnk, 'create', opts);
   } catch (e) {
     log.warn(`shortcut update failed: ${(e as Error).message}`);
@@ -275,9 +291,11 @@ function registerProtocols() {
     return new Response(res.body, { status: res.status, headers });
   });
   protocol.handle('hy-att', async (req) => {
-    // hy-att://m/<messageId>/<index>
+    // hy-att://m/<messageId>/<index>?t=<token>
     try {
-      const parts = new URL(req.url).pathname.split('/').filter(Boolean);
+      const url = new URL(req.url);
+      const parts = url.pathname.split('/').filter(Boolean);
+      if (!core!.verifyAttachmentToken(Number(parts[0]), url.searchParams.get('t'))) return new Response('forbidden', { status: 403 });
       const att = await core!.attachment(Number(parts[0]), Number(parts[1]));
       return new Response(att.content as any, { headers: { 'Content-Type': att.contentType, 'Cache-Control': 'max-age=3600' } });
     } catch {
@@ -345,12 +363,17 @@ function buildHandlers(): MailApi {
       else win.close();
     },
     async setNetworkOnline(online) { c.setOnline(online); },
+    async setDefaultMailClient() {
+      const ok = app.setAsDefaultProtocolClient('mailto');
+      if (ok && process.platform === 'win32') await shell.openExternal('ms-settings:defaultapps');
+      return ok;
+    },
 
     async getSettings() { return c.getSettings(); },
     async updateSettings(patch) {
       const next = c.updateSettings(patch);
       if (patch.launchAtLogin !== undefined && (process.platform === 'win32' || process.platform === 'darwin')) {
-        app.setLoginItemSettings({ openAtLogin: next.launchAtLogin, args: ['--hidden'] });
+        app.setLoginItemSettings({ openAtLogin: next.launchAtLogin, args: ['--hidden'], name: 'HongyanMail' });
       }
       if (patch.theme !== undefined) nativeTheme.themeSource = next.theme;
       return next;

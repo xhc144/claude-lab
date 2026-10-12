@@ -1,7 +1,9 @@
 node_modules/
 dist/
-release/
 out/
 *.log
 .vite/
 tests/e2e/screenshots/
+# build output; only the Windows installer is committed as the downloadable deliverable
+release/*
+!release/HongyanMail-Setup-*.exe

@@ -17,6 +17,7 @@ export interface MailApi {
   setTitleBarColors(colors: { color: string; symbolColor: string }): Promise<void>;
   windowControl(action: 'minimize' | 'maximize' | 'close'): Promise<void>;
   setNetworkOnline(online: boolean): Promise<void>;
+  setDefaultMailClient(): Promise<boolean>;
 
   // settings
   getSettings(): Promise<Settings>;
