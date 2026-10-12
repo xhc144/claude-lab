@@ -17,7 +17,7 @@ export function vegCapacity(w, c) {
     const depth = Math.max(0, -h);
     const shelf = 1 - smoothstep(0.02, 0.25, depth);
     const coast = 1 - smoothstep(1, 10, w.coastDist[c]);
-    let k = 0.05 + 0.45 * shelf + 0.2 * coast;
+    let k = 0.05 + 0.36 * shelf + 0.18 * coast;
     k *= 0.6 + 0.4 * smoothstep(-2, 12, T);
     if (w.lake[c] > 0) k = 0.55;
     return clamp(k - w.pollution[c] * 0.8 - w.rad[c], 0, 1);

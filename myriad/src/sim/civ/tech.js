@@ -42,8 +42,11 @@ function diffusion(w, n, t) {
   return total ? Math.min(1, known / total) : 0;
 }
 
+/** research points a nation gains per year from its science output (diminishing returns) */
+export function researchRate(sci) { return sci / (1 + sci / 8000); }
+
 export function effectiveCost(w, n, t) {
-  return techCost(t) * (1 - 0.55 * diffusion(w, n, t)) * (n.darkAge > 0 ? 1.5 : 1);
+  return techCost(t) * (1 - 0.45 * diffusion(w, n, t)) * (n.darkAge > 0 ? 1.5 : 1);
 }
 
 export function chooseResearch(w, n) {

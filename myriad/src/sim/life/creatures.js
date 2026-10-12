@@ -9,7 +9,7 @@ import { phenotype, mutateInto, geneticDistance, HAB_WATER, HAB_AMPHI, HAB_LAND,
 import { createSpecies, markExtinct } from './species.js';
 import { log } from '../chronicle.js';
 
-export const SPECIATION = 0.2;
+export const SPECIATION = 0.17;
 const BIN = 4;
 const TWO_PI = Math.PI * 2;
 const tmpT = {};
@@ -107,7 +107,7 @@ function initSlot(w, L, i, sp, x, y, energy) {
   L.y[i] = Math.min(w.H - 0.01, Math.max(0, y));
   L.dir[i] = w.rng.next() * TWO_PI;
   L.age[i] = 0;
-  L.cd[i] = 4;
+  L.cd[i] = 4 + (w.rng.next() * 8) | 0;
   L.tp[i] = 0;
   applyPhenotype(L, i);
   L.energy[i] = energy * L.pEmax[i];
@@ -149,7 +149,7 @@ export function seedPopulation(w, genes, x, y, n, radius, rng, name = null, pare
     const c = (py | 0) * w.W + (px | 0);
     if (!canLive(w, tmpT.hab, tmpT.fly, c)) continue;
     mutateInto(tmp, 0, g, 0, rng, 0.02);
-    if (spawnCreature(w, sp.id, tmp, 0, px, py, 0.7) >= 0) placed++;
+    if (spawnCreature(w, sp.id, tmp, 0, px, py, 0.55) >= 0) placed++;
   }
   return sp;
 }
@@ -238,6 +238,8 @@ function updateCreature(w, L, i, rng) {
   const T = tempAt(w, c);
   const dT = Math.abs(T - L.pTopt[i]) - L.pTol[i];
   let metab = L.pMetab[i] * (dT > 0 ? 1 + dT * 0.14 : 1);
+  // starving animals fall into torpor: they burn less and wait out lean seasons
+  if (L.energy[i] < L.pEmax[i] * 0.25) metab *= 0.55;
   const ok = habitable(w, L, i, c);
   if (!ok) metab += 0.1;
   if (L.pHab[i] === HAB_LAND && !L.pFly[i] && w.flood[c] > 0.003) metab += 0.12;
@@ -452,9 +454,9 @@ export function census(w) {
   }
   let alive = 0;
   if (L.plague.length < nS) { const p = new Float32Array(nS * 2); p.set(L.plague); L.plague = p; }
-  const crowded = Math.max(0, L.count / L.cap - 0.7) * 0.06;
+  const crowded = Math.max(0, L.count / L.cap - 0.7) * 0.1;
   for (let s = 0; s < nS; s++) {
-    L.plague[s] = Math.min(0.03, Math.max(0, cnt[s] / L.cap - 0.12) * 0.05) + crowded;
+    L.plague[s] = Math.min(0.04, Math.max(0, cnt[s] / L.cap - 0.12) * 0.12) + crowded;
     const sp = w.species[s];
     if (sp.extinct !== null) continue;
     sp.pop = cnt[s];
@@ -553,6 +555,6 @@ function seedMore(w, spId, genes, x, y, n, radius, rng) {
     if (px < 0 || py < 0 || px >= w.W || py >= w.H) continue;
     if (!canLive(w, tmpT.hab, tmpT.fly, (py | 0) * w.W + (px | 0))) continue;
     mutateInto(tmp, 0, g, 0, rng, 0.02);
-    if (spawnCreature(w, spId, tmp, 0, px, py, 0.7) >= 0) placed++;
+    if (spawnCreature(w, spId, tmp, 0, px, py, 0.55) >= 0) placed++;
   }
 }

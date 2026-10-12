@@ -613,6 +613,7 @@ function markTerrainChanged(w) {
 }
 
 function pushFx(w, fx) {
+  fx.t = w.tick;
   if (w.fx.length < 400) w.fx.push(fx);
 }
 
@@ -909,6 +910,12 @@ function generateTerrain(w, opts = {}) {
     const v = elev[c];
     if (v >= t) elev[c] = Math.pow((v - t) / (hi - t + 1e-9), 2.0) * 0.95 + 0.002;
     else elev[c] = -Math.pow((t - v) / (t - lo + 1e-9), 0.55);
+  }
+  // the outermost cells are always sea, whatever the mountains near the rim say
+  for (let c = 0; c < w.N; c++) {
+    const x = c % W, y = (c / W) | 0;
+    const d = Math.min(x, y, W - 1 - x, H - 1 - y);
+    if (d < 3) elev[c] = Math.min(elev[c], -0.03 - (3 - d) * 0.03);
   }
 
   // ---- volcanoes: subduction arcs plus a hot spot or two
@@ -1476,7 +1483,7 @@ function vegCapacity(w, c) {
     const depth = Math.max(0, -h);
     const shelf = 1 - smoothstep(0.02, 0.25, depth);
     const coast = 1 - smoothstep(1, 10, w.coastDist[c]);
-    let k = 0.05 + 0.45 * shelf + 0.2 * coast;
+    let k = 0.05 + 0.36 * shelf + 0.18 * coast;
     k *= 0.6 + 0.4 * smoothstep(-2, 12, T);
     if (w.lake[c] > 0) k = 0.55;
     return clamp(k - w.pollution[c] * 0.8 - w.rad[c], 0, 1);
@@ -2127,7 +2134,7 @@ const { phenotype, mutateInto, geneticDistance, HAB_WATER, HAB_AMPHI, HAB_LAND, 
 const { createSpecies, markExtinct } = __m["src/sim/life/species.js"];
 const { log } = __m["src/sim/chronicle.js"];
 
-const SPECIATION = 0.2;
+const SPECIATION = 0.17;
 const BIN = 4;
 const TWO_PI = Math.PI * 2;
 const tmpT = {};
@@ -2225,7 +2232,7 @@ function initSlot(w, L, i, sp, x, y, energy) {
   L.y[i] = Math.min(w.H - 0.01, Math.max(0, y));
   L.dir[i] = w.rng.next() * TWO_PI;
   L.age[i] = 0;
-  L.cd[i] = 4;
+  L.cd[i] = 4 + (w.rng.next() * 8) | 0;
   L.tp[i] = 0;
   applyPhenotype(L, i);
   L.energy[i] = energy * L.pEmax[i];
@@ -2267,7 +2274,7 @@ function seedPopulation(w, genes, x, y, n, radius, rng, name = null, parent = -1
     const c = (py | 0) * w.W + (px | 0);
     if (!canLive(w, tmpT.hab, tmpT.fly, c)) continue;
     mutateInto(tmp, 0, g, 0, rng, 0.02);
-    if (spawnCreature(w, sp.id, tmp, 0, px, py, 0.7) >= 0) placed++;
+    if (spawnCreature(w, sp.id, tmp, 0, px, py, 0.55) >= 0) placed++;
   }
   return sp;
 }
@@ -2356,6 +2363,8 @@ function updateCreature(w, L, i, rng) {
   const T = tempAt(w, c);
   const dT = Math.abs(T - L.pTopt[i]) - L.pTol[i];
   let metab = L.pMetab[i] * (dT > 0 ? 1 + dT * 0.14 : 1);
+  // starving animals fall into torpor: they burn less and wait out lean seasons
+  if (L.energy[i] < L.pEmax[i] * 0.25) metab *= 0.55;
   const ok = habitable(w, L, i, c);
   if (!ok) metab += 0.1;
   if (L.pHab[i] === HAB_LAND && !L.pFly[i] && w.flood[c] > 0.003) metab += 0.12;
@@ -2570,9 +2579,9 @@ function census(w) {
   }
   let alive = 0;
   if (L.plague.length < nS) { const p = new Float32Array(nS * 2); p.set(L.plague); L.plague = p; }
-  const crowded = Math.max(0, L.count / L.cap - 0.7) * 0.06;
+  const crowded = Math.max(0, L.count / L.cap - 0.7) * 0.1;
   for (let s = 0; s < nS; s++) {
-    L.plague[s] = Math.min(0.03, Math.max(0, cnt[s] / L.cap - 0.12) * 0.05) + crowded;
+    L.plague[s] = Math.min(0.04, Math.max(0, cnt[s] / L.cap - 0.12) * 0.12) + crowded;
     const sp = w.species[s];
     if (sp.extinct !== null) continue;
     sp.pop = cnt[s];
@@ -2671,7 +2680,7 @@ function seedMore(w, spId, genes, x, y, n, radius, rng) {
     if (px < 0 || py < 0 || px >= w.W || py >= w.H) continue;
     if (!canLive(w, tmpT.hab, tmpT.fly, (py | 0) * w.W + (px | 0))) continue;
     mutateInto(tmp, 0, g, 0, rng, 0.02);
-    if (spawnCreature(w, spId, tmp, 0, px, py, 0.7) >= 0) placed++;
+    if (spawnCreature(w, spId, tmp, 0, px, py, 0.55) >= 0) placed++;
   }
 }
 
@@ -2756,7 +2765,10 @@ const TECHS = [
 
 const TECH = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 const NTECH = TECHS.length;
-const techCost = (t) => 50 * Math.pow(2.45, t.era) * (1 + t.req.length * 0.1);
+// base research cost per era: steep through antiquity, flatter in the modern eras where a nation's
+// science output (universities, labs, networks) is what limits the pace
+const ERA_COST = [60, 170, 480, 1300, 3700, 10000, 26000, 45000, 70000, 100000, 135000];
+const techCost = (t) => ERA_COST[t.era] * (1 + t.req.length * 0.1);
 
 // buildings: id, name, tech, production cost, description
 const BUILDINGS = [
@@ -3300,6 +3312,7 @@ function foundCity(w, n, x, y, pop, opts = {}) {
     starving: 0,
     prayer: null,
     lastConquest: -1e9,
+    siege: -1e9,
     garrison: 0,
     blessed: 0,
     inspired: 0,
@@ -3355,6 +3368,8 @@ function destroyCity(w, city, cause, opts = {}) {
   city.alive = false;
   city.fell = w.tick;
   city.pop = 0;
+  // its caravans and ships stop at once (routes are otherwise only pruned yearly)
+  w.routes = w.routes.filter((r) => r.a !== city.id && r.b !== city.id);
   const i = n.cities.indexOf(city.id);
   if (i >= 0) n.cities.splice(i, 1);
   if (n.capital === city.id) {
@@ -3739,8 +3754,11 @@ function diffusion(w, n, t) {
   return total ? Math.min(1, known / total) : 0;
 }
 
+/** research points a nation gains per year from its science output (diminishing returns) */
+function researchRate(sci) { return sci / (1 + sci / 8000); }
+
 function effectiveCost(w, n, t) {
-  return techCost(t) * (1 - 0.55 * diffusion(w, n, t)) * (n.darkAge > 0 ? 1.5 : 1);
+  return techCost(t) * (1 - 0.45 * diffusion(w, n, t)) * (n.darkAge > 0 ? 1.5 : 1);
 }
 
 function chooseResearch(w, n) {
@@ -3826,7 +3844,7 @@ function grantUpToEra(n, e) {
 }
 
 
-return { techFlags, available, effectiveCost, chooseResearch, addResearch, grantTech, loseTechs, grantUpToEra };
+return { techFlags, available, researchRate, effectiveCost, chooseResearch, addResearch, grantTech, loseTechs, grantUpToEra };
 })();
 
 // ---- src/sim/civ/economy.js
@@ -5488,7 +5506,7 @@ const { createNation, rel } = __m["src/sim/civ/nation.js"];
 const { foundCity, tierOf, TIERS, destroyCity, developLand, tileFood } = __m["src/sim/civ/city.js"];
 const { findPath, labelLandmasses } = __m["src/sim/civ/path.js"];
 const { computeTerritory } = __m["src/sim/civ/territory.js"];
-const { techFlags, addResearch, grantTech, grantUpToEra } = __m["src/sim/civ/tech.js"];
+const { techFlags, addResearch, grantTech, grantUpToEra, effectiveCost, researchRate } = __m["src/sim/civ/tech.js"];
 const { computeAccess, updateTrade, tradeIncome, connectCities } = __m["src/sim/civ/economy.js"];
 const { folkReligion, stepMythogenesis, spreadReligions, updateStateReligion, maybeSchism, updatePrayers, createReligion, normalize } = __m["src/sim/civ/religion.js"];
 const { stepIdeaOrigins, spreadIdeas, stepNationIdeas } = __m["src/sim/civ/ideas.js"];
@@ -5527,7 +5545,7 @@ function settleSpot(w, x, y, sp, rng, r = 10) {
     const px = Math.round(x + (rng.next() - 0.5) * 2 * r), py = Math.round(y + (rng.next() - 0.5) * 2 * r);
     if (px < 2 || py < 2 || px >= w.W - 2 || py >= w.H - 2) continue;
     const c = py * w.W + px;
-    if (w.elev[c] < w.seaLevel || w.lake[c] > 0 || w.lava[c] > 0) continue;
+    if (w.elev[c] < w.seaLevel + 0.003 || w.lake[c] > 0 || w.lava[c] > 0) continue;
     if (w.cities.some((k) => k.alive && Math.abs(k.x - px) < 4 && Math.abs(k.y - py) < 4)) continue;
     const T = w.baseTemp[c] + w.climate.offset;
     const topt = sp ? -16 + sp.ref[G.warmth] * 50 : 15;
@@ -5715,7 +5733,7 @@ function yields(w, rng) {
     const upkeep = n.cities.reduce((s, ci) => s + w.cities[ci].buildings.length * 0.15, 0) + w.armies.filter((a) => a.nation === n.id).reduce((s, a) => s + a.str * 0.002, 0);
     n.treasury += st.wealth - upkeep;
     if (n.treasury < -50) { n.stability -= 0.05; n.treasury = -50; }
-    const done = addResearch(w, n, st.sci);
+    const done = addResearch(w, n, researchRate(st.sci));
     if (done) { const ld = w.persons[n.leader]; if (ld) ld.stats.techs++; }
     if (st.pop > n.peakPop) n.peakPop = st.pop;
     if (n.cities.length > n.peakCities) n.peakCities = n.cities.length;
@@ -5805,7 +5823,7 @@ function chooseSite(w, n, src, rng) {
     const x = Math.round(src.x + Math.cos(a) * d), y = Math.round(src.y + Math.sin(a) * d);
     if (x < 2 || y < 2 || x >= w.W - 2 || y >= w.H - 2) continue;
     const c = y * w.W + x;
-    if (w.elev[c] < w.seaLevel || w.lake[c] > 0 || w.lava[c] > 0 || w.rad[c] > 0.2) continue;
+    if (w.elev[c] < w.seaLevel + 0.003 || w.lake[c] > 0 || w.lava[c] > 0 || w.rad[c] > 0.2) continue;
     if (w.owner[c] >= 0 && w.owner[c] !== n.id) continue;
     if (w.cities.some((k) => k.alive && Math.abs(k.x - x) < 5 && Math.abs(k.y - y) < 5 && Math.hypot(k.x - x, k.y - y) < 4.6)) continue;
     const overseas = w.landmass[c] !== srcLand;
@@ -6006,7 +6024,8 @@ function applyImpactsToCiv(w, impacts) {
 function checkDrowned(w) {
   for (const c of w.cities) {
     if (!c.alive) continue;
-    if (w.elev[c.y * w.W + c.x] < w.seaLevel) {
+    // dykes hold back a little water; modern ones a little more
+    if (w.elev[c.y * w.W + c.x] < w.seaLevel - (w.nations[c.nation].tf.industry ? 0.004 : 0.0015)) {
       const n = w.nations[c.nation];
       destroyCity(w, c, '沉入了上涨的海水', { cat: 'nature', text: `海平面上涨，${n.name}的${c.name.z}沉入大海，只留下水下的废墟。` });
       w.flags.drownedCity = true;
@@ -6047,7 +6066,11 @@ function greatPeople(w, n, rng) {
   switch (role) {
     case 'scientist': {
       const t = n.research ? TECH[n.research] : null;
-      if (t) { grantTech(w, n, t.id, 'genius'); p.deeds.push(`发明「${t.name}」`); text = `${city.name.z}的天才学者${name}完成了「${t.name}」的研究。`; }
+      if (t) {
+        n.researchPts += Math.min(effectiveCost(w, n, t) * 0.3, 20 + researchRate(n.stats.sci) * 5);
+        p.deeds.push(`推动「${t.name}」的研究`);
+        text = `${city.name.z}的天才学者${name}在「${t.name}」上取得了重大突破。`;
+      }
       break;
     }
     case 'artist': city.culture += 400; p.deeds.push('传世杰作'); text = `${city.name.z}的艺术家${name}创作出传世之作，${n.adj}文化之名远播四方。`; break;
@@ -6190,7 +6213,7 @@ const { log } = __m["src/sim/chronicle.js"];
 const { pushFx, forDisk, year } = __m["src/sim/state.js"];
 const { rel } = __m["src/sim/civ/nation.js"];
 const { newRuler, fullName } = __m["src/sim/civ/people.js"];
-const { loseTechs, grantTech, available } = __m["src/sim/civ/tech.js"];
+const { loseTechs, grantTech, available, effectiveCost, researchRate } = __m["src/sim/civ/tech.js"];
 const { IDEAS, TECH } = __m["src/sim/civ/data.js"];
 const { forCreaturesNear } = __m["src/sim/life/creatures.js"];
 
@@ -6307,8 +6330,8 @@ const EVENTS = [
       const n = pickNation(w, rng);
       if (!n || !n.research) return false;
       const t = TECH[n.research];
-      grantTech(w, n, t.id, 'accident');
-      log(w, 'science', `一次失败的实验意外成功——${n.adj}提前掌握了「${t.name}」。`, { imp: 1, nations: [n.id] });
+      n.researchPts += Math.min(effectiveCost(w, n, t) * 0.3, 20 + researchRate(n.stats.sci) * 4);
+      log(w, 'science', `一次失败的实验意外带来了启发——${n.adj}在「${t.name}」上进展神速。`, { imp: 1, nations: [n.id] });
       return true;
     },
   },
@@ -6412,11 +6435,14 @@ const EVENTS = [
     id: 'bell', name: '古钟自鸣',
     weight: (w) => (w.ruins.some((r) => r.discovered) ? 0.6 : 0),
     run(w, rng) {
-      const r = rng.pick(w.ruins.filter((r) => r.discovered));
+      const found = w.ruins.filter((r) => r.discovered);
+      if (!found.length) return false;
+      const r = rng.pick(found);
       const o = w.owner[r.y * w.W + r.x];
       if (o < 0) return false;
       const n = w.nations[o];
-      const av = available(n);
+      // only what the vanished city itself knew can be recovered
+      const av = available(n).filter((t) => t.era <= (r.era ?? 0));
       if (!av.length) return false;
       const t = rng.pick(av);
       grantTech(w, n, t.id, 'ruin');
@@ -8542,41 +8568,43 @@ class CloudLayer {
     this.noise2 = makeNoise2D(world.seed ^ 0x99);
     this.t = 0;
     this.row = 0;
-    this.offsets = new Float32Array(this.ch);
   }
 
-  /** zonal wind speed at cloud row y (cells per unit time), smooth across bands */
-  wind(y) {
+  /** share of eastward flow at cloud row y (westerlies) vs westward (trade winds, polar easterlies) */
+  eastShare(y) {
     const a = Math.abs(((y + 0.5) / this.ch) * 2 - 1);
-    return -Math.cos(a * Math.PI * 3) * 1.0;
+    return 0.5 - 0.5 * Math.cos(a * Math.PI * 3);
   }
 
   update(dt, tps) {
-    const speed = 0.6 + Math.min(6, tps * 0.15);
+    const speed = 0.5 + Math.min(5, tps * 0.12);
     this.t += dt * speed;
-    for (let y = 0; y < this.ch; y++) this.offsets[y] += this.wind(y) * dt * speed * 0.9;
-    // refresh a band of rows per frame (the whole sky every ~10 frames)
-    const rows = Math.ceil(this.ch / 10);
+    // refresh a third of the sky per frame
+    const rows = Math.ceil(this.ch / 3);
     const d = this.img.data, sd = this.simg.data;
     const w = this.w;
     const n = this.noise, n2 = this.noise2;
-    const tt = this.t * 0.012;
+    const drift = this.t * 0.9;
+    const tt = this.t * 0.01;
+    const dust = clamp(w.climate.dust, 0, 1);
     for (let k = 0; k < rows; k++) {
       const y = this.row;
       this.row = (this.row + 1) % this.ch;
-      const off = this.offsets[y];
+      const e = this.eastShare(y);
       const wy = Math.min(w.H - 1, y * RES);
+      const fy = y * 0.045;
       for (let x = 0; x < this.cw; x++) {
-        const fx = (x - off) * 0.035, fy = y * 0.05;
-        let v = n(fx, fy + tt) * 0.55 + n(fx * 2.1 + 3.3, fy * 2.1 - tt * 1.7) * 0.3 + n2(fx * 4.3, fy * 4.3 + tt * 2) * 0.15;
+        // two fields drifting in opposite directions, blended by latitude: no shear accumulates
+        const fe = (x - drift) * 0.045, fw = (x + drift) * 0.045;
+        const ve = n(fe, fy + tt) * 0.6 + n2(fe * 2.3, fy * 2.3 - tt) * 0.4;
+        const vw = n(fw + 40, fy - tt) * 0.6 + n2(fw * 2.3 + 17, fy * 2.3 + tt) * 0.4;
+        let v = ve * e + vw * (1 - e);
         const c = wy * w.W + Math.min(w.W - 1, x * RES);
-        const wet = w.rain[c];
-        v += (wet - 0.45) * 0.55 + clamp(w.climate.dust * 0.4, 0, 0.5);
-        const a = smoothstep(0.08, 0.6, v);
+        v += (w.rain[c] - 0.5) * 0.7 + dust * 0.4;
+        const a = smoothstep(0.12, 0.62, v);
         const o = (y * this.cw + x) * 4;
-        const dust = clamp(w.climate.dust, 0, 1);
         d[o] = 246 - dust * 80; d[o + 1] = 248 - dust * 90; d[o + 2] = 252 - dust * 100;
-        d[o + 3] = a * 235;
+        d[o + 3] = a * 225;
         sd[o] = 10; sd[o + 1] = 14; sd[o + 2] = 30; sd[o + 3] = a * 255;
       }
     }
@@ -8584,9 +8612,9 @@ class CloudLayer {
     this.sctx.putImageData(this.simg, 0, 0);
   }
 
-  draw(ctx, cam, dt, tps, time) {
+  draw(ctx, cam, dt, tps, time, dim = 1) {
     this.update(dt, tps);
-    const alpha = clamp(1.25 - cam.zoom / 14, 0.12, 0.8);
+    const alpha = clamp(0.72 - cam.zoom / 14, 0.06, 0.45) * dim;
     if (alpha <= 0.01) return;
     const [x0, y0] = cam.toScreen(0, 0);
     const mw = this.w.W * cam.zoom, mh = this.w.H * cam.zoom;
@@ -8640,7 +8668,7 @@ class FxLayer {
     const q = w.fx;
     if (!q.length) return;
     w.fx = [];
-    for (const e of q) this.spawn(e, R);
+    for (const e of q) if (e.t === undefined || w.tick - e.t <= 8) this.spawn(e, R);
   }
 
   spawn(e, R) {
@@ -9409,6 +9437,21 @@ function drawCivilization(ctx, R, view, game) {
   const sel = R.selection && R.selection.type === 'city' ? R.selection.id : -1;
   const list = w.cities.filter((c) => c.alive && inView(c.x, c.y, 4));
   list.sort((a, b) => a.y - b.y);
+  // decide which labels fit: capitals and big cities claim space first
+  const placed = [];
+  const labelOK = new Set();
+  if (R.opts.labels) {
+    for (const c of list.slice().sort((a, b) => (b.capital - a.capital) || b.pop - a.pop)) {
+      const [sx, sy] = cam.toScreen(c.x + 0.5, c.y + 0.5);
+      const fs = clamp(9 + c.tier * 1.2 + (z - 4) * 0.4, 9, 15);
+      const ly = sy + Math.max(7, z * (0.45 + c.tier * 0.12)) + fs * 0.7;
+      const wdt = (c.name.z.length + (z >= 6.5 ? 4 : 0)) * fs * 0.9 + 14;
+      const box = [sx - wdt / 2, ly - fs * 0.75, sx + wdt / 2, ly + fs * 0.75];
+      if (placed.some((b) => b[0] < box[2] && box[0] < b[2] && b[1] < box[3] && box[1] < b[3])) continue;
+      placed.push(box);
+      labelOK.add(c.id);
+    }
+  }
   for (const c of list) {
     const n = w.nations[c.nation];
     const [sx, sy] = cam.toScreen(c.x + 0.5, c.y + 0.5);
@@ -9431,7 +9474,7 @@ function drawCivilization(ctx, R, view, game) {
       if (c.disease > 0.08) { badge(ctx, bx, sy - z * 0.6, '#5aa040', '☣'); bx += 12; }
       if (c.prayer) drawPrayer(ctx, c, sx, sy - Math.max(14, z * 1.4), t);
     }
-    if (R.opts.labels && (z >= 4.2 || (z >= 2.6 && c.tier >= 3) || c.capital && z >= 2.2)) {
+    if (labelOK.has(c.id) && (z >= 4.2 || (z >= 2.6 && c.tier >= 3) || c.capital && z >= 2.2)) {
       const fs = clamp(9 + c.tier * 1.2 + (z - 4) * 0.4, 9, 15);
       const ly = sy + Math.max(7, z * (0.45 + c.tier * 0.12)) + fs * 0.7;
       cityLabel(ctx, c, n, sx, ly, fs, z >= 6.5);
@@ -9611,15 +9654,19 @@ function drawBuilding(ctx, x, y, s, era, h, n, palace = false) {
   }
   if (era >= 8 && h > 0.35) {
     // towers
-    const hh = s * (1.8 + h * 2.6) * (era >= 10 ? 1.3 : 1);
-    const ww = s * 0.75;
-    ctx.fillStyle = era >= 10 ? '#c8d8f0' : h > 0.7 ? '#7c8aa0' : '#9aa4b4';
+    const hh = s * (1.4 + h * 2.2) * (era >= 10 ? 1.15 : 1);
+    const ww = s * (0.7 + (h * 7 % 1) * 0.35);
+    const base = era >= 10 ? (h > 0.75 ? [150, 190, 210] : [176, 196, 214]) : h > 0.7 ? [112, 124, 144] : [146, 154, 170];
+    ctx.fillStyle = rgb(base);
     ctx.fillRect(x - ww / 2, y - hh, ww, hh);
-    ctx.fillStyle = 'rgba(255,255,255,0.18)';
-    ctx.fillRect(x - ww / 2, y - hh, ww * 0.3, hh);
+    ctx.fillStyle = rgb(shade(base, 0.72));
+    ctx.fillRect(x + ww * 0.1, y - hh, ww * 0.4, hh);
+    ctx.fillStyle = 'rgba(255,255,255,0.14)';
+    ctx.fillRect(x - ww / 2, y - hh, ww * 0.18, hh);
+    if (era >= 9 && h > 0.85) { ctx.fillStyle = '#5aa86a'; ctx.beginPath(); ctx.ellipse(x, y - hh, ww * 0.55, s * 0.25, 0, 0, TAU); ctx.fill(); }
     ctx.fillStyle = 'rgba(255,236,160,0.75)';
     for (let k = 0; k < 4; k++) if (hash2(h * 100, k, 7) > 0.45) ctx.fillRect(x - ww * 0.3 + (k % 2) * ww * 0.35, y - hh * (0.25 + 0.18 * k), ww * 0.18, s * 0.12);
-    if (era >= 10) { ctx.fillStyle = '#e0f0ff'; ctx.beginPath(); ctx.moveTo(x - ww / 2, y - hh); ctx.lineTo(x, y - hh - s); ctx.lineTo(x + ww / 2, y - hh); ctx.fill(); }
+    if (era >= 10 && h < 0.6) { ctx.fillStyle = 'rgba(190,230,255,0.9)'; ctx.beginPath(); ctx.moveTo(x - ww * 0.3, y - hh); ctx.lineTo(x, y - hh - s * 0.8); ctx.lineTo(x + ww * 0.3, y - hh); ctx.fill(); }
     return;
   }
   if (era >= 6 && h < 0.25) {
@@ -9917,7 +9964,7 @@ class Renderer {
     if (this.opts.creatures) drawCreatures(ctx, this, view, game);
     drawCivilization(ctx, this, view, game);
 
-    if (this.opts.clouds) this.clouds.draw(ctx, cam, dt, tps, this.time);
+    if (this.opts.clouds) this.clouds.draw(ctx, cam, dt, tps, this.time, this.opts.overlay === 'none' ? 1 : 0.35);
     this.fx.draw(ctx, this, dt, view);
 
     if (this.opts.daynight) this.drawNight(ctx, x0, y0, mw, mh);
@@ -10327,6 +10374,10 @@ class Game {
   }
 
   handleNotice(no) {
+    if (this.world && this.world.demo) {
+      if (no.kind === 'chronicle' && no.entry.imp >= 2 && no.entry.x != null) this.directorQueue.push(no.entry);
+      return;
+    }
     if (no.kind === 'chronicle') {
       const e = no.entry;
       if (e.imp >= this.settings.toastLevel) this.emit('toast', { text: e.text, year: e.year, cat: e.cat, imp: e.imp, x: e.x, y: e.y });
@@ -10961,7 +11012,7 @@ function buildHUD(game, ui) {
       el.append(h('div.opt-row', {}, h('label', { text: '建立部落的物种' }), sel, h('div.hint', { text: '选择非智慧物种时，它会被直接赋予智慧。' })));
     }
   }
-  game.on('tool', renderGrid);
+  game.on('tool', (id) => { if (id === 'inspect') openCat = null; renderGrid(); });
   game.on('world', renderGrid);
   ui.renderToolGrid = renderGrid;
   renderGrid();
@@ -11069,7 +11120,7 @@ function buildHUD(game, ui) {
     if (t.ach) el.classList.add('ach');
     if (t.x != null) el.addEventListener('click', () => game.flyTo(t.x + 0.5, t.y + 0.5));
     toasts.append(el);
-    while (toasts.childElementCount > 5) toasts.firstChild.remove();
+    while (toasts.childElementCount > 4) toasts.firstChild.remove();
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, t.quick ? 2600 : t.imp >= 3 ? 9000 : 6000);
   });
 
@@ -11129,8 +11180,8 @@ function describeAt(game, x, y) {
   if (w.flow[c] > 14 && !water) s += '<br>河流';
   if (w.res[c]) s += `<br>资源：${RESOURCES[w.res[c]].name}`;
   if (w.owner[c] >= 0) s += `<br><span class="dim">领土：</span>${esc(w.nations[w.owner[c]].name)}`;
-  if (w.fire[c]) s += '<br>🔥 正在燃烧';
-  if (w.rad[c] > 0.05) s += '<br>☢ 辐射污染';
+  if (w.fire[c]) s += '<br><span style="color:#ffb38a">正在燃烧</span>';
+  if (w.rad[c] > 0.05) s += '<br><span style="color:#b8f090">辐射污染</span>';
   return s;
 }
 

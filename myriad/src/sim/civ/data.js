@@ -73,7 +73,10 @@ export const TECHS = [
 
 export const TECH = Object.fromEntries(TECHS.map((t) => [t.id, t]));
 export const NTECH = TECHS.length;
-export const techCost = (t) => 60 * Math.pow(2.8, t.era) * (1 + t.req.length * 0.1);
+// base research cost per era: steep through antiquity, flatter in the modern eras where a nation's
+// science output (universities, labs, networks) is what limits the pace
+const ERA_COST = [60, 170, 480, 1300, 3700, 10000, 26000, 45000, 70000, 100000, 135000];
+export const techCost = (t) => ERA_COST[t.era] * (1 + t.req.length * 0.1);
 
 // buildings: id, name, tech, production cost, description
 export const BUILDINGS = [

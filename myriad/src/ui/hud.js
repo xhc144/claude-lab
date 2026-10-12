@@ -217,7 +217,7 @@ export function buildHUD(game, ui) {
       el.append(h('div.opt-row', {}, h('label', { text: '建立部落的物种' }), sel, h('div.hint', { text: '选择非智慧物种时，它会被直接赋予智慧。' })));
     }
   }
-  game.on('tool', renderGrid);
+  game.on('tool', (id) => { if (id === 'inspect') openCat = null; renderGrid(); });
   game.on('world', renderGrid);
   ui.renderToolGrid = renderGrid;
   renderGrid();
@@ -325,7 +325,7 @@ export function buildHUD(game, ui) {
     if (t.ach) el.classList.add('ach');
     if (t.x != null) el.addEventListener('click', () => game.flyTo(t.x + 0.5, t.y + 0.5));
     toasts.append(el);
-    while (toasts.childElementCount > 5) toasts.firstChild.remove();
+    while (toasts.childElementCount > 4) toasts.firstChild.remove();
     setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 300); }, t.quick ? 2600 : t.imp >= 3 ? 9000 : 6000);
   });
 
@@ -385,7 +385,7 @@ export function describeAt(game, x, y) {
   if (w.flow[c] > 14 && !water) s += '<br>河流';
   if (w.res[c]) s += `<br>资源：${RESOURCES[w.res[c]].name}`;
   if (w.owner[c] >= 0) s += `<br><span class="dim">领土：</span>${esc(w.nations[w.owner[c]].name)}`;
-  if (w.fire[c]) s += '<br>🔥 正在燃烧';
-  if (w.rad[c] > 0.05) s += '<br>☢ 辐射污染';
+  if (w.fire[c]) s += '<br><span style="color:#ffb38a">正在燃烧</span>';
+  if (w.rad[c] > 0.05) s += '<br><span style="color:#b8f090">辐射污染</span>';
   return s;
 }

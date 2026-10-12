@@ -66,9 +66,9 @@ export class CloudLayer {
     this.sctx.putImageData(this.simg, 0, 0);
   }
 
-  draw(ctx, cam, dt, tps, time) {
+  draw(ctx, cam, dt, tps, time, dim = 1) {
     this.update(dt, tps);
-    const alpha = clamp(0.95 - cam.zoom / 16, 0.1, 0.6);
+    const alpha = clamp(0.72 - cam.zoom / 14, 0.06, 0.45) * dim;
     if (alpha <= 0.01) return;
     const [x0, y0] = cam.toScreen(0, 0);
     const mw = this.w.W * cam.zoom, mh = this.w.H * cam.zoom;

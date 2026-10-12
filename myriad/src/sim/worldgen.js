@@ -133,6 +133,12 @@ export function generateTerrain(w, opts = {}) {
     if (v >= t) elev[c] = Math.pow((v - t) / (hi - t + 1e-9), 2.0) * 0.95 + 0.002;
     else elev[c] = -Math.pow((t - v) / (t - lo + 1e-9), 0.55);
   }
+  // the outermost cells are always sea, whatever the mountains near the rim say
+  for (let c = 0; c < w.N; c++) {
+    const x = c % W, y = (c / W) | 0;
+    const d = Math.min(x, y, W - 1 - x, H - 1 - y);
+    if (d < 3) elev[c] = Math.min(elev[c], -0.03 - (3 - d) * 0.03);
+  }
 
   // ---- volcanoes: subduction arcs plus a hot spot or two
   w.volcanoes = [];

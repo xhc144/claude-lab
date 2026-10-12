@@ -7,7 +7,7 @@ import { log } from './chronicle.js';
 import { pushFx, forDisk, year } from './state.js';
 import { rel } from './civ/nation.js';
 import { newRuler, fullName } from './civ/people.js';
-import { loseTechs, grantTech, available, effectiveCost } from './civ/tech.js';
+import { loseTechs, grantTech, available, effectiveCost, researchRate } from './civ/tech.js';
 import { IDEAS, TECH } from './civ/data.js';
 import { forCreaturesNear } from './life/creatures.js';
 
@@ -124,7 +124,7 @@ export const EVENTS = [
       const n = pickNation(w, rng);
       if (!n || !n.research) return false;
       const t = TECH[n.research];
-      n.researchPts += effectiveCost(w, n, t) * 0.4;
+      n.researchPts += Math.min(effectiveCost(w, n, t) * 0.3, 20 + researchRate(n.stats.sci) * 4);
       log(w, 'science', `一次失败的实验意外带来了启发——${n.adj}在「${t.name}」上进展神速。`, { imp: 1, nations: [n.id] });
       return true;
     },
@@ -229,11 +229,14 @@ export const EVENTS = [
     id: 'bell', name: '古钟自鸣',
     weight: (w) => (w.ruins.some((r) => r.discovered) ? 0.6 : 0),
     run(w, rng) {
-      const r = rng.pick(w.ruins.filter((r) => r.discovered));
+      const found = w.ruins.filter((r) => r.discovered);
+      if (!found.length) return false;
+      const r = rng.pick(found);
       const o = w.owner[r.y * w.W + r.x];
       if (o < 0) return false;
       const n = w.nations[o];
-      const av = available(n);
+      // only what the vanished city itself knew can be recovered
+      const av = available(n).filter((t) => t.era <= (r.era ?? 0));
       if (!av.length) return false;
       const t = rng.pick(av);
       grantTech(w, n, t.id, 'ruin');

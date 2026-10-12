@@ -27,7 +27,7 @@ export class FxLayer {
     const q = w.fx;
     if (!q.length) return;
     w.fx = [];
-    for (const e of q) this.spawn(e, R);
+    for (const e of q) if (e.t === undefined || w.tick - e.t <= 8) this.spawn(e, R);
   }
 
   spawn(e, R) {

@@ -133,7 +133,7 @@ export class Renderer {
     if (this.opts.creatures) drawCreatures(ctx, this, view, game);
     drawCivilization(ctx, this, view, game);
 
-    if (this.opts.clouds) this.clouds.draw(ctx, cam, dt, tps, this.time);
+    if (this.opts.clouds) this.clouds.draw(ctx, cam, dt, tps, this.time, this.opts.overlay === 'none' ? 1 : 0.35);
     this.fx.draw(ctx, this, dt, view);
 
     if (this.opts.daynight) this.drawNight(ctx, x0, y0, mw, mh);

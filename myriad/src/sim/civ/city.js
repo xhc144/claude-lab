@@ -127,6 +127,8 @@ export function destroyCity(w, city, cause, opts = {}) {
   city.alive = false;
   city.fell = w.tick;
   city.pop = 0;
+  // its caravans and ships stop at once (routes are otherwise only pruned yearly)
+  w.routes = w.routes.filter((r) => r.a !== city.id && r.b !== city.id);
   const i = n.cities.indexOf(city.id);
   if (i >= 0) n.cities.splice(i, 1);
   if (n.capital === city.id) {

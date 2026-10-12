@@ -123,6 +123,7 @@ export function markTerrainChanged(w) {
 }
 
 export function pushFx(w, fx) {
+  fx.t = w.tick;
   if (w.fx.length < 400) w.fx.push(fx);
 }
 

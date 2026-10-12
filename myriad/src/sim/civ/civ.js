@@ -11,7 +11,7 @@ import { createNation, rel } from './nation.js';
 import { foundCity, tierOf, TIERS, destroyCity, developLand, tileFood } from './city.js';
 import { findPath, labelLandmasses } from './path.js';
 import { computeTerritory } from './territory.js';
-import { techFlags, addResearch, grantTech, grantUpToEra, effectiveCost } from './tech.js';
+import { techFlags, addResearch, grantTech, grantUpToEra, effectiveCost, researchRate } from './tech.js';
 import { computeAccess, updateTrade, tradeIncome, connectCities } from './economy.js';
 import { folkReligion, stepMythogenesis, spreadReligions, updateStateReligion, maybeSchism, updatePrayers, createReligion, normalize } from './religion.js';
 import { stepIdeaOrigins, spreadIdeas, stepNationIdeas } from './ideas.js';
@@ -238,7 +238,7 @@ function yields(w, rng) {
     const upkeep = n.cities.reduce((s, ci) => s + w.cities[ci].buildings.length * 0.15, 0) + w.armies.filter((a) => a.nation === n.id).reduce((s, a) => s + a.str * 0.002, 0);
     n.treasury += st.wealth - upkeep;
     if (n.treasury < -50) { n.stability -= 0.05; n.treasury = -50; }
-    const done = addResearch(w, n, st.sci);
+    const done = addResearch(w, n, researchRate(st.sci));
     if (done) { const ld = w.persons[n.leader]; if (ld) ld.stats.techs++; }
     if (st.pop > n.peakPop) n.peakPop = st.pop;
     if (n.cities.length > n.peakCities) n.peakCities = n.cities.length;
@@ -572,7 +572,7 @@ function greatPeople(w, n, rng) {
     case 'scientist': {
       const t = n.research ? TECH[n.research] : null;
       if (t) {
-        n.researchPts += effectiveCost(w, n, t) * 0.45;
+        n.researchPts += Math.min(effectiveCost(w, n, t) * 0.3, 20 + researchRate(n.stats.sci) * 5);
         p.deeds.push(`推动「${t.name}」的研究`);
         text = `${city.name.z}的天才学者${name}在「${t.name}」上取得了重大突破。`;
       }
