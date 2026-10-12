@@ -90,6 +90,7 @@ async function main() {
   const canvas = document.getElementById('universe');
   const universe = createUniverse(canvas, { count: env.particles, quality: env.quality, pixelRatio: env.pixelRatio });
   if (!universe) document.body.classList.add('no-webgl');
+  else if (env.reducedMotion) { universe.reduced = true; universe.morphDur = 1.2; }
   window.__universe = universe;
 
   renderTex();

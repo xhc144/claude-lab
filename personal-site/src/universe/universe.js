@@ -22,7 +22,7 @@ export const RIGS = {
   filament: { cam: [0, 0.2, 7.6], look: [0, 0, 0], tilt: 0.25, rot: 0.07, spin: 0, pulse: 1.0, pf: 1.0, ps: 2.2, size: 1.0, gain: 0.85 },
   landscape: { cam: [0, 4.4, 5.6], look: [0, -0.5, 0], tilt: 0.0, rot: 0.025, spin: 0, pulse: 0.25, pf: 3.1416, ps: 1.0, size: 1.0, gain: 1.45 },
   fiber: { cam: [0, 0, 10.2], look: [0, 0, 0], tilt: -0.35, rot: 0.06, spin: 0, pulse: 0.5, pf: 1.0, ps: 2.0, size: 0.95, gain: 0.62, bloom: 0.42 },
-  lorenz: { cam: [0, 0.3, 6.4], look: [0, 0.3, 0], tilt: 0.12, rot: 0.06, spin: 0, pulse: 1.0, pf: 1.0, ps: 3.0, size: 0.95, gain: 0.8 },
+  lorenz: { cam: [0, 0.3, 6.4], look: [0, 0.3, 0], tilt: 0.12, rot: 0.06, spin: 0, pulse: 1.0, pf: 1.0, ps: 3.0, size: 1.0, gain: 1.1 },
   latent: { cam: [0, 0.6, 7.0], look: [0, 0, 0], tilt: 0.15, rot: 0.05, spin: 0, pulse: 0.8, pf: 1.0, ps: 2.4, size: 1.05, gain: 0.85 },
   archive: { cam: [0, 2.4, 7.6], look: [0, 0.0, 0], tilt: 0.06, rot: 0.045, spin: 0, pulse: 1.0, pf: 1.0, ps: 2.6, size: 0.95, gain: 0.8 },
   hopf: { cam: [0, 0, 8.2], look: [0, 0, 0], tilt: -1.05, rot: 0.04, spin: 0, pulse: 0.4, pf: 1.0, ps: 1.0, size: 1.0, gain: 0.85 },
@@ -84,7 +84,7 @@ void main() {
 
   vec4 col = mix(aColFrom, aColTo, m);
   float pulse = pow(0.5 + 0.5 * sin(col.a * uPulseFreq - uTime * uPulseSpeed), 14.0);
-  vColor = pow(max(col.rgb, 0.0), vec3(2.2)) * (1.0 + uPulse * pulse * 2.4);
+  vColor = pow(max(col.rgb, 0.0), vec3(GAMMA)) * (1.0 + uPulse * pulse * 2.4);
   if (uToProc > 0.5 && uProcKind < 1.5) {
     vec3 tint = 0.62 + 0.38 * cos(6.2831853 * (gPage / uPages + vec3(0.0, 0.33, 0.67)));
     vColor *= mix(vec3(1.0), tint * 1.25, uSpread * m);
@@ -135,7 +135,7 @@ void main() {
   float fres = pow(1.0 - abs(dot(normalize(vN), normalize(vView))), 1.6);
   float pulse = pow(0.5 + 0.5 * sin(vUv.x * 18.85 - uTime * 2.4), 24.0);
   vec3 col = mix(vec3(1.0, 0.42, 0.14), vec3(1.0, 0.94, 0.84), 0.25 + 0.75 * fres) * (0.32 + 1.7 * pulse);
-  gl_FragColor = vec4(pow(col, vec3(2.2)) * uOpacity, 1.0);
+  gl_FragColor = vec4(pow(col, vec3(GAMMA)) * uOpacity, 1.0);
 }`;
 
 const FILM = {
@@ -179,6 +179,8 @@ export class Universe {
     this.scene.add(this.group);
     this.look = new THREE.Vector3();
 
+    // colours are authored in sRGB: linearise them when the post chain (OutputPass) converts back
+    this.defines = { GAMMA: quality === 'low' ? '1.0' : '2.2' };
     this._initPoints();
     this._initKnot();
     this._initHopfLines();
@@ -223,7 +225,7 @@ export class Universe {
       uHopfRot: { value: new THREE.Matrix4() },
     };
     const mat = new THREE.ShaderMaterial({
-      uniforms: this.uniforms, vertexShader: VERT, fragmentShader: FRAG,
+      uniforms: this.uniforms, vertexShader: VERT, fragmentShader: FRAG, defines: this.defines,
       transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
     });
     this.points = new THREE.Points(g, mat);
@@ -237,7 +239,7 @@ export class Universe {
     const geo = new THREE.TubeGeometry(curve, 900, 0.028, 10, true);
     this.knotUniforms = { uTime: { value: 0 }, uOpacity: { value: 0 }, uWobble: { value: 0 } };
     const mat = new THREE.ShaderMaterial({
-      uniforms: this.knotUniforms, vertexShader: TUBE_VERT, fragmentShader: TUBE_FRAG,
+      uniforms: this.knotUniforms, vertexShader: TUBE_VERT, fragmentShader: TUBE_FRAG, defines: this.defines,
       transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     });
     this.knot = new THREE.Mesh(geo, mat);
@@ -262,7 +264,7 @@ export class Universe {
     g.setAttribute('position', new THREE.BufferAttribute(data, 3));
     this.hopfLineUniforms = { uTime: this.uniforms.uTime, uHopfRot: this.uniforms.uHopfRot, uOpacity: { value: 0 } };
     const mat = new THREE.ShaderMaterial({
-      uniforms: this.hopfLineUniforms,
+      uniforms: this.hopfLineUniforms, defines: this.defines,
       vertexShader: `uniform float uTime; uniform mat4 uHopfRot; varying vec3 vC; varying float vF;
         void main(){
           float eta = position.x, alpha = position.y, t = position.z;
@@ -274,7 +276,7 @@ export class Universe {
           gl_Position = projectionMatrix * modelViewMatrix * vec4(p, 1.0);
         }`,
       fragmentShader: `uniform float uOpacity; varying vec3 vC; varying float vF;
-        void main(){ gl_FragColor = vec4(pow(vC, vec3(2.2)) * 0.36 * uOpacity * vF, 1.0); }`,
+        void main(){ gl_FragColor = vec4(pow(vC, vec3(GAMMA)) * 0.36 * uOpacity * vF, 1.0); }`,
       transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
     });
     this.hopfLines = new THREE.LineSegments(g, mat);
@@ -414,6 +416,8 @@ export class Universe {
     u.uSpinTo.value = rig.spin;
     u.uPulseFreq.value = rig.pf;
     u.uPulseSpeed.value = rig.ps;
+    const st = this.state;
+    st.rotY += st.dragX; st.tilt += st.dragY; st.dragX = 0; st.dragY = 0; st.velX = 0; st.velY = 0;
     this.prevShape = this.shape;
     this.shape = name;
     this.rig = rig;
@@ -427,8 +431,9 @@ export class Universe {
     const rig = this.rig, s = this.state;
     this.morphT = 1; this.uniforms.uMorph.value = 1;
     s.focus = s.focusTarget; s.tilt = rig.tilt; s.spread = s.spreadTarget;
-    this.camera.position.set(...rig.cam);
-    this.look.set(...rig.look);
+    const sideways = this.width / this.height < 0.8 ? 0 : 1;
+    this.camera.position.set(rig.cam[0] * sideways, rig.cam[1], rig.cam[2]);
+    this.look.set(rig.look[0] * sideways, rig.look[1], rig.look[2]);
     this.camera.lookAt(this.look);
     s.knotVis = this.shape === 'fiber' && s.knotWanted ? 1 : 0;
     this.hopfLineUniforms.uOpacity.value = this.shape === 'hopf' ? s.focus : 0;
@@ -517,7 +522,7 @@ export class Universe {
       s.velX *= Math.exp(-dt * 3); s.velY *= Math.exp(-dt * 3);
       s.dragX += s.velX * dt * 4; s.dragY += s.velY * dt * 4;
     }
-    s.rotY += dt * rig.rot;
+    s.rotY += dt * rig.rot * (this.reduced ? 0.25 : 1);
     s.tilt = damp(s.tilt, rig.tilt, 1.5, dt);
     this.group.rotation.y = s.rotY + s.dragX;
     this.group.rotation.x = Math.max(-1.4, Math.min(1.4, s.tilt + s.dragY));
@@ -526,10 +531,11 @@ export class Universe {
     const cam = this.camera;
     const k = 1.4;
     const zoom = 1 - s.zoom * 0.25;
-    cam.position.x = damp(cam.position.x, rig.cam[0] * zoom + s.mouse.x * 0.35, k, dt);
+    const sideways = this.width / this.height < 0.8 ? 0 : 1; // portrait screens: keep the subject centred
+    cam.position.x = damp(cam.position.x, rig.cam[0] * zoom * sideways + s.mouse.x * 0.35, k, dt);
     cam.position.y = damp(cam.position.y, rig.cam[1] * zoom + s.mouse.y * 0.25, k, dt);
     cam.position.z = damp(cam.position.z, rig.cam[2] * zoom, k, dt);
-    this.look.x = damp(this.look.x, rig.look[0], k, dt);
+    this.look.x = damp(this.look.x, rig.look[0] * sideways, k, dt);
     this.look.y = damp(this.look.y, rig.look[1], k, dt);
     this.look.z = damp(this.look.z, rig.look[2], k, dt);
     cam.lookAt(this.look);
