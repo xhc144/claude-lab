@@ -13,9 +13,18 @@
 
 ---
 
-## 运行
+## 下载即用（推荐）
 
-需要一个现代浏览器（Chrome / Edge 99+、Firefox 112+、Safari 16+）。因为使用 ES 模块，页面必须通过 HTTP 访问，不能直接双击 `index.html`（`file://`）打开。
+整个软件打包成了**一个 HTML 文件**：[`dist/mathscape.html`](dist/mathscape.html)（约 270 KB）。下载后双击，用浏览器打开即可，不需要安装任何东西，也不需要联网。
+
+- 在 GitHub 上打开 [这个文件](https://github.com/xhc144/claude-lab/blob/main/mathscape/dist/mathscape.html)，点右上角的 **Download raw file**（下载图标）；
+- 或者用命令行：`curl -LO https://raw.githubusercontent.com/xhc144/claude-lab/main/mathscape/dist/mathscape.html`
+
+需要一个现代浏览器：Chrome / Edge 99+、Firefox 112+、Safari 16+。
+
+## 从源码运行
+
+源码版本使用 ES 模块，浏览器不允许从 `file://` 加载，所以要通过 HTTP 打开（单文件版没有这个限制）：
 
 ```bash
 cd mathscape
@@ -48,10 +57,12 @@ npm start                 # 零依赖静态服务器（Node ≥ 18），打开 h
 cd mathscape
 npm install                    # 仅安装测试工具 @playwright/test
 npx playwright install chromium   # 首次运行端到端测试前下载浏览器
-npm test                       # = 单元测试 + 端到端测试
+npm test                       # = 单元测试 + 端到端测试（源码版和单文件版各跑一遍）
 npm run test:unit              # 50 个单元测试（node --test，不需要浏览器，约 2 秒）
 npm run test:e2e               # 32 个端到端测试（Playwright 驱动真实 Chromium，约 40 秒）
-npm run lint                   # 零依赖静态检查：语法 + 所有相对 import 都指向真实存在的导出
+npm run test:dist              # 重新打包，并对 dist/mathscape.html 跑全部端到端测试
+npm run lint                   # 零依赖静态检查：语法、所有相对 import 都指向真实存在的导出、dist/ 与源码同步
+npm run build                  # 修改源码后重新生成 dist/mathscape.html（要一起提交）
 ```
 
 ### 单元测试验证的数学结论（`tests/unit/`）
@@ -131,6 +142,8 @@ mathscape/
 │   │   └── curves.js            自适应曲线采样
 │   ├── ui/                      Canvas 图层、视口与手势、控件、绘图工具
 │   └── modules/                 四个模块（ode.js 组合 phase2d.js 与 attractor3d.js）
+├── dist/mathscape.html          单文件版（由 scripts/build.mjs 生成，勿手改）
+├── scripts/build.mjs            零依赖打包器：CSS 与全部模块内联成一个 HTML
 ├── scripts/serve.mjs            零依赖静态服务器
 ├── scripts/check.mjs            零依赖静态检查
 └── tests/unit, tests/e2e        单元测试与端到端测试
