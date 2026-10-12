@@ -12,6 +12,9 @@ import { installFluids } from './fluids.js';
 import { installPlants } from './plants.js';
 import { installWeather } from './weather.js';
 import { installEvents } from './events.js';
+import { installCircuits } from './circuits.js';
+import { installMachines } from './machines.js';
+import { installTransport } from './transport.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -40,6 +43,9 @@ export function installSystems(game, state) {
   installPlants(game);
   installWeather(game, state);
   installEvents(game, state);
+  installCircuits(game);
+  installMachines(game);
+  installTransport(game);
 
   // entity ticking, particles, audio, rendering
   game.addSystem({

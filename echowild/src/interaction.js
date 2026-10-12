@@ -110,6 +110,7 @@ export class Interaction {
           if (p.medium && p.medium.eyeWater) need *= 3;
           if (!p.onGround && !p.flying && !(p.medium && p.medium.climb) && !(p.medium && p.medium.water > 0.2)) need *= 2.5;
           this.mining = { x: hit.x, y: hit.y, z: hit.z, v: hit.v, time: 0, need, face: hit.face, tick: 0 };
+          g.emit('blockHit', hit.x, hit.y, hit.z, hit.v);
         }
         const mm = this.mining;
         mm.time += dt;

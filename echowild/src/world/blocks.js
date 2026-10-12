@@ -172,7 +172,7 @@ def('dead_bush', '枯灌木', plant({ tex: 'dead_bush', replaceable: true, drops
 def('reeds', '芦苇', plant({ tex: 'reeds', drops: 'reeds' }));
 def('glowshroom', '荧光菇', plant({ tex: 'glowshroom', light: [2, 10, 9], flammable: 0 }));
 def('red_mushroom', '赤菇', plant({ tex: 'red_mushroom', flammable: 0 }));
-def('berry_bush', '霜莓丛', plant({ tex: 'berry_bush', texAlt: 'berry_bush_ripe', drops: null, flammable: 40 }));
+def('berry_bush', '霜莓丛', plant({ tex: 'berry_bush', texAlt: 'berry_bush_ripe', drops: null, flammable: 40, use: 'pick' }));
 def('cactus', '仙人柱', { shape: 'cactus', tex: { top: 'cactus_top', bottom: 'cactus_top', side: 'cactus_side' }, opaque: false, layer: L_CUTOUT, hardness: 0.4, sound: 'cloth', damage: 1, cat: 'nature' });
 def('lily_pad', '睡莲', { shape: 'flat', tex: 'lily_pad', solid: true, opaque: false, layer: L_CUTOUT, hardness: 0, sound: 'plant', tint: 2, cat: 'nature' });
 def('seagrass', '海草', plant({ tex: 'seagrass', replaceable: true, drops: null, water: true }));

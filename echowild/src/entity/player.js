@@ -50,6 +50,7 @@ export class Player {
     const world = this.game.world;
     this.prev.x = this.x; this.prev.y = this.y; this.prev.z = this.z;
     if (this.dead) { this.vx = this.vz = 0; return; }
+    if (this.riding) { this.riding.carry(this, inp, dt); this.fallStart = null; this.updateVitals(dt); return; }
     if (!world.isLoaded(Math.floor(this.x), Math.floor(this.z))) return; // wait for terrain
 
     const med = sampleMedium(world, this);

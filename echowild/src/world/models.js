@@ -160,7 +160,7 @@ function normalToFace(n) {
   return 6;
 }
 export function rotate6(quads, to) {
-  if (to === 2) return quads;
+  if (to === 2 || !ROT6[to]) return quads;
   const r = ROT6[to];
   const rf = (f) => {
     if (f < 0 || f > 5) return f;
@@ -480,7 +480,7 @@ const SHAPES = {
     }
     // curves 6..9: SE, SW, NW, NE (connecting south+east etc.)
     const ct = T('rail_curve');
-    const k = shape === 6 ? 0 : shape === 7 ? 1 : shape === 8 ? 2 : 3;
+    const k = shape === 6 ? 0 : shape === 7 ? 3 : shape === 8 ? 2 : 1; // SE, SW, NW, NE
     return flat(k, ct);
   },
   vine(d, meta) {
@@ -522,6 +522,8 @@ const SHAPES = {
     return [...box(4, 0, 4, 12, 9, 12, f), ...box(5, 9, 5, 11, 12, 11, f, { uv: { 2: [5, 5, 11, 11] } })];
   },
 };
+
+SHAPES.inverter = SHAPES.torch;
 
 const SWAYING = new Set(['tall_grass', 'fern', 'dawnflower', 'bellbloom', 'bluestar', 'emberbloom', 'moonlily', 'reeds', 'seagrass', 'oak_sapling', 'birch_sapling', 'pine_sapling', 'blossom_sapling', 'willow_sapling', 'cloud_sapling', 'berry_bush']);
 
