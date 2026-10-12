@@ -371,8 +371,10 @@ export const EVENTS = [
 /** yearly: maybe run one random event */
 export function stepEvents(w, rng) {
   if (!rng.chance(0.14 + Math.min(0.2, w.cities.length * 0.002))) return null;
-  const e = rng.weighted(EVENTS, (e) => e.weight(w));
+  const last = w.eventLast || (w.eventLast = {});
+  const e = rng.weighted(EVENTS, (e) => (w.tick - (last[e.id] ?? -1e9) < 40 ? 0 : e.weight(w)));
   if (!e) return null;
+  last[e.id] = w.tick;
   return e.run(w, rng) ? e.id : null;
 }
 

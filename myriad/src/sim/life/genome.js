@@ -10,7 +10,9 @@ import { clamp } from '../../core/util.js';
 export const GENE_WEIGHT = new Float32Array([1, 0.8, 1.2, 0.8, 1.3, 0.6, 0.5, 0.5, 0.8, 0.6, 0.6, 0.7, 1.1, 0.7, 0.4]);
 const WSUM = GENE_WEIGHT.reduce((a, b) => a + b, 0);
 
-export const HAB_WATER = 0, HAB_AMPHI = 1, HAB_LAND = 2;
+export const HAB_WATER = 0;
+export const HAB_AMPHI = 1;
+export const HAB_LAND = 2;
 
 /** habitat class of a habitat gene */
 export const habitatOf = (g) => (g < 0.33 ? HAB_WATER : g < 0.62 ? HAB_AMPHI : HAB_LAND);

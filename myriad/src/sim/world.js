@@ -17,6 +17,8 @@ import { log } from './chronicle.js';
 import { prof, now } from '../core/prof.js';
 import { stepEvents } from './events.js';
 import { initEntities, stepEntities } from './entities.js';
+import { initStats, sampleStats } from './stats.js';
+import { checkAchievements } from './achievements.js';
 
 export const SIZES = {
   small: { W: 240, H: 150, name: '小' },
@@ -59,10 +61,13 @@ export function createWorld(opts = {}) {
   initLife(w, cap);
   initCiv(w);
   initEntities(w);
+  initStats(w);
+  w.seaLevelBase0 = w.seaLevel;
   labelLandmasses(w);
   seedLife(w, opts.life || (opts.start === 'primordial' ? 'primordial' : opts.start === 'barren' ? 'none' : 'flourishing'), w.rng);
   if (opts.start === 'tribes' || opts.start === 'kingdoms') seedPeoples(w, opts.start === 'kingdoms' ? 3 : null);
   log(w, 'nature', startText(opts.start), { imp: 2 });
+  sampleStats(w);
   return w;
 }
 
@@ -102,6 +107,19 @@ export function seedPeoples(w, era = null) {
     }
   }
   return tribes;
+}
+
+/** recompute climate and rivers right away (used while the player edits a paused world) */
+export function refreshDerived(w) {
+  if (w.dirty.climate || w.dirty.hydro) {
+    computeClimate(w);
+    computeHydrology(w);
+    computeClimate(w);
+    w._vcap = null;
+    w.dirty.territory = true;
+    return true;
+  }
+  return false;
 }
 
 /** advance the world by one tick (one season) */
@@ -146,6 +164,8 @@ function yearly(w) {
   stepGeologyYear(w, rng);
   maybeEarthquake(w, rng);
   stepEvents(w, rng);
+  sampleStats(w);
+  checkAchievements(w);
   const m = maybeMeteor(w, rng);
   if (m) meteorImpact(w, m.x, m.y, m.r, rng);
   if (year(w) % 5 === 0) {

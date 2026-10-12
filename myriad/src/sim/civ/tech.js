@@ -87,6 +87,7 @@ export function grantTech(w, n, id, how = 'research') {
   if (n.techs[t.i]) return;
   n.techs[t.i] = 1;
   techFlags(n);
+  if (n.research === id) n.research = null;
   const firstInWorld = !w.techFirsts[id];
   if (firstInWorld) {
     w.techFirsts[id] = { nation: n.id, tick: w.tick };

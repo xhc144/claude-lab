@@ -117,7 +117,8 @@ export function endReign(w, n, cause = 'death') {
   p.died = w.tick;
   p.epithet = epithetFor(w, p, n);
   const reign = Math.max(0, Math.round((w.tick - p.start) / 4));
-  if (cause === 'death' && (p.epithet || reign > 30 || n.cities.length >= 6)) {
+  const notable = ['征服者', '失地者', '营造者', '疯王', '残暴者', '长治者'].includes(p.epithet);
+  if (cause === 'death' && (notable || reign > 40 || n.cities.length >= 8)) {
     log(w, 'civ', `${n.name}${p.title}${fullName(p)}${cause === 'death' ? '去世' : '下台'}，在位 ${reign} 年。`, { imp: 1, nations: [n.id] });
   }
   return p;

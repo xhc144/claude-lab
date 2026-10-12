@@ -309,6 +309,27 @@ export function militaryAI(w, n, rng) {
   n.treasury -= 5;
 }
 
+/** physical effects of a nuclear explosion at a city; returns the number killed */
+export function nukeEffects(w, city) {
+  const x = city.x + 0.5, y = city.y + 0.5;
+  pushFx(w, { type: 'nuke', x, y });
+  pushImpact(w, { kind: 'nuke', x, y, r: 4, power: 10 });
+  forDisk(w, x, y, 5, (c, xx, yy, d2) => {
+    const k = 1 - Math.sqrt(d2) / 5;
+    w.rad[c] = Math.min(1, w.rad[c] + 0.9 * k);
+    w.veg[c] *= 0.1;
+    if (w.impr[c] === IMP.URBAN || w.impr[c] === IMP.FARM) w.impr[c] = IMP.RUIN;
+    w.scorch[c] = Math.max(w.scorch[c], 40);
+  });
+  w.climate.dust += 0.25;
+  w.dirty.climate = true;
+  w.terrainVersion++;
+  w.nukes = (w.nukes || 0) + 1;
+  const dead = Math.round(city.pop * 0.85);
+  city.pop *= 0.15;
+  return dead;
+}
+
 /** the unthinkable: an atomic power strikes an enemy city */
 export function nuclearStrike(w, n, city, rng) {
   const target = w.nations[city.nation];
