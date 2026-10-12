@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { watchErrors, open, canvasStats, state } from './helpers.mjs';
+import { watchErrors, open, canvasStats, state, APP } from './helpers.mjs';
 
 test('loads, shows four modules and switches by click, hash and keyboard', async ({ page }) => {
   const check = watchErrors(page);
@@ -19,7 +19,7 @@ test('loads, shows four modules and switches by click, hash and keyboard', async
   await page.keyboard.press('4');
   await expect(page.locator('#module-title')).toHaveText('三体运动');
 
-  await page.goto('/#/matrix');
+  await page.goto(`${APP}#/matrix`);
   await expect(page.locator('#module-title')).toHaveText('矩阵线性变换');
   check();
 });
