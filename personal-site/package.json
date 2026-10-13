@@ -1,0 +1,30 @@
+{
+  "name": "xhc144-site",
+  "version": "1.0.0",
+  "description": "xhc144 个人网站《0 → ∞》：从 0 维到无穷维的数学、物理与 AI 数字空间",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "dev": "node scripts/build.mjs --watch --serve",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/serve.mjs",
+    "test": "node --test \"tests/unit/*.test.mjs\" && playwright test",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test",
+    "shots": "node scripts/shots.mjs",
+    "zip": "node scripts/zip.mjs"
+  },
+  "dependencies": {
+    "katex": "0.18.7",
+    "three": "0.186.0"
+  },
+  "devDependencies": {
+    "@fontsource/jetbrains-mono": "5.3.0",
+    "@fontsource/space-grotesk": "5.3.0",
+    "@playwright/test": "1.56.1",
+    "esbuild": "0.28.2"
+  }
+}
