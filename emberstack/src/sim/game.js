@@ -700,6 +700,7 @@ export class Game {
   canPick(cardId) { return canPick(this, this.s.cards[cardId]); }
   /** move a card (and everything above it) to a spot on the board */
   actMove(cardId, x, y, who = 'player') {
+    if (who !== 'player' && this.s.cards[cardId]) this.emit({ type: 'hand', who, id: cardId, from: this.cardPos(this.s.cards[cardId]), to: { x: x + CARD_W / 2, y: y + CARD_H / 2 } });
     const p = this.actPick(cardId, who);
     if (!p.ok) return p;
     return release(this, p.sid, x, y, null);
@@ -711,16 +712,21 @@ export class Game {
     const tst = this.s.stacks[t.s];
     if (!tst) return { ok: false, why: '目标不存在' };
     if (tst.cards.includes(cardId)) return { ok: false, why: '同一堆' };
+    if (who !== 'player' && this.s.cards[cardId]) this.emit({ type: 'hand', who, id: cardId, from: this.cardPos(this.s.cards[cardId]), to: this.cardPos(t) });
     const p = this.actPick(cardId, who);
     if (!p.ok) return p;
     const tt = this.s.stacks[t.s];
     return release(this, p.sid, tt.x, tt.y + 30, tt.id);
   }
-  actOpen(cardId, who = 'player') { const r = openCard(this, cardId); if (r.ok) this.s.stats.actions[who]++; return r; }
+  tap(cardId, who) {
+    const c = this.s.cards[cardId];
+    if (who !== 'player' && c) { const p = this.cardPos(c); this.emit({ type: 'hand', who, id: cardId, from: p, to: p, tap: true }); }
+  }
+  actOpen(cardId, who = 'player') { this.tap(cardId, who); const r = openCard(this, cardId); if (r.ok) this.s.stats.actions[who]++; return r; }
   actResearch(id, who = 'player') { const r = research(this, id); if (r.ok) this.s.stats.actions[who]++; return r; }
-  actTrade(cardId, idx, who = 'player') { const r = trade(this, cardId, idx); if (r.ok) this.s.stats.actions[who]++; return r; }
-  actBuy(marketId, offerId, who = 'player') { const r = buy(this, marketId, offerId); if (r.ok) this.s.stats.actions[who]++; return r; }
-  actChoose(cardId, idx, who = 'player') { const r = choose(this, cardId, idx); if (r.ok) this.s.stats.actions[who]++; return r; }
+  actTrade(cardId, idx, who = 'player') { this.tap(cardId, who); const r = trade(this, cardId, idx); if (r.ok) this.s.stats.actions[who]++; return r; }
+  actBuy(marketId, offerId, who = 'player') { this.tap(marketId, who); const r = buy(this, marketId, offerId); if (r.ok) this.s.stats.actions[who]++; return r; }
+  actChoose(cardId, idx, who = 'player') { this.tap(cardId, who); const r = choose(this, cardId, idx); if (r.ok) this.s.stats.actions[who]++; return r; }
   marketOffers() { return marketOffers(this); }
 
   /** topmost stack under a world point (for mouse drops) */

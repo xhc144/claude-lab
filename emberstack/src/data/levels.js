@@ -13,8 +13,16 @@ function level(ch, l) {
   const c = CHAPTERS.find((x) => x.id === ch);
   const id = `${ch}-${c.levels.length + 1}`;
   const L = { id, chapter: ch, biome: c.biome, board: [2400, 1700], stars: [], lose: [], schedule: [], ...l };
-  // the land must be able to feed the camp: top up thin maps with food sources fitting the biome
-  if (ch >= 2 && L.forage !== false) {
+  if (ch >= 2) ensureFood(L);
+  LEVELS[id] = L;
+  c.levels.push(id);
+  return L;
+}
+
+/** the land must be able to feed the camp: top up thin maps with food sources fitting the biome,
+ * and give every camp about a day of preserved provisions */
+export function ensureFood(L) {
+  if (L.forage !== false) {
     const pop = L.start.filter((e) => CARDS[e.c].kind === 'folk').reduce((a, e) => a + (e.n || 1), 0);
     const perDay = (id) => {
       const nd = CARDS[id].node;
@@ -39,14 +47,11 @@ function level(ch, l) {
     for (const [c, n] of Object.entries(add)) L.start.push({ c, n });
   }
   // provisions: every camp from chapter 2 on starts with about a day of preserved food
-  if (ch >= 2 && L.provisions !== false) {
+  if (L.provisions !== false) {
     const pop = L.start.filter((e) => CARDS[e.c].kind === 'folk').reduce((a, e) => a + (e.n || 1), 0);
     const food = L.start.filter((e) => CARDS[e.c].food > 0).reduce((a, e) => a + (e.n || 1) * CARDS[e.c].food, 0);
     if (food < pop * 2) L.start.push({ c: 'jerky', n: Math.ceil((pop * 2 - food) / 2) });
   }
-  LEVELS[id] = L;
-  c.levels.push(id);
-  return L;
 }
 
 const E1 = ['stone_tools', 'shelter', 'cooking', 'fishing', 'hunting', 'torches', 'lore'];

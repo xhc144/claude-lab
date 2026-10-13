@@ -10,8 +10,12 @@ import { stars } from '../src/sim/objectives.js';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf('--' + k); return i >= 0 ? args[i + 1] : d; };
 const id = args[0] || '1-1';
-const level = LEVELS[id];
-const g = new Game(level, { seed: Number(opt('seed', 1)) });
+const { makeExpedition, makeChallenge } = await import('../src/modes/expedition.js');
+const [kind, a, b] = id.split(':');
+const seed0 = Number(opt('seed', 1));
+const level = LEVELS[id] || (kind === 'exp' ? makeExpedition({ mode: 'expedition', biome: a, diff: Number(b), seed: seed0 })
+  : kind === 'endless' ? makeExpedition({ mode: 'endless', biome: a, diff: 2, seed: seed0 }) : makeChallenge(a));
+const g = new Game(level, { seed: level.seed ?? seed0 });
 const brain = new Brain(g, { strategy: opt('strategy', 'balanced') });
 const maxDays = Number(opt('days', 30));
 const showLog = args.includes('--log');

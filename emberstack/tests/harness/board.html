@@ -1,0 +1,35 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>board</title>
+<style>html,body{margin:0;height:100%;background:#000;overflow:hidden} canvas{display:block;width:100vw;height:100vh}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+import { Game } from '../../src/sim/game.js';
+import { Brain } from '../../src/ai/brain.js';
+import { LEVELS } from '../../src/data/levels.js';
+import { DT } from '../../src/sim/constants.js';
+import { BoardView } from '../../src/render/board.js';
+const q = new URLSearchParams(location.search);
+const lv = LEVELS[q.get('level') || '1-1'];
+const g = new Game(lv, { seed: +(q.get('seed') || 1) });
+const brain = new Brain(g, { strategy: q.get('strategy') || 'balanced' });
+const secs = +(q.get('t') || 0);
+const view = new BoardView(document.getElementById('c'));
+view.resize(innerWidth, innerHeight, devicePixelRatio || 1);
+view.setGame(g);
+const t0 = performance.now();
+const steps = Math.round(secs / DT);
+for (let i = 0; i < steps && !g.s.result; i++) { brain.update(DT); g.step(DT); const ev = g.drain(); if (steps - i < 30) view.onEvents(ev); }
+const simMs = performance.now() - t0;
+// animate some real frames so views settle and effects show
+let frames = +(q.get('frames') || 40);
+const tf = performance.now();
+function frame() {
+  for (let k = 0; k < 2; k++) { brain.update(DT); g.step(DT); view.onEvents(g.drain()); }
+  view.update(1 / 30);
+  view.draw();
+  if (--frames > 0) requestAnimationFrame(frame);
+  else { window.__info = { day: g.s.day, phase: g.phase().toFixed(2), simMs: Math.round(simMs), frameMs: ((performance.now() - tf) / (+(q.get('frames') || 40))).toFixed(1), stacks: Object.keys(g.s.stacks).length, cards: Object.keys(g.s.cards).length, result: g.s.result }; window.__done = true; }
+}
+if (q.get('zoom')) { view.autoCam = false; view.cam.z = view.camT.z = +q.get('zoom'); }
+requestAnimationFrame(frame);
+</script></body></html>
