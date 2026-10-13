@@ -218,10 +218,17 @@ export function buildSide(game, ui) {
     return box;
   }
 
-  let timer = 0;
+  // live refresh — only when the world has changed (time passed or a power was used), and never
+  // while a button is held inside the panel, so a click can't straddle a rebuilt DOM
+  let timer = 0, seen = '', held = false;
+  side.addEventListener('pointerdown', () => { held = true; });
+  window.addEventListener('pointerup', () => setTimeout(() => { held = false; }, 0));
   game.on('frame', (dt) => {
     timer -= dt;
-    if (timer > 0) return;
+    if (timer > 0 || held || !game.world) return;
+    const stamp = `${game.world.tick}/${game.edits || 0}`;
+    if (stamp === seen) return;
+    seen = stamp;
     timer = current === 'inspect' ? 0.5 : current === 'chronicle' ? 0.7 : 2.5;
     render(false);
   });

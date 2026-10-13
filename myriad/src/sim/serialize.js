@@ -5,7 +5,7 @@
 
 import { RNG } from '../core/rng.js';
 
-const TRANSIENT = new Set(['fx', 'notices', '_filled', '_order', '_visited', '_links', '_prof', 'borders']);
+const TRANSIENT = new Set(['fx', 'notices', '_filled', '_order', '_visited', '_links', '_prof', '_profSum', 'borders']);
 
 /** a plain object with the whole world (typed arrays are copied) */
 export function snapshot(w) {

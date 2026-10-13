@@ -19,7 +19,7 @@ export function drawCreatures(ctx, R, view, game) {
   if (z < 2.2) return;
   const cam = R.cam;
   const cols = new Array(w.species.length);
-  const detail = z >= 7;
+  const detail = z >= 9.5; // below this bodies are only a few pixels: plain dots read better and cost far less
   const t = R.time;
   const sel = R.selection && R.selection.type === 'creature' ? R.selection.uid : -1;
   for (let i = 0; i < L.hi; i++) {
@@ -36,13 +36,46 @@ export function drawCreatures(ctx, R, view, game) {
       ctx.fillRect(sx - r, sy - r, r * 2, r * 2);
       continue;
     }
-    drawBody(ctx, sx, sy, z, L, i, col, t);
+    const spr = creatureSprite(ctx, z, L.pForm[i], L.pSize[i], L.pArmor[i], col, Math.cos(L.dir[i]) >= 0 ? 1 : -1, t * 8 + i * 1.7);
+    if (spr) ctx.drawImage(spr, Math.round(sx - spr.cx), Math.round(sy - spr.cy), spr.cw, spr.ch);
+    else drawBody(ctx, sx, sy, z, L, i, col, t);
     if (L.uid[i] === sel) {
       ctx.strokeStyle = 'rgba(255,240,180,0.95)';
       ctx.lineWidth = 1.5;
       ctx.beginPath(); ctx.arc(sx, sy, z * (0.4 + L.pSize[i] * 0.3), 0, TAU); ctx.stroke();
     }
   }
+}
+
+// Vector bodies are cached as small bitmaps per (species colour, body form, size, facing, animation
+// frame) at the current zoom — drawing thousands of paths every frame is far too slow.
+const SPRITE_FRAMES = 8;
+const sprites = new Map();
+let spriteZoom = 0, spriteDpr = 0;
+const one = { pSize: [0], dir: [0], pForm: [0], pArmor: [0] };
+
+function creatureSprite(ctx, z, form, size, armor, col, face, phase) {
+  if (typeof document === 'undefined') return null;
+  const dpr = ctx.getTransform ? ctx.getTransform().a : 1;
+  const zq = Math.round(z * 4) / 4;
+  if (zq !== spriteZoom || dpr !== spriteDpr || sprites.size > 4000) { sprites.clear(); spriteZoom = zq; spriteDpr = dpr; }
+  const sb = Math.round(size * 10);
+  const frame = Math.floor((((phase / TAU) % 1) + 1) % 1 * SPRITE_FRAMES);
+  const key = `${col[0] | 0},${col[1] | 0},${col[2] | 0}|${form}|${sb}|${armor > 0.5 ? 1 : 0}|${face}|${frame}`;
+  let spr = sprites.get(key);
+  if (spr) return spr;
+  const sz = sb / 10;
+  const half = Math.ceil(zq * (0.18 + sz * 0.2) * 3.2 + 3);
+  const c = document.createElement('canvas');
+  c.width = c.height = Math.ceil(half * 2 * dpr);
+  const g = c.getContext('2d');
+  g.scale(dpr, dpr);
+  one.pSize[0] = sz; one.dir[0] = face > 0 ? 0 : Math.PI; one.pForm[0] = form; one.pArmor[0] = armor > 0.5 ? 1 : 0;
+  drawBody(g, half, half, zq, one, 0, col, ((frame + 0.5) / SPRITE_FRAMES) * TAU / 8);
+  spr = c;
+  spr.cx = half; spr.cy = half; spr.cw = half * 2; spr.ch = half * 2;
+  sprites.set(key, spr);
+  return spr;
 }
 
 function drawBody(ctx, sx, sy, z, L, i, col, t) {
@@ -76,7 +109,7 @@ function drawBody(ctx, sx, sy, z, L, i, col, t) {
       break;
     }
     case FORM.BIRD: case FORM.RAPTOR: case FORM.MOTH: {
-      const flap = Math.sin(phase * 1.6);
+      const flap = Math.sin(phase * 2);
       const span = form === FORM.RAPTOR ? 1.6 : form === FORM.MOTH ? 0.9 : 1.2;
       ctx.strokeStyle = body;
       ctx.lineWidth = Math.max(1.2, s * 0.35);
@@ -158,7 +191,7 @@ function drawBody(ctx, sx, sy, z, L, i, col, t) {
         ctx.beginPath(); ctx.moveTo(hx - s * 0.05, hy - s * 0.2); ctx.lineTo(hx - s * 0.2, hy - s * 0.65); ctx.moveTo(hx - s * 0.15, hy - s * 0.48); ctx.lineTo(hx - s * 0.4, hy - s * 0.6); ctx.stroke();
       }
       if (form === FORM.DRAGON) {
-        const flap = Math.sin(phase * 0.8);
+        const flap = Math.sin(phase);
         ctx.fillStyle = rgb(shade(col, 0.75), 0.9);
         ctx.beginPath(); ctx.moveTo(-s * 0.2, -s * 0.3); ctx.lineTo(-s * 0.9, -s * (1.3 + flap * 0.3)); ctx.lineTo(s * 0.3, -s * 0.35); ctx.closePath(); ctx.fill();
       }
