@@ -26,7 +26,7 @@ git push origin recovered-project
 
 ## 发布边界
 
-- Pages 准备从 `main:/docs` 发布，产物由白名单构建脚本生成。
+- Pages 从 `main:/docs` 发布，产物由白名单构建脚本生成。
 - 4 个浏览器项目；2 个影片播放器。Python 渲染工程仅通过 GitHub 源码链接访问。
 - 鸿雁邮箱源码仅留仓库，不复制 Pages；历史安装包未执行、未发布，风险未鉴定。
 - 交互实验室清除个人学段、目标、联系方式、私有项目与其他仓库内容；通用示意数据已标注。
@@ -46,15 +46,21 @@ git push origin recovered-project
 
 主分支已成功推送发布准备提交 `0161ad18f02e2e0cad10325e6a2516de165dafcc`。
 
-启用 Pages 请求：`POST /repos/xhc144/claude-lab/pages`，参数 `build_type=legacy`、`source.branch=main`、`source.path=/docs`。GitHub 返回 **403 Resource not accessible by integration**；随后 Pages API 404、仓库 `has_pages=false`。预定网址 `https://xhc144.github.io/claude-lab/` 实测 HTTP 404，尚无部署成功或公共交互验证。
+用户在仓库设置中启用 Pages 后，已只读核验：`source.branch=main`、`source.path=/docs`、`build_type=legacy`、`public=true`、`status=built`。首次确认成功部署的 commit 是 `a215fdda9dd34229bad07c2c81e7bc3425d3f143`，构建于 `2026-10-13T05:44:54Z` 开始、`05:45:28Z` 完成，构建错误为空。
 
-GitHub 官方接口要求 Pages 写权限及 Administration 写权限；本次没有更改安全设置或寻找绕过方式。可由仓库管理员在 Settings → Pages 选择 Deploy from a branch / main / docs，或补足集成权限后继续。
+**公开入口：[https://xhc144.github.io/claude-lab/](https://xhc144.github.io/claude-lab/)**。
 
-2026-10-13 已清理七个完整整合或冗余的 Claude 分支，远端分支数量 **8 → 1**，只剩 `main`。分支清理是独立已授权事项，Pages 权限阻塞不影响已经保留在主分支的项目历史。
+公共 HTTP 核验使用正常 TLS 证书校验：主页与六个主要入口均为 200；99 个页面、脚本、样式、字体等公开资源全部为 200，SHA-256 与先前通过交互测试的本地产物一致。两个影片均为 `video/mp4`、HTTP 200，大小分别为 94,941,117 和 83,561,613 字节；文件首尾的 Range 请求均为 206，字节与本地已播放的影片一致。
+
+直接公共浏览器测试受本执行环境 Chromium 的 `ERR_CERT_AUTHORITY_INVALID` 限制，失败发生在网页脚本加载前；没有关闭证书校验、修改证书信任库或仓库安全设置。普通 HTTPS 客户端的证书验证成功。公开交互验证的证据是在线产物与此前 9 项主要流程、52 个浏览器场景通过的产物一致；不能把这些本地结果描述为本轮直接公共浏览器交互通过。
+
+此前启用 Pages 的 API 请求曾返回 403，用户手动设置后部署成功；本轮只读取配置/构建状态和公开网页，没有再次创建 Pages 或更改权限。后续状态 API 读取出现 401，但此前 `built` 结果与实际公开资源的 200 返回已经确认上线。
+
+2026-10-13 已清理七个完整整合或冗余的 Claude 分支，远端分支数量 **8 → 1**，只剩 `main`。分支清理是独立已授权事项，保留在主分支的项目历史可恢复。
 
 每次删除前重新读取远端 tip，确认与上表恢复 SHA 相同，并确认原 tip 是远端 `main`（`bb940fbe978593cce426ed98e94c748372ed2440`）的祖先。普通 `git push --delete` 的临时检查钩子还核对 Git 服务器广播的 tip；若不一致则拒绝删除。七次删除均成功，逐项再次读取远端确认分支不存在，没有发现并发新提交。
 
-未删除 `main`、未强推、未清除历史对象、未修改仓库可见性或安全权限。上表恢复 SHA 仍可从 `main` 到达。Pages 的 403 权限问题保持记录，本次清理没有再次尝试 Pages 接口。
+未删除 `main`、未强推、未清除历史对象、未修改仓库可见性或安全权限。上表恢复 SHA 仍可从 `main` 到达。原分支清理没有再次尝试 Pages 写接口。
 
 参考：[GitHub Pages API 权限](https://docs.github.com/en/rest/pages/pages#create-a-github-pages-site)、[配置发布来源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
@@ -65,3 +71,7 @@ GitHub 官方接口要求 Pages 写权限及 Administration 写权限；本次�
 - `7a3cfdefcfa449a04193d18851a193e9a32c741d` — Merge sea film revisions and finished video into sea-above
 - `f121de1cb9e3ef4287b119ce45a1faec9ce86f7e` — Merge claude/dreamy-dijkstra-8te314 preserving standalone project
 - `565050b9bbe50c0d3e76ebbab4b2ceba9854d8fd` — Merge claude/awesome-meitner-yckpzc preserving standalone project
+
+## 后续分支
+
+公开部署核验时发现新分支 `claude/peaceful-gauss-vfsup7`，tip 为 `ae2122a47767f46daf1f9a530b2a5e9bed50182f`。本轮范围是部署核验与状态文档更新，已保留此新开发分支，没有合并或删除。原七个分支的清理结果仍为 8 → 1；新分支出现后当前远端共 2 个分支。

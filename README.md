@@ -2,13 +2,13 @@
 
 这是多个独立实验的合集：交互数学、创世沙盒、三维游戏与程序化影片。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
 
-**站点产物已准备并通过本地验证。当前 GitHub 集成启用 Pages 返回 HTTP 403，尚未公开部署。**
+**公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-预定地址：[项目导航](https://xhc144.github.io/claude-lab/)（Pages 启用后可访问）。发布来源应设置为 `main` 分支的 `/docs`。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页、四个交互项目与两个影片播放器的在线入口均已核验。
 
 ## 浏览器交互项目
 
-| 项目 | 用途 | 在线入口（启用后） | 源码与本地运行 |
+| 项目 | 用途 | 在线入口 | 源码与本地运行 |
 | --- | --- | --- | --- |
 | 数境 MathScape | 矩阵、复映射、常微分方程与三体运动可视化 | [打开](https://xhc144.github.io/claude-lab/mathscape/) | [mathscape/](mathscape/)；`npm start`；`npm run build` 生成单文件 |
 | 万象 Myriad | 地形、气候、生态和文明演化的创世沙盒 | [打开](https://xhc144.github.io/claude-lab/myriad/) | [myriad/](myriad/)；`npm start`；`npm run build` 生成单文件；桌面操作最佳 |
@@ -40,7 +40,7 @@ node scripts/build-pages.mjs
 python3 -m http.server 8080 --directory docs
 ```
 
-`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 拟使用 `main` 分支的 `/docs`；启用权限阻塞详见整合记录。Echowild 只复制 HTML/CSS/源码；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
+`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 只复制 HTML/CSS/源码；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 
