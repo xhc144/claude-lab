@@ -1,0 +1,340 @@
+% !TEX program = xelatex
+% =============================================================================
+%  墨经 Mojing · 翻译排版模板示例
+%  希尔伯特《数学问题》（1900）英汉对照节选
+%
+%  英文原文采自 M. W. Newson 的英译本（Bulletin of the AMS, 1902），已进入公有领域；
+%  中文为本模板示例所作的新译，译注亦为示例而写。
+%
+%  版式选项 layout = facing（默认，左页原文、右页译文）/ columns（同页两栏）/
+%                   interleave（逐段对照）/ target（只排译文）
+%  不改源文件，换一种版式编译：
+%    xelatex -jobname=main-columns "\def\MojingLayout{columns}\input{main}"
+% =============================================================================
+\documentclass{mojing-translation}
+
+\seriesname{数学经典对照读本 · 排版示例}
+\booktitle{数学问题}
+\origtitle{Mathematical Problems}
+\bookauthor{〔德〕大卫·希尔伯特\quad 著}
+\origauthor{David Hilbert}
+\translator{英译\quad M. W. 纽森\qquad 中译\quad 墨经模板示例}
+\sourcenote{英文据 \textit{Bulletin of the American Mathematical Society} 8 (1902), 437--479}
+
+\begin{document}
+\frontmatter
+\maketitle
+
+\chapter{译者序}
+
+1900 年 8 月 8 日，在巴黎召开的第二届国际数学家大会上，三十八岁的哥廷根大学教授
+大卫·希尔伯特作了题为《数学问题》的演讲。他在演讲中提出了二十三个问题（会上只宣读了其中的
+十个），希望以此指引新世纪的数学研究。此后一百多年间，这些问题吸引了几代最优秀的数学家，
+围绕它们发展起来的思想与方法，深刻地塑造了二十世纪数学的面貌。
+
+演讲稿的德文原文于 1900 年发表在《哥廷根科学会通报》上。1902 年，美国数学家
+玛丽·温斯顿·纽森（Mary Winston Newson）把它译成英文，刊于《美国数学会通报》。纽森的译文
+忠实流畅，流传最广，本书即以它为底本。英文原文已进入公有领域。
+
+本书节选了演讲的引言部分，以及第 1、8、10 三个问题的陈述，附录列出了全部二十三个问题
+及其研究现状的简表。希尔伯特的演讲有一种独特的修辞力量，他谈到问题的价值时说：
+\begin{quote}
+只要一门科学分支还能提出大量的问题，它就充满生命力；缺乏问题则预示着它的衰亡或独立发展的终止。
+\end{quote}
+这段话至今仍常被引用。译文力求准确，同时尽量保留原文的语气。
+
+\chapter{凡例}
+
+\begin{enumerate}[label=\arabic*.]
+  \item 本书采用左右对照的排法：左页为英文原文，右页为中文译文，两页的段落一一对应，
+        页边的数字是段落编号，便于对照与引用。
+  \item 原文页码以 \origpage{437} 的形式标在原文相应位置。
+  \item 脚注中，阿拉伯数字编号者为原注，带圈数字编号者为译注。
+  \item 重要的术语在译文中首次出现时，以括号注出原文；全部术语汇总于书末的术语对照表。
+  \item 人名一般采用通行译名，首次出现时不另注原文。
+  \item 节略之处，原文以 \(*\,*\,*\) 标出，译文以“（中略）”标出。
+\end{enumerate}
+
+\mainmatter
+\halftitle
+\begin{pairs}
+
+\pairtitle{Mathematical Problems}
+          {Lecture delivered before the International Congress of Mathematicians at Paris in 1900
+           \\ By Professor David Hilbert\footnote{Translated for the Bulletin, with the author's
+           permission, by Dr.\ Mary Winston Newson. The original appeared in the
+           \textit{G\"ottinger Nachrichten}, 1900, pp.~253--297, and in the \textit{Archiv der
+           Mathematik und Physik}, 3d ser., vol.~1 (1901), pp.~44--63 and 213--237.}}
+          {数学问题}
+          {1900 年在巴黎国际数学家大会上的演讲\\大卫·希尔伯特}
+
+\begin{original}
+\origpage{437}
+Who of us would not be glad to lift the veil behind which the future lies hidden; to cast
+a glance at the next advances of our science and at the secrets of its development during
+future centuries? What particular goals will there be toward which the leading mathematical
+spirits of coming generations will strive? What new methods and new facts in the wide and
+rich field of mathematical thought will the new centuries disclose?
+\end{original}
+\begin{translated}
+我们当中有谁不愿揭开那遮掩着未来的帷幕，看一看我们这门科学接下来的进展，窥探它在未来
+几个世纪里发展的奥秘呢？下一代的数学领军人物将追求哪些特定的目标？在广阔而丰饶的
+数学思想领域中，新的世纪将揭示哪些新的方法和新的事实？
+\end{translated}
+
+\begin{original}
+History teaches the continuity of the development of science. We know that every age has
+its own problems, which the following age either solves or casts aside as profitless and
+replaces by new ones. If we would obtain an idea of the probable development of mathematical
+knowledge in the immediate future, we must let the unsettled questions pass before our minds
+and look over the problems which the science of to-day sets and whose solution we expect from
+the future. To such a review of problems the present day, lying at the meeting of the
+centuries, seems to me well adapted. For the close of a great epoch not only invites us to
+look back into the past but also directs our thoughts to the unknown future.
+\end{original}
+\begin{translated}
+历史告诉我们，科学的发展是连续的。我们知道，每个时代都有它自己的问题，这些问题或者由下一个
+时代解决，或者因为无益而被搁置一旁，代之以新的问题。如果我们想对数学知识在不久的将来可能的
+发展有所了解，就必须让那些悬而未决的问题在脑海中一一浮现，审视当今科学提出的、期待在将来得到
+解决的问题。在我看来，正值世纪之交的今天，十分适宜于作这样一番问题的检阅。因为一个伟大时代的
+结束，不仅促使我们回顾过去，也把我们的思绪引向未知的将来。
+\end{translated}
+
+\begin{original}
+The deep significance of certain problems for the advance of mathematical science in general
+and the important r\^ole which they play in the work of the individual investigator are not to
+be denied. As long as a branch of science offers an abundance of problems, so long is it alive;
+a lack of problems foreshadows extinction or the cessation of independent development. Just as
+every human undertaking pursues certain objects, so also mathematical research requires its
+problems. It is by the solution of problems that the investigator tests the temper of his
+steel; he finds new methods and new outlooks, and gains a wider and freer horizon.
+\end{original}
+\begin{translated}
+某些问题对于数学科学的总体进展所具有的深远意义，以及它们在研究者个人工作中所起的重要作用，
+是不可否认的。只要一门科学分支还能提出大量的问题，它就充满生命力；缺乏问题则预示着它的衰亡
+或独立发展的终止。正如人类的每一项事业都追求着确定的目标，数学研究也需要自己的问题。正是通过
+解决问题，研究者才得以检验自己锋刃的成色；他由此发现新的方法和新的观点，获得更为广阔、
+更为自由的视野。
+\end{translated}
+
+\begin{original}
+It is difficult and often impossible to judge the value of a problem correctly in advance; for
+the final award depends upon the gain which science obtains from the problem. Nevertheless we
+can ask whether there are general criteria which mark a good mathematical problem. An old
+French mathematician said: ``A mathematical theory is not to be considered complete until you
+have made it so clear that you can explain it to the first man whom you meet on the street.''
+This clearness and ease of comprehension, here insisted on for a mathematical theory, I should
+still more demand for a mathematical problem if it is to be perfect; for what is clear and
+easily comprehended attracts, the complicated repels us.
+\end{original}
+\begin{translated}
+要预先正确地判断一个问题的价值是困难的，而且往往是不可能的，因为最终的评判取决于科学从这个
+问题中获得的收益。尽管如此，我们仍然可以问：是否存在某些普遍的标准，可以用来鉴别一个好的
+数学问题？一位法国老数学家\yizhu{原文未指明其人。后人多认为指热尔岗（J. D. Gergonne，
+1771—1859），但未见确证。}说过：“一种数学理论，除非你已把它讲得如此清楚，以至于能向你在
+街上遇到的第一个人解释明白，否则就不能认为是完善的。”这里对一种数学理论所要求的清晰与易懂，
+我以为对一个数学问题更应如此要求，倘若它要成为一个完美的问题的话；因为清楚易懂的东西吸引
+我们，而复杂的东西使我们却步。
+\end{translated}
+
+\begin{original}
+Moreover a mathematical problem should be difficult in order to entice us, yet not completely
+inaccessible, lest it mock at our efforts. It should be to us a guide post on the mazy paths to
+hidden truths, and ultimately a reminder of our pleasure in the successful solution.
+\end{original}
+\begin{translated}
+此外，一个数学问题应当是困难的，才能引起我们的兴趣；但又不能完全无从下手，以免让我们的努力
+落空。它应当是我们在通向隐秘真理的迷宫般的道路上的路标，最终又成为我们成功解决问题时那份
+喜悦的纪念。
+\end{translated}
+
+\begin{original}
+The mathematicians of past centuries were accustomed to devote themselves to the solution of
+difficult particular problems with passionate zeal. They knew the value of difficult problems.
+I remind you only of the ``problem of the line of quickest descent,'' proposed by John
+Bernoulli. Experience teaches, explains Bernoulli in the public announcement of this problem,
+that lofty minds are led to strive for the advance of science by nothing more than by laying
+before them difficult and at the same time useful problems, and he therefore hopes to earn the
+thanks of the mathematical world by following the example of men like Mersenne, Pascal, Fermat,
+Viviani and others and laying before the distinguished analysts of his time a problem by which,
+as a touchstone, they may test the value of their methods and measure their strength. The
+calculus of variations owes its origin to this problem of Bernoulli and to similar problems.
+\end{original}
+\begin{translated}
+过去几个世纪的数学家们习惯于以满腔的热情去解决困难的特殊问题。他们深知困难问题的价值。我只
+需提醒诸位约翰·伯努利提出的“\term{line of quickest descent}{最速降线}问题”\yizhu{约翰·伯努利于
+1696 年 6 月在莱比锡的《教师学报》（\textit{Acta Eruditorum}）上公开征解此题：求连接不在同一
+竖直线上的两点的曲线，使质点在重力作用下沿它由高点滑到低点所需的时间最短。答案是摆线。}。
+伯努利在公开征解这个问题时说，经验告诉我们，引导高尚的心灵为科学的进步而奋斗的，莫过于向他们
+提出既困难又有用的问题；因此他希望仿效梅森、帕斯卡、费马、维维亚尼等人的榜样，向当时杰出的
+分析学家们提出一个问题，使他们可以拿它作试金石，检验自己方法的价值，衡量自己的力量，并以此
+赢得数学界的感谢。\term{calculus of variations}{变分法}正是起源于伯努利的这个问题以及类似的问题。
+\end{translated}
+
+\begin{original}
+Fermat had asserted, as is well known, that the diophantine equation
+\[ x^n+y^n=z^n \]
+($x$, $y$ and $z$ integers) is unsolvable---except in certain self-evident cases. The attempt to
+prove this impossibility offers a striking example of the inspiring effect which such a very
+special and apparently unimportant problem may have upon science. For Kummer, incited by
+Fermat's problem, was led to the introduction of ideal numbers and to the discovery of the law
+of the unique decomposition of the numbers of a circular field into ideal prime factors---a law
+which to-day, in its generalization to any algebraic field by Dedekind and Kronecker, stands at
+the center of modern number theory and whose significance extends far beyond the boundaries of
+number theory into the realm of algebra and the theory of functions.
+\end{original}
+\begin{translated}
+众所周知，费马曾断言，除了某些显然的情形以外，\term{diophantine equation}{丢番图方程}
+\[ x^n+y^n=z^n \]
+（$x$，$y$，$z$ 为整数）没有解\yizhu{即“费马大定理”。它最终由怀尔斯（A. Wiles）证明，
+证明于 1995 年正式发表，其中的一处缺陷由怀尔斯与泰勒（R. Taylor）合作弥补。}。证明这种不可能性的
+种种尝试提供了一个极好的例子，说明这样一个非常特殊、看起来并不重要的问题会给科学带来多么巨大的
+激励。正是在费马问题的激发下，库默尔引入了\term{ideal numbers}{理想数}，并发现了
+\term{circular field}{分圆域}中的数唯一地分解为理想素因子的定律。这一定律今天已由戴德金和
+克罗内克推广到任意的\term{algebraic field}{代数数域}，成为现代数论的核心，其意义远远超出了数论的
+范围，延伸到代数学和\term{theory of functions}{函数论}的领域。
+\end{translated}
+
+\omission
+
+\begin{original}
+\dots\ This conviction of the solvability of every mathematical problem is a powerful incentive
+to the worker. We hear within us the perpetual call: There is the problem. Seek its solution.
+You can find it by pure reason, for in mathematics there is no \textit{ignorabimus}.
+\end{original}
+\begin{translated}
+……对每一个数学问题都可解的这种信念，是对研究者的强大激励。我们听到内心不断的召唤：问题
+就在这里，去寻求它的解答吧。你能够凭借纯粹的思维找到它，因为在数学中没有
+“\term{ignorabimus}{我们将不会知道}”\yizhu{拉丁语。生理学家杜布瓦-雷蒙（E. du Bois-Reymond）
+在 1872 年的著名演讲中断言，对于某些自然之谜，“我们不知道，也将不会知道”（\textit{ignoramus et
+ignorabimus}）。希尔伯特此语正是针对这一论调。1930 年，他在柯尼斯堡的广播讲话以“我们必须知道，
+我们必将知道”作结，这句话后来刻在了他的墓碑上。}。
+\end{translated}
+
+\pairheading{1. Cantor's Problem of the Cardinal Number of the Continuum}
+            {1.\quad 康托尔的连续统基数问题}
+
+\begin{original}
+Two systems, i.e., two assemblages of ordinary real numbers or points, are said to be
+(according to Cantor) equivalent or of equal cardinal number, if they can be brought into a
+relation to one another such that to every number of the one assemblage corresponds one and
+only one definite number of the other. The investigations of Cantor on such assemblages of
+points suggest a very plausible theorem, which nevertheless, in spite of the most strenuous
+efforts, no one has succeeded in proving. This is the theorem:
+\end{original}
+\begin{translated}
+两个系统，即两个由普通实数（或点）组成的\term{assemblage}{集合}，如果能在它们之间建立这样一种
+关系，使一个集合中的每一个数都对应着另一个集合中唯一确定的一个数，那么（按照康托尔的说法）就称
+它们是\term{equivalent}{等价}的，或者说具有相同的\term{cardinal number}{基数}。康托尔对这类点集的
+研究提示了一个非常合理的定理，然而尽管人们作了最艰苦的努力，至今没有人能够证明它。这个定理是：
+\end{translated}
+
+\begin{original}
+Every system of infinitely many real numbers, i.e., every assemblage of numbers (or points),
+is either equivalent to the assemblage of natural integers, $1,2,3,\dots$ or to the assemblage
+of all real numbers and therefore to the continuum, that is, to the points of a line; as
+regards equivalence there are, therefore, only two assemblages of numbers, the countable
+assemblage and the continuum.
+
+From this theorem it would follow at once that the continuum has the next cardinal number
+beyond that of the countable assemblage; the proof of this theorem would, therefore, form a new
+bridge between the countable assemblage and the continuum.
+\end{original}
+\begin{translated}
+每一个由无穷多个实数组成的系统，即每一个数（或点）的集合，或者与自然数的集合 $1,2,3,\dots$
+等价，或者与全体实数的集合等价，因而与\term{continuum}{连续统}，即一条直线上的点等价；
+因此，就等价而言，数的集合只有两种：\term{countable}{可数}集合与连续统。
+
+由这个定理立即可以推出，连续统的基数紧跟在可数集合的基数之后；因此，这个定理的证明将在可数
+集合与连续统之间架起一座新的桥梁\yizhu{即“连续统假设”。哥德尔（1940）与科恩（1963）证明了它独立于 ZFC 公理系统。}。
+\end{translated}
+
+\omission
+
+\pairheading{8. Problems of Prime Numbers}{8.\quad 素数问题}
+
+\begin{original}
+Essential progress in the theory of the distribution of prime numbers has lately been made by
+Hadamard, de la Vall\'ee-Poussin, Von Mangoldt and others. For the complete solution, however,
+of the problems set us by Riemann's paper ``Ueber die Anzahl der Primzahlen unter einer
+gegebenen Gr\"osse,'' it still remains to prove the correctness of an exceedingly important
+statement of Riemann, viz., that the zero points of the function $\zeta(s)$ defined by the
+series
+\[
+  \zeta(s)=1+\frac{1}{2^s}+\frac{1}{3^s}+\frac{1}{4^s}+\dotsb
+\]
+all have the real part $\frac12$, except the well-known negative integral real zeros.
+\end{original}
+\begin{translated}
+最近，阿达马、德拉瓦莱普桑、冯·曼戈尔特等人在素数分布理论方面取得了重要的进展\yizhu{1896 年，
+阿达马与德拉瓦莱普桑各自独立地证明了素数定理。}。然而，要彻底解决黎曼的论文《论小于给定数值的
+素数个数》向我们提出的问题，还必须证明黎曼的一个极其重要的论断，即由级数
+\[
+  \zeta(s)=1+\frac{1}{2^s}+\frac{1}{3^s}+\frac{1}{4^s}+\dotsb
+\]
+定义的函数 $\zeta(s)$ 的\term{zero points}{零点}，除了熟知的负整数实零点以外，实部都等于
+$\frac12$\yizhu{这就是黎曼猜想，至今仍未解决。}。
+\end{translated}
+
+\omission
+
+\pairheading{10. Determination of the Solvability of a Diophantine Equation}
+            {10.\quad 丢番图方程可解性的判定}
+
+\begin{original}
+Given a diophantine equation with any number of unknown quantities and with rational integral
+numerical coefficients: To devise a process according to which it can be determined by a
+finite number of operations whether the equation is solvable in rational integers.
+\end{original}
+\begin{translated}
+给定一个含任意多个未知数、系数为有理整数的丢番图方程：要求设计一种方法，按照这种方法，通过
+有限次运算就能判定该方程是否有\term{rational integers}{有理整数}解\yizhu{马季亚谢维奇在戴维斯、普特南与罗宾逊工作的基础上，于 1970 年证明这样的方法不存在。}。
+\end{translated}
+
+\end{pairs}
+
+\backmatter
+\chapter{附录：二十三个问题一览}
+
+下表按希尔伯特原来的编号列出全部二十三个问题。“现状”一栏只作极简略的概括；许多问题的表述
+本身有多种理解，所谓“解决”也常常只针对其中一种理解。
+
+\begin{center}
+\small
+\renewcommand\arraystretch{1.28}
+\begin{longtable}{@{}>{\mojingsansmedium\color{mjAccent}}r p{.36\textwidth} p{.5\textwidth}@{}}
+\toprule
+\multicolumn{1}{@{}r}{\heitimd 编号} & {\heitimd 问题} & {\heitimd 现状（简述）} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+1  & 连续统假设 & 哥德尔（1940）与科恩（1963）证明它独立于 ZFC \\
+2  & 算术公理的相容性 & 哥德尔不完全性定理（1931）表明无法在算术内部证明；根岑（1936）借助超限归纳给出证明 \\
+3  & 等底等高的两个四面体能否剖分拼合 & 德恩（1900）给出否定回答 \\
+4  & 以直线为最短距离的几何 & 表述较为宽泛，已有大量相关研究 \\
+5  & 不要求可微性的李群概念 & 格利森、蒙哥马利与齐平（1952）在通常的理解下解决 \\
+6  & 物理学的公理化 & 部分进展，如柯尔莫哥洛夫的概率论公理化（1933） \\
+7  & 某些数的无理性与超越性 & 盖尔方德与施奈德（1934）解决 \\
+8  & 素数问题（含黎曼猜想） & 黎曼猜想仍未解决 \\
+9  & 任意数域中最一般的互反律 & 阿廷（1927）对阿贝尔扩张解决；一般情形仍在研究中 \\
+10 & 丢番图方程可解性的判定 & 马季亚谢维奇（1970）证明不存在一般的判定方法 \\
+11 & 代数数系数的二次型 & 哈塞--闵可夫斯基定理等，部分解决 \\
+12 & 克罗内克定理向任意代数数域的推广 & 未完全解决 \\
+13 & 用二元函数解七次方程 & 柯尔莫哥洛夫与阿诺尔德（1957）对连续函数的情形给出否定回答 \\
+14 & 某些完全函数系的有限性 & 永田雅宜（1959）给出反例 \\
+15 & 舒伯特计数演算的严格基础 & 相交理论的发展使之大部分得到解决 \\
+16 & 代数曲线与曲面的拓扑 & 未解决，包括平面多项式向量场极限环个数的问题 \\
+17 & 正定形式的平方和表示 & 阿廷（1927）解决 \\
+18 & 由全等多面体构造空间 & 比伯巴赫（1910）、赖因哈特（1928）；其中的球堆积问题即开普勒猜想，由黑尔斯证明（2005 年发表） \\
+19 & 正则变分问题的解是否必定解析 & 伯恩斯坦（1904）、德焦尔吉与纳什（1957 年前后）解决 \\
+20 & 一般边值问题 & 已有大量成果 \\
+21 & 具有给定单值群的线性微分方程的存在性 & 博利布鲁赫（1989）发现反例 \\
+22 & 用自守函数使解析关系单值化 & 克贝与庞加莱（1907）解决 \\
+23 & 变分法的进一步发展 & 开放性的研究方向 \\
+\end{longtable}
+\end{center}
+
+\printglossary
+
+\end{document}
