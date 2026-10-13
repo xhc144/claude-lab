@@ -207,7 +207,7 @@ function doStep(brain, g, ex, step) {
       if (!c || !t) { ex.why = '目标不在了'; return step.optional ? 'next' : 'fail'; }
       const cst = g.s.stacks[c.s];
       const ci = cst ? cst.cards.indexOf(c.id) : -1;
-      if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1) {
+      if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1 && !step.whole) {
         const above = cst.cards[ci + 1];
         const spot = g.freeSpot(cst.x + CARD_W + 20, cst.y, CARD_H + 40, { exclude: cst.id });
         const r0 = g.actMove(above, spot.x, spot.y, who);

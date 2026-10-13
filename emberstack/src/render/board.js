@@ -7,7 +7,7 @@ import { CARD_W, CARD_H, stackOffsets, STACK_DY } from '../sim/constants.js';
 import { blockReason } from '../sim/tasks.js';
 import { GREAT_FLAME_STAGES } from '../sim/drop.js';
 import { makeCanvas } from './paint.js';
-import { cardSprite, FACE, FONT_BODY, FONT_NUM } from './cardface.js';
+import { cardSprite, spriteFrame, FACE, FONT_BODY, FONT_NUM } from './cardface.js';
 import { drawIcon } from './icons.js';
 import { paintGround, paintSnow } from './ground.js';
 import { FX } from './fx.js';
@@ -439,6 +439,7 @@ export class BoardView {
   // ------------------------------------------------------------------ drawing
   draw() {
     const g = this.g, G = this.game, dpr = this.dpr, z = this.cam.z;
+    spriteFrame(10);
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.fillStyle = '#120c08';
     g.fillRect(0, 0, this.cv.width, this.cv.height);
@@ -605,7 +606,7 @@ export class BoardView {
     const x = v.x + v.lx + sh - lift * 0.3, y = v.y + v.ly - lift;
     const back = v.flipP < 0.5;
     const fx = back ? 1 - v.flipP * 2 : v.flipP * 2 - 1;
-    const spr = cardSprite(back ? '#back' : c.d, scale * s);
+    const spr = cardSprite(back ? '#back' : c.d, scale);
     g.save();
     g.globalAlpha = Math.max(0, Math.min(1, v.a));
     g.translate(x + CARD_W / 2, y + CARD_H / 2);
@@ -634,7 +635,7 @@ export class BoardView {
 
   drawGhost(g, gh, scale) {
     const t = gh.life / gh.max;
-    const spr = cardSprite(gh.d, scale * 0.8);
+    const spr = cardSprite(gh.d, scale);
     g.save();
     g.globalAlpha = t;
     const cx = gh.x + CARD_W / 2, cy = gh.y + CARD_H / 2;

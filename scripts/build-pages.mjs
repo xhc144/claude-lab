@@ -5,16 +5,16 @@ import { execFileSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-for (const project of ['mathscape','myriad','personal-site']) {
+for (const project of ['mathscape','myriad','personal-site','emberstack']) {
  execFileSync(process.execPath, ['scripts/build.mjs'], {cwd:join(root,project),stdio:'inherit'});
 }
 const out=join(root,'docs');
 // Keep the durable history/verification record across rebuilds.
-for(const p of ['index.html','mathscape','myriad','personal-site','echowild','films']) rmSync(join(out,p),{recursive:true,force:true});
+for(const p of ['index.html','mathscape','myriad','personal-site','echowild','films','emberstack']) rmSync(join(out,p),{recursive:true,force:true});
 mkdirSync(out,{recursive:true});
 cpSync(join(root,'site/index.html'),join(out,'index.html'));
 writeFileSync(join(out,'.nojekyll'),'');
-for(const [p,file] of [['mathscape','mathscape.html'],['myriad','myriad.html']]) {
+for(const [p,file] of [['mathscape','mathscape.html'],['myriad','myriad.html'],['emberstack','emberstack.html']]) {
  mkdirSync(join(out,p),{recursive:true});cpSync(join(root,p,'dist',file),join(out,p,'index.html'));
 }
 cpSync(join(root,'personal-site/dist'),join(out,'personal-site'),{recursive:true});

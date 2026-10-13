@@ -493,8 +493,12 @@ export function bucketFor(scale) {
   return BUCKETS[BUCKETS.length - 1];
 }
 
+let frameBudget = Infinity;
+/** called once per frame by the board: limits how many new sprites are painted per frame */
+export function spriteFrame(ms = 10) { frameBudget = performance.now() + ms; }
+
 /** a cached canvas with the face of card `id` (or '#back') rendered at `scale` pixels per unit */
-export function cardSprite(id, scale) {
+export function cardSprite(id, scale, force = false) {
   const b = bucketFor(scale);
   const key = id + '|' + b;
   let s = cache.get(key);
@@ -502,6 +506,13 @@ export function cardSprite(id, scale) {
     cache.delete(key);
     cache.set(key, s); // LRU touch
     return s;
+  }
+  // over this frame's painting budget: reuse another resolution of the same card if there is one
+  if (!force && performance.now() > frameBudget) {
+    for (const bb of BUCKETS) {
+      const alt = cache.get(id + '|' + bb);
+      if (alt) return alt;
+    }
   }
   s = makeCanvas(Math.ceil(CARD_W * b), Math.ceil(CARD_H * b));
   const g = s.getContext('2d');

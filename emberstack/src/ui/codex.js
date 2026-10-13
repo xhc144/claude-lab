@@ -19,7 +19,7 @@ export function cardCanvas(id, w = 110) {
   c.style.width = '100%';
   c.style.aspectRatio = '110 / 150';
   c.style.borderRadius = '6px';
-  const s = cardSprite(id, (w / 110) * dpr);
+  const s = cardSprite(id, (w / 110) * dpr, true);
   c.getContext('2d').drawImage(s, 0, 0, c.width, c.height);
   return c;
 }

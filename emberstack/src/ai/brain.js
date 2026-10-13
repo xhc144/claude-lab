@@ -1300,5 +1300,24 @@ export class Brain {
       this.start(new Exec({ key: 'tidy:' + st.id, kind: 'tidy', prio: 2, why: '', cat: '整理' }, steps, { lock: [top.id] }));
       return;
     }
+    // merge scattered piles of the same material: a tidy camp is easier to read (and to plan with)
+    const piles = new Map();
+    for (const st of W.stacks) {
+      if (st.task || st.battle || st.mob || st.held) continue;
+      const d0 = g.s.cards[st.cards[0]].d;
+      if (!['resource', 'food', 'knowledge', 'coin'].includes(CARDS[d0].kind)) continue;
+      if (st.cards.some((id) => g.s.cards[id].d !== d0 || this.locked.has(id))) continue;
+      if (!piles.has(d0)) piles.set(d0, []);
+      piles.get(d0).push(st);
+    }
+    for (const list of piles.values()) {
+      if (list.length < 2) continue;
+      list.sort((a, b) => b.cards.length - a.cards.length);
+      const big = list[0], small = list[list.length - 1];
+      if (big.cards.length + small.cards.length > 30) continue;
+      if (Math.hypot(big.x - small.x, big.y - small.y) > 900) continue;
+      this.start(new Exec({ key: 'merge:' + small.id, kind: 'tidy', prio: 1, why: '', cat: '整理' }, [{ op: 'drop', id: small.cards[0], target: big.cards[0], whole: true }], { lock: small.cards.slice() }));
+      return;
+    }
   }
 }
