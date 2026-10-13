@@ -9,19 +9,43 @@ const fmtDate = (t) => { if (!t) return '—'; const d = new Date(t); return `${
 const MODE_ZH = { survival: '生存', creative: '创造' };
 const DIFF_ZH = ['和平', '简单', '普通', '困难'];
 
+// the emblem: an echo spreading in rings around a woven peak
+const EMBLEM = `<svg viewBox="0 0 120 120" aria-hidden="true">
+<defs><linearGradient id="emg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9fbff"/><stop offset="0.55" stop-color="#7fe7ff"/><stop offset="1" stop-color="#a98bff"/></linearGradient></defs>
+<circle class="em-ring r1" cx="60" cy="60" r="34"/><circle class="em-ring r2" cx="60" cy="60" r="34"/><circle class="em-ring r3" cx="60" cy="60" r="34"/>
+<path d="M60 26 L88 78 H32 Z" fill="none" stroke="url(#emg)" stroke-width="3" stroke-linejoin="round"/>
+<path d="M60 46 L76 76 H44 Z" fill="url(#emg)" opacity="0.85"/>
+<circle cx="60" cy="88" r="4" fill="#ffd77a"/></svg>`;
+
 export class TitleScreen extends Screen {
   constructor(app) { super(); this.app = app; this.capturesGame = false; }
   build() {
+    const letters = (t, d0) => [...t].map((c, i) => h('span', { style: { animationDelay: `${d0 + i * 0.13}s` } }, c));
+    this.cont = h('div', { class: 'title-continue' });
+    const btn = (label, sub, fn, cls = '') => h('button', { class: `tbtn ${cls}`, onclick: fn }, h('span', { class: 'tb-label' }, label), sub ? h('span', { class: 'tb-sub' }, sub) : null);
     const el = h('div', { class: 'screen title-screen' },
-      h('div', { class: 'logo' },
-        h('div', { class: 'logo-main' }, '回响荒野'),
-        h('div', { class: 'logo-sub' }, 'E C H O W I L D'),
-        h('div', { class: 'logo-tag' }, '在破碎的织界中拾起回响，重织这个世界')),
-      h('div', { class: 'title-btns' },
-        h('button', { class: 'btn primary big', onclick: () => this.ui.push(new WorldsScreen(this.app)) }, '开始冒险'),
-        h('button', { class: 'btn big', onclick: () => this.ui.push(new HelpScreen(this.app)) }, '玩法指南'),
-        h('button', { class: 'btn big', onclick: () => this.ui.push(new SettingsScreen(this.app)) }, '设置')),
-      h('div', { class: 'title-foot' }, `v${this.app.version} · 全部画面、音效与世界均由代码实时生成`));
+      h('div', { class: 'title-shade' }),
+      h('div', { class: 'title-grain' }),
+      h('div', { class: 'letterbox top' }), h('div', { class: 'letterbox bottom' }),
+      h('div', { class: 'title-left' },
+        h('div', { class: 'logo' },
+          h('div', { class: 'logo-mark', html: EMBLEM }),
+          h('div', { class: 'logo-main' }, ...letters('回响荒野', 0.35)),
+          h('div', { class: 'logo-sub' }, h('i'), h('span', {}, 'ECHOWILD'), h('i')),
+          h('div', { class: 'logo-tag' }, '在破碎的织界中拾起回响，重织这个世界')),
+        h('div', { class: 'title-btns' },
+          this.cont,
+          btn('开始冒险', '新建或载入一个世界', () => this.ui.push(new WorldsScreen(this.app)), 'primary'),
+          btn('玩法指南', '操作、生存与探索', () => this.ui.push(new HelpScreen(this.app))),
+          btn('设置', '画质、操作与声音', () => this.ui.push(new SettingsScreen(this.app))))),
+      h('div', { class: 'title-foot' }, h('span', {}, `v${this.app.version}`), h('span', { class: 'dot' }, '·'), h('span', {}, '全部画面、音效与世界均由代码实时生成')));
+    // quick continue: the most recently played world
+    listWorlds().then((ws) => {
+      const w = ws && ws.filter((x) => !String(x.id).startsWith('dev-')).sort((a, b) => (b.lastPlayed || 0) - (a.lastPlayed || 0))[0];
+      if (!w) return;
+      this.cont.appendChild(btn(`继续：${w.name}`, `${MODE_ZH[w.mode] || ''} · 第 ${w.day || 1} 天${w.shards ? ` · 碎片 ${w.shards}/5` : ''}`, () => this.app.playWorld(w), 'primary cont'));
+      el.querySelector('.tbtn.primary:not(.cont)').classList.remove('primary');
+    }).catch(() => {});
     return el;
   }
   onKey() { return true; }

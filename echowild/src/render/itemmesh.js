@@ -107,6 +107,7 @@ export function blockTextureSprite(layer) {
 // Cache of item meshes keyed by item id.
 export class ItemMeshes {
   constructor(renderer) { this.r = renderer; this.cache = new Map(); }
+  dispose() { for (const m of this.cache.values()) if (m && m.vao) this.r.deleteMesh(m); this.cache.clear(); }
   get(id) {
     let m = this.cache.get(id);
     if (m) return m;

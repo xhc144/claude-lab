@@ -581,27 +581,31 @@ void main() {
   vec3 col = skyLUT(d);
   float h = d.y;
   float clear = 1.0 - u_rain * 0.9;
+  float above = smoothstep(-0.03, 0.01, h);   // the discs set behind the horizon
   // sun disc with limb darkening, dimmed by the air in front of it
   float sd = dot(d, u_sunDir);
   float r = acos(clamp(sd, -1.0, 1.0)) / 0.0105;
-  if (r < 1.0 && h > -0.02) col += u_sunDisc * (1.0 - 0.6 * (1.0 - sqrt(1.0 - r * r))) * clear;
+  if (r < 1.0) col += above * u_sunDisc * (1.0 - 0.6 * (1.0 - sqrt(1.0 - r * r))) * clear;
   col += u_sunDisc * 0.004 * exp(-r * 0.9) * clear;
   // moon with phase and a little texture
   vec3 md = -u_sunDir;
   float mdd = dot(d, md);
-  if (mdd > 0.9988) {
+  float moonMask = 0.0;
+  if (mdd > 0.9988 && above > 0.0) {
     vec3 side = normalize(cross(md, vec3(0.0, 1.0, 0.0)) + 1e-4);
     float x = dot(d - md * mdd, side) / 0.049;
     float lit = smoothstep(-0.2, 0.2, x * cos(u_moonPhase * 6.2832) + sin(u_moonPhase * 6.2832) * 0.5);
     float disc = smoothstep(0.9988, 0.99905, mdd);
     vec2 mq = vec2(dot(d - md, side), dot(d - md, cross(side, md))) * 60.0;
     float tex = 0.78 + 0.16 * n2(mq * 1.5) + 0.08 * n2(mq * 4.0);
-    col = mix(col, u_moonDisc * tex * max(lit, 0.04), disc * clear);
+    // the sunlit part adds to the sky in front of it; the dark part only hides the stars
+    moonMask = disc * above;
+    col += u_moonDisc * tex * lit * moonMask * clear;
   }
   col += u_moonDisc * 0.02 * pow(max(mdd, 0.0), 120.0) * clear;
   // stars, fading out where the sky is bright
   float skyLum = dot(col, vec3(0.3, 0.5, 0.2));
-  float starVis = u_night * clear * smoothstep(0.0, 0.12, h) * (1.0 - smoothstep(0.02, 0.2, skyLum));
+  float starVis = u_night * clear * smoothstep(0.0, 0.12, h) * (1.0 - smoothstep(0.02, 0.2, skyLum)) * (1.0 - moonMask);
   if (starVis > 0.01) {
     vec3 sp = d * 260.0;
     vec3 cell = floor(sp);

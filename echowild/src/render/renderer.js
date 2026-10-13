@@ -314,6 +314,15 @@ export class Renderer {
     return part;
   }
 
+  // forget every chunk mesh (the renderer outlives a world: it is shared by the title scene and games)
+  resetWorld() {
+    const gl = this.gl;
+    for (const m of this.sections) for (const p of [m.o, m.t]) if (p) { gl.deleteBuffer(p.vbo); gl.deleteVertexArray(p.vao); }
+    this.sections.clear();
+    this.lutKey = null;
+    this.stats.sections = this.stats.drawn = this.stats.tris = 0;
+  }
+
   disposeChunk(chunk) {
     for (let s = 0; s < 16; s++) {
       const m = chunk.meshes[s];

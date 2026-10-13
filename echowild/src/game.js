@@ -32,7 +32,7 @@ export class Game {
     this.seed = this.meta.seed >>> 0;
     this.world = new World(this.seed);
     this.gen = new WorldGen(this.seed);  // main-thread copy for queries (spawn, compass)
-    this.renderer = new Renderer(this.canvas);
+    this.renderer = opts.renderer || new Renderer(this.canvas);
     this.applySettings();
     this.input = opts.input || new Input(this.canvas);
     this.player = new Player(this);
@@ -271,7 +271,7 @@ export class Game {
     };
     // underground: fog closes in and turns dark
     const ex = Math.floor(p.x), ey = Math.floor(p.eyeY), ez = Math.floor(p.z);
-    const skyHere = w.skyLight(ex, ey, ez) / 15;
+    const skyHere = this.titleScene ? 1 : w.skyLight(ex, ey, ez) / 15;
     const cave = 1 - skyHere;
     if (cave > 0.4 && p.y < 60) {
       const k = (cave - 0.4) / 0.6;
@@ -514,5 +514,7 @@ export class Game {
     this.chunks.dispose();
     for (const s of this.systems) if (s.dispose) s.dispose(this);
     this.hud.root.remove();
+    if (this.itemMeshes && this.itemMeshes.dispose) this.itemMeshes.dispose();
+    this.renderer.resetWorld();
   }
 }

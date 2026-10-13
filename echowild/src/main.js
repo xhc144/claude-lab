@@ -7,6 +7,8 @@ import { TitleScreen, PauseScreen, DeathScreen, SettingsScreen } from './ui/menu
 import { InventoryScreen } from './ui/inventory.js';
 import { WorldStore, saveWorldMeta, listWorlds } from './save/storage.js';
 import { installSystems } from './systems/index.js';
+import { Renderer } from './render/renderer.js';
+import { TitleScene } from './ui/titlescene.js';
 
 export const VERSION = '1.0.0';
 
@@ -39,14 +41,42 @@ class App {
   }
   saveSettings() { try { localStorage.setItem('echowild.settings', JSON.stringify(this.settings)); } catch { /* ignore */ } }
   applySettings() {
+    this.updateFx();
     if (this.game) { this.game.settings = this.settings; this.game.applySettings(); }
+    if (this.titleScene) this.titleScene.applySettings(this.settings);
     this.input.sensitivity = this.settings.sensitivity;
     this.input.invertY = this.settings.invertY;
   }
 
+  // one renderer (and GL context) for the title scene and every game
+  getRenderer() {
+    if (!this.renderer) { this.renderer = new Renderer(this.canvas); this.updateFx(); }
+    return this.renderer;
+  }
+  // heavy interface effects (backdrop blur) are dropped on software rendering and the lowest quality
+  updateFx() {
+    const g = this.settings.graphics || 'auto';
+    const low = g === 'low' || (g === 'auto' && this.renderer && this.renderer.softwareGL);
+    document.body.classList.toggle('lowfx', !!low);
+  }
+
   showTitle() {
     this.bg.style.display = '';
+    this.bg.style.opacity = '1';
     this.ui.replace(new TitleScreen(this));
+    if (!this.titleScene && !new URLSearchParams(location.search).has('notitle3d')) {
+      const ts = this.titleScene = new TitleScene(this);
+      ts.start().catch((e) => { console.warn('title scene unavailable:', e); if (this.titleScene === ts) this.stopTitleScene(); });
+    }
+  }
+  onTitleReady() {
+    this.bg.style.opacity = '0';
+    setTimeout(() => { if (this.titleScene && this.titleScene.ready) this.bg.style.display = 'none'; }, 1100);
+    document.body.classList.add('title-live');
+  }
+  stopTitleScene() {
+    if (this.titleScene) { this.titleScene.stop(); this.titleScene = null; }
+    document.body.classList.remove('title-live');
   }
 
   onScreensChanged() {
@@ -103,13 +133,15 @@ class App {
 
   async startGame(meta, state, store = new WorldStore(meta.id)) {
     this.ui.closeAll();
+    this.stopTitleScene();
     this.bg.style.display = 'none';
     const loading = document.createElement('div');
     loading.className = 'screen loading';
-    loading.innerHTML = `<div class="title">回响荒野</div><div class="sub">${meta.name}</div><div class="bar"><i></i></div><div class="tip">${TIPS[Math.floor(Math.random() * TIPS.length)]}</div>`;
+    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
+    loading.innerHTML = `<div class="ld-rings"><i></i><i></i><i></i></div><div class="title">回响荒野</div><div class="sub">${esc(meta.name)}</div><div class="bar"><i></i></div><div class="ld-status">正在编织世界…</div><div class="tip">${TIPS[Math.floor(Math.random() * TIPS.length)]}</div>`;
     this.root.appendChild(loading);
     if (meta.difficulty !== undefined) this.settings.difficulty = meta.difficulty;
-    const game = new Game({ canvas: this.canvas, uiRoot: this.root, settings: this.settings, input: this.input, meta, app: this });
+    const game = new Game({ canvas: this.canvas, uiRoot: this.root, settings: this.settings, input: this.input, meta, app: this, renderer: this.getRenderer() });
     this.game = game;
     window.__game = game;
     game.store = store;
