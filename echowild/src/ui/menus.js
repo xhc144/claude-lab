@@ -210,6 +210,7 @@ const HELP = [
 <tr><td>E</td><td>背包与合成</td><td>Q</td><td>丢弃（Ctrl+Q 整组）</td></tr>
 <tr><td>F</td><td>回响脉冲（需要回响罗盘）</td><td>X</td><td>与副手交换</td></tr>
 <tr><td>M</td><td>世界地图</td><td>J</td><td>探索图鉴</td></tr>
+<tr><td>L</td><td>旅程手册（主线与支线任务）</td><td></td><td></td></tr>
 <tr><td>T 或 /</td><td>聊天与指令</td><td>C</td><td>望远</td></tr>
 <tr><td>V / F5</td><td>切换视角</td><td>F3</td><td>调试信息</td></tr>
 <tr><td>F1</td><td>隐藏界面</td><td>Esc</td><td>暂停</td></tr>

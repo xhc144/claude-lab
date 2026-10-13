@@ -81,6 +81,7 @@ class App {
     if (e.code === 'KeyT' || e.code === 'Slash' || e.code === 'Enter') { if (g.openChat) { e.preventDefault(); g.openChat(e.code === 'Slash' ? '/' : ''); return true; } }
     if (e.code === 'KeyM' && g.openMap) { g.openMap(); return true; }
     if (e.code === 'KeyJ' && g.openCodex) { g.openCodex(); return true; }
+    if (e.code === 'KeyL' && g.openJourney) { g.openJourney(); return true; }
     return false;
   }
 

@@ -18,6 +18,7 @@ import { installTransport } from './transport.js';
 import { installAdventure } from './adventure.js';
 import { installWorldMap } from './worldmap.js';
 import { installCodex } from './codex.js';
+import { installJourney } from './journey.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -55,6 +56,7 @@ export function installSystems(game, state) {
   installAdventure(game, state);
   installWorldMap(game, state);
   installCodex(game, state);
+  installJourney(game, state);
 
   // entity ticking, particles, audio, rendering
   game.addSystem({
