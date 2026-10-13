@@ -1,0 +1,21 @@
+{
+  "name": "tensora",
+  "version": "1.0.0",
+  "description": "星枢 Tensora：API 中转网关、模型训练平台与 GPU 算力控制台一体化的 AI 基础设施管理平台（纯前端演示，数据为模拟）",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "build": "node scripts/build.mjs",
+    "test": "npm run test:e2e && npm run test:dist",
+    "test:e2e": "playwright test",
+    "test:dist": "node scripts/build.mjs && TENSORA_APP=/dist/tensora.html playwright test",
+    "lint": "node scripts/check.mjs && node scripts/build.mjs --check"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}

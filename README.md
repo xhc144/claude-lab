@@ -1,10 +1,10 @@
 # claude-lab · Claude 实验仓库
 
-这是多个独立实验的合集：交互数学、创世沙盒、三维游戏与程序化影片。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
+这是多个独立实验的合集：交互数学、创世沙盒、三维游戏、AI 基础设施控制台原型与程序化影片。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供四个交互项目、墨经模板目录与两个影片播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供四个交互项目、一个产品界面原型、墨经模板目录与两个影片播放器。
 
 ## 浏览器交互项目
 
@@ -16,6 +16,10 @@
 | 0 → ∞ 交互实验室 | 从复平面到纽结、双摆、量子波包与神经网络的 13 台仪器 | [打开](https://xhc144.github.io/claude-lab/personal-site/) | [personal-site/](personal-site/)；`npm ci && npm run build && npm start`；发布一般作品展示版本 |
 
 MathScape 与 Myriad 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
+
+## 产品界面原型
+
+[星枢 Tensora](tensora/) 是 API 中转网关、模型训练平台与 GPU 算力控制台一体化的 AI 基础设施管理平台前端，共 10 个页面：总览仪表盘、模型广场、API 密钥、调用统计、Token 消耗、模型训练、训练任务、GPU 集群、费用分析与设置。数据每秒实时模拟，模型、厂商与账单均为虚构，不连接后端。[在线打开](https://xhc144.github.io/claude-lab/tensora/)；源码目录内 `npm start` 本地运行，`npm run build` 生成可离线打开的 `dist/tensora.html`，桌面与手机均可使用。
 
 ## 数学排版模板
 
@@ -46,7 +50,7 @@ node scripts/build-pages.mjs
 python3 -m http.server 8080 --directory docs
 ```
 
-`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
+`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室与星枢 Tensora 的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 
