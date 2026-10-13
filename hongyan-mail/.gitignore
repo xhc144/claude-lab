@@ -1,0 +1,8 @@
+node_modules/
+dist/
+out/
+*.log
+.vite/
+tests/e2e/screenshots/
+# All installers stay out of the tracked tree.
+release/

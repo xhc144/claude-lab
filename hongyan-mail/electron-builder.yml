@@ -1,0 +1,33 @@
+# electron-builder produces the unpacked Windows app; scripts/dist-win.mjs then stamps
+# the executable (icon, version info) and wraps it in an NSIS installer and a portable zip.
+appId: com.hongyan.mail
+productName: Hongyan Mail
+copyright: MIT License
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/**/*
+  - package.json
+  - "!**/*.map"
+asar: true
+electronLanguages:
+  - zh-CN
+  - en-US
+extraResources:
+  - from: build/icon.ico
+    to: icon.ico
+  - from: build/icon.png
+    to: icon.png
+  - from: build/tray.ico
+    to: tray.ico
+  - from: build/tray.png
+    to: tray.png
+npmRebuild: false
+nodeGypRebuild: false
+win:
+  target:
+    - target: dir
+      arch: [x64]
+  icon: build/icon.ico
+  signAndEditExecutable: false
