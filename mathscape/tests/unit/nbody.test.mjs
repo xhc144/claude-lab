@@ -87,7 +87,12 @@ test('Pythagorean problem: the lightest body is ejected, the others form a binar
   const [x0, y0] = sys.pos(0), [x1, y1] = sys.pos(1), [x2, y2] = sys.pos(2);
   const binary = Math.hypot(x2 - x1, y2 - y1);
   const escape = Math.hypot(x0 - (4 * x1 + 5 * x2) / 9, y0 - (4 * y1 + 5 * y2) / 9);
-  assert.ok(binary < 1, `binary separation ${binary}`);
+  // The close encounters are chaotic: the binary's orbital phase differs across
+  // floating-point implementations. Binding energy identifies a binary without
+  // imposing an arbitrary separation at one timestamp.
+  const [vx1, vy1] = sys.vel(1), [vx2, vy2] = sys.vel(2);
+  const binaryEnergy = 0.5 * ((vx2 - vx1) ** 2 + (vy2 - vy1) ** 2) - 9 / binary;
+  assert.ok(binaryEnergy < 0, `binary specific energy ${binaryEnergy}`);
   assert.ok(escape > 20, `escaper distance ${escape}`);
   // the escaper (mass 3) has positive energy relative to the binary
   const [vx0, vy0] = sys.vel(0);

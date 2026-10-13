@@ -105,7 +105,9 @@ class App {
     this.bg.style.display = 'none';
     const loading = document.createElement('div');
     loading.className = 'screen loading';
-    loading.innerHTML = `<div class="title">回响荒野</div><div class="sub">${meta.name}</div><div class="bar"><i></i></div><div class="tip">${TIPS[Math.floor(Math.random() * TIPS.length)]}</div>`;
+    loading.innerHTML = '<div class="title">回响荒野</div><div class="sub"></div><div class="bar"><i></i></div><div class="tip"></div>';
+    loading.querySelector('.sub').textContent = meta.name;
+    loading.querySelector('.tip').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
     this.root.appendChild(loading);
     if (meta.difficulty !== undefined) this.settings.difficulty = meta.difficulty;
     const game = new Game({ canvas: this.canvas, uiRoot: this.root, settings: this.settings, input: this.input, meta, app: this });

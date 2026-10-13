@@ -5,7 +5,7 @@ import { pathToFileURL } from 'node:url';
 import { resolve } from 'node:path';
 import { mkdirSync } from 'node:fs';
 
-const URL = pathToFileURL(resolve('dist/index.html')).href;
+const URL = process.env.PERSONAL_SITE_APP || pathToFileURL(resolve('dist/index.html')).href;
 const SHOTS = resolve('shots/e2e');
 mkdirSync(SHOTS, { recursive: true });
 

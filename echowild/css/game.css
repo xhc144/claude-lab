@@ -302,3 +302,11 @@ html, body { margin: 0; height: 100%; overflow: hidden; background: #070a12; col
 .codex-stats { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 6px 24px; }
 .cs-row { display: flex; justify-content: space-between; padding: 8px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.06); font-size: 14px; }
 .cs-row b { color: var(--gold); font-weight: 600; }
+
+/* Small screens may browse menus; gameplay still requires keyboard and mouse. */
+@media (max-width: 600px) {
+ .menu-panel { min-width: 0; width: 92vw; max-width: 92vw; box-sizing: border-box; padding: 16px; }
+ .menu-row, .wr-btns { flex-wrap: wrap; }
+ .logo-main { font-size: clamp(30px, 9vw, 54px); }
+ .title-foot { padding: 0 12px; text-align: center; }
+}

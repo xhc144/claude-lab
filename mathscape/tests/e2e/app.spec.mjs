@@ -35,10 +35,13 @@ test('every module draws a non-trivial picture', async ({ page }) => {
   ];
   for (const [hash, sel] of cases) {
     await open(page, hash);
-    await page.waitForTimeout(700);
+    // Software rendering can need several frames before a 3D trajectory fills
+    // the canvas. Wait for the picture itself instead of a fixed wall time.
+    await expect.poll(async () => (await canvasStats(page, sel)).distinct,
+      { timeout: 15000, message: `${hash}: canvas did not finish rendering` })
+      .toBeGreaterThan(hash.includes('threebody') ? 8 : 40);
     const s = await canvasStats(page, sel);
     expect(s.w, hash).toBeGreaterThan(300);
-    expect(s.distinct, `${hash}: too few colours, canvas looks blank`).toBeGreaterThan(hash.includes('threebody') ? 8 : 40);
   }
   check();
 });
