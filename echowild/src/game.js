@@ -6,6 +6,7 @@ import { ChunkManager } from './world/chunkmanager.js';
 import { WorldGen, SEA } from './world/gen/worldgen.js';
 import { Renderer } from './render/renderer.js';
 import { skyState, DAY_TICKS } from './render/sky.js';
+import { skyLighting, skyRadiance } from './render/atmosphere.js';
 import { Player } from './entity/player.js';
 import { Inventory } from './entity/inventory.js';
 import { Input } from './input.js';
@@ -63,7 +64,8 @@ export class Game {
     this.renderer.renderDist = s.renderDist;
     this.renderer.fov = s.fov * Math.PI / 180;
     this.renderer.scale = s.renderScale;
-    this.renderer.gamma = 1 - (s.brightness - 0.5) * 0.5;
+    const q = s.graphics && s.graphics !== 'auto' ? s.graphics : (this.renderer.softwareGL ? 'low' : 'high');
+    if (q !== this.renderer.qualityName) this.renderer.setQuality(q);
     if (this.input) { this.input.sensitivity = s.sensitivity; this.input.invertY = s.invertY; }
   }
 
@@ -226,35 +228,84 @@ export class Game {
     const flash = this.weather ? this.weather.flash : 0;
     const s = skyState(this.dayTime, weather, biome, flash);
     this.sky = s;
+    // atmosphere lighting (sun / moon colour, sky ambient), refreshed when the sky changes
+    const akey = `${Math.round(this.dayTime / 15)}:${Math.round(weather.rain * 25)}`;
+    if (akey !== this._atmKey) {
+      this._atmKey = akey;
+      this._atm = skyLighting(s.sun, weather.rain);
+      // horizon haze toward / away from the sun (fog colour for distant terrain)
+      const h = (x, z) => { const d = [x, 0.06, z]; const l = Math.hypot(...d); return skyRadiance(d.map((v) => v / l), s.sun); };
+      const sl = Math.hypot(s.sun[0], s.sun[2]) || 1;
+      const sx = s.sun[0] / sl, sz = s.sun[2] / sl, ca = Math.cos(0.6), sa = Math.sin(0.6);
+      // toward the sun, but outside its bright forward-scattering halo
+      const toward = h(sx * ca - sz * sa, sx * sa + sz * ca), away = h(-sx, -sz);
+      const gr = (c) => { const g = (c[0] + c[1] + c[2]) / 3; return c.map((v) => (v * (1 - weather.rain * 0.85) + g * 0.75 * weather.rain * 0.85)); };
+      this._haze = [gr(toward), gr(away)];
+    }
+    const A = this._atm;
+    const lum = (c) => c[0] * 0.2126 + c[1] * 0.7152 + c[2] * 0.0722;
+    const bright = this.settings.brightness;
+    const storm = weather.storm || 0;
+    let lightCol = A.lightCol.map((c) => c * (1 - storm * 0.45));
+    // sky light, a little desaturated, plus warm light bounced off the ground
+    const g0 = (A.ambient[0] + A.ambient[1] + A.ambient[2]) / 3;
+    let ambient = A.ambient.map((a, i) => (a * 0.62 + g0 * 0.38) * (1 - storm * 0.3) + A.sunCol[i] * 0.035);
+    if (flash > 0) { lightCol = lightCol.map((c) => c + flash * 5); ambient = ambient.map((a) => a + flash * 1.6); }
     const rd = this.settings.renderDist * 16;
     const env = {
-      ...s,
+      sun: s.sun, daylight: s.daylight, night: s.night, twilight: s.twilight, rain: s.rain, storm,
+      lightDir: A.lightDir, lightCol, ambient,
+      ambientMin: [0.006, 0.008, 0.014].map((v) => v * (0.5 + bright * 2.2)),
       time: this.time,
-      ambient: 0.035 + this.settings.brightness * 0.05,
-      fogNear: rd * 0.55, fogFar: rd * 0.98,
-      cloudCover: 0.5 - (weather.rain * 0.3) + 0.08,
+      fogNear: rd * 0.72, fogFar: rd * 1.0,
+      haze: 0.0006 + s.rain * 0.004 + (biome.fog ? 0.001 : 0),
+      hazeSun: this._haze[0], hazeAnti: this._haze[1],
+      caveFog: 0, fogLinear: [0.02, 0.025, 0.035],
+      cloudCover: 0.47 + s.rain * 0.38,
+      sunDisc: A.sunT.map((t) => t * 90),
+      moonDisc: [0.85, 0.9, 1.05].map((v) => v * 0.45),
       aurora: this.auroraLevel ? this.auroraLevel() : 0,
       moonPhase: (this.day % 8) / 8,
       underwater: false,
+      hurt: 0,
     };
     // underground: fog closes in and turns dark
-    const sky = w.skyLight(Math.floor(p.x), Math.floor(p.eyeY), Math.floor(p.z));
-    const cave = 1 - sky / 15;
+    const ex = Math.floor(p.x), ey = Math.floor(p.eyeY), ez = Math.floor(p.z);
+    const skyHere = w.skyLight(ex, ey, ez) / 15;
+    const cave = 1 - skyHere;
     if (cave > 0.4 && p.y < 60) {
       const k = (cave - 0.4) / 0.6;
-      const deep = p.y < 46 ? [0.035, 0.05, 0.08] : [0.04, 0.045, 0.06];
-      env.fog = env.fog.map((c, i) => c * (1 - k) + deep[i] * k);
-      env.horizon = env.fog; env.zenith = env.fog;
+      env.caveFog = k;
+      env.fogLinear = p.y < 46 ? [0.006, 0.011, 0.02] : [0.008, 0.009, 0.012];
     }
     if (p.medium && p.medium.eyeWater) {
-      const t = biome.waterRGB.map((c) => c / 255);
-      const dl = 0.15 + s.daylight * 0.55;
-      env.fog = [t[0] * 0.4 * dl, t[1] * 0.55 * dl, t[2] * 0.7 * dl];
-      env.fogNear = 0; env.fogFar = 22 + s.daylight * 14;
+      const t = biome.waterRGB.map((c) => Math.pow(c / 255, 2.2));
+      const dl = 0.12 + s.daylight * 0.5;
+      env.fogLinear = [t[0] * 0.25 * dl, t[1] * 0.45 * dl, t[2] * 0.6 * dl];
+      env.fogNear = 0; env.fogFar = 20 + s.daylight * 16;
       env.underwater = true;
+      env.waterTint = [0.72, 0.9, 1.0];
     }
-    if (p.medium && p.medium.eyeLava) { env.fog = [0.6, 0.18, 0.02]; env.fogNear = 0; env.fogFar = 3; env.underwater = true; }
+    if (p.medium && p.medium.eyeLava) { env.fogLinear = [1.4, 0.3, 0.02]; env.fogNear = 0; env.fogFar = 3; env.underwater = true; env.inLava = true; }
     if (this.weather) this.weather.adjustEnv(env, p);
+    // surfaces stay wet for a while after the rain (dries over ~a minute)
+    const rainHere = this.weather ? this.weather.rainAt(p.x, p.z) : 0;
+    const dtw = Math.min(0.25, Math.max(0, this.time - (this._wetT ?? this.time)));
+    this._wetT = this.time;
+    this._wet = Math.max(rainHere, (this._wet || 0) - dtw / 60);
+    env.wet = this._wet;
+    // eye adaptation: brighten for night and caves, ease toward the target over a second or two
+    const L = w.getLight(ex, ey, ez);
+    const blk = Math.max((L >> 4) & 15, (L >> 8) & 15, (L >> 12) & 15) / 15;
+    const outdoorKey = lum(lightCol) * 0.55 + lum(ambient);
+    const key = outdoorKey * skyHere * skyHere + blk * blk * 0.9 + 0.025;
+    const target = Math.min(3.4, Math.max(0.5, 0.92 * Math.pow(2.1 / key, 0.55))) * (0.85 + bright * 0.35);
+    const dt = Math.min(0.25, Math.max(0, this.time - (this._expT ?? this.time)));
+    this._expT = this.time;
+    this._exposure = this._exposure ? this._exposure + (target - this._exposure) * Math.min(1, dt * (target > this._exposure ? 0.9 : 2.2)) : target;
+    env.exposure = this._exposure;
+    env.partScale = Math.max(outdoorKey, 0.25);
+    env.handSun = Math.pow(skyHere, 4);
     return env;
   }
 
@@ -298,16 +349,17 @@ export class Game {
     this.env = env;
     const cam = this.camera();
     this.cam = cam;
-    r.beginFrame(cam, env);
-    r.drawSky();
-    for (const s of this.systems) if (s.renderSky) s.renderSky(this, r);
+    r.beginFrame(cam, env, (rr) => { for (const s of this.systems) if (s.renderShadow) s.renderShadow(this, rr); });
     r.drawTerrain(0);
     for (const s of this.systems) if (s.renderOpaque) s.renderOpaque(this, r);
+    r.drawSky();
+    for (const s of this.systems) if (s.renderSky) s.renderSky(this, r);
     r.drawClouds();
     r.drawTerrain(1);
     for (const s of this.systems) if (s.renderTranslucent) s.renderTranslucent(this, r);
     this.drawSelection();
     for (const s of this.systems) if (s.renderOverlay) s.renderOverlay(this, r);
+    r.endFrame();
   }
 
   drawSelection() {

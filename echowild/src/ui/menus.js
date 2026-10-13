@@ -132,6 +132,14 @@ export class SettingsScreen extends Screen {
       b.addEventListener('click', () => { s[key] = !s[key]; b.textContent = s[key] ? '开' : '关'; b.classList.toggle('on', s[key]); this.app.applySettings(); });
       rows.push(h('div', { class: 'setting' }, h('span', {}, zh), b));
     };
+    {
+      // graphics quality preset (auto picks low on software rendering, high otherwise)
+      const seg = h('div', { class: 'seg' });
+      const opts = [['auto', '自动'], ['low', '低'], ['medium', '中'], ['high', '高'], ['ultra', '极致']];
+      const render = () => { seg.innerHTML = ''; for (const [k, zh] of opts) seg.appendChild(h('button', { class: `seg-b ${(s.graphics || 'auto') === k ? 'on' : ''}`, onclick: () => { s.graphics = k; this.app.applySettings(); render(); } }, zh)); };
+      render();
+      rows.push(h('div', { class: 'setting' }, h('span', {}, '画质'), seg));
+    }
     slider('renderDist', '视距（区块）', 3, 16, 1);
     slider('fov', '视野', 55, 110, 1, (v) => `${v}°`);
     slider('sensitivity', '鼠标灵敏度', 0.2, 3, 0.05, (v) => Number(v).toFixed(2));

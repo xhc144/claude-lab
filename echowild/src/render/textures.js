@@ -1203,3 +1203,84 @@ export function registerTexture(name, painter, { glow = false } = {}) {
   return texLayer(name);
 }
 export { field, noisy, speckle, voronoi, blob, line, P as PALETTE };
+
+// ---------------------------------------------------------------- material maps
+// A second texture array, one RGBA layer per block texture: R,G = tangent-space normal (x, y),
+// B = roughness, A = metalness. Normals come from a height field (texel luminance, blurred a
+// touch: darker reads deeper — mortar, seams, bark grooves, gaps between cobbles), scaled by a
+// per-material relief strength. Roughness / metalness follow the material family.
+const MAT_RULES = [
+  // [regexp on texture name, relief strength, roughness, metalness]
+  [/^(water|lava)/, 0, 0.05, 0],
+  [/^(iron_block|iron_door|rail|power_rail|speed_rail|hopper|cauldron|piston_inner|lantern)/, 0.9, 0.32, 1],
+  [/^(gold_block|ancient_gold|stargem_block|star_core)/, 0.8, 0.22, 1],
+  [/^(copper_block|copper_tiles)/, 1.0, 0.38, 0.85],
+  [/^(meteor_block|meteor_ore|meteor_rock)/, 1.8, 0.45, 0.6],
+  [/^(ice|packed_ice|pale_crystal|crystal_cluster|crystal_bud|echo_block|budding_echo|glass|cloud$)/, 0.35, 0.08, 0],
+  [/^(obsidian)/, 1.2, 0.12, 0],
+  [/^(glaze_|polished_stone|chiseled_stone|smooth|cut_sandstone|ancient_pillar|lamp_stone)/, 1.2, 0.34, 0],
+  [/(_ore)$/, 2.3, 0.72, 0],
+  [/^(stone|deepstone|cobblestone|deep_cobble|stone_bricks|mossy_bricks|cracked_bricks|deep_bricks|deep_tiles|bricks|ancient_bricks|ancient_carved|bedrock|redrock|sandstone|terra|terracotta|furnace|dispenser|drill|observer|placer|forge|resonator|seal_door|pedestal|waystone|altar|urn)/, 2.6, 0.82, 0],
+  [/^(dirt|farmland|mud|clay|gravel|mycel|pale_soil|pale_side|redsand|sand)/, 1.4, 0.94, 0],
+  [/^(snow)/, 0.7, 0.62, 0],
+  [/(_log|_log_top|mush_stem)/, 2.2, 0.78, 0],
+  [/(_planks|bookshelf|chest|workbench|barrel|trapdoor|oak_door|ladder|note_block|thatch|daylight)/, 1.6, 0.68, 0],
+  [/(_leaves|grass|fern|vines|seagrass|reeds|moss|lily_pad|cactus)/, 1.1, 0.58, 0],
+  [/^(felt_|bed_)/, 0.9, 0.98, 0],
+];
+function matFor(name) {
+  for (const [re, k, r, m] of MAT_RULES) if (re.test(name)) return [k, r, m];
+  return [1.3, 0.75, 0];
+}
+
+export function buildMaterialMaps(tex = buildBlockTextures()) {
+  const n = tex.layers;
+  const out = new Uint8Array(n * S * S * 4);
+  const h = new Float32Array(S * S);
+  for (let l = 0; l < n; l++) {
+    const name = tex.names[l] || '';
+    const [k, rough, metal] = matFor(name);
+    const src = tex.data.subarray(l * S * S * 4, (l + 1) * S * S * 4);
+    for (let i = 0; i < S * S; i++) {
+      const a = src[i * 4 + 3];
+      h[i] = a < 80 ? 0 : (src[i * 4] * 0.299 + src[i * 4 + 1] * 0.587 + src[i * 4 + 2] * 0.114) / 255;
+    }
+    const H = (x, y) => h[(((y % S) + S) % S) * S + (((x % S) + S) % S)];
+    // a light blur keeps single noisy texels from turning into needles
+    const hb = (x, y) => H(x, y) * 0.5 + (H(x + 1, y) + H(x - 1, y) + H(x, y + 1) + H(x, y - 1)) * 0.125;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      const dx = (hb(x + 1, y) - hb(x - 1, y)) * k;
+      const dy = (hb(x, y + 1) - hb(x, y - 1)) * k;
+      let nx = -dx, ny = -dy, nz = 1;
+      const len = Math.hypot(nx, ny, nz);
+      nx /= len; ny /= len;
+      // bright texels on rough materials are a little smoother (worn tops of cobbles, polish)
+      const r = Math.max(0.04, Math.min(1, rough - (H(x, y) - 0.5) * 0.12 * (1 - metal)));
+      const o = (l * S * S + y * S + x) * 4;
+      out[o] = Math.round((nx * 0.5 + 0.5) * 255);
+      out[o + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      out[o + 2] = Math.round(r * 255);
+      out[o + 3] = Math.round(metal * 255);
+    }
+  }
+  return { size: S, layers: n, data: out };
+}
+
+// plain box-filtered mips for the material array (normals are renormalised in the shader)
+export function buildMatMips(data, layers, size) {
+  const levels = [data];
+  let s = size, cur = data;
+  while (s > 1) {
+    const hh = s >> 1;
+    const o = new Uint8Array(layers * hh * hh * 4);
+    for (let l = 0; l < layers; l++) for (let y = 0; y < hh; y++) for (let x = 0; x < hh; x++) {
+      for (let c = 0; c < 4; c++) {
+        let v = 0;
+        for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) v += cur[(l * s * s + (y * 2 + dy) * s + x * 2 + dx) * 4 + c];
+        o[(l * hh * hh + y * hh + x) * 4 + c] = v / 4;
+      }
+    }
+    levels.push(o); cur = o; s = hh;
+  }
+  return levels;
+}

@@ -61,6 +61,7 @@ export function installSystems(game, state) {
     tick(g) { g.entities.tick(TICK); },
     frame(g, dt) { g.particles.frame(dt); g.audio.update(g, dt); },
     renderOpaque(g, r) { g.entities.render(r, Math.min(1, g.acc / TICK)); },
+    renderShadow(g, r) { g.entities.render(r, Math.min(1, g.acc / TICK)); },
     renderTranslucent(g, r) { g.particles.render(r); },
   });
 

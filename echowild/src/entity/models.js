@@ -421,9 +421,9 @@ export function drawModel(r, kind, x, y, z, yaw, pose, light, overlay, emissiveB
     multiply(tmp, base, pm);
     const em = (part.skin === 'ember' || part.skin === 'ember_core' || part.skin === 'jelly_core' || part.skin === 'rune' || part.skin === 'crystal') ? 0.9 : emissiveBoost;
     if (part.translucent) { r.gl.enable(r.gl.BLEND); r.gl.blendFunc(r.gl.SRC_ALPHA, r.gl.ONE_MINUS_SRC_ALPHA); }
-    r.entity.f1('u_glowMask', 1);
+    r.setGlowMask(1);
     r.drawMesh(mesh, tmp, light, overlay, em);
-    r.entity.f1('u_glowMask', 0);
+    r.setGlowMask(0);
     if (part.translucent) r.gl.disable(r.gl.BLEND);
   }
   void def;

@@ -11,7 +11,7 @@ import { installSystems } from './systems/index.js';
 export const VERSION = '1.0.0';
 
 const DEFAULT_SETTINGS = {
-  renderDist: 8, fov: 75, sensitivity: 1, invertY: false, renderScale: 1, brightness: 0.5,
+  graphics: 'auto', renderDist: 8, fov: 75, sensitivity: 1, invertY: false, renderScale: 1, brightness: 0.5,
   viewBob: true, volume: 0.8, music: 0.5, difficulty: 2, showCoords: false, particles: true,
 };
 
@@ -201,6 +201,7 @@ async function boot() {
     // test / dev entry: jump straight into a world
     const seed = q.has('seed') ? Number(q.get('seed')) >>> 0 : 20261012;
     if (q.has('rd')) app.settings.renderDist = Number(q.get('rd'));
+    if (q.has('gfx')) app.settings.graphics = q.get('gfx');
     const mode = q.get('mode') === 'creative' ? 'creative' : 'survival';
     const id = `dev-${seed}-${mode}`;
     const existing = q.has('fresh') ? null : (await listWorlds()).find((w) => w.id === id);
