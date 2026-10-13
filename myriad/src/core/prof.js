@@ -5,6 +5,8 @@ export function prof(w, key, t0) {
   const p = w._prof || (w._prof = {});
   const dt = performance.now() - t0;
   p[key] = p[key] === undefined ? dt : p[key] * 0.9 + dt * 0.1;
+  const sum = w._profSum || (w._profSum = {});
+  sum[key] = (sum[key] || 0) + dt;
   return performance.now();
 }
 

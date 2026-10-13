@@ -264,6 +264,7 @@ export class Game {
     const res = applyTool(w, t.id, x, y, opts);
     if (res && res.msg) this.emit('toast', { text: res.msg, imp: 1, quick: true });
     if (res && res.ok !== false) {
+      this.edits = (this.edits || 0) + 1;
       const r = (t.r ? this.brush.r : 3) + 3;
       this.R.terrain.markRect(x - r, y - r, x + r, y + r);
       if (['raise', 'lower', 'flatten', 'mountain', 'island', 'smooth', 'drought', 'wet', 'heat', 'cool', 'worldtree', 'volcano', 'meteor', 'quake'].includes(t.id)) this.dirtyDerived = performance.now() + 350;
