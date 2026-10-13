@@ -228,11 +228,13 @@ void main() {
   if (s.a < 0.3) discard;
   vec3 albedo = toLinear(s.rgb);
   vec3 Ng = faceNormal(v_face);
-  bool foliage = v_face >= 6 || (v_flags & 1) != 0;
+  bool foliage = v_face >= 6;                          // crossed plants: lit through, both sides
+  bool leafCube = !foliage && (v_flags & 1) != 0;      // leaf blocks: lit by face, a little light through
   float ao = aoFactor();
   if (u_pbr < 0.5) {
     float lum = dot(s.rgb, vec3(0.299, 0.587, 0.114));
     vec3 col = shade(albedo, Ng, v_light, ao * mix(0.86, 1.06, smoothstep(0.08, 0.7, lum)), foliage ? 1.0 : 0.0, v_shadow);
+    if (leafCube) col += albedo * u_lightCol * 0.12 * max(0.0, -dot(Ng, u_lightDir)) * smoothstep(0.32, 0.86, v_light.x);
     col += albedo * emis * ((v_flags & 16) != 0 ? 7.0 : 4.5);
     o = vec4(outColor(applyFog(col)), 1.0);
     return;
@@ -257,8 +259,10 @@ void main() {
   }
   // direct light (diffuse + Blinn-Phong specular) through the shadow map
   float ndl = dot(N, u_lightDir), ndlG = dot(Ng, u_lightDir);
-  float diff = foliage ? (0.35 + 0.65 * abs(ndl)) : max(ndl, 0.0) * step(0.0, ndlG);
-  float vis = diff > 0.0 ? shadowAt(v_shadow, foliage ? 1.0 : ndlG) * smoothstep(0.32, 0.86, sky) : 0.0;
+  float diff = foliage ? (0.35 + 0.65 * abs(ndl)) : leafCube ? max(0.0, ndl * 0.75 + 0.25) : max(ndl, 0.0) * step(0.0, ndlG);
+  float vis = diff > 0.0 ? shadowAt(v_shadow, foliage || leafCube ? 1.0 : ndlG) * smoothstep(0.32, 0.86, sky) : 0.0;
+  // leaves glow a little when the sun is behind them
+  vec3 through = leafCube ? albedo * u_lightCol * 0.16 * max(0.0, -ndlG) * smoothstep(0.32, 0.86, sky) : vec3(0.0);
   vec3 F0 = mix(vec3(0.04), albedo, metal);
   vec3 H = normalize(V + u_lightDir);
   float a2 = rough * rough * rough * rough;
@@ -271,7 +275,7 @@ void main() {
   vec3 skyAmb = u_ambient * (sky * sky) * (0.55 + 0.45 * (N.y * 0.5 + 0.5));
   vec3 blk = v_light.yzw;
   blk = blk * blk * (0.5 + blk * 0.75) * 1.25;
-  vec3 col = direct + albedo * kd * (skyAmb + blk + u_ambientMin) * ao;
+  vec3 col = direct + through + albedo * kd * (skyAmb + blk + u_ambientMin) * ao;
   // smooth surfaces mirror the sky
   if (rough < 0.6) {
     vec3 R = reflect(-V, N);
