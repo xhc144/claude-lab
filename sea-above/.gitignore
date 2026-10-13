@@ -8,3 +8,5 @@ shaders/_*.glsl
 out/*.wav
 out/*.txt
 out/edit_preview*
+out/*.sh
+out/the_sea_above_master.mp4

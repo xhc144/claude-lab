@@ -6,6 +6,7 @@
 
 uniform float uBubbles;      // density of the bubble burst after the plunge
 uniform vec3  uBubbleC;      // where the burst is centred
+uniform vec3  uBubbleOffset; // bubbles are dragged along with the camera at first
 
 const float UW_SIG = 0.0065;  // extinction per metre
 
@@ -73,13 +74,14 @@ float traceBubbles(vec3 ro, vec3 rd, float tmax, out vec3 nrm) {
         if (hc.x < dens) {
             float y0 = ro.y + rd.y * tEnter, y1 = ro.y + rd.y * min(tExit, best);
             float ylo = min(y0, y1) - 0.1, yhi = max(y0, y1) + 0.1;
-            float off = uTime * 2.4 + hc.y * S;
+            float off = uTime * (1.6 + 1.4 * hc.y) + hc.y * S;
             float k0 = floor((ylo - off) / S), k1 = floor((yhi - off) / S);
             for (float k = k0; k <= min(k1, k0 + 6.0); k += 1.0) {
                 vec3 hk = hash33(vec3(pos, k) + 2.0);
                 float r = 0.012 + 0.05 * hk.z * hk.z;
                 float wob = 0.08 * sin(uTime * 9.0 + hk.x * 30.0);
-                vec3 c = vec3((pos.x + 0.2 + 0.6 * hk.x) * C + wob, (k + 0.5) * S + off, (pos.y + 0.2 + 0.6 * hk.y) * C);
+                vec3 hj = hash33(vec3(k, pos) + 7.3);
+                vec3 c = vec3((pos.x + 0.15 + 0.7 * hj.x) * C + wob, (k + 0.1 + 0.8 * hj.y) * S + off, (pos.y + 0.15 + 0.7 * hj.z) * C);
                 vec3 oc = ro - c;
                 float b = dot(oc, rd);
                 float h = b * b - (dot(oc, oc) - r * r);
@@ -195,7 +197,7 @@ vec3 renderUnderwater(vec3 ro, vec3 rd, vec2 px, out float depth) {
     // bubbles in front of everything
     if (uBubbles > 0.0) {
         vec3 bn;
-        float tbub = traceBubbles(ro, rd, min(t, 30.0), bn);
+        float tbub = traceBubbles(ro - uBubbleOffset, rd, min(t, 30.0), bn);
         if (tbub > 0.0) {
             float edge = pow(1.0 - saturate(dot(bn, -rd)), 1.5);
             vec3 env = uwAmbient(ro.y - 40.0) * 1.6;

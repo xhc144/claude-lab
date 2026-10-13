@@ -25,6 +25,10 @@ class Shot:
     def post_at(self, t):
         return dict(self.post)
 
+    def spp_for(self, frame):
+        """Samples per pixel for a frame (shots can ask for more where motion blur needs it)."""
+        return self.spp
+
     def frame_count(self):
         return int(round(self.duration * FPS))
 

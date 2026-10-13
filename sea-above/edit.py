@@ -30,8 +30,9 @@ EDIT = [
     dict(shot="s4_above", at=33.0),
     dict(shot="s5_return", at=56.0, dissolve=1.0),
 ]
-TITLE_AT = 64.4          # title fades in over the last image
-FADE_OUT = (65.6, 68.0)  # the picture fades to black under the title
+TITLE_AT = 64.6          # title fades in under the dew drop, in the lower third
+DIM = (63.6, 65.2, 0.55)  # the picture dims so the title reads...
+FADE_OUT = (67.0, 69.2)  # ...then fades to black under it
 TOTAL = 71.0
 
 FONT_DIR = "/usr/share/fonts/opentype/noto"
@@ -51,8 +52,8 @@ def make_title(w=1920, h=1080):
     zh = ImageFont.truetype(f"{FONT_DIR}/NotoSerifCJK-Light.ttc", 78, index=2)
     en = ImageFont.truetype(f"{FONT_DIR}/NotoSerifCJK-ExtraLight.ttc", 23, index=2)
     layers = []
-    for text, font, spacing, y, col in (("倒悬之海", zh, 46, 486, (246, 238, 224)),
-                                         ("THE  SEA  ABOVE", en, 11, 590, (214, 206, 192))):
+    for text, font, spacing, y, col in (("倒悬之海", zh, 46, 756, (246, 238, 224)),
+                                         ("THE  SEA  ABOVE", en, 11, 862, (226, 218, 204))):
         img = Image.new("RGBA", (w, h), (0, 0, 0, 0))
         d = ImageDraw.Draw(img)
         widths = [d.textbbox((0, 0), ch, font=font)[2] for ch in text]
@@ -115,8 +116,8 @@ def frame_at(fi, w):
             out = graded(imgs[0][1], t, w)
     if out is None:
         out = np.zeros((int(round(w / (1920 / 816) / 2) * 2), w, 3), np.float32)
-    # fade to black under the title
-    out = out * (1.0 - smoothstep(*FADE_OUT, t))
+    # dim, then fade to black under the title
+    out = out * (1.0 - DIM[2] * smoothstep(DIM[0], DIM[1], t)) * (1.0 - smoothstep(*FADE_OUT, t))
     img8 = post.letterbox(post.to_uint8(out, fi))
     if t >= TITLE_AT:
         if _title is None:
