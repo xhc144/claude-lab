@@ -6,7 +6,7 @@ import { moveAndCollide, sampleMedium, boxBlocked } from './physics.js';
 import { drawModel, MODELS } from './models.js';
 import { BLOCKS, B, ID_MASK, SOLID, LIQUID, OPAQUE } from '../world/blocks.js';
 import { I, ITEMS } from '../world/items.js';
-import { BIOMES, BI } from '../world/biomes.js';
+import { BIOMES, BI, biomeOf } from '../world/biomes.js';
 import { angleLerp } from '../core/math.js';
 
 const D = (key, zh, o) => ({ key, zh, model: key, hw: 0.4, h: 1, health: 10, speed: 3, hostile: false, voice: 'chirp', drops: [], ...o });
@@ -566,7 +566,7 @@ export function installMobs(game) {
     const y = c.heights[(lz << 4) | lx];
     const top = c.blocks[(y << 8) | (lz << 4) | lx] & ID_MASK;
     if (top !== B.grass && top !== B.snow_grass && top !== B.sky_grass && top !== B.snow_layer && top !== B.tall_grass && top !== B.pale_soil && top !== B.sand) return;
-    const biome = BIOMES[c.biomes[(lz << 4) | lx]].key;
+    const biome = BIOMES[biomeOf(c.biomes[(lz << 4) | lx], y)].key;
     const list = PASSIVE_BY_BIOME[biome];
     if (!list) return;
     const kind = pick(list);
@@ -653,7 +653,7 @@ export function installMobs(game) {
     const ground = w.getId(x, y - 1, z);
     if (ground === B.glass || BLOCKS[ground].leaves || BLOCKS[ground].shape === 'slab') return false;
     // pick species
-    const biome = BIOMES[w.biomeAt(x, z)].key;
+    const biome = BIOMES[w.biomeAt(x, z, y)].key;
     let kind;
     const deep = y < 46 && sky < 4;
     const r = Math.random();
@@ -701,7 +701,7 @@ export function installMobs(game) {
     const top = w.getId(x, y, z);
     if (top !== B.grass && top !== B.snow_grass && top !== B.sky_grass) return;
     if (w.skyLight(x, y + 1, z) < 10) return;
-    const list = PASSIVE_BY_BIOME[BIOMES[w.biomeAt(x, z)].key];
+    const list = PASSIVE_BY_BIOME[BIOMES[w.biomeAt(x, z, y)].key];
     if (!list) return;
     const kind = pick(list);
     for (let i = 0; i < 2 + Math.floor(Math.random() * 2); i++) g.spawnMob(kind, x + 0.5 + Math.random() * 2, y + 1.1, z + 0.5 + Math.random() * 2);

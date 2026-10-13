@@ -129,7 +129,7 @@ export function installCodex(game, state) {
       t = 0;
       const x = Math.floor(p.x), z = Math.floor(p.z);
       if (g.world.isLoaded(x, z)) {
-        const b = g.world.biomeAt(x, z);
+        const b = g.world.biomeAt(x, z, p.y);
         const deep = p.y < 30 && (g.world.getLight(x, Math.floor(p.y + 1), z) & 15) < 4;
         const bk = deep ? 'underworld' : BIOMES[b].key;
         if (!cx.biomes.has(bk)) {

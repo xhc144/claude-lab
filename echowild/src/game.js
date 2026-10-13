@@ -221,7 +221,7 @@ export class Game {
   // ---------------------------------------------------------------- rendering
   envState() {
     const p = this.player, w = this.world;
-    const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z))];
+    const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y)];
     const weather = this.weather ? this.weather.state() : { rain: 0, storm: 0 };
     const flash = this.weather ? this.weather.flash : 0;
     const s = skyState(this.dayTime, weather, biome, flash);
@@ -382,6 +382,10 @@ export class Game {
     }
     this.emit('blockBroken', x, y, z, v);
   }
+
+  // name -> id lookups (handy from the console and for tests of the single-file build)
+  itemId(name) { return I[name]; }
+  blockId(name) { return B[name]; }
 
   // Without an entity system yet, drops go straight into the inventory.
   spawnItem(x, y, z, st, vel) {

@@ -18,7 +18,8 @@ export function installCircuits(game) {
 
   // ---------------------------------------------------------------- what a block emits
   // power the cell (x,y,z) sends toward face f (from it into its neighbour), 0..15.
-  function emitted(x, y, z, f, forWire) {
+  // blockToBlock: the receiver is itself a block — plain blocks never pass power to blocks.
+  function emitted(x, y, z, f, forWire, blockToBlock = false) {
     const v = w.getBlock(x, y, z);
     const bid = v & ID_MASK, m = v >>> ID_BITS;
     switch (bid) {
@@ -36,7 +37,7 @@ export function installCircuits(game) {
       case B.observer: return (m & 8) && f === OPPOSITE[m & 7] ? 15 : 0;
       case B.wire: return forWire ? 0 : (f === 2 ? 0 : m & 15);
       default:
-        if (OPAQUE[bid]) { const s = strongPower(x, y, z); return forWire ? s : Math.max(s, weakPower(x, y, z)); }
+        if (OPAQUE[bid] && !blockToBlock) { const s = strongPower(x, y, z); return forWire ? s : Math.max(s, weakPower(x, y, z)); }
         return 0;
     }
   }
@@ -147,18 +148,21 @@ export function installCircuits(game) {
       if (Math.abs(dx) + Math.abs(dy) + Math.abs(dz) > 2) continue;
       const bid = id(x + dx, y + dy, z + dz);
       if (bid === B.wire && skipWires) continue;
-      if (DEVICES.has(bid)) w.schedule(x + dx, y + dy, z + dz, bid === B.wire ? 1 : 1);
+      if (DEVICES.has(bid)) w.schedule(x + dx, y + dy, z + dz, delayOf(bid, w.getBlock(x + dx, y + dy, z + dz)));
     }
   }
   C.wakeAround = wakeAround;
 
   // ---------------------------------------------------------------- registration helpers
+  const DELAYS = new Map();
+  const delayOf = (bid, v) => { const d = DELAYS.get(bid); return d === undefined ? 1 : typeof d === 'function' ? d(v) : d; };
   const onChange = (bid, fn, delay = 1) => {
     DEVICES.add(bid);
+    DELAYS.set(bid, delay);
     const prevN = w.handlers.neighbor[bid];
     w.handlers.neighbor[bid] = (world, x, y, z, v, sx, sy, sz) => { if (prevN) prevN(world, x, y, z, v, sx, sy, sz); if (!applying && id(x, y, z) === bid) w.schedule(x, y, z, typeof delay === 'function' ? delay(v) : delay); };
     const prevP = w.handlers.place[bid];
-    w.handlers.place[bid] = (world, x, y, z, v, old) => { if (prevP) prevP(world, x, y, z, v, old); w.schedule(x, y, z, 1); wakeAround(x, y, z); };
+    w.handlers.place[bid] = (world, x, y, z, v, old) => { if (prevP) prevP(world, x, y, z, v, old); w.schedule(x, y, z, delayOf(bid, v)); wakeAround(x, y, z); };
     const prevR = w.handlers.remove[bid];
     w.handlers.remove[bid] = (world, x, y, z, v, nv) => { if (prevR) prevR(world, x, y, z, v, nv); setTimeout(() => wakeAround(x, y, z), 0); };
     w.handlers.tick[bid] = fn;
@@ -243,7 +247,9 @@ export function installCircuits(game) {
   onChange(B.inverter, (world, x, y, z, v) => {
     const m = v >>> ID_BITS;
     const [ax, ay, az] = inverterAttached(x, y, z, m);
-    // power in the attached block, ignoring what this inverter itself provides
+    // power in the attached block, ignoring what this inverter itself provides. Only parts
+    // (sources, wires, logic) power a block; neighbouring blocks never pass power on, otherwise
+    // the inverter's own output wire would feed back through the ground and make it flicker.
     let p = 0;
     const av = w.getBlock(ax, ay, az), aid = av & ID_MASK;
     if (OPAQUE[aid]) {
@@ -251,7 +257,7 @@ export function installCircuits(game) {
         const [dx, dy, dz] = FACE_N[f];
         const nx = ax + dx, ny = ay + dy, nz = az + dz;
         if (nx === x && ny === y && nz === z) continue;
-        p = Math.max(p, emitted(nx, ny, nz, OPPOSITE[f], false));
+        p = Math.max(p, emitted(nx, ny, nz, OPPOSITE[f], false, true));
       }
     } else p = emitted(ax, ay, az, -1, false);
     const off = p > 0;
