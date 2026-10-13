@@ -2,7 +2,7 @@
 
 一部约 71 秒的程序化三维短片。主题：一个不可能存在、却令人向往的世界 —— 海洋悬在天上，水往高处流，世界会卷起来，月亮是一滴水。
 
-**成片**：`out/the_sea_above.mp4`（1920×1080，24 fps，2.35:1 画幅，立体声）。成片已从原影片分支整合，可在 [项目主页](https://xhc144.github.io/claude-lab/films/sea-above/) 在线播放；在本目录运行 `./make_film.sh` 可从源码重新生成。
+**成片**：`out/the_sea_above.mp4`（1920×1080，24 fps，2.35:1 画幅，立体声）。成片已从原影片分支整合，Pages 启用后可在 [项目主页](https://xhc144.github.io/claude-lab/films/sea-above/) 在线播放；在本目录运行 `./make_film.sh` 可从源码重新生成。
 
 所有画面都由本目录里的着色器逐像素计算出来，所有声音都由 `audio/` 里的合成器生成。没有使用任何外部模型、贴图、HDRI、音色或录音。
 
@@ -45,15 +45,14 @@ pip install -r requirements.txt
 python render.py still s1_drop --t 3 14 22 --w 960 --spp 2
 python render.py preview s4_above --w 480 --spp 1
 
-# 一条命令完成全部流程：./make_film.sh
-
-# 全分辨率 HDR 帧（断点续渲，4 核 CPU 上约 6 小时）
-./render_all.sh
-
-# 配乐、剪辑、片名、混音、编码
-python -m audio.score out/score.wav
-python edit.py --audio out/score.wav --out out/the_sea_above.mp4
+# 完整流程：渲染、配乐、母版剪辑、两遍压缩网络版（需要 FFmpeg）
+# 全分辨率 HDR 帧支持断点续渲，4 核 CPU 上约 6 小时
+./make_film.sh
 ```
+
+脚本先生成配乐 `out/score.wav`，再由 `edit.py` 输出高码率母版 `out/the_sea_above_master.mp4`。随后用 FFmpeg 的 libx264 两遍编码生成网络版 `out/the_sea_above.mp4`：视频目标码率约 9.2 Mb/s，AAC 音频 224 kb/s，并设置 `faststart` 以便网页播放。仓库保留的是网络版；母版与中间帧不提交。
+
+已有 HDR 帧时，可单独重新制作配乐与母版：`python -m audio.score out/score.wav`，然后执行 `python edit.py --audio out/score.wav --out out/the_sea_above_master.mp4`。这一步尚未生成两遍压缩的网络版；完整网络编码命令见 `make_film.sh`。
 
 第一次渲染时会把地形烘焙到 `cache/`。HDR 帧以对数编码的 16 位 PNG 存在 `cache/w1920/<镜头>/`，调色和剪辑可以在不重新渲染的情况下反复调整。
 
