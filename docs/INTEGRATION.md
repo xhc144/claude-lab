@@ -1,6 +1,6 @@
 # 分支整合与发布记录
 
-基线：`43f38cdac1dd649fcc6a04505ffd435590789976`。默认分支 `main`，仓库公开属性保持不变。整合前 8 个远端分支，目标保留 `main` 一个。
+基线：`43f38cdac1dd649fcc6a04505ffd435590789976`。默认分支 `main`，仓库公开属性保持不变。整合前 8 个远端分支；清理后只保留 `main`，远端分支数量 **8 → 1**。
 
 ## 原分支与恢复 SHA
 
@@ -50,7 +50,11 @@ git push origin recovered-project
 
 GitHub 官方接口要求 Pages 写权限及 Administration 写权限；本次没有更改安全设置或寻找绕过方式。可由仓库管理员在 Settings → Pages 选择 Deploy from a branch / main / docs，或补足集成权限后继续。
 
-按任务要求先部署验证再清理分支，当前暂缓删除：**8 → 8**，七个 Claude 分支原 tip 均已验证是远端 main 的祖先，恢复 SHA 已记录。Pages 启用、公共验证通过后即可重新核对 tip 并清理。
+2026-10-13 已清理七个完整整合或冗余的 Claude 分支，远端分支数量 **8 → 1**，只剩 `main`。分支清理是独立已授权事项，Pages 权限阻塞不影响已经保留在主分支的项目历史。
+
+每次删除前重新读取远端 tip，确认与上表恢复 SHA 相同，并确认原 tip 是远端 `main`（`bb940fbe978593cce426ed98e94c748372ed2440`）的祖先。普通 `git push --delete` 的临时检查钩子还核对 Git 服务器广播的 tip；若不一致则拒绝删除。七次删除均成功，逐项再次读取远端确认分支不存在，没有发现并发新提交。
+
+未删除 `main`、未强推、未清除历史对象、未修改仓库可见性或安全权限。上表恢复 SHA 仍可从 `main` 到达。Pages 的 403 权限问题保持记录，本次清理没有再次尝试 Pages 接口。
 
 参考：[GitHub Pages API 权限](https://docs.github.com/en/rest/pages/pages#create-a-github-pages-site)、[配置发布来源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
