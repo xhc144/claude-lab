@@ -6,10 +6,12 @@
 import { RNG, hash3 } from '../../core/noise.js';
 import { B, pack, ID_MASK, SOLID, OPAQUE, LIQUID } from '../blocks.js';
 import { BIOMES } from '../biomes.js';
+import { makeVillage } from './village.js';
 
 export const STRUCTURE_INFO = {
   heart: { zh: '织心遗迹', icon: '◎' },
-  ruin: { zh: '古代遗迹', icon: '⌂' },
+  ruin: { zh: '古代遗迹', icon: '▣' },
+  village: { zh: '炊烟村落', icon: '⌂' },
   mine: { zh: '废弃矿道', icon: '⛏' },
   dungeon: { zh: '暗影巢穴', icon: '☠' },
   sky: { zh: '天穹神殿', icon: '☁', shard: 'shard_sky' },
@@ -449,10 +451,21 @@ S.tide = {
   },
 };
 
+S.village = makeVillage({ put, fill, chest, foundation });
+
 export const STRUCTURES = S;
-const ORDER = ['heart', 'ruin', 'mine', 'dungeon', 'sky', 'abyss', 'sand', 'frost', 'tide'];
+const ORDER = ['heart', 'village', 'ruin', 'mine', 'dungeon', 'sky', 'abyss', 'sand', 'frost', 'tide'];
 
 const locCache = new Map();
+function villageNear(gen, x, z, r) {
+  const size = S.village.spacing * 16;
+  const rx = Math.floor(x / size), rz = Math.floor(z / size);
+  for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+    const v = locateRegion(gen, 'village', rx + dx, rz + dz);
+    if (v && Math.hypot(v.x - x, v.z - z) < r) return true;
+  }
+  return false;
+}
 function locateRegion(gen, kind, rx, rz) {
   const k = `${gen.seed}:${kind}:${rx}:${rz}`;
   if (locCache.has(k)) return locCache.get(k);
@@ -480,7 +493,9 @@ export function placeStructures(gen, W, cx, cz) {
       if (!o) continue;
       if (o.x + s.radius < bx0 || o.x - s.radius > bx0 + 15 || o.z + s.radius < bz0 || o.z - s.radius > bz0 + 15) continue;
       // the heart shrine keeps its surroundings clear of other structures
-      if (kind !== 'heart') { const h = locateRegion(gen, 'heart', 0, 0); if (h && Math.hypot(o.x - h.x, o.z - h.z) < 40 && (kind === 'ruin' || kind === 'sand' || kind === 'frost')) continue; }
+      if (kind !== 'heart') { const h = locateRegion(gen, 'heart', 0, 0); if (h && Math.hypot(o.x - h.x, o.z - h.z) < (kind === 'village' ? 90 : 40) && (kind === 'ruin' || kind === 'sand' || kind === 'frost' || kind === 'village')) continue; }
+      // ruins keep out of villages
+      if (kind === 'ruin' && villageNear(gen, o.x, o.z, 48)) continue;
       s.build(gen, W, o, new RNG(hash3(o.x, o.z, s.salt, gen.seed)));
     }
   }
@@ -495,7 +510,10 @@ export function locateStructures(gen, kind, x, z, regionRadius = 3) {
   const out = [];
   for (let rz = crz - regionRadius; rz <= crz + regionRadius; rz++) for (let rx = crx - regionRadius; rx <= crx + regionRadius; rx++) {
     const o = locateRegion(gen, kind, rx, rz);
-    if (o) out.push({ ...o, kind, d: Math.hypot(o.x - x, o.z - z) });
+    if (!o) continue;
+    if (kind === 'village') { const hh = locateRegion(gen, 'heart', 0, 0); if (hh && Math.hypot(o.x - hh.x, o.z - hh.z) < 90) continue; }
+    if (kind === 'ruin' && villageNear(gen, o.x, o.z, 48)) continue;
+    out.push({ ...o, kind, d: Math.hypot(o.x - x, o.z - z) });
   }
   out.sort((a, b) => a.d - b.d);
   return out;

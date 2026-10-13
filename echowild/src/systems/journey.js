@@ -116,6 +116,17 @@ export const SIDE = [
     ],
   },
   {
+    id: 'village', zh: '支线 · 炊烟', intro: '荒野里也有人烟。找到一座村落，用织纹币和村民做生意，再跟着藏宝图去挖宝。',
+    reward: [['weave_coin', 12], ['treasure_map', 1]],
+    steps: [
+      { id: 'find', title: '找到炊烟村落', how: '村落坐落在草甸、森林、樱林和针叶林的平地上：一口水井、四条石子路和几栋木屋。', hint: '站在高处找炊烟般的屋顶和路灯；按 M 打开地图，发现的村落会被标出。', done: (g) => [...(g.structures || new Map()).values()].some((s) => s.kind === 'village') },
+      { id: 'coin', title: '赚到织纹币', how: '把多余的麦穗、羊毛、煤或矿石卖给村民，换取织纹币。遗迹宝箱里也常有。', done: has('weave_coin') },
+      { id: 'trade', title: '与村民交易', how: '对着村民按右键打开货架。每位村民的货物不同，每天清晨补货。', ...cnt('villageTrade', 1) },
+      { id: 'map', title: '买一张藏宝图', how: '制图师（戴贝雷帽、穿深蓝外套）出售藏宝图。', done: has('treasure_map') },
+      { id: 'dig', title: '挖出宝藏', how: '右键展开藏宝图，跟着屏幕下方的指引走到标记处，向下挖两三格。', hint: '宝藏埋在地表以下，用铲子挖得更快。', ...cnt('treasure', 1) },
+    ],
+  },
+  {
     id: 'friends', zh: '支线 · 旅伴', intro: '荒野里并不只有你。',
     reward: [['fishing_rod', 1], ['fish', 6]],
     steps: [
@@ -205,6 +216,8 @@ export function installJourney(game, state) {
     else if (BLOCKS[id] && BLOCKS[id].shape === 'crop') bump('planted');
   });
   game.on('ate', () => bump('ate'));
+  game.on('traded', (name, prof) => { if (prof) bump('villageTrade'); });
+  game.on('treasureFound', () => bump('treasure'));
 
   const give = (c) => {
     const names = [];

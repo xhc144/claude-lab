@@ -106,7 +106,7 @@ vec3 shade(vec3 albedo, vec3 N, vec4 L, float ao, float foliage, vec4 shadowPos)
   vec3 direct = u_lightCol * diff * vis * mix(1.0, ao, 0.4);
   vec3 skyAmb = u_ambient * (sky * sky) * (0.55 + 0.45 * (N.y * 0.5 + 0.5));
   vec3 blk = L.yzw;
-  blk = blk * blk * (0.6 + blk * 1.1) * 1.6;
+  blk = blk * blk * (0.5 + blk * 0.75) * 1.25;
   vec3 amb = (skyAmb + blk + u_ambientMin) * ao;
   return albedo * (direct + amb);
 }
@@ -270,7 +270,7 @@ void main() {
   // ambient: sky dome + block light
   vec3 skyAmb = u_ambient * (sky * sky) * (0.55 + 0.45 * (N.y * 0.5 + 0.5));
   vec3 blk = v_light.yzw;
-  blk = blk * blk * (0.6 + blk * 1.1) * 1.6;
+  blk = blk * blk * (0.5 + blk * 0.75) * 1.25;
   vec3 col = direct + albedo * kd * (skyAmb + blk + u_ambientMin) * ao;
   // smooth surfaces mirror the sky
   if (rough < 0.6) {

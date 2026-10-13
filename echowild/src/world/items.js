@@ -154,6 +154,10 @@ export const SHARDS = [
 ];
 for (const [name, zh, where] of SHARDS) item(name, zh, { stack: 1, cat: 'quest', desc: `五枚回响碎片之一。传说它藏在${where}。`, shard: true });
 
+// ---- villages (appended after everything else so the ids of older items never move)
+item('weave_coin', '织纹币', { cat: 'material', desc: '边缘织着回响纹的铜币，村落里通用的货币。可以和村民交易。' });
+item('treasure_map', '藏宝图', { stack: 1, cat: 'gear', use: 'treasure', desc: '右键展开：标出一处埋藏的宝藏。拿在手里时会指路，到了之后向下挖掘。' });
+
 export const ITEM_COUNT = ITEMS.length;
 export const itemDef = (id) => ITEMS[id];
 export function itemName(id) { const d = ITEMS[id]; return d ? d.zh : '未知物品'; }

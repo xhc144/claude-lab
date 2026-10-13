@@ -4,9 +4,11 @@ import { BLOCKS, ID_MASK, LIQUID, CLIMB, SOLID } from '../world/blocks.js';
 import { collisionBoxes, CONNECTS, connectionMask } from '../world/models.js';
 
 const EPS = 1e-4;
+const DOOR = new Uint8Array(1024);
+for (const b of BLOCKS) if (b && b.shape === 'door') DOOR[b.id] = 1;
 
 // Gather collision boxes (world space) overlapping the given region.
-export function gatherBoxes(world, x0, y0, z0, x1, y1, z1, out) {
+export function gatherBoxes(world, x0, y0, z0, x1, y1, z1, out, passDoors = false) {
   out.length = 0;
   const ix0 = Math.floor(x0), iy0 = Math.floor(y0) - 1, iz0 = Math.floor(z0);
   const ix1 = Math.floor(x1), iy1 = Math.floor(y1), iz1 = Math.floor(z1);
@@ -16,6 +18,7 @@ export function gatherBoxes(world, x0, y0, z0, x1, y1, z1, out) {
     else v = world.getBlock(x, y, z);
     const id = v & ID_MASK;
     if (!SOLID[id]) continue;
+    if (passDoors && DOOR[id]) continue;
     const conn = CONNECTS[id] ? connectionMask(v, (dx, dy, dz) => world.getBlock(x + dx, y + dy, z + dz)) : 0;
     const bs = collisionBoxes(v, conn);
     for (const b of bs) out.push([x + b[0], y + b[1], z + b[2], x + b[3], y + b[4], z + b[5], id]);
@@ -32,7 +35,7 @@ export function moveAndCollide(world, e, dx, dy, dz) {
   const x0 = e.x - hw, y0 = e.y, z0 = e.z - hw, x1 = e.x + hw, y1 = e.y + h, z1 = e.z + hw;
   const boxes = gatherBoxes(world,
     Math.min(x0, x0 + dx) - 0.01, Math.min(y0, y0 + dy) - 0.01, Math.min(z0, z0 + dz) - 0.01,
-    Math.max(x1, x1 + dx) + 0.01, Math.max(y1, y1 + dy) + 0.01, Math.max(z1, z1 + dz) + 0.01, tmp);
+    Math.max(x1, x1 + dx) + 0.01, Math.max(y1, y1 + dy) + 0.01, Math.max(z1, z1 + dz) + 0.01, tmp, !!e.passDoors);
   let bx0 = x0, by0 = y0, bz0 = z0, bx1 = x1, by1 = y1, bz1 = z1;
   const ody = dy, odx = dx, odz = dz;
   let groundId = 0;

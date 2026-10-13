@@ -19,6 +19,7 @@ import { installAdventure } from './adventure.js';
 import { installWorldMap } from './worldmap.js';
 import { installCodex } from './codex.js';
 import { installJourney } from './journey.js';
+import { installVillage } from './village.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -54,6 +55,7 @@ export function installSystems(game, state) {
   installMachines(game);
   installTransport(game);
   installAdventure(game, state);
+  installVillage(game, state);
   installWorldMap(game, state);
   installCodex(game, state);
   installJourney(game, state);

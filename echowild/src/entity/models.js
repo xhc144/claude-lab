@@ -140,7 +140,49 @@ function gradientPainter(a, b, { glow = false } = {}) {
   return (img) => img.each((x, y) => { img.set(x, y, mul(mix(A, Bc, y / 15), 0.93 + img.rng.next() * 0.12)); if (glow && y > 9 && img.rng.next() < 0.15) img.glow(x, y, 0.8); });
 }
 
+// woven cloth: a fine twill with soft vertical folds
+function clothPainter(base, { dark = 0.84, light = 1.08, trim = null } = {}) {
+  const B = hex(base);
+  return (img) => {
+    const f = field(img, 4, 21);
+    img.each((x, y) => {
+      const fold = Math.sin((x + f(x, y) * 3) * 1.3) * 0.06;
+      const tw = ((x + y) % 4 < 2 ? 0.03 : -0.03);
+      img.set(x, y, mul(B, Math.min(light, Math.max(dark, 1 + fold + tw + (img.rng.next() - 0.5) * 0.04))));
+    });
+    if (trim) for (let x = 0; x < 16; x++) { img.set(x, 0, hex(trim)); img.set(x, 15, mul(hex(trim), 0.85)); }
+  };
+}
+function strawPainter(base) {
+  const B = hex(base);
+  return (img) => img.each((x, y) => img.set(x, y, mul(B, ((x + (y >> 1)) % 3 === 0 ? 0.82 : 1.04) + (img.rng.next() - 0.5) * 0.08)));
+}
+function villagerFace(skin) {
+  const S = hex(skin);
+  return (img) => {
+    img.each((x, y) => img.set(x, y, mul(S, 0.96 + img.rng.next() * 0.06)));
+    for (const x of [3, 12]) { img.blend(x, 10, [230, 120, 110], 0.35); img.blend(x - (x > 8 ? 1 : -1), 10, [230, 120, 110], 0.2); }
+    for (let x = 6; x <= 9; x++) img.set(x, 13, mul(S, 0.62));
+    for (const x of [3, 4, 5, 10, 11, 12]) img.set(x, 5, mul(S, 0.55));
+  };
+}
+
 const SKINS = {
+  // villagers
+  v_skin: hairPainter('#dcae84', { dark: 0.92, light: 1.04, strands: 0.08 }),
+  v_face: villagerFace('#dcae84'),
+  v_hair: hairPainter('#4a3424', { dark: 0.72, light: 1.2, strands: 1.3 }),
+  v_robe: clothPainter('#7a6a3a', { trim: '#b8a060' }),
+  v_robe_shepherd: clothPainter('#c9d6e2', { trim: '#7aa0c8' }),
+  v_robe_smith: clothPainter('#4a4a54', { trim: '#7a5a3a' }),
+  v_robe_carto: clothPainter('#2e4a7a', { trim: '#e3c06e' }),
+  v_robe_scholar: clothPainter('#5e44b0', { trim: '#e3c06e' }),
+  v_pants: clothPainter('#3e3a34'),
+  v_belt: hairPainter('#5a3a22', { strands: 0.3 }),
+  v_apron: hairPainter('#6e4a30', { strands: 0.6, dark: 0.75 }),
+  v_straw: strawPainter('#e2c46a'),
+  v_band: clothPainter('#b8423a'),
+  v_beret: clothPainter('#a83a4a'),
   // grazing animals
   deer_fur: hairPainter('#9c6a3a', { spots: '#ead8b4', nSpots: 4, strands: 0.45 }),
   deer_coat: hairPainter('#9c6a3a', { strands: 0.45 }),
@@ -264,7 +306,49 @@ const eyesSide = (group, x, y, z, w = 1.1, h = 1.1) => both(
   P([x - 0.16, y + h / 2 - 0.5, z - w / 2 + 0.2, x - 0.1, y + h / 2 - 0.15, z - w / 2 + 0.55], null, { group: `${group}L`, color: GLINT }),
 );
 
+const SHOE = [0.22, 0.15, 0.1, 1];
 export const MODELS = {
+  villager: {
+    texScale: 2,
+    // variant = profession: farmer, shepherd, smith, cartographer, scholar
+    variants: [[1, {}], [0, { v_robe: 'v_robe_shepherd' }], [0, { v_robe: 'v_robe_smith' }], [0, { v_robe: 'v_robe_carto' }], [0, { v_robe: 'v_robe_scholar' }]],
+    groups: mirrorGroups({
+      body: { pivot: [0, 12, 0] },
+      head: { pivot: [0, 24.5, 0], parent: 'body' },
+      eyeL: { pivot: [-1.8, 28.2, -4], parent: 'head' },
+      armL: { pivot: [-5.3, 23, 0], parent: 'body', rot: [0, 0, -0.06] },
+      legL: { pivot: [-2, 12, 0] },
+    }),
+    parts: [
+      ...both(
+        P([-3.7, 1.4, -1.8, -0.3, 12, 1.8], 'v_pants', { group: 'legL' }),
+        P([-3.9, 0, -2.4, -0.1, 1.5, 1.9], null, { group: 'legL', color: SHOE }),
+        P([-6.6, 13.2, -1.6, -4, 24, 1.6], 'v_robe', { group: 'armL' }),
+        P([-6.4, 11.9, -1.4, -4.2, 13.3, 1.4], 'v_skin', { group: 'armL' }),
+      ),
+      P([-4, 12, -2.4, 4, 24.6, 2.4], 'v_robe', { group: 'body' }),
+      P([-4.4, 9.4, -2.8, 4.4, 13.2, 2.8], 'v_robe', { group: 'body' }),
+      P([-4.2, 14.6, -2.6, 4.2, 15.7, 2.6], 'v_belt', { group: 'body' }),
+      P([-3.2, 10, -2.75, 3.2, 21.5, -2.5], 'v_apron', { group: 'body', only: [2] }),
+      P([2.8, 12.4, -1.6, 4.9, 16.2, 1.6], 'v_belt', { group: 'body', only: [3] }),
+      P([-4, 24.5, -4, 4, 32.5, 4], { front: 'v_face', default: 'v_skin' }, { group: 'head', fit: 'front' }),
+      P([-4.25, 30.2, -4.25, 4.25, 32.9, 4.25], 'v_hair', { group: 'head' }),
+      P([-4.25, 25.5, 2.5, 4.25, 30.2, 4.25], 'v_hair', { group: 'head' }),
+      P([-0.9, 25.8, -5.3, 0.9, 29, -4], 'v_skin', { group: 'head' }),
+      ...eyesFront('eye', -1.8, 28.2, -4, 1.3, 1.2),
+      // hats by trade
+      P([-6.6, 32.2, -6.6, 6.6, 32.9, 6.6], 'v_straw', { group: 'head', only: [0] }),
+      P([-4.4, 32.6, -4.4, 4.4, 35.2, 4.4], 'v_straw', { group: 'head', only: [0] }),
+      P([-4.5, 32.9, -4.5, 4.5, 33.7, 4.5], 'v_band', { group: 'head', only: [0] }),
+      P([-4.6, 31.4, -4.6, 4.6, 34.2, 4.6], 'sheep_wool', { group: 'head', only: [1] }),
+      P([-1.1, 34.1, -1.1, 1.1, 35.8, 1.1], 'sheep_wool', { group: 'head', only: [1] }),
+      P([-4.35, 29.4, -4.35, 4.35, 30.5, 4.35], 'v_band', { group: 'head', only: [2] }),
+      P([-4.7, 32.1, -4.9, 4.3, 33.8, 4.7], 'v_beret', { group: 'head', only: [3] }),
+      P([-0.5, 33.8, -0.5, 0.5, 34.6, 0.5], 'v_beret', { group: 'head', only: [3] }),
+      P([-4.7, 24.8, -3.4, 4.7, 33.4, 4.7], 'v_robe', { group: 'head', only: [4] }),
+      P([-2.2, 23.2, -4.4, 2.2, 26.2, -3.6], 'v_hair', { group: 'head', only: [4] }),
+    ],
+  },
   sheep: {
     texScale: 2,
     variants: [[0.62, {}], [0.14, { sheep_wool: 'sheep_wool_cream' }], [0.14, { sheep_wool: 'sheep_wool_gray' }], [0.1, { sheep_wool: 'sheep_wool_brown' }]],
@@ -715,6 +799,9 @@ function animateGroup(m, name, pose, walkSw, legSw) {
     const side = name === 'wingL' ? -1 : 1;
     const f = pose.flap ? Math.abs(Math.sin(t * 22)) * 1.2 : 0.05 + Math.max(0, Math.sin(t * 0.7 + seed)) ** 20 * 0.5;
     rotateZ(m, m, side * f);
+  } else if (name === 'armL' || name === 'armR') {
+    const side = name === 'armL' ? 1 : -1;
+    rotateX(m, m, -walkSw * legSw * side * 0.9 + Math.sin(t * 1.3 + seed) * 0.03);
   } else if (name === 'finL' || name === 'finR') {
     rotateY(m, m, Math.sin(t * 6 + (name === 'finL' ? 0 : 1.5)) * 0.3);
   }
@@ -759,6 +846,7 @@ export function drawModel(r, kind, x, y, z, yaw, pose, light, overlay, emissiveB
       if (part.antler && pose.noAntlers) continue;
       if (part.wool && pose.sheared) continue;
       if (part.shorn && !pose.sheared) continue;
+      if (part.only && !part.only.includes(pose.variant || 0)) continue;
       const g = def.groups[part.group];
       const gm = GM.get(part.group);
       if (g && gm) {
