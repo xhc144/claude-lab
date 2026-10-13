@@ -201,7 +201,8 @@ export function makeVillage({ put, fill, chest, foundation }) {
           const h = ground(gen, x, z);
           put(W, x, h, z, (s * 3 + w * 5 + a) % 7 === 0 ? B.cobblestone : B.gravel);
           for (let k = 1; k <= 3; k++) put(W, x, h + k, z, 0);
-          if (s % 7 === 0 && w === 1) { const lx = x + px, lz = z + pz; lampPost(W, lx, ground(gen, lx, lz) + 1, lz); }
+          // lamp posts in the gaps between building plots (not under any eaves)
+          if ((s === 6 || s === 18 || s === ARM) && w === 1) { const lx = x + px, lz = z + pz; lampPost(W, lx, ground(gen, lx, lz) + 1, lz); }
         }
         // two building plots per side of each lane
         for (const side of [-1, 1]) for (const s of [13, 22]) {
