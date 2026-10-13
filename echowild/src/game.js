@@ -383,6 +383,10 @@ export class Game {
     this.emit('blockBroken', x, y, z, v);
   }
 
+  // name -> id lookups (handy from the console and for tests of the single-file build)
+  itemId(name) { return I[name]; }
+  blockId(name) { return B[name]; }
+
   // Without an entity system yet, drops go straight into the inventory.
   spawnItem(x, y, z, st, vel) {
     if (this.entities && this.entities.spawnItem) return this.entities.spawnItem(x, y, z, st, vel);
