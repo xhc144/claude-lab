@@ -1,0 +1,335 @@
+% !TEX program = xelatex
+% =============================================================================
+%  墨经 Mojing · 竞赛试卷模板示例
+%  2026 年高中数学联赛模拟训练（第一试 + 加试）
+%
+%  同一份源文件生成两种版本：
+%    latexmk main.tex                                                   试题卷
+%    xelatex -jobname=main-answers "\def\MojingAnswers{true}\input{main}"   参考答案及评分标准
+%  （答案版需编译两遍以得到正确的总页数。）也可写 \documentclass[answers]{mojing-exam}。
+%
+%  其他选项：seal=odd（默认，奇数页印密封线）/ all / first / none
+% =============================================================================
+\documentclass{mojing-exam}
+
+\examtitle{2026 年高中数学联赛模拟训练}
+\secret{绝密 ★ 启用前}
+% 密封线内的考生信息栏可以自定义：
+% \sealfields{学校\underline{\hspace{30mm}}\hspace{6mm}班级\underline{\hspace{20mm}}\hspace{6mm}姓名\underline{\hspace{24mm}}}
+
+\begin{document}
+
+% =============================================================================
+\begin{paper}[time={8:00—9:20}, full=120]{第一试}
+% =============================================================================
+
+\begin{instructions}
+  \item 本试卷共 \papertotalpages{} 页，满分 120 分，考试时间 80 分钟。
+  \item 答卷前，考生务必将自己的学校、姓名、准考证号填写在密封线内相应位置。
+  \item 选择题与填空题只需写出最后结果；解答题应写出文字说明、证明过程或演算步骤。
+  \item 不得使用计算器等计算工具。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 评阅试卷时，请依据本评分标准。选择题只设 6 分和 0 分两档；填空题只设 8 分和 0 分两档；
+        解答题请严格按照本评分标准的评分档次给分，不要增加其他中间档次。
+  \item 如果考生的解答方法和本解答不同，只要思路合理、步骤正确，在评卷时可参考本评分标准
+        适当划分档次评分。
+\end{gradingnotes}
+
+\scoretable{一, 二, 11, 12, 13}
+
+% -----------------------------------------------------------------------------
+\examsection*{选择题}{本题共 4 小题，每小题 6 分，满分 24 分。每小题给出的四个选项中，
+只有一项是符合题目要求的}
+
+\begin{questions}
+\question 设 $a=\log_2 3$，$b=\log_3 4$，$c=\log_4 5$，则 \paren[A]
+\choices{$a>b>c$}{$a>c>b$}{$b>a>c$}{$c>b>a$}
+\begin{solution}
+对 $n\ge2$，由均值不等式，
+$\log_{n+1}n\cdot\log_{n+1}(n+2)<\Bigl(\dfrac{\log_{n+1}n(n+2)}{2}\Bigr)^2<\Bigl(\dfrac{\log_{n+1}(n+1)^2}{2}\Bigr)^2=1$，
+故 $\log_{n+1}(n+2)<\dfrac{1}{\log_{n+1}n}=\log_n(n+1)$，即 $\log_n(n+1)$ 关于 $n$ 递减，所以 $a>b>c$。
+\end{solution}
+
+\question 函数 $f(x)=\abs{x-1}+\abs{x-2}+\abs{x-3}$ 的最小值是 \paren[C]
+\choices{$0$}{$1$}{$2$}{$3$}
+\begin{solution}
+$\abs{x-1}+\abs{x-3}\ge2$，当且仅当 $1\le x\le3$ 时取等号；$\abs{x-2}\ge0$，当且仅当 $x=2$ 时取等号。
+故最小值为 $2$，在 $x=2$ 处取到。
+\end{solution}
+
+\question 关于函数 $f(x)=\sin x+\abs{\sin x}$，下列说法中正确的是 \paren[B]
+\choices{$f(x)$ 是最小正周期为 $\pi$ 的周期函数}
+        {$f(x)$ 的值域为 $[0,2]$，且在 $x=\frac{\pi}{2}+2k\pi$（$k\in\Z$）处取得最大值}
+        {$f(x)$ 在区间 $[0,\pi]$ 上单调递增}
+        {$f(x)$ 的图像关于原点中心对称}
+\begin{solution}
+当 $\sin x\ge0$ 时 $f(x)=2\sin x$，否则 $f(x)=0$。由 $f(\frac{\pi}{2})=2$，$f(\frac{3\pi}{2})=0$ 知 A 错；
+$f$ 在 $[0,\pi]$ 上先增后减，C 错；$f(\frac\pi2)=2$ 而 $f(-\frac\pi2)=0$，D 错。B 正确。
+\end{solution}
+
+\question 设 $\{a_n\}$ 是公比为 $q$ 的等比数列，$S_n$ 为其前 $n$ 项和，则“$q>1$”是
+“$\{S_n\}$ 为递增数列”的 \paren[D]
+\choices{充分而不必要条件}{必要而不充分条件}{充分必要条件}{既不充分也不必要条件}
+\begin{solution}
+$\{S_n\}$ 递增 $\iff$ 对一切 $n$ 有 $a_{n+1}>0\iff a_1>0$ 且 $q>0$。取 $a_1=-1$，$q=2$ 知
+充分性不成立；取 $a_1=1$，$q=\frac12$ 知必要性不成立。
+\end{solution}
+\end{questions}
+
+% -----------------------------------------------------------------------------
+\examsection*{填空题}{本题共 6 小题，每小题 8 分，满分 48 分}
+
+\begin{questions}
+\question 设 $f(x)=x^2-2x$，集合 $A=\set{x\in\R\given f(f(x))=0}$，则 $A$ 中所有元素之和为
+\fillin[$4$]。
+\begin{solution}
+$f(f(x))=0\iff f(x)=0$ 或 $f(x)=2$。前者得 $x=0,2$；后者即 $x^2-2x-2=0$，得 $x=1\pm\sqrt3$。
+四个元素之和为 $0+2+2=4$。
+\end{solution}
+
+\question 若复数 $z$ 满足 $\abs{z}=1$，则 $\abs{z^2-z+1}$ 的最大值为 \fillin[$3$]。
+\begin{solution}
+由 $\bar z=1/z$ 得 $z^2-z+1=z\bigl(z+\bar z-1\bigr)$。设 $z=\cos\theta+\ii\sin\theta$，则
+$\abs{z^2-z+1}=\abs{2\cos\theta-1}\le3$，当 $z=-1$ 时取等号。
+\end{solution}
+
+\question 方程 $x^2+y^2=2025$ 的整数解 $(x,y)$ 共有 \fillin[$12$][4em] 组。
+\begin{solution}
+若 $3\nmid x$，则 $x^2\equiv1\pmod3$，$y^2\equiv2\pmod3$，不可能。故 $3\mid x$，同理 $3\mid y$。
+如此两次，问题化为 $u^2+v^2=25$，其整数解为 $(0,\pm5)$，$(\pm5,0)$，$(\pm3,\pm4)$，$(\pm4,\pm3)$，共 12 组。
+\end{solution}
+
+\question 从 $1,2,\dotsc,20$ 中任取三个不同的数，使它们（按适当顺序）构成等差数列，不同的取法共有
+\fillin[$90$][4em] 种。
+\begin{solution}
+三数 $a<b<c$ 成等差数列 $\iff a+c=2b\iff a$ 与 $c$ 同奇偶，且此时 $b$ 由 $a,c$ 唯一确定。
+故取法数为 $2\binom{10}{2}=90$。
+\end{solution}
+
+\question 设 $F_1$，$F_2$ 是椭圆 $\dfrac{x^2}{4}+\dfrac{y^2}{3}=1$ 的两个焦点，点 $P$ 在椭圆上，且
+$\angle F_1PF_2=60^\circ$，则 $\triangle F_1PF_2$ 的面积为 \fillin[$\sqrt3$]。
+\begin{solution}
+记 $\abs{PF_1}=m$，$\abs{PF_2}=n$，则 $m+n=4$，$\abs{F_1F_2}=2$。由余弦定理，
+$4=m^2+n^2-mn=(m+n)^2-3mn$，得 $mn=4$，面积为 $\frac12mn\sin60^\circ=\sqrt3$。
+\end{solution}
+
+\question
+\begin{withfigure}[.28]{%
+  \begin{tikzpicture}[x={(1cm,0cm)}, y={(.42cm,.3cm)}, z={(0cm,1cm)}, scale=1.55,
+      font=\footnotesize]
+    \coordinate (A) at (0,0,0); \coordinate (B) at (1,0,0);
+    \coordinate (C) at (1,1,0); \coordinate (D) at (0,1,0);
+    \coordinate (A1) at (0,0,1); \coordinate (B1) at (1,0,1);
+    \coordinate (C1) at (1,1,1); \coordinate (D1) at (0,1,1);
+    \draw[mj thin] (A) -- (B) -- (C) (A) -- (A1) (B) -- (B1) (C) -- (C1)
+      (A1) -- (B1) -- (C1) -- (D1) -- cycle;
+    \draw[mj aux] (A) -- (D) -- (C) (D) -- (D1);
+    \fill[black!8, opacity=.8] (A1) -- (B) -- (D) -- cycle;
+    \draw[mj thin] (A1) -- (B);
+    \draw[mj aux] (B) -- (D) -- (A1);
+    \node[below left] at (A) {$A$};   \node[below right] at (B) {$B$};
+    \node[right] at (C) {$C$};        \node[above left=-1pt] at (D) {$D$};
+    \node[left] at (A1) {$A_1$};      \node[right] at (B1) {$B_1$};
+    \node[above right] at (C1) {$C_1$}; \node[above] at (D1) {$D_1$};
+  \end{tikzpicture}}
+如图，在棱长为 $1$ 的正方体 $ABCD\text{-}A_1B_1C_1D_1$ 中，点 $A$ 到平面 $A_1BD$ 的距离为
+\fillin[$\dfrac{\sqrt3}{3}$]。
+\end{withfigure}
+\begin{solution}
+三棱锥 $A_1\text{-}ABD$ 的体积为 $\frac13\cdot\frac12\cdot1=\frac16$；$\triangle A_1BD$ 是边长为 $\sqrt2$ 的正三角形，
+面积为 $\frac{\sqrt3}{2}$。所求距离 $d=\dfrac{3\cdot\frac16}{\frac{\sqrt3}{2}}=\dfrac{\sqrt3}{3}$。
+\end{solution}
+\end{questions}
+
+% -----------------------------------------------------------------------------
+\examsection*{解答题}{本题共 3 小题，满分 48 分。解答应写出文字说明、证明过程或演算步骤}
+
+\begin{questions}
+\question[14] 已知数列 $\{a_n\}$ 满足 $a_1=2$，$a_{n+1}=a_n^2-a_n+1$（$n\in\N^*$），记
+\[ S_n=\frac{1}{a_1}+\frac{1}{a_2}+\dotsb+\frac{1}{a_n} . \]
+\begin{enumerate}
+  \item 证明：$S_n<1$；
+  \item 证明：$S_n\ge1-\dfrac{1}{2^{2^{n-1}}}$。
+\end{enumerate}
+\answerspace{7cm}
+\begin{proof}
+由 $a_{n+1}-a_n=(a_n-1)^2>0$ 及 $a_1=2$ 知 $\{a_n\}$ 是递增的正整数数列，且 $a_n\ge2$。
+
+(1)~由 $a_{n+1}-1=a_n(a_n-1)$ 得
+$\dfrac{1}{a_{n+1}-1}=\dfrac{1}{a_n-1}-\dfrac{1}{a_n}$，即
+$\dfrac{1}{a_n}=\dfrac{1}{a_n-1}-\dfrac{1}{a_{n+1}-1}$。\score{4}
+求和得 $S_n=\dfrac{1}{a_1-1}-\dfrac{1}{a_{n+1}-1}=1-\dfrac{1}{a_{n+1}-1}<1$。\score{6}
+
+(2)~由 (1)，只需证 $a_{n+1}-1\ge2^{2^{n-1}}$。对 $n$ 归纳：$n=1$ 时 $a_2-1=2=2^{2^0}$；若
+$a_{n+1}-1\ge2^{2^{n-1}}$，则
+$a_{n+2}-1=a_{n+1}(a_{n+1}-1)>(a_{n+1}-1)^2\ge2^{2^n}$。\score{12}
+所以 $S_n=1-\dfrac{1}{a_{n+1}-1}\ge1-\dfrac{1}{2^{2^{n-1}}}$。\score{14}
+\end{proof}
+
+\question[16]
+\begin{withfigure}[.3]{%
+  \begin{tikzpicture}[scale=.62, font=\footnotesize]
+    \draw[mj axis] (-1,0) -- (4.6,0) node[below] {$x$};
+    \draw[mj axis] (0,-3.3) -- (0,3.6) node[left] {$y$};
+    \draw[mj thin, line width=.7pt, domain=-3.2:3.2, samples=60] plot ({\x*\x/4},\x);
+    \draw[mj thin] (.45,-1.45) -- (2.3,3.2);
+    \node[mj point] at (1,0) {}; \node[below right=-1pt] at (1,0) {$F$};
+    \node[mj point] at (2,2.828) {}; \node[left] at (2,2.828) {$A$};
+    \node[mj point] at (.5,-1.414) {}; \node[below right] at (.5,-1.414) {$B$};
+    \node[below left] at (0,0) {$O$};
+  \end{tikzpicture}}
+已知抛物线 $C\colon y^2=4x$ 的焦点为 $F$，过 $F$ 的直线与 $C$ 交于 $A$，$B$ 两点。
+\begin{enumerate}
+  \item 证明：$\dfrac{1}{\abs{AF}}+\dfrac{1}{\abs{BF}}=1$；
+  \item 求 $\abs{AF}+4\abs{BF}$ 的最小值。
+\end{enumerate}
+\end{withfigure}
+\answerspace{7cm}
+\begin{solution}
+(1)~焦点为 $F(1,0)$。直线 $AB$ 不能与 $x$ 轴平行，故可设其方程为 $x=my+1$，代入 $y^2=4x$，得
+$y^2-4my-4=0$。设 $A(x_1,y_1)$，$B(x_2,y_2)$，则 $y_1+y_2=4m$，$y_1y_2=-4$。\score{4}
+于是 $x_1x_2=\dfrac{(y_1y_2)^2}{16}=1$，$x_1+x_2=m(y_1+y_2)+2=4m^2+2$。由抛物线的定义，
+$\abs{AF}=x_1+1$，$\abs{BF}=x_2+1$。\score{6}
+所以 $\dfrac{1}{\abs{AF}}+\dfrac{1}{\abs{BF}}=\dfrac{x_1+x_2+2}{x_1x_2+x_1+x_2+1}=1$。\score{8}
+
+(2)~记 $p=\abs{AF}$，$q=\abs{BF}$，则 $\frac1p+\frac1q=1$，从而
+\[
+  p+4q=(p+4q)\Bigl(\frac1p+\frac1q\Bigr)=5+\frac{4q}{p}+\frac{p}{q}\ge5+2\sqrt{\frac{4q}{p}\cdot\frac{p}{q}}=9 .
+\]
+\score{12}
+等号成立当且仅当 $p=2q$，结合 $\frac1p+\frac1q=1$ 得 $p=3$，$q=\frac32$，此时 $x_1=2$，
+$x_2=\frac12$，满足 $x_1x_2=1$，例如 $A(2,2\sqrt2)$，$B(\frac12,-\sqrt2)$。故所求最小值为 $9$。\score{16}
+\end{solution}
+
+\question[18] 设正实数 $a$，$b$，$c$ 满足 $a+b+c=3$。证明：
+\[
+  \frac{a}{1+b^2}+\frac{b}{1+c^2}+\frac{c}{1+a^2}\ge\frac32 .
+\]
+\answerspace{6cm}
+\begin{proof}
+由 $1+b^2\ge2b$，
+$\dfrac{a}{1+b^2}=a-\dfrac{ab^2}{1+b^2}\ge a-\dfrac{ab^2}{2b}=a-\dfrac{ab}{2}$。\score{6}
+同理可得另两式，相加得
+$\displaystyle\sum\frac{a}{1+b^2}\ge(a+b+c)-\frac{ab+bc+ca}{2}=3-\frac{ab+bc+ca}{2}$。\score{12}
+又 $ab+bc+ca\le\dfrac{(a+b+c)^2}{3}=3$，\score{16}
+故左端 $\ge3-\dfrac32=\dfrac32$，当且仅当 $a=b=c=1$ 时取等号。\score{18}
+\end{proof}
+\end{questions}
+
+\end{paper}
+
+% =============================================================================
+\begin{paper}[time={9:40—12:10}, full=180]{加试}
+% =============================================================================
+
+\begin{instructions}
+  \item 本试卷共 4 道题，满分 180 分，考试时间 150 分钟。
+  \item 请将答案写在每题下方的空白处，写在其他位置无效。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 评阅试卷时，请严格按照本评分标准的评分档次给分。
+  \item 如果考生的解答方法和本解答不同，只要思路合理、步骤正确，在评卷时可参考本评分标准
+        适当划分档次评分，10 分为一个档次，不要增加其他中间档次。
+\end{gradingnotes}
+
+\scoretable{一, 二, 三, 四}
+
+\begin{questions}[chinese]
+\question[40]
+\begin{withfigure}[.36]{%
+  \begin{tikzpicture}[scale=1.25, font=\footnotesize]
+    \coordinate (O) at (0,0);
+    \coordinate (A) at (100:1.6);
+    \coordinate (B) at (215:1.6);
+    \coordinate (C) at (325:1.6);
+    \coordinate (A1) at (280:1.6);
+    \coordinate (H) at ($(A)+(B)+(C)$);
+    \coordinate (M) at ($(B)!.5!(C)$);
+    \draw[mj thin] (O) circle (1.6);
+    \draw[mj thin, line width=.7pt] (A) -- (B) -- (C) -- cycle;
+    \draw[mj aux] (A) -- (A1) (B) -- (A1) -- (C) (B) -- (H) -- (C) (A) -- (H) (O) -- (M);
+    \draw[mj aux] (H) -- (A1);
+    \foreach \p/\pos in {A/above, B/below left, C/below right, O/left, H/left,
+                         M/below, A1/below} {
+      \node[mj point] at (\p) {};
+    }
+    \node[above] at (A) {$A$}; \node[below left] at (B) {$B$};
+    \node[below right] at (C) {$C$}; \node[right] at (O) {$O$};
+    \node[left] at (H) {$H$}; \node[below right=-1pt] at (M) {$M$};
+    \node[below] at (A1) {$A'$};
+  \end{tikzpicture}}
+如图，设 $H$ 为锐角三角形 $ABC$ 的垂心，$O$ 为其外心，$M$ 为边 $BC$ 的中点。证明：
+\[ AH=2\,OM . \]
+\end{withfigure}
+\answerspace{9cm}
+\begin{proof}
+作外接圆的直径 $AA'$，则 $\angle ABA'=\angle ACA'=90^\circ$，即 $A'B\perp AB$，$A'C\perp AC$。\score{10}
+又 $H$ 是垂心，$CH\perp AB$，$BH\perp AC$，所以 $CH\parallel A'B$，$BH\parallel A'C$。\score{20}
+于是四边形 $BHCA'$ 是平行四边形，其对角线互相平分，故 $BC$ 的中点 $M$ 也是 $HA'$ 的中点。\score{30}
+在 $\triangle AHA'$ 中，$O$，$M$ 分别是 $AA'$，$HA'$ 的中点，所以 $OM$ 是中位线，$AH=2\,OM$。\score{40}
+\end{proof}
+
+\question[40] 设整数 $n\ge2$，正实数 $x_1,x_2,\dotsc,x_n$ 满足 $x_1+x_2+\dotsb+x_n=1$。证明：
+\[
+  \sum_{i=1}^{n}\frac{x_i}{\sqrt{1-x_i}}\ge\sqrt{\frac{n}{n-1}} .
+\]
+\answerspace{8cm}
+\begin{proof}
+考虑 $f(t)=\dfrac{t}{\sqrt{1-t}}$，$t\in(0,1)$。直接计算得
+$f''(t)=\dfrac{4-t}{4(1-t)^{5/2}}>0$，故 $f$ 是 $(0,1)$ 上的下凸函数。\score{20}
+由琴生不等式，
+\[
+  \sum_{i=1}^nf(x_i)\ge nf\Bigl(\frac{1}{n}\sum_{i=1}^nx_i\Bigr)=nf\Bigl(\frac1n\Bigr)
+  =\frac{1}{\sqrt{1-\frac1n}}=\sqrt{\frac{n}{n-1}} ,
+\]
+当且仅当 $x_1=\dotsb=x_n=\frac1n$ 时取等号。\score{40}
+\end{proof}
+\begin{proof}[另证]
+由柯西不等式，
+\[
+  \sum_{i=1}^n\frac{x_i}{\sqrt{1-x_i}}=\sum_{i=1}^n\frac{x_i^2}{x_i\sqrt{1-x_i}}
+  \ge\frac{\bigl(\sum x_i\bigr)^2}{\sum x_i\sqrt{1-x_i}}=\frac{1}{\sum x_i\sqrt{1-x_i}} .
+\]
+\score{20}
+再由柯西不等式及 $\sum x_i^2\ge\frac1n\bigl(\sum x_i\bigr)^2=\frac1n$，
+\[
+  \sum x_i\sqrt{1-x_i}=\sum\sqrt{x_i}\cdot\sqrt{x_i(1-x_i)}
+  \le\sqrt{\sum x_i}\cdot\sqrt{\sum x_i(1-x_i)}=\sqrt{1-\sum x_i^2}\le\sqrt{\frac{n-1}{n}} ,
+\]
+两式结合即得结论。\score{40}
+\end{proof}
+
+\question[50] 证明：对任意正整数 $n$，$2^{2^n}+1$ 的每个素因子 $p$ 都满足 $p\equiv1\pmod{2^{n+1}}$。
+\answerspace{8cm}
+\begin{proof}
+$p$ 是奇素数。由 $2^{2^n}\equiv-1\pmod p$ 得 $2^{2^{n+1}}\equiv1\pmod p$。\score{10}
+设 $d$ 为 $2$ 模 $p$ 的阶，则 $d\mid2^{n+1}$，故 $d=2^k$，$0\le k\le n+1$。\score{20}
+若 $k\le n$，则 $2^{2^n}=\bigl(2^{2^k}\bigr)^{2^{n-k}}\equiv1\pmod p$，与 $2^{2^n}\equiv-1\pmod p$ 结合得
+$p\mid2$，矛盾。所以 $d=2^{n+1}$。\score{35}
+由费马小定理，$2^{p-1}\equiv1\pmod p$，从而 $d\mid p-1$，即 $2^{n+1}\mid p-1$。\score{50}
+\end{proof}
+
+\question[50] 将 $1,2,\dotsc,2n$ 任意分成两组，每组 $n$ 个数。将一组从小到大排列为
+$a_1<a_2<\dotsb<a_n$，另一组从大到小排列为 $b_1>b_2>\dotsb>b_n$。证明：
+\[
+  \abs{a_1-b_1}+\abs{a_2-b_2}+\dotsb+\abs{a_n-b_n}=n^2 .
+\]
+\answerspace{8cm}
+\begin{proof}
+先证：对每个 $i$，$a_i$ 与 $b_i$ 中恰有一个不超过 $n$。
+
+若 $a_i\le n$ 且 $b_i\le n$，则 $a_1,\dotsc,a_i$ 与 $b_i,\dotsc,b_n$ 这 $i+(n-i+1)=n+1$ 个互不相同的数
+都不超过 $n$，矛盾。\score{15}
+若 $a_i\ge n+1$ 且 $b_i\ge n+1$，则 $a_i,\dotsc,a_n$ 与 $b_1,\dotsc,b_i$ 这 $n+1$ 个互不相同的数
+都属于 $\{n+1,\dotsc,2n\}$，同样矛盾。\score{30}
+因此每个 $\abs{a_i-b_i}$ 都等于“较大数 $-$ 较小数”，且 $n$ 个较大数恰为 $n+1,\dotsc,2n$，
+$n$ 个较小数恰为 $1,\dotsc,n$。于是
+$\displaystyle\sum_{i=1}^n\abs{a_i-b_i}=\sum_{k=n+1}^{2n}k-\sum_{k=1}^nk=n\cdot n=n^2$。\score{50}
+\end{proof}
+\end{questions}
+
+\end{paper}
+\end{document}

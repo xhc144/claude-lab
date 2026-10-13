@@ -7,6 +7,7 @@
 | [《对称的语言》](symmetry-film/) | 程序化影片 | 约 3 分 40 秒的抽象代数宣传片，画面（skia + numba 着色器）与配乐全部由代码生成；成片已提交 | `cd symmetry-film && bash build.sh preview` |
 | [《倒悬之海》The Sea Above](sea-above/) | 程序化影片 | 约 71 秒的三维短片：悬在天上的海洋。GLSL 着色器逐像素渲染，合成器配乐；成片未提交，需从源码生成 | `cd sea-above && ./make_film.sh` |
 | [数境 MathScape](mathscape/) | 交互式网页应用 | 矩阵线性变换、复变函数映射、常微分方程轨线、三体运动四个可视化模块；零运行时依赖，带单元测试与端到端测试 | 下载 [`mathscape/dist/mathscape.html`](mathscape/dist/mathscape.html) 双击打开；或 `cd mathscape && npm start` |
+| [墨经 Mojing](mojing/) | LaTeX 模板集 | 中文数学排版模板：讲义、习题与解答、竞赛试卷、论文、书籍、翻译对照六种文档类，共用一套字体、配色与定理体系，各附完整示例与 PDF 预览 | 下载 [`mojing/dist/`](mojing/dist/) 中的压缩包上传 Overleaf；或 `cd mojing && ./build.sh` |
 
 ## 约定
 

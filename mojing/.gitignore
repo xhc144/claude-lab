@@ -1,0 +1,22 @@
+# LaTeX 中间文件
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.idx
+*.ilg
+*.ind
+*.log
+*.out
+*.ptc
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+missfont.log
+# 书籍模板在编译时生成的索引样式文件
+templates/book/mojing-book.ist
+# 模板目录中的编译结果（成品统一复制到 previews/）
+templates/**/*.pdf
