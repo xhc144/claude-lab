@@ -64,6 +64,7 @@ export function techGap(g, tech) {
  */
 export function itemCost(W, item, memo, depth = 0, visiting = new Set()) {
   if (memo.has(item)) return memo.get(item);
+  if (W.freeN && W.freeN(item) > 0 && depth > 0) return 2;
   if (depth > 5 || visiting.has(item)) return Infinity;
   visiting.add(item);
   let best = Infinity;
@@ -74,13 +75,18 @@ export function itemCost(W, item, memo, depth = 0, visiting = new Set()) {
     if (!isKnown(g, W.mem, r.id)) continue;
     if (r.kind === 'harvest') {
       const node = Object.keys(r.keep)[0];
-      if (!W.nodeCount(node)) continue;
       if (r.tech && !g.hasTech(r.tech)) continue;
+      if (!W.nodeCount(node)) {
+        // no such node right now: replant it or go find one
+        if (CARDS[node].tags.includes('tree') && (W.freeN('sapling') || W.count('young_tree'))) best = Math.min(best, r.t / Math.max(0.05, p.n) + 90);
+        for (const e of REGION_LOOT.get(node) || []) if (W.count(e.region)) best = Math.min(best, r.t / Math.max(0.05, p.n) + CARDS[e.region].region.t / e.p);
+        continue;
+      }
       best = Math.min(best, r.t / Math.max(0.05, p.n));
       continue;
     }
     // crafting
-    let c = r.t / Math.max(0.05, p.n);
+    let c = (r.t * (r.night ? 3.5 : 1) * Math.max(1, r.w)) / Math.max(0.05, p.n);
     const gap = techGap(g, r.tech);
     if (gap === Infinity) continue;
     c += gap * 18;

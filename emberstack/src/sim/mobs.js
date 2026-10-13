@@ -129,6 +129,8 @@ export function updateMobs(g, dt) {
       let burn = 0;
       if (bright && !g.rules.dark) burn = 3;
       else if (lit > 0) burn = 1.4 * (1 + lit) * g.lightBurnAt(pos.x, pos.y);
+      // underground there is no sunrise, but shades still wane during the hours of day
+      if (g.rules.dark && !burn && g.phase() > 0.08 && g.phase() < 0.66) burn = 0.35;
       if (burn > 0) {
         c.burnAcc = (c.burnAcc || 0) + burn * dt;
         if (c.burnAcc >= 1) {
@@ -258,8 +260,10 @@ export function updateMobs(g, dt) {
       }
       case 'boss': {
         if (!ai.act) {
-          const near = nearest(g, pos, (s) => hasPerson(g, s), 260);
-          if (near) { ai.act = true; g.msg(`${def.name}被惊醒了！`, 'danger'); }
+          // a sleeping boss stirs when someone lingers close by for a few seconds
+          const near = nearest(g, pos, (s) => hasPerson(g, s) && !s.battle, 220);
+          ai.alert = Math.max(0, (ai.alert || 0) + (near ? dt : -dt * 0.5));
+          if (ai.alert > 3) { ai.act = true; g.msg(`${def.name}被惊醒了！`, 'danger'); }
           else break;
         }
         if (mob.darkPulse) {

@@ -27,7 +27,7 @@ function R(id, name, r) {
 // ---- era 1: fire, tools, shelter ---------------------------------------------------------------
 R('make_campfire', '生火', { in: { wood: 2, flint: 1 }, w: 1, out: 'campfire', t: 8, tech: 'fire', skill: 'build', fx: 'build' });
 R('make_tablet', '凿刻石', { in: { stone: 3 }, w: 1, out: 'stone_tablet', t: 8, skill: 'build', fx: 'build' });
-R('tablet_insight', '记录见闻', { keep: { stone_tablet: 1 }, w: 1, out: 'insight', t: 26, skill: 'research', aids: ['research_aid'], fx: 'research' });
+R('tablet_insight', '记录见闻', { keep: { stone_tablet: 1 }, w: 1, out: 'insight', t: 20, skill: 'research', aids: ['research_aid'], fx: 'research' });
 R('night_talk', '篝火夜话', { keep: { '#cook': 1 }, w: 2, out: 'insight', t: 30, tech: 'lore', night: true, dark: true, skill: 'research', fx: 'research' });
 R('make_club', '削木棒', { in: { wood: 2 }, w: 1, out: 'club', t: 6 });
 R('make_stone_axe', '制石斧', { in: { wood: 1, flint: 1, fiber: 1 }, w: 1, out: 'stone_axe', t: 8, tech: 'stone_tools' });
@@ -112,7 +112,7 @@ R('make_trading_post', '建商栈', { in: { plank: 4, cloth: 2, rope: 2 }, w: 1,
 R('make_paper', '造纸', { in: { reed: 2 }, w: 1, out: 'paper', t: 8, tech: 'writing', batch: true });
 R('bind_book', '装订书卷', { in: { paper: 3, leather: 1 }, w: 1, out: 'book', t: 12, tech: 'writing' });
 R('make_study', '建书斋', { in: { plank: 3, paper: 2 }, w: 1, out: 'study', t: 14, tech: 'writing', skill: 'build', fx: 'build' });
-R('study_insight', '苦读', { keep: { study: 1 }, w: 1, out: 'insight', t: 14, skill: 'research', aids: ['research_aid'], fx: 'research' });
+R('study_insight', '苦读', { keep: { study: 1 }, w: 1, out: 'insight', t: 11, skill: 'research', aids: ['research_aid'], fx: 'research' });
 R('study_relic', '考据古物', { keep: { study: 1 }, in: { relic: 1 }, w: 1, out: [['insight', 3]], t: 20, tech: 'writing', skill: 'research', fx: 'research' });
 R('draw_map', '绘地图', { in: { paper: 1, charcoal: 1 }, w: 1, out: 'map', t: 8, tech: 'writing' });
 R('make_mill', '建磨坊', { in: { plank: 3, stone: 4 }, w: 1, out: 'mill', t: 16, tech: 'milling', skill: 'build', fx: 'build' });
@@ -145,7 +145,7 @@ R('make_lamp_post', '立灯柱', { in: { copper: 2, stone: 2, oil: 1 }, w: 1, ou
 
 // ---- era 5: letters ------------------------------------------------------------------------------
 R('make_library', '建藏书阁', { in: { brick: 4, book: 2, plank: 2 }, w: 1, out: 'library', t: 20, tech: 'philosophy', skill: 'build', fx: 'build' });
-R('library_insight', '藏书阁研读', { keep: { library: 1 }, w: 1, out: [['insight', 2]], t: 18, skill: 'research', aids: ['research_aid'], fx: 'research' });
+R('library_insight', '藏书阁研读', { keep: { library: 1 }, w: 1, out: [['insight', 2]], t: 15, skill: 'research', aids: ['research_aid'], fx: 'research' });
 R('make_observatory', '筑观星台', { in: { brick: 4, glass: 2, bronze: 2 }, w: 1, out: 'observatory', t: 22, tech: 'astronomy', skill: 'build', fx: 'build' });
 R('observe_stars', '观星', { keep: { observatory: 1 }, w: 1, out: [['insight', 2], ['star_chart', 1, 0.3]], t: 24, night: true, dark: true, skill: 'research', fx: 'research' });
 R('make_telescope', '磨望远镜', { in: { glass: 2, bronze: 1 }, w: 1, out: 'telescope', t: 12, tech: 'astronomy' });

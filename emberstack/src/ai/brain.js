@@ -18,7 +18,7 @@ import { STRATEGIES } from './strategies.js';
 import { isKnown, itemCost, foodRate } from './knowledge.js';
 import { newPlan, need, produce, needFood, objectiveNeeds, chooseTech, goal, addJob, availFree, cheapestLight } from './planner.js';
 import { Exec, runStep, recipeLayout, workSpot, topRun } from './executor.js';
-import { combatActions, assault, militaryNeeds, equipAndHeal, availableFighters, groupPower, enemyPower } from './tactics.js';
+import { combatActions, assault, militaryNeeds, equipAndHeal, availableFighters, groupPower, enemyPower, defsPower } from './tactics.js';
 
 const nm = (id) => CARDS[id]?.name || id;
 
@@ -118,7 +118,7 @@ export class Brain {
   }
 
   onDone(ex) {
-    if (ex.job.kind === 'experiment') {
+    if (ex.job.kind === 'experiment' && !ex.noted) {
       const sc = this.g.s.cards[ex.site];
       const st = sc && this.g.s.stacks[sc.s];
       const found = st && st.task && RECIPES[st.task.r].hidden;
@@ -198,6 +198,9 @@ export class Brain {
 
     // ---- assign
     for (const ex of fresh) this.start(ex);
+    // cards that the quick jobs above will move are not available to the planner's jobs
+    P.execClaims = new Map();
+    for (const ex of fresh) for (const st of ex.steps) if (st.op === 'dropRef' || st.op === 'bring') P.execClaims.set(st.ref, (P.execClaims.get(st.ref) || 0) + (st.n || 0));
     this.assign(W, P);
     if (W.idle.length > this.execs.length) this.experiment(W, P);
     if (!this.execs.length) this.tidy(W);
@@ -281,8 +284,8 @@ export class Brain {
     }
     // store perishables in a granary before they rot / before winter
     const gran = W.structs.find((c) => CARDS[c.d].store && (c.store || 0) < CARDS[c.d].store.cap - 3 && !this.locked.has(c.id));
-    if (gran && (W.daysToWinter <= 4 || W.food > W.dailyNeed * 2)) {
-      const perish = W.cards.filter((c) => c.sp !== undefined && c.sp <= 2 && CARDS[c.d].food >= 2 && g.isFree(c) && !this.locked.has(c.id) && !CARDS[c.d].tags.includes('raw'));
+    if (gran && (W.daysToWinter <= 5 || W.food > W.dailyNeed * 2)) {
+      const perish = W.cards.filter((c) => c.sp !== undefined && (c.sp <= 2 || W.daysToWinter <= 5) && CARDS[c.d].food >= 2 && g.isFree(c) && !this.locked.has(c.id) && !CARDS[c.d].tags.includes('raw'));
       if (perish.length) {
         const id = perish[0].d;
         fresh.push(new Exec({ key: 'store:' + id, kind: 'store', prio: 40, why: `把快坏的${nm(id)}存进谷仓`, cat: '生存' },
@@ -291,6 +294,22 @@ export class Brain {
     }
     const daily = W.dailyNeed;
     const hungry = W.people.filter((p) => p.st && p.st.hungry).length;
+    // ---- winter: perishable food rots before it can be eaten, so stockpile what keeps
+    if (g.rules.seasons && W.season !== 3 && W.daysToWinter <= 6) {
+      const winterDays = g.rules.seasonDays || 3;
+      const winterNeed = W.appetite * (W.winterMult || 1.5) * winterDays;
+      this.winterNeed = winterNeed;
+      if (W.durable < winterNeed) {
+        const urgency = 1 - W.durable / winterNeed;
+        const wp = 50 + 35 * urgency * (W.daysToWinter <= 3 ? 1.3 : 1);
+        goal(P, '过冬储粮', wp, '生存', `${Math.round(W.durable)}/${Math.round(winterNeed)}`);
+        if (g.techAllowed('storage') && !W.count('granary')) produce(P, 'granary', 1, wp + 5, '冬天要来了，建谷仓存粮（存进去的食物不会坏）', '生存');
+        if (g.hasTech('cooking') && !W.count('drying_rack') && (W.beasts.length || availFree(P, 'raw_meat'))) produce(P, 'drying_rack', 1, wp - 10, '搭晾架，把肉风干过冬', '生存');
+        if (g.hasTech('farming') && W.count('field') < Math.ceil(W.pop / 3) && W.daysToWinter >= 2) produce(P, 'field', 1, wp - 4, '多开一块田，谷物放不坏', '生存');
+        if (g.hasTech('curing') && W.count('salt_flat') && availFree(P, 'raw_fish') + availFree(P, 'raw_meat') >= 2) produce(P, availFree(P, 'raw_fish') >= 2 ? 'salted_fish' : 'jerky', 2, wp, '腌制鱼肉过冬', '生存');
+        needFood(P, winterNeed - W.durable, wp, `为冬天储备不会坏的粮食（${Math.round(W.durable)}/${Math.round(winterNeed)}）`, 2);
+      }
+    }
     let horizon = S.foodDays;
     if (g.rules.seasons && W.daysToWinter <= 4 && W.season !== 3) horizon += Math.min(3, (g.rules.seasonDays || 3)) * (W.winterMult || 1.5) * 0.7;
     if (W.season === 3) horizon += Math.min(W.winterLeft, 2) * 0.5;
@@ -318,6 +337,15 @@ export class Brain {
     P.foodPrio = prio - 6;
     goal(P, shortNow > 0 ? '明天的口粮' : '储备食物', prio, '生存', `${Math.round(W.food)}/${Math.round(shortNow > 0 ? daily : target)}`);
     needFood(P, Math.max(shortNow, target - W.food), prio, why, shortNow > 0 ? Math.ceil(workersNow) : 1);
+    // the land barely feeds us: invest in farming before it is too late
+    const prodNow = this.prodAvg;
+    if (prodNow !== undefined && prodNow < W.appetite * 1.25 && W.pop >= 3) {
+      const ip = 48 + (prodNow < W.appetite ? 20 : 0);
+      goal(P, '扩大粮食生产', ip, '生存', `日产 ${Math.round(prodNow)} / 日耗 ${Math.round(W.appetite)}`);
+      if (g.techAllowed('farming') && !g.hasTech('farming')) P.techNeed.set('farming', Math.max(P.techNeed.get('farming') || 0, ip));
+      else if (g.hasTech('farming') && W.season !== 3 && W.count('field') < Math.ceil(W.pop / 2.5)) produce(P, 'field', 1, ip, '开垦更多田地', '生存');
+      if (g.hasTech('fishing') && !W.free('#rod').length && (W.count('river') || W.count('pond'))) need(P, 'fishing_rod', 1, ip - 6, '钓竿让捕鱼更快', '生存');
+    }
     // winter: build a granary and preserve meat
     if (g.rules.seasons && W.daysToWinter <= 6 && W.pop >= 3 && g.techAllowed('storage') && !W.count('granary')) produce(P, 'granary', 1, prio - 15, '冬天要来了，建谷仓存粮', '生存');
     if (g.hasTech('cooking') && availFree(P, 'raw_meat') >= 2 && W.daysToWinter <= 5 && !W.count('drying_rack')) produce(P, 'drying_rack', 1, prio - 20, '风干肉过冬', '生存');
@@ -368,7 +396,19 @@ export class Brain {
     const objPop = P.popTarget || 0;
     let target = Math.max(objPop, Math.round(S.popTarget * S.growth));
     if (g.rules.noBirth) return;
-    const foodOk = W.food >= W.dailyNeed * 1.2 || objPop > W.pop;
+    // food stock and production, dawn to dawn: production = stock change + what was eaten
+    const prod = this.foodProduction(W);
+    const hist = this.dawnFood || [];
+    const trend = hist.length >= 2 ? hist[hist.length - 1] - hist[hist.length - 2] : 0;
+    const recentHunger = W.people.some((p) => p.st && p.st.hungry);
+    const perHead = 2 * (W.season === 3 || (g.rules.seasons && W.daysToWinter <= 3) ? W.winterMult || 1.5 : 1);
+    const sustainable = prod === null || prod >= (W.appetite + perHead) * 1.05;
+    let foodOk = (W.food >= W.dailyNeed * 1.6 + 2 && trend >= -1 && !recentHunger && sustainable) || (objPop > W.pop && !recentHunger && W.food >= W.dailyNeed);
+    if (g.rules.seasons && (W.daysToWinter <= 5 || W.season === 3) && W.durable < (this.winterNeed || W.dailyNeed * 4) * 1.1) {
+      foodOk = false;
+      if (objPop <= W.pop) target = Math.min(target, W.pop);
+    }
+    if (W.food < W.dailyNeed && !objPop) return;
     if (W.pop >= target) return;
     const prio = objPop > W.pop ? P.popPrio || 70 : 32 * S.growth;
     goal(P, '人口增长', prio, '建设', `${W.pop}/${target}`);
@@ -383,6 +423,23 @@ export class Brain {
     if (houses.length && adults.length + W.busy.length >= 2) {
       addJob(P, { key: 'c:birth', kind: 'craft', r: 'birth', site: houses[0].id, item: 'child', n: 1, prio, why: `人口 ${W.pop}，房屋有空位，生个孩子`, cat: '建设' });
     }
+  }
+
+  /** measured food production per day (null until two dawns have passed) */
+  foodProduction(W) {
+    const g = this.g;
+    if (this.lastDay !== W.day) {
+      this.lastDay = W.day;
+      (this.dawnFood ||= []).push(W.food);
+      (this.dawnEaten ||= []).push(g.s.stats.eaten);
+      if (this.dawnFood.length > 4) { this.dawnFood.shift(); this.dawnEaten.shift(); }
+      const n = this.dawnFood.length;
+      if (n >= 2) {
+        const p = this.dawnFood[n - 1] - this.dawnFood[n - 2] + (this.dawnEaten[n - 1] - this.dawnEaten[n - 2]);
+        this.prodAvg = this.prodAvg === undefined ? p : this.prodAvg * 0.5 + p * 0.5;
+      }
+    }
+    return this.prodAvg === undefined ? null : this.prodAvg;
   }
 
   bestHouse() {
@@ -431,7 +488,10 @@ export class Brain {
     const unlit = W.taskStacks.filter((st) => !W.nightLit(st.x + CARD_W / 2, st.y + CARD_H / 2) && !CARDS[g.s.cards[st.cards[0]].d].fixed && !RECIPES[st.task.r].dark);
     const crowd = W.stacks.filter((st) => !st.mob && W.nightLit(st.x + CARD_W / 2, st.y + CARD_H / 2)).length;
     const lightsBuilt = W.nightLights.length;
-    if ((unlit.length >= 2 && crowd > 7 && lightsBuilt < 2 + Math.floor(W.pop / 3)) || (g.rules.dark && lightsBuilt < 2)) {
+    const spots = W.litSpots();
+    if (g.rules.dark && spots < 4) {
+      produce(P, cheapestLight(P), 1, 92 - spots * 6, `火光里只剩 ${spots} 个空位，地下太黑了，立更多光源`, '生存');
+    } else if ((unlit.length >= 2 && crowd > 7 && lightsBuilt < 2 + Math.floor(W.pop / 3)) || (g.rules.dark && lightsBuilt < 2) || (g.rules.shades && spots < 2)) {
       produce(P, cheapestLight(P), 1, 42 + (g.rules.dark ? 20 : 0), '营地太挤了，需要更多光照', '建设');
     }
     // portable light for the dark
@@ -560,6 +620,9 @@ export class Brain {
     need(P, 'stone', Math.round(3 * k), 11, '备些石块', '建设');
     if (g.techAllowed('shelter') || g.hasTech('weaving')) need(P, 'fiber', Math.round(2 * k), 9, '备些纤维', '建设');
     if (!W.freeN('flint') && !W.count('campfire') && !W.count('hearth')) need(P, 'flint', 1, 40, '生火需要燃石', '生存');
+    // forests regrow only if someone plants them
+    const trees = W.nodes.filter((c) => CARDS[c.d].tags.includes('tree')).length + W.count('young_tree');
+    if (availFree(P, 'sapling') > 0 && trees < 4) addJob(P, { key: 'c:plant_sapling', kind: 'craft', r: 'plant_sapling', item: 'young_tree', n: 1, prio: 20 + (4 - trees) * 5, why: `树快砍光了（剩 ${trees} 棵），种下树苗`, cat: '建设' });
     // always have something to research toward
     if (this.techTarget) need(P, 'insight', 1, 10 * S.research, '积累灵感', '科技');
   }
@@ -602,6 +665,27 @@ export class Brain {
       if (a.d !== 'automaton' || (a.fuel || 0) > 1) continue;
       if (availFree(P, 'oil') > 0) fresh.push(new Exec({ key: 'oil:' + a.id, kind: 'fuel', prio: 90, why: '给机关傀儡加油', cat: '生存' }, [{ op: 'dropRef', ref: 'oil', n: 1, target: a.id }]));
       else need(P, 'oil', 1, 50, '机关傀儡需要灯油', '生存');
+    }
+    // lit space is precious: piles and huts don't need light, work does
+    if ((g.rules.dark || g.rules.shades) && W.nightLights.length && W.litSpots() < 3) {
+      for (const st of W.stacks) {
+        if (st.mob || st.battle || st.held || st.task) continue;
+        const root = g.s.cards[st.cards[0]];
+        const d = CARDS[root.d];
+        if (d.fixed || this.locked.has(root.id) || st.cards.some((id) => this.locked.has(id))) continue;
+        const idleThing = ['resource', 'food', 'knowledge', 'coin', 'tool', 'gear', 'misc', 'region'].includes(d.kind) || (d.kind === 'structure' && d.tags.includes('house'));
+        if (!idleThing || st.cards.some((id) => CARDS[g.s.cards[id].d].tags.includes('person'))) continue;
+        const cx = st.x + CARD_W / 2, cy = st.y + CARD_H / 2;
+        const L = W.nightLights.find((l) => Math.hypot(l.x - cx, l.y - cy) < l.r - 20);
+        if (!L) continue;
+        // just outside the ring of light, away from the centre
+        const a = Math.atan2(cy - L.y, cx - L.x) || 0;
+        const spot = g.freeSpot(L.x + Math.cos(a) * (L.r + 90) - CARD_W / 2, L.y + Math.sin(a) * (L.r + 90) - CARD_H / 2, g.stackH(st), { exclude: st.id });
+        if (W.nightLit(spot.x + CARD_W / 2, spot.y + CARD_H / 2)) continue;
+        fresh.push(new Exec({ key: 'clear-light:' + root.id, kind: 'tidy', prio: 72, why: `把${d.name}挪出火光，给干活的人腾地方`, cat: '整理' },
+          [{ op: 'move', id: root.id, x: spot.x, y: spot.y }], { lock: [root.id] }));
+        break;
+      }
     }
     // keep important structures and nodes inside the light (nights stop work in the dark)
     if ((g.rules.shades || W.phase < 0.6) && W.nightLights.length) {
@@ -646,7 +730,9 @@ export class Brain {
   }
 
   valueOf(W, id) {
-    if (id === 'survivor') return W.pop < (this.P?.popTarget || 0) ? 30 : 16;
+    const fed = W.food >= W.dailyNeed * 1.5 && (this.prodAvg === undefined || this.prodAvg >= W.appetite + 2);
+    if (id === 'survivor') return W.pop < (this.P?.popTarget || 0) ? 30 : fed ? 14 : 3;
+    if (id === 'child') return fed ? 6 : 1;
     if (id === 'child') return 8;
     if (id === 'scout') return 18;
     if (id === 'insight') return 8;
@@ -679,7 +765,7 @@ export class Brain {
       busyVal.set(b.w.id, { v, b });
     }
     let started = 0;
-    const reserved = new Map();
+    const reserved = new Map(P.execClaims || []);
     for (const job of jobs) {
       if (started >= 4) break;
       if ((this.fail.get(job.key) || 0) > g.s.t) continue;
@@ -749,7 +835,12 @@ export class Brain {
         const lit = W.nightLit(st.x + CARD_W / 2, st.y + CARD_H / 2);
         const steps = [];
         if (!st.task) steps.push({ op: 'clearSite', keep: [] });
-        if (night && !lit && !r.dark && !CARDS[node.d].fixed) steps.push({ op: 'relocate' });
+        const np = { x: st.x + CARD_W / 2, y: st.y + CARD_H / 2 };
+        const nearBoss = W.threats.some((t) => t.d.mob?.beh === 'boss' && !(t.c.ai && t.c.ai.act) && Math.hypot(t.p.x - np.x, t.p.y - np.y) < 420);
+        if (nearBoss) {
+          if (CARDS[node.d].fixed || st.task) return null;
+          steps.push({ op: 'relocate', force: true });
+        } else if (night && !lit && !r.dark && !CARDS[node.d].fixed) steps.push({ op: 'relocate' });
         const w0 = this.pickWorker(W, job, idle, taken, busyVal, r.skill, { light: night && !lit });
         if (!w0) return null;
         take(w0);
@@ -836,6 +927,11 @@ export class Brain {
           take(w);
           ws.push(w);
         }
+        // urgent research gets a second pair of hands
+        if (r.skill === 'research' && r.multi > 0 && job.prio >= 45) {
+          const w = this.pickWorker(W, job, idle, taken, new Map(), r.skill);
+          if (w) { take(w); ws.push(w); }
+        }
         const steps = [];
         const lock = [...trainees.map((c) => c.id), ...ws.map((c) => c.id)];
         let total = 0;
@@ -909,13 +1005,24 @@ export class Brain {
         lock.push(w0.id);
         steps.push({ op: 'bringCard', id: w0.id });
         const ws = [w0];
-        for (let i = 1; i < want; i++) {
-          const w = this.pickWorker(W, job, idle, taken, new Map(), 'explore');
+        // the region's known dangers: bring enough company to survive an ambush
+        const foes = region.foes || rd.foes || [];
+        const danger = region.danger ?? rd.danger;
+        let foePow = 0;
+        for (const [f] of foes) foePow = Math.max(foePow, defsPower([[f, 1]]));
+        const teamPow = () => groupPower(g, ws, [...new Set(foes.flatMap(([f]) => CARDS[f].traits || []))]).power;
+        const safe = () => danger < 0.05 || teamPow() >= foePow * (1.2 + this.strat.caution) * (job.prio >= 60 ? 0.75 : 1);
+        for (let i = 1; i < 3 && (i < want || !safe()); i++) {
+          const w = this.pickWorker(W, { ...job, cat: '战斗' }, idle, taken, new Map(), 'explore');
           if (!w) break;
           take(w);
           lock.push(w.id);
           ws.push(w);
           steps.push({ op: 'bringCard', id: w.id, optional: true });
+        }
+        if (!safe() && danger * foePow > 8) {
+          for (const w of ws) { taken.delete(w.id); }
+          return null;
         }
         const ex = new Exec(job, steps, { site: region.id, lock, verify: job.r });
         ex.desc = `${ws.map((w) => w.name).join('、')}出发探索${nm(region.d)}`;
@@ -1051,7 +1158,8 @@ export class Brain {
     const label = `${nm(c.a)}×${c.na} + ${nm(c.b)}${c.withW ? ' + 劳力' : ''}`;
     const ex = new Exec({ key: 'exp:' + c.key, kind: 'experiment', prio: 8 + boost, why: `做个实验：${label}`, cat: '实验', combo: c.key, label }, steps, { lock, verify: '__experiment__' });
     ex.verify = null;
-    ex.steps.push({ op: 'wait' });
+    ex.steps.push({ op: 'wait' }, { op: 'note' }, { op: 'scatter' });
+    ex.onNote = () => { this.onDone(ex); ex.noted = true; };
     this.lastExperiment = g.s.t;
     this.stats.experiments++;
     this.start(ex);

@@ -54,10 +54,10 @@ function feed(g) {
   let starving = 0;
   for (const p of people) {
     let need = CARDS[p.d].appetite;
-    if (winter) need = Math.ceil(need * (g.rules.winterAppetite ?? 1));
+    if (winter) need = need * (g.rules.winterAppetite ?? 1);
     const left = take(need);
     p.st = p.st || {};
-    if (left <= 0) p.st.hungry = 0;
+    if (left <= 0.01) p.st.hungry = 0;
     else if (p.st.hungry) {
       starving++;
       g.killPerson(p, '饿死了');

@@ -51,10 +51,13 @@ export function workSpot(brain, g, W, h = CARD_H, avoid = null) {
     }
   }
   let fallback = null;
+  const danger = W.threats.filter((t) => ['boss', 'lair'].includes(t.d.mob?.beh) || t.d.kind === 'lair').map((t) => t.p)
+    .concat(W.lairs.map((l) => g.cardPos(l)));
   for (const [x, y] of cands) {
     const spot = g.freeSpot(x, y, h, { exclude: avoid });
     if (Math.hypot(spot.x - x, spot.y - y) > 30) continue;
     const cx = spot.x + CARD_W / 2, cy = spot.y + CARD_H / 2;
+    if (danger.some((p) => Math.hypot(p.x - cx, p.y - cy) < 520)) continue;
     if (!nl.length || nl.some((L) => Math.hypot(L.x - cx, L.y - cy) < L.r - 45)) return spot;
     if (!fallback) fallback = spot;
   }
@@ -198,10 +201,18 @@ function doStep(brain, g, ex, step) {
       return r.ok ? 'act' : 'next';
     }
     case 'drop': {
-      // drop a specific card (with what's above it) onto a target card
+      // drop a specific card onto a target card (clearing anything stacked on it first)
       const c = g.s.cards[step.id];
       const t = g.s.cards[step.target];
       if (!c || !t) { ex.why = '目标不在了'; return step.optional ? 'next' : 'fail'; }
+      const cst = g.s.stacks[c.s];
+      const ci = cst ? cst.cards.indexOf(c.id) : -1;
+      if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1) {
+        const above = cst.cards[ci + 1];
+        const spot = g.freeSpot(cst.x + CARD_W + 20, cst.y, CARD_H + 40, { exclude: cst.id });
+        const r0 = g.actMove(above, spot.x, spot.y, who);
+        return r0.ok ? 'actRepeat' : (step.optional ? 'next' : 'fail');
+      }
       const r = g.actDrop(c.id, t.id, who);
       if (!r.ok) { ex.why = r.why; return step.optional ? 'next' : 'fail'; }
       return 'act';
@@ -226,6 +237,20 @@ function doStep(brain, g, ex, step) {
       if (!c) return 'next';
       const r = g.actMove(c.id, step.x, step.y, who);
       return r.ok ? 'act' : 'next';
+    }
+    case 'note': {
+      // let the brain record the experiment's outcome before the cards are put back
+      if (ex.onNote) ex.onNote();
+      return 'next';
+    }
+    case 'scatter': {
+      // undo an experiment that did nothing: put the cards back where they belong
+      const site = siteStack(g, ex);
+      if (!site || site.task || site.cards.length < 2) return 'next';
+      const top = g.s.cards[site.cards[site.cards.length - 1]];
+      const pile = Object.values(g.s.stacks).find((s2) => s2 !== site && !s2.task && !s2.mob && !s2.battle && !s2.held && s2.cards.length < 25 && s2.cards.every((id) => g.s.cards[id].d === top.d));
+      const r = pile ? g.actDrop(top.id, pile.cards[0], who) : g.actMove(top.id, ...Object.values(g.freeSpot(site.x + CARD_W + 30, site.y, CARD_H, { exclude: site.id })), who);
+      return r.ok ? 'actRepeat' : 'next';
     }
     case 'wait': {
       if (step.until === undefined) step.until = g.s.t + (step.dur || 1.2);

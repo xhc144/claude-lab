@@ -19,7 +19,7 @@ import { setupLevel } from './setup.js';
 
 export const DEFAULT_RULES = {
   dayLen: DAY_LEN, seasons: true, seasonDays: 3, startSeason: 0, shades: false, shadeBase: 0, shadePerFog: 1 / 12,
-  fogRate: 0, eventRate: 0.3, caravanEvery: 0, cold: false, winterAppetite: 1.5, enemyHp: 1, enemyAtk: 1, danger: 1,
+  fogRate: 0, eventRate: 0.3, caravanEvery: 0, cold: false, winterAppetite: 1.25, enemyHp: 1, enemyAtk: 1, danger: 1,
   workSpeed: 1, dark: false, spoilMult: 1,
 };
 
@@ -235,7 +235,8 @@ export class Game {
     if (def.hp) c.hp = Math.max(1, Math.round(maxHp(this, c) * Math.min(1, ratio || 1)));
     if (def.fuelMax && c.fuel === undefined) c.fuel = def.fuelStart ?? def.fuelMax;
     if (def.store && c.store === undefined) c.store = 0;
-    if (def.node && c.ch === undefined) c.ch = def.node.charges;
+    if (def.node && CARDS[from].node !== def.node) c.ch = def.node.charges;
+    else if (!def.node && !def.region) delete c.ch;
     if (def.spoil) c.sp = Math.round(def.spoil * (this.hasTech('storage') ? 1.5 : 1));
     else delete c.sp;
     const st = this.s.stacks[c.s];

@@ -138,7 +138,7 @@ function attack(g, b, att, foes) {
   if (crit) dmg *= 2;
   dmg = Math.max(1, Math.round(dmg) - ts.def);
   g.emit({ type: 'hit', a: att.id, t: tgt.id, dmg, crit, kind: as.dmg, ranged: as.ranged });
-  if (ts.traits.includes('burning') && !as.ranged) g.hurt(att, 1, '被灼伤');
+  if (ts.traits.includes('burning') && !as.ranged && g.rng.chance(0.35)) g.hurt(att, 1, '被灼伤');
   if (ts.thorns && !as.ranged) g.hurt(att, ts.thorns, '');
   g.hurt(tgt, dmg, '', att);
 }

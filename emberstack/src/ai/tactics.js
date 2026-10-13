@@ -85,6 +85,18 @@ export function combatActions(brain, W) {
     const allIn = groupPower(g, [...ours, ...availableFighters(brain, W, tt).filter((f) => !used.has(f.p.id)).map((f) => f.p)], tt, foeDef).power / Math.max(1, ep.power);
     const far = Math.hypot(b.x - W.anchor.x, b.y - W.anchor.y) > 450;
     const fleeable = theirs.every((c) => ['neutral', 'flee', 'wander'].includes(CARDS[c.d].mob?.beh));
+    const nearSleeper = W.threats.some((o) => o.d.mob.beh === 'boss' && !(o.c.ai && o.c.ai.act) && !theirs.includes(o.c) && Math.hypot(o.p.x - b.x, o.p.y - b.y) < 480);
+    if (nearSleeper && ratio > 0.9) continue; // don't pile people next to a sleeping boss
+    if (nearSleeper) {
+      for (const p of ours) {
+        if (used.has(p.id)) continue;
+        used.add(p.id);
+        const spot = workSpot(brain, g, W);
+        execs.push(new Exec({ key: 'retreat:' + p.id, kind: 'retreat', prio: 205, why: `${p.name}离沉睡的首领太近了，撤回营地`, cat: '战斗' },
+          [{ op: 'move', id: p.id, x: spot.x, y: spot.y }], { lock: [p.id] }));
+      }
+      continue;
+    }
     if ((shadeFight && !lit && ratio < 1.4) || (allIn < 0.6 && far && fleeable)) {
       // don't fight shades in the dark: step back into the light where they cannot follow
       for (const p of ours) {
@@ -130,7 +142,21 @@ export function combatActions(brain, W) {
       }
     }
   }
-  // 2) enemies on the way
+  // 2) never loiter next to a sleeping boss
+  const sleepers = W.threats.filter((t) => t.d.mob?.beh === 'boss' && !(t.c.ai && t.c.ai.act));
+  if (sleepers.length) {
+    for (const p of W.people) {
+      const st = g.s.stacks[p.s];
+      if (!st || st.battle || used.has(p.id) || brain.locked.has(p.id)) continue;
+      const pp = { x: st.x + CARD_W / 2, y: st.y + CARD_H / 2 };
+      if (!sleepers.some((t) => Math.hypot(t.p.x - pp.x, t.p.y - pp.y) < 340)) continue;
+      used.add(p.id);
+      const spot = workSpot(brain, g, W);
+      execs.push(new Exec({ key: 'away:' + p.id, kind: 'retreat', prio: 215, why: `${p.name}离沉睡的${sleepers[0].d.name}太近了，退回营地`, cat: '战斗' },
+        [{ op: 'move', id: p.id, x: spot.x, y: spot.y }], { lock: [p.id] }));
+    }
+  }
+  // 3) enemies on the way
   for (const th of W.threats) {
     if (th.inBattle) continue;
     const beh = th.d.mob.beh;
@@ -152,7 +178,8 @@ export function combatActions(brain, W) {
       }
       continue;
     }
-    if (th.dist > 900 && beh !== 'boss') continue;
+    const nearPeople = W.people.some((p) => { const st = g.s.stacks[p.s]; return st && !st.battle && Math.hypot(st.x + CARD_W / 2 - th.p.x, st.y + CARD_H / 2 - th.p.y) < 300; });
+    if (th.dist > 650 && !nearPeople && beh !== 'boss') continue;
     const sleeper = W.threats.find((o) => o !== th && o.d.mob.beh === 'boss' && !(o.c.ai && o.c.ai.act) && Math.hypot(o.p.x - th.p.x, o.p.y - th.p.y) < 520);
     if (sleeper) continue;
     const tt = th.d.traits || [];
@@ -166,7 +193,7 @@ export function combatActions(brain, W) {
       team.push(f.p);
       pw = groupPower(g, team, tt).power;
     }
-    if (pw >= foe.power * 1.3 && team.length) {
+    if (pw >= foe.power * 1.3 && team.length && (team.length >= 2 || pw >= foe.power * 3)) {
       for (const p of team) used.add(p.id);
       execs.push(new Exec({ key: 'intercept:' + th.c.id, kind: 'fight', prio: 185, why: `迎击来袭的${th.d.name}`, cat: '战斗' },
         team.map((p) => ({ op: 'drop', id: p.id, target: th.c.id, optional: true })), { lock: team.map((p) => p.id) }));
@@ -283,13 +310,15 @@ function trainSoldiers(brain, P, n, prio, traits) {
   // options in order of preference given enemy traits
   const opts = [];
   const has = (t) => g.techAllowed(t) || g.hasTech(t);
+  const armored = traits.includes('armored') && !traits.includes('flying');
   if (traits.includes('flying') && has('archery')) opts.push('bow');
   if (traits.includes('shade') && has('lamplight')) opts.push('lantern');
-  if (traits.includes('armored') && has('tactics')) opts.push('mace');
-  if (has('hunting')) opts.push('spear');
-  if (has('archery')) opts.push('bow');
+  if (armored && has('tactics')) opts.push('mace');
+  // against armour, pierce does half damage: clubs and armour beat spears
+  if (!armored && has('hunting')) opts.push('spear');
+  if (!armored && has('archery')) opts.push('bow');
   const gearOpts = [];
-  if (traits.includes('armored')) gearOpts.push('club');
+  if (armored) gearOpts.push('club');
   if (has('iron')) gearOpts.push('iron_sword', 'iron_armor');
   if (has('bronze')) gearOpts.push('bronze_sword', 'bronze_armor');
   if (has('husbandry')) gearOpts.push('leather_armor');

@@ -90,7 +90,7 @@ export function perceive(g, brain) {
   for (const w of W.workers) {
     const st = s.stacks[w.s];
     if (st.battle || locked.has(w.id)) continue;
-    const stuck = st.task && st.task.block && !['太暗了', '等待夜晚'].includes(st.task.block);
+    const stuck = st.task && st.task.block && (!['太暗了', '等待夜晚'].includes(st.task.block) || (st.task.block === '太暗了' && ((st.task.bt || 0) > 6 && (g.rules.dark || CARDS[g.s.cards[st.cards[0]].d].kind === 'region'))));
     if (st.task && !stuck && (st.task.m.workers.includes(w.id) || st.task.m.extra.includes(w.id) || st.task.m.keep.includes(w.id))) W.busy.push({ w, st, r: st.task.r });
     else if (st.task && st.task.m.consume.includes(w.id)) continue; // being trained
     else W.idle.push(w);
@@ -104,6 +104,27 @@ export function perceive(g, brain) {
     || W.structs.find((c) => CARDS[c.d].light);
   W.anchor = mainFire ? g.cardPos(mainFire) : g.colonyCenter();
   W.mainFire = mainFire || null;
+  // how many free card-sized spots remain inside the lights that burn all night
+  W.litSpots = () => {
+    if (W._litSpots !== undefined) return W._litSpots;
+    const others = W.stacks.filter((st) => !st.mob && !st.held);
+    let n = 0;
+    const seen = [];
+    for (const L of W.nightLights) {
+      for (let r = 60; r < L.r - 50; r += 95) {
+        const k = Math.max(1, Math.floor((2 * Math.PI * r) / 130));
+        for (let i = 0; i < k; i++) {
+          const a = (i / k) * Math.PI * 2;
+          const x = L.x + Math.cos(a) * r - CARD_W / 2, y = L.y + Math.sin(a) * r - CARD_H / 2;
+          if (seen.some((p) => Math.abs(p.x - x) < CARD_W + 10 && Math.abs(p.y - y) < CARD_H + 10)) continue;
+          if (others.some((st) => x < st.x + CARD_W + 8 && x + CARD_W + 8 > st.x && y < st.y + g.stackH(st) + 8 && y + CARD_H + 8 > st.y)) continue;
+          seen.push({ x, y });
+          n++;
+        }
+      }
+    }
+    return (W._litSpots = n);
+  };
 
   // food & needs
   W.canCook = W.cards.some((c) => CARDS[c.d].tags.includes('cook')) && g.hasTech('cooking');
@@ -120,6 +141,17 @@ export function perceive(g, brain) {
     food += f;
   }
   W.food = food;
+  // food that will still be edible after a few days (granary stores, preserved and grain)
+  let durable = 0;
+  for (const c of W.cards) {
+    const d = CARDS[c.d];
+    if (d.store) durable += c.store || 0;
+    if (!(d.food > 0) || d.tags.includes('raw')) continue;
+    const st = s.stacks[c.s];
+    if (!st || st.mob) continue;
+    if (c.sp === undefined || c.sp >= 3) durable += c.fl ?? d.food;
+  }
+  W.durable = durable;
   W.pop = g.population();
   W.housing = g.housing();
   // seasons

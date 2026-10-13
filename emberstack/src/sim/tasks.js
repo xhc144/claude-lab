@@ -124,7 +124,8 @@ export function updateTasks(g, dt) {
     const r = RECIPES[task.r];
     const block = blockReason(g, st, r, task.m);
     task.block = block;
-    if (block) continue;
+    if (block) { task.bt = (task.bt || 0) + dt; continue; }
+    task.bt = 0;
     task.p += (dt * taskSpeed(g, st, r, task.m)) / r.t;
     if (task.p >= 1) complete(g, st, r, task.m);
   }

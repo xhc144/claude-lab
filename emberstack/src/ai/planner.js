@@ -98,7 +98,18 @@ export function methodsFor(P, item) {
         continue;
       }
       const nodes = W.nodes.filter((c) => c.d === nodeId && (nd.charges < 0 || c.ch > 0));
-      if (!nodes.length) continue;
+      if (!nodes.length) {
+        // replant trees from saplings; otherwise look for the node out in the wild
+        if (CARDS[nodeId].tags.includes('tree') && nodeId === 'tree') {
+          if (W.count('young_tree')) out.push({ kind: 'wait', cost: r.t / Math.max(0.05, p.n) + 60, item: nodeId });
+          else if (availFree(P, 'sapling') > 0) out.push({ kind: 'plant', cost: r.t / Math.max(0.05, p.n) + 80 });
+        }
+        for (const e of REGION_LOOT.get(nodeId) || []) {
+          const regs = W.regions.filter((c) => c.d === e.region && c.ch > 0);
+          if (regs.length) out.push({ kind: 'explore', region: regs[0], cost: r.t / Math.max(0.05, p.n) + (CARDS[e.region].region.t / e.p) * 1.4 });
+        }
+        continue;
+      }
       const sm = seasonMult(g, nd);
       if (sm <= 0) continue;
       out.push({ kind: 'harvest', r: r.id, node: nodeId, nodes, yieldN: p.n, cost: r.t / Math.max(0.05, p.n) / sm, extra: !!p.extra });
@@ -139,7 +150,7 @@ export function methodsFor(P, item) {
 
 function recipeCost(P, r, yieldN) {
   const W = P.W;
-  let c = r.t / Math.max(0.05, yieldN);
+  let c = (r.t * (r.night ? 3.5 : 1) * Math.max(1, r.w)) / Math.max(0.05, yieldN);
   for (const [ref, n] of Object.entries(r.in)) {
     let sub;
     if (ref[0] === '#') {
@@ -201,6 +212,11 @@ export function produce(P, item, n, prio, why, cat, depth = 0) {
       addJob(P, { key: 'c:' + r.id, kind: 'craft', r: r.id, item, n: batches, prio, why: label, cat });
       break;
     }
+    case 'plant':
+      addJob(P, { key: 'c:plant_sapling', kind: 'craft', r: 'plant_sapling', item: 'young_tree', n: Math.min(3, availFree(P, 'sapling')), prio: prio + 2, why: label + '（种下树苗）', cat });
+      break;
+    case 'wait':
+      break;
     case 'explore':
       addJob(P, { key: 'e:' + m.region.id, kind: 'explore', r: 'explore_' + m.region.d, site: m.region.id, item, prio: prio * 0.8, why: label + '（去探索' + nm(m.region.d) + '）', cat });
       break;
@@ -227,6 +243,7 @@ function pickNode(P, nodes) {
     if (W.nightLit(p.x, p.y)) s += 1.5;
     s += Math.min(3, (c.ch < 0 ? 5 : c.ch) / 2);
     if (st.battle) s -= 100;
+    if (W.threats.some((t) => t.d.mob?.beh === 'boss' && !(t.c.ai && t.c.ai.act) && Math.hypot(t.p.x - p.x, t.p.y - p.y) < 450)) s -= 50;
     if (s > bs) { bs = s; best = c; }
   }
   return best || nodes[0];
@@ -293,7 +310,7 @@ export function objectiveNeeds(P) {
     const pr = objectiveProgress(g, o);
     if (pr.cur >= pr.need) continue;
     const frac = pr.need ? pr.cur / pr.need : 0;
-    const prio = base + 8 * frac;
+    const prio = Math.min(98, base + 8 * frac);
     const why = '目标：' + objectiveText(o);
     switch (o.type) {
       case 'build': {
@@ -420,14 +437,16 @@ export function chooseTech(P) {
     if (id === 'lore' && (R.fogRate > 0 || R.shades)) s += 24 + g.s.fog / 3;
     if (id === 'hunting' && (W.hostiles.length || W.warnings.length || W.lairs.length)) s += 22;
     if (id === 'shelter') s += 20;
-    if (id === 'farming' && R.seasons) s += 14;
-    if (id === 'storage' && R.seasons && W.daysToWinter <= 6) s += 16;
+    if (id === 'farming' && R.seasons) s += 28;
+    if (id === 'storage' && R.seasons && W.daysToWinter <= 8) s += 30;
     if (id === 'archery' && W.threats.some((x) => x.d.traits.includes('flying'))) s += 40;
     if (id === 'herbalism' && W.people.some((p) => p.st && p.st.sick)) s += 30;
     if (id === 'stone_tools') s += 18;
     if (id === 'fishing' && W.count('river') + W.count('pond')) s += 10;
     if (id === 'writing' || id === 'philosophy') s += 8 * S.research;
     if (id === 'masonry' && R.cold) s += 15;
+    if (id === 'curing' && R.seasons && W.count('salt_flat') && W.daysToWinter <= 8) s += 26;
+    if (id === 'husbandry' && R.cold) s += 18;
     if (id === 'tactics' && (W.lairs.length || P.killTargets)) s += 12;
     scores.push([id, s, st.ok]);
   }

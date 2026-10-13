@@ -14,6 +14,9 @@ export function setupLevel(g) {
   const W = g.board.w, H = g.board.h;
   const cx = W * (L.campAt ? L.campAt[0] : 0.5), cy = H * (L.campAt ? L.campAt[1] : 0.55);
   let regionIdx = 0;
+  // hostile cards with fixed positions: everything else keeps its distance from them
+  const hostile = (L.start || []).filter((e) => e.at && ['enemy', 'lair'].includes(CARDS[e.c].kind)).map((e) => ({ x: e.at[0] * W, y: e.at[1] * H }));
+  const safe = (x, y) => hostile.every((h) => Math.hypot(h.x - x - CARD_W / 2, h.y - y - CARD_H / 2) > 620);
   const regionsTotal = (L.start || []).filter((e) => CARDS[e.c].kind === 'region' && !e.at).reduce((a, e) => a + (e.n || 1), 0);
   for (const e of L.start || []) {
     const def = CARDS[e.c];
@@ -42,17 +45,24 @@ export function setupLevel(g) {
         y = Math.max(60, cy - 640 + (regionIdx % 2) * 40);
         regionIdx++;
       } else {
-        const [r0, r1] = { camp: [0, 200], near: [260, 460], mid: [480, 700], far: [700, 950], edge: [900, 1300] }[zone] || [0, 200];
-        const a = g.rng.next() * Math.PI * 2;
-        const r = r0 + g.rng.next() * (r1 - r0);
-        x = cx + Math.cos(a) * r - CARD_W / 2;
-        y = cy + Math.sin(a) * r * 0.75 - CARD_H / 2;
+        const [r0, r1] = { camp: [0, 240], near: [260, 480], mid: [480, 700], far: [700, 950], edge: [900, 1300] }[zone] || [0, 200];
+        for (let tries = 0; tries < 30; tries++) {
+          const a = g.rng.next() * Math.PI * 2;
+          const r = r0 + g.rng.next() * (r1 - r0);
+          x = cx + Math.cos(a) * r - CARD_W / 2;
+          y = cy + Math.sin(a) * r * 0.75 - CARD_H / 2;
+          if (zone === 'edge' || safe(x, y)) break;
+        }
         if (zone === 'edge') {
           x = Math.max(80, Math.min(W - 80 - CARD_W, x));
           y = Math.max(80, Math.min(H - 80 - CARD_H, y));
         }
       }
-      const spot = e.at ? { x, y } : g.freeSpot(x, y, CARD_H);
+      let spot = e.at ? { x, y } : g.freeSpot(x, y, CARD_H);
+      if (!e.at && zone !== 'edge' && !safe(spot.x, spot.y)) {
+        // pushed toward a boss by the crowd: try the other side of the camp
+        spot = g.freeSpot(2 * cx - spot.x - CARD_W, 2 * cy - spot.y - CARD_H, CARD_H);
+      }
       const st = g.makeStack([c.id], spot.x, spot.y);
       if (def.mob) g.initMob(c);
       if (e.wake === false && c.ai) c.ai.act = false;
