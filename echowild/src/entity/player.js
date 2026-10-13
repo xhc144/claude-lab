@@ -337,7 +337,8 @@ export class Player {
     if (this.creative) { this.health = this.maxHealth; this.hunger = 20; return; }
     const peaceful = this.game.settings && this.game.settings.difficulty === 0;
     this.regenTimer += dt;
-    if (this.hunger >= 18 && this.health < this.maxHealth && this.regenTimer > (this.saturation > 0 ? 0.6 : 4)) {
+    const fed = !!this.effects.fed;
+    if (this.hunger >= (fed ? 14 : 18) && this.health < this.maxHealth && this.regenTimer > (this.saturation > 0 ? 0.6 : fed ? 2 : 4)) {
       this.regenTimer = 0;
       this.health = Math.min(this.maxHealth, this.health + 1);
       this.exhaust(3);

@@ -236,7 +236,7 @@ export class Game {
       // horizon haze toward / away from the sun (fog colour for distant terrain)
       const h = (x, z) => { const d = [x, 0.06, z]; const l = Math.hypot(...d); return skyRadiance(d.map((v) => v / l), s.sun); };
       const sl = Math.hypot(s.sun[0], s.sun[2]) || 1;
-      const sx = s.sun[0] / sl, sz = s.sun[2] / sl, ca = Math.cos(0.6), sa = Math.sin(0.6);
+      const sx = s.sun[0] / sl, sz = s.sun[2] / sl, ca = Math.cos(0.85), sa = Math.sin(0.85);
       // toward the sun, but outside its bright forward-scattering halo
       const toward = h(sx * ca - sz * sa, sx * sa + sz * ca), away = h(-sx, -sz);
       const gr = (c) => { const g = (c[0] + c[1] + c[2]) / 3; return c.map((v) => (v * (1 - weather.rain * 0.85) + g * 0.75 * weather.rain * 0.85)); };
@@ -297,7 +297,8 @@ export class Game {
     // eye adaptation: brighten for night and caves, ease toward the target over a second or two
     const L = w.getLight(ex, ey, ez);
     const blk = Math.max((L >> 4) & 15, (L >> 8) & 15, (L >> 12) & 15) / 15;
-    const outdoorKey = lum(lightCol) * 0.55 + lum(ambient);
+    // the bright horizon toward a low sun counts too, so sunsets don't blow out
+    const outdoorKey = lum(lightCol) * 0.55 + lum(ambient) + 0.22 * Math.max(lum(this._haze[0]), lum(this._haze[1])) * (1 - weather.rain * 0.5);
     const key = outdoorKey * skyHere * skyHere + blk * blk * 0.9 + 0.025;
     const target = Math.min(3.4, Math.max(0.5, 0.92 * Math.pow(2.1 / key, 0.55))) * (0.85 + bright * 0.35);
     const dt = Math.min(0.25, Math.max(0, this.time - (this._expT ?? this.time)));

@@ -263,6 +263,13 @@ void main() {
   float vis = diff > 0.0 ? shadowAt(v_shadow, foliage || leafCube ? 1.0 : ndlG) * smoothstep(0.32, 0.86, sky) : 0.0;
   // leaves glow a little when the sun is behind them
   vec3 through = leafCube ? albedo * u_lightCol * 0.16 * max(0.0, -ndlG) * smoothstep(0.32, 0.86, sky) : vec3(0.0);
+  // seen from under water, sunlit ground ripples with caustics
+  if (u_underwater > 0.5 && vis > 0.0) {
+    vec2 cp = v_world.xz * 0.11;
+    float n1 = texture(u_noise2, cp + vec2(u_time * 0.031, u_time * 0.017)).r;
+    float n2 = texture(u_noise2, cp * 1.37 - vec2(u_time * 0.023, -u_time * 0.029)).r;
+    vis *= 0.55 + 1.6 * pow(1.0 - abs(n1 - n2), 7.0);
+  }
   vec3 F0 = mix(vec3(0.04), albedo, metal);
   vec3 H = normalize(V + u_lightDir);
   float a2 = rough * rough * rough * rough;
@@ -503,7 +510,7 @@ in vec2 v_uv;
 out vec4 o;
 const float RE = 6360e3, RA = 6460e3, CAMH = 600.0;
 const vec3 BR = vec3(5.8e-6, 13.5e-6, 33.1e-6);
-const float HR = 8000.0, BM = 10e-6, HM = 1200.0;
+const float HR = 8000.0, BM = 7e-6, HM = 1200.0;
 const vec3 BO = vec3(0.65e-6, 1.881e-6, 0.085e-6);
 const float PI = 3.14159265;
 float ozone(float y) { return max(0.0, 1.0 - abs(y - 25000.0) / 15000.0); }
@@ -960,13 +967,15 @@ void main() {
   vec3 c = texture(u_scene, uv).rgb;
   c += texture(u_bloom, uv).rgb * u_bloomK;
   c += texture(u_rays, uv).r * u_rayColor;
-  if (u_underwater > 0.5) {
-    float caust = pow(abs(sin(uv.x * 30.0 + u_time * 1.3) * sin(uv.y * 24.0 - u_time * 1.1)), 6.0);
-    c = c * u_waterTint + u_waterTint * caust * 0.05;
-  }
+  if (u_underwater > 0.5) c *= u_waterTint;
   c *= u_exposure;
-  c = (c * (2.51 * c + 0.03)) / (c * (2.43 * c + 0.59) + 0.14);
-  c = clamp(c, 0.0, 1.0);
+  // ACES per channel, blended with a luminance-only curve so bright saturated light (sunsets,
+  // lava, lamps) keeps its hue instead of bleaching toward yellow-white
+  vec3 cA = clamp((c * (2.51 * c + 0.03)) / (c * (2.43 * c + 0.59) + 0.14), 0.0, 1.0);
+  float Lc = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  float LA = clamp((Lc * (2.51 * Lc + 0.03)) / (Lc * (2.43 * Lc + 0.59) + 0.14), 0.0, 1.0);
+  vec3 cL = clamp(c * (LA / max(Lc, 1e-4)), 0.0, 1.0);
+  c = mix(cA, cL, 0.35 * smoothstep(0.4, 2.5, Lc));
   // grade: a touch of contrast and saturation, warm highlights / cool shadows
   float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
   c = mix(vec3(l), c, u_saturation);

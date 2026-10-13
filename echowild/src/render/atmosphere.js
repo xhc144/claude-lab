@@ -5,7 +5,7 @@
 
 const RE = 6360e3, RA = 6460e3, CAM_H = 600;
 const BR = [5.8e-6, 13.5e-6, 33.1e-6], HR = 8000;
-const BM = 10e-6, HM = 1200;
+const BM = 7e-6, HM = 1200;
 const BO = [0.65e-6, 1.881e-6, 0.085e-6]; // ozone absorption (no scattering): keeps twilight skies blue
 const ozone = (y) => Math.max(0, 1 - Math.abs(y - 25000) / 15000);
 export const SUN_INTENSITY = 22, MOON_INTENSITY = 0.42;
