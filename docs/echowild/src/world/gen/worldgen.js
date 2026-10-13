@@ -4,7 +4,7 @@
 
 import { Noise, RNG, hash3, rand2 } from '../../core/noise.js';
 import { B, pack, OPAQUE, ID_MASK } from '../blocks.js';
-import { BIOMES, BI } from '../biomes.js';
+import { BIOMES, BI, ISLAND_FLAG } from '../biomes.js';
 import { placeStructures } from './structures.js';
 
 export const SEA = 62;
@@ -277,7 +277,7 @@ export class WorldGen {
             else if (rand2(wx * 3 + y, wz, this.seed + 5) < 0.04) blocks[i] = B.levistone;
           } else depth = 0;
         }
-        biomes[(z << 4) | x] = BI.sky;
+        biomes[(z << 4) | x] |= ISLAND_FLAG;
       }
     }
 
@@ -366,8 +366,6 @@ export class WorldGen {
       tints[256 + i] = p(acc[3], acc[4], acc[5]);
       tints[512 + i] = p(acc[6], acc[7], acc[8]);
     }
-    // the sky islands keep their own tints
-    for (let i = 0; i < 256; i++) if (biomes[i] === BI.sky) { tints[i] = 0x6fd0a0; tints[256 + i] = 0xbcd8f2; }
 
     return { blocks, biomes, heights, tints, features };
   }

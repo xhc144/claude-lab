@@ -34,13 +34,13 @@ export class Weather {
     const p = this.game.player;
     const cold = this.snowAt(p.x, p.y, p.z);
     if (this.storm > 0.5) return cold ? '暴风雪' : '雷暴';
-    const b = BIOMES[this.game.world.biomeAt(Math.floor(p.x), Math.floor(p.z))];
+    const b = BIOMES[this.game.world.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y)];
     if (!b.rain) return '阴天';
     return cold ? '飘雪' : '下雨';
   }
   biomeRains(x, z) { return BIOMES[this.game.world.biomeAt(Math.floor(x), Math.floor(z))].rain !== false; }
   snowAt(x, y, z) {
-    const b = BIOMES[this.game.world.biomeAt(Math.floor(x), Math.floor(z))];
+    const b = BIOMES[this.game.world.biomeAt(Math.floor(x), Math.floor(z), y)];
     return b.snow || y > 150 || (b.key === 'mountains' && y > 120);
   }
   rainAt(x, z) { return this.biomeRains(x, z) ? this.rain : 0; }

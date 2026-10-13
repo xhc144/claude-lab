@@ -175,7 +175,7 @@ export class HUD {
     // top-left: clock and place
     const t = g.dayTime;
     const ck = clockString(t);
-    const biome = BIOMES[g.world.biomeAt(Math.floor(p.x), Math.floor(p.z))];
+    const biome = BIOMES[g.world.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y)];
     const deep = p.y < 50 && g.world.skyLight(Math.floor(p.x), Math.floor(p.y + 1), Math.floor(p.z)) < 4;
     const placeName = p.y > 140 && biome && biome.key === 'sky' ? '浮空群岛' : deep && p.y < 46 ? '幽光深层' : deep ? '地下洞穴' : biome ? biome.zh : '';
     const sun = g.sky ? (g.sky.daylight > 0.5 ? '☀' : g.sky.daylight > 0.1 ? '◐' : '☾') : '';

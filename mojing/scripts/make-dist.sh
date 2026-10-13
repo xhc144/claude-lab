@@ -36,7 +36,7 @@ for t in notes exercise exam paper book translation; do
 $pdf_mode = 5;
 $xelatex = 'xelatex -interaction=nonstopmode -file-line-error -synctex=1 %O %S';
 RC
-  cat > "$dir/使用说明.txt" <<TXT
+  cat > "$dir/README.txt" <<TXT
 墨经 Mojing · ${TITLE[$t]}模板
 
 本压缩包是自包含的：main.tex 为示例文档，mojing-*.cls / mojing-*.sty 为模板文件。

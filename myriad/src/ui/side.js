@@ -221,8 +221,11 @@ export function buildSide(game, ui) {
   // live refresh — only when the world has changed (time passed or a power was used), and never
   // while a button is held inside the panel, so a click can't straddle a rebuilt DOM
   let timer = 0, seen = '', held = false;
+  const release = () => { held = false; };
   side.addEventListener('pointerdown', () => { held = true; });
-  window.addEventListener('pointerup', () => setTimeout(() => { held = false; }, 0));
+  window.addEventListener('pointerup', () => setTimeout(release, 0));
+  side.addEventListener('pointercancel', release);
+  window.addEventListener('blur', release);
   game.on('frame', (dt) => {
     timer -= dt;
     if (timer > 0 || held || !game.world) return;

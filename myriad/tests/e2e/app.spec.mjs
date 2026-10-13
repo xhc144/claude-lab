@@ -167,6 +167,26 @@ test('saves: export a file and load it back', async ({ page }) => {
   check();
 });
 
+test('side panel resumes live updates after cancelled gestures or window blur', async ({ page }) => {
+  const check = watchErrors(page);
+  await openWorld(page);
+  await page.locator('.tab[data-tab="chronicle"]').click();
+  for (const cause of ['pointercancel', 'blur']) {
+    await page.locator('#side').dispatchEvent('pointerdown', { pointerId: 1 });
+    const message = `侧栏恢复更新：${cause}`;
+    await page.evaluate((text) => {
+      const g = window.__myriad.game, w = g.world;
+      w.chronicle.push({ year: 0, text, cat: 'world', imp: 1 });
+      w.chronicleSeq++;
+      g.edits = (g.edits || 0) + 1;
+    }, message);
+    if (cause === 'pointercancel') await page.locator('#side').dispatchEvent('pointercancel', { pointerId: 1 });
+    else await page.evaluate(() => window.dispatchEvent(new Event('blur')));
+    await expect(page.locator('.tab-body')).toContainText(message, { timeout: 15000 });
+  }
+  check();
+});
+
 test('species designer creates a creature that can be released', async ({ page }) => {
   const check = watchErrors(page);
   await openWorld(page, { start: 'barren' });

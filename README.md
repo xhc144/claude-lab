@@ -4,7 +4,7 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页、四个交互项目与两个影片播放器的在线入口均已核验。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供四个交互项目、墨经模板目录与两个影片播放器。
 
 ## 浏览器交互项目
 
@@ -15,7 +15,13 @@
 | 回响荒野 Echowild | 程序化体素世界、建造与生存冒险 | [打开](https://xhc144.github.io/claude-lab/echowild/) | [echowild/](echowild/)；`node scripts/serve.mjs`；需要桌面键鼠与 WebGL2，暂不支持触屏游玩 |
 | 0 → ∞ 交互实验室 | 从复平面到纽结、双摆、量子波包与神经网络的 13 台仪器 | [打开](https://xhc144.github.io/claude-lab/personal-site/) | [personal-site/](personal-site/)；`npm ci && npm run build && npm start`；发布一般作品展示版本 |
 
-MathScape 与 Myriad 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
+MathScape 与 Myriad 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
+
+## 数学排版模板
+
+[墨经 Mojing：PDF 预览与 ZIP 下载](https://xhc144.github.io/claude-lab/mojing/) 提供讲义、习题与解答、竞赛试卷、数学论文、数学书籍、翻译对照六套 LaTeX 模板。十份示例 PDF 包含学生版、答案版与双栏对照等变体；六个 ZIP 各自包含完整源码和 ASCII 文件名的 `README.txt`。
+
+源码位于 [mojing/](mojing/)。网页提供预先编译的 PDF；下载后的编辑和编译在本地或 Overleaf 进行。需要完整的 TeX Live 2023+、XeLaTeX、ctex、latexmk 等依赖，详见项目 README。各套模板独立使用，其他项目的默认排版配置保持原样。
 
 ## 程序化影片
 
@@ -40,7 +46,7 @@ node scripts/build-pages.mjs
 python3 -m http.server 8080 --directory docs
 ```
 
-`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 只复制 HTML/CSS/源码；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
+`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 

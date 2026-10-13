@@ -5,12 +5,12 @@ import { execFileSync } from 'node:child_process';
 import { resolve, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root = resolve(fileURLToPath(new URL('..', import.meta.url)));
-for (const project of ['mathscape','myriad','personal-site']) {
+for (const project of ['mathscape','myriad','personal-site','echowild']) {
  execFileSync(process.execPath, ['scripts/build.mjs'], {cwd:join(root,project),stdio:'inherit'});
 }
 const out=join(root,'docs');
 // Keep the durable history/verification record across rebuilds.
-for(const p of ['index.html','mathscape','myriad','personal-site','echowild','films']) rmSync(join(out,p),{recursive:true,force:true});
+for(const p of ['index.html','mathscape','myriad','personal-site','echowild','mojing','films']) rmSync(join(out,p),{recursive:true,force:true});
 mkdirSync(out,{recursive:true});
 cpSync(join(root,'site/index.html'),join(out,'index.html'));
 writeFileSync(join(out,'.nojekyll'),'');
@@ -20,6 +20,20 @@ for(const [p,file] of [['mathscape','mathscape.html'],['myriad','myriad.html']])
 cpSync(join(root,'personal-site/dist'),join(out,'personal-site'),{recursive:true});
 mkdirSync(join(out,'echowild'),{recursive:true});
 for(const p of ['index.html','css','src']) cpSync(join(root,'echowild',p),join(out,'echowild',p),{recursive:true});
+cpSync(join(root,'echowild/dist/echowild.html'),join(out,'echowild/echowild.html'));
+const mojing = join(out,'mojing');
+mkdirSync(join(mojing,'previews/png'),{recursive:true});
+mkdirSync(join(mojing,'dist'),{recursive:true});
+cpSync(join(root,'site/mojing.html'),join(mojing,'index.html'));
+for(const name of ['notes','exercise','exercise-student','exercise-key','exam','exam-answers','paper','book','translation','translation-columns']) {
+ cpSync(join(root,'mojing/previews',name+'.pdf'),join(mojing,'previews',name+'.pdf'));
+}
+for(const name of ['notes','exercise','exercise-student','exam','exam-answers','paper','book','translation','translation-columns']) {
+ cpSync(join(root,'mojing/previews/png',name+'.png'),join(mojing,'previews/png',name+'.png'));
+}
+for(const name of ['notes','exercise','exam','paper','book','translation']) {
+ cpSync(join(root,'mojing/dist','mojing-'+name+'.zip'),join(mojing,'dist','mojing-'+name+'.zip'));
+}
 const films=[
  ['symmetry-film','《对称的语言》','symmetry-film/output/abstract_algebra_promo_web.mp4','约 3 分 40 秒 · 抽象代数程序化影片'],
  ['sea-above','《倒悬之海》','sea-above/out/the_sea_above.mp4','约 71 秒 · 程序化三维短片']
