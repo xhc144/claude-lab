@@ -6,7 +6,7 @@
 // map is in hand.
 
 import { I, ITEMS } from '../world/items.js';
-import { B, ID_MASK, SOLID, LIQUID } from '../world/blocks.js';
+import { B, BLOCKS, SOLID, LIQUID } from '../world/blocks.js';
 import { h, Screen } from '../ui/ui.js';
 import { iconURL } from '../render/icons.js';
 
@@ -154,7 +154,12 @@ export function installVillage(game, state) {
         held.tag = { tx: t.x, tz: t.z, label: `标记：${t.x}, ${t.z}` };
         game.inventory.changed();
       }
-      if (!game.treasures.some((q) => q.x === t.x && q.z === t.z)) game.treasures.push({ x: t.x, z: t.z, placed: false, found: false });
+      if (!game.treasures.some((q) => q.x === t.x && q.z === t.z)) {
+        game.treasures.push({ x: t.x, z: t.z, placed: false, found: false });
+        // (with a long view distance the spot may already be loaded)
+        const c = game.world.getChunk(t.x >> 4, t.z >> 4);
+        if (c && c.ready) bury(c);
+      }
       if (!game.chartMarks.some((m) => m.x === t.x && m.z === t.z)) game.chartMarks.push({ x: t.x, z: t.z, kind: 'treasure' });
       const d = Math.round(Math.hypot(t.x - p.x, t.z - p.z));
       game.hud.toast('藏宝图展开了', `宝藏埋在${dirName(t.x - p.x, t.z - p.z)}方向约 ${d} 格（${t.x}, ${t.z}）。已标在地图上（M），拿着地图时屏幕下方会指路。到了之后向下挖。`, 'discover', 8000);
@@ -164,18 +169,19 @@ export function installVillage(game, state) {
     return prevUse ? prevUse(held, def, hit, fresh) : false;
   };
   // bury the chest when its land is loaded
-  const bury = (c) => {
+  function bury(c) {
     for (const t of game.treasures) {
       if (t.placed || (t.x >> 4) !== c.cx || (t.z >> 4) !== c.cz) continue;
       const w = game.world;
-      let y = w.surfaceY(t.x, t.z);
-      while (y > 2 && (!SOLID[w.getId(t.x, y, t.z)] || LIQUID[w.getId(t.x, y, t.z)])) y--;
+      // two blocks under the natural ground (the generator's height, so never up in a tree)
+      let y = Math.min(w.surfaceY(t.x, t.z), game.gen.column(t.x, t.z).h + 2);
+      while (y > 2 && (!SOLID[w.getId(t.x, y, t.z)] || LIQUID[w.getId(t.x, y, t.z)] || BLOCKS[w.getId(t.x, y, t.z)].leaves || w.getId(t.x, y, t.z) === B.oak_log)) y--;
       const cy = Math.max(3, y - 2);
       w.setBlock(t.x, cy, t.z, B.chest);
       w.setBE(t.x, cy, t.z, { kind: 'chest', slots: new Array(27).fill(null), loot: 'treasure' });
       t.placed = true; t.y = cy;
     }
-  };
+  }
   game.chunks.onChunkLoaded.push(bury);
   for (const c of game.world.chunks.values()) if (c.ready) bury(c);
 
@@ -210,4 +216,3 @@ export function installVillage(game, state) {
     for (const t of game.treasures) if (t.placed && !t.found && t.x === x && t.z === z) { t.found = true; game.emit('treasureFound'); game.hud.toast('找到宝藏了！', '织纹币、宝石和远方的纪念品。', 'achievement', 5000); }
   });
 }
-void ID_MASK;

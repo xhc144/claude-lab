@@ -6,7 +6,6 @@
 import { Game } from '../game.js';
 import { installSystems } from '../systems/index.js';
 import { locateStructures } from '../world/gen/structures.js';
-import { BLOCKS } from '../world/blocks.js';
 
 export const TITLE_SEED = 20261012;
 const SHOT = 19;     // seconds per shot
@@ -141,7 +140,6 @@ export class TitleScene {
     p.yaw = c.yaw; p.pitch = c.pitch;
     // golden hour breathes slowly
     g.dayTime = 10150 + 750 * (0.5 - 0.5 * Math.cos(t / 240 * Math.PI * 2));
-    void BLOCKS;
     return { x: c.x, y: c.y, z: c.z, yaw: c.yaw, pitch: c.pitch, fov: r.fov * 0.86, roll: Math.sin(t * 0.21) * 0.008 };
   }
 }

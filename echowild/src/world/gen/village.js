@@ -7,7 +7,7 @@
 // orientation. Every floor is levelled to its highest ground and the door always meets the lane
 // at the same height or one stair step up.
 
-import { B, ID_MASK, pack } from '../blocks.js';
+import { B, pack } from '../blocks.js';
 import { BIOMES } from '../biomes.js';
 import { RNG, hash3 } from '../../core/noise.js';
 
@@ -31,8 +31,8 @@ export function makeVillage({ put, fill, chest, foundation }) {
   }
 
   // a timber cottage: w × d outer footprint, door in the middle of the front wall
-  function house(W, F, w, d, style, prof, r) {
-    const { wood, planks, stairs, slab, wall, corner } = style;
+  function house(W, F, w, d, style, prof) {
+    const { planks, stairs, slab, wall, corner } = style;
     const dx = w >> 1;
     // floor and foundation; clear the inside and the roof space
     for (let lz = -1; lz <= d; lz++) for (let lx = -1; lx <= w; lx++) {
@@ -96,7 +96,6 @@ export function makeVillage({ put, fill, chest, foundation }) {
       F.put(bx, 0, bz - 1, pack(B.furnace, F.face(3)));
       chest(W, F.wx(1, 1), F.y, F.wz(1, 1), 'village', F.face(1));
     }
-    void r;
   }
 
   const lampPost = (W, x, y, z) => { put(W, x, y, z, B.oak_fence); put(W, x, y + 1, z, B.oak_fence); put(W, x, y + 2, z, pack(B.lantern, 0)); };
@@ -165,10 +164,10 @@ export function makeVillage({ put, fill, chest, foundation }) {
       const { x: cx, z: cz } = o;
       const cold = o.biome === 'taiga';
       const style = cold
-        ? { wood: 'pine', planks: B.pine_planks, stairs: B.pine_planks_stairs, slab: B.pine_planks_slab, wall: B.pine_planks, corner: B.pine_log }
+        ? { planks: B.pine_planks, stairs: B.pine_planks_stairs, slab: B.pine_planks_slab, wall: B.pine_planks, corner: B.pine_log }
         : o.biome === 'blossom'
-          ? { wood: 'blossom', planks: B.blossom_planks, stairs: B.blossom_planks_stairs, slab: B.blossom_planks_slab, wall: B.blossom_planks, corner: B.blossom_log }
-          : { wood: 'oak', planks: B.oak_planks, stairs: B.oak_planks_stairs, slab: B.oak_planks_slab, wall: B.oak_planks, corner: B.oak_log };
+          ? { planks: B.blossom_planks, stairs: B.blossom_planks_stairs, slab: B.blossom_planks_slab, wall: B.blossom_planks, corner: B.blossom_log }
+          : { planks: B.oak_planks, stairs: B.oak_planks_stairs, slab: B.oak_planks_slab, wall: B.oak_planks, corner: B.oak_log };
       const smithStyle = { ...style, wall: B.cobblestone, planks: B.stone_bricks };
       // the square: levelled to the well's height, paved, cleared of trees
       const y = ground(gen, cx, cz) + 1;
@@ -233,13 +232,12 @@ export function makeVillage({ put, fill, chest, foundation }) {
           hi = Math.max(hi, lane);
           if (hi - lo > 5 || hi - lane > 2) continue;
           const F = frame(W, ox, hi + 1, oz, k);
-          house(W, F, w, d, prof === 'smith' ? smithStyle : style, prof, slot);
+          house(W, F, w, d, prof === 'smith' ? smithStyle : style, prof);
           porch(W, F, w >> 1, lane, gen);
           W.feature({ type: 'villager', prof, x: F.wx(w >> 1, d >> 1), y: F.y, z: F.wz(w >> 1, d >> 1), home: [F.wx(w >> 1, 1), F.y, F.wz(w >> 1, 1)] });
           if (prof === 'shepherd') W.feature({ type: 'pen', x: F.wx(w >> 1, -4), y: lane + 1, z: F.wz(w >> 1, -4) });
         }
       }
-      void ID_MASK;
     },
   };
 }
