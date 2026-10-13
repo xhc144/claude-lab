@@ -26,7 +26,7 @@ git push origin recovered-project
 
 ## 发布边界
 
-- Pages 从 `main:/docs` 发布，产物由白名单构建脚本生成。
+- Pages 准备从 `main:/docs` 发布，产物由白名单构建脚本生成。
 - 4 个浏览器项目；2 个影片播放器。Python 渲染工程仅通过 GitHub 源码链接访问。
 - 鸿雁邮箱源码仅留仓库，不复制 Pages；历史安装包未执行、未发布，风险未鉴定。
 - 交互实验室清除个人学段、目标、联系方式、私有项目与其他仓库内容；通用示意数据已标注。
@@ -36,11 +36,23 @@ git push origin recovered-project
 
 本地发布目录浏览器检查 9/9 项通过：导航六个在线入口、390px 导航与交互实验室、MathScape 四模块、Myriad 开局与时间演化、13 台仪器及终端、Echowild 创建世界/Worker/WebGL、两部影片元数据与实际播放。
 
-单元测试：MathScape 50/50、Myriad 26/26、交互实验室 14/14。原数学双星测试使用固定瞬时距离，平台浮点差异导致失败；改用物理上对应双星的负束缚能量检查，能量守恒及逃逸断言保留。MathScape 画面测试改等待实际渲染，避免固定延时和动态取样重复断言。
+单元测试：MathScape 50/50、Myriad 26/26、交互实验室 14/14。
+
+浏览器端到端用系统 Chromium 与软件 WebGL 验证：MathScape 32 个场景（首次31通过、修正动态渲染等待后失败场景重跑通过）；Myriad 11 个场景（首次9通过、两个固定等待场景改状态轮询后重跑2通过）；交互实验室 9/9。Myriad 断言保留原先时间推进与抬升越过海平面的条件，只等待实际状态达成。
+
+环境策略阻止 `file://` 导航，因此交互实验室测试通过新 `PERSONAL_SITE_APP` 参数改走允许的本地 HTTP 发布目录；没有修改浏览器安全策略。离线双击模式未在本环境实测。原数学双星测试使用固定瞬时距离，平台浮点差异导致失败；改用物理上对应双星的负束缚能量检查，能量守恒及逃逸断言保留。MathScape 画面测试改等待实际渲染，避免固定延时和动态取样重复断言。
 
 静态检查：102 个白名单文件，254 个相对引用存在；本地主要流程的404和JavaScript异常为零。主树 408 个已追踪文本经高置信密钥模式扫描无命中；这是启发扫描，不是对历史/二进制的完整安全鉴定。
 
-待补充部署 commit、公共网址验证与分支删除结果。
+主分支已成功推送发布准备提交 `0161ad18f02e2e0cad10325e6a2516de165dafcc`。
+
+启用 Pages 请求：`POST /repos/xhc144/claude-lab/pages`，参数 `build_type=legacy`、`source.branch=main`、`source.path=/docs`。GitHub 返回 **403 Resource not accessible by integration**；随后 Pages API 404、仓库 `has_pages=false`。预定网址 `https://xhc144.github.io/claude-lab/` 实测 HTTP 404，尚无部署成功或公共交互验证。
+
+GitHub 官方接口要求 Pages 写权限及 Administration 写权限；本次没有更改安全设置或寻找绕过方式。可由仓库管理员在 Settings → Pages 选择 Deploy from a branch / main / docs，或补足集成权限后继续。
+
+按任务要求先部署验证再清理分支，当前暂缓删除：**8 → 8**，七个 Claude 分支原 tip 均已验证是远端 main 的祖先，恢复 SHA 已记录。Pages 启用、公共验证通过后即可重新核对 tip 并清理。
+
+参考：[GitHub Pages API 权限](https://docs.github.com/en/rest/pages/pages#create-a-github-pages-site)、[配置发布来源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)。
 
 ## 合并提交
 

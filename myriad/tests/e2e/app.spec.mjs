@@ -33,7 +33,8 @@ test('the world renders, time flows and the HUD follows', async ({ page }) => {
   expect(s.distinct).toBeGreaterThan(150);
   await expect(page.locator('#clk-year')).toContainText('创世 0 年');
   await page.keyboard.press('5');
-  await page.waitForTimeout(2500);
+  await expect.poll(() => page.evaluate(() => window.__myriad.game.world.tick),
+    { timeout: 20000 }).toBeGreaterThan(20);
   const year = await page.evaluate(() => window.__myriad.game.world.tick);
   expect(year).toBeGreaterThan(20);
   await page.keyboard.press('Space');
@@ -73,7 +74,10 @@ test('god powers through the palette: raise land, meteor, prophecy', async ({ pa
   const [sx, sy] = await toScreen(page, sea.x, sea.y);
   await page.mouse.move(sx, sy);
   await page.mouse.down();
-  await page.waitForTimeout(1600);
+  await expect.poll(() => page.evaluate((c) => {
+    const w = window.__myriad.game.world;
+    return w.elev[c] >= w.seaLevel;
+  }, sea.c), { timeout: 20000 }).toBe(true);
   await page.mouse.up();
   expect(await page.evaluate((c) => { const w = window.__myriad.game.world; return w.elev[c] >= w.seaLevel; }, sea.c)).toBe(true);
   // a meteor leaves a crater and dust
