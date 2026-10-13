@@ -218,15 +218,22 @@ export function assault(brain, W, targetCard, prio, why) {
   if (d.mob && d.mob.spawn) mult += 0.4;
   const need = foe.power * mult * (1.6 + S.caution * 1.2) / (S.aggressive ? 1.25 : 1);
   const avail = availableFighters(brain, W, tt);
+  // winning is not enough: the enemy focuses its blows, so estimate how many of ours would fall
+  const boss = tt.includes('boss');
+  const allow = (boss ? 1.5 : d.kind === 'lair' ? 1.1 : 0.7) * (S.aggressive ? 1.15 : 1) * (1.3 - S.caution * 0.5);
+  const sm = Math.sqrt(mult);
   const team = [];
-  let pw = 0;
+  let pw = 0, deaths = Infinity;
   for (const f of avail) {
     team.push(f.p);
-    pw = groupPower(g, team, tt, d.def || 0).power;
-    if (pw >= need * 1.15) break;
+    const gp = groupPower(g, team, tt, d.def || 0);
+    pw = gp.power;
+    const T = (foe.hp * sm) / Math.max(0.01, gp.dps);
+    deaths = (foe.dps * sm * T) / Math.max(1, gp.hp / team.length);
+    if (pw >= need * 1.15 && deaths <= allow) break;
   }
-  brain.armyReady = pw / Math.max(1, need);
-  if (pw < need) return null;
+  brain.armyReady = Math.min(pw / Math.max(1, need), deaths > 0 ? allow / deaths : 1);
+  if (pw < need || deaths > allow) return null;
   return new Exec({ key: 'assault:' + targetCard.id, kind: 'fight', prio, why: why || `进攻${d.name}`, cat: '战斗' },
     team.map((p) => ({ op: 'drop', id: p.id, target: targetCard.id, optional: true })), { lock: team.map((p) => p.id) });
 }
@@ -302,7 +309,8 @@ export function militaryNeeds(brain, P) {
   }
   if (want <= 0 || have >= want) return;
   const soon = W.warnings.some((e) => e.day - W.day <= 2) || W.threats.some((t) => !t.inBattle && !['shade', 'flee', 'wander', 'neutral'].includes(t.d.mob.beh) && t.dist < 900);
-  const prio = (48 + 30 * (soon ? 1 : 0.5)) * Math.min(1.4, S.army);
+  // with nothing on the way, arming up waits behind the level's goals (even for a warlord)
+  const prio = soon ? 78 * Math.min(1.4, S.army) : 44 * Math.min(1.3, S.army);
   goal(P, '加强武备', prio, '战斗', `${Math.round((have / want) * 100)}%`);
   const units = Math.max(1, Math.min(3, Math.ceil((1 - have / want) * 4)));
   // a big gap needs more hands, not just better weapons
@@ -317,7 +325,7 @@ function trainSoldiers(brain, P, n, prio, traits) {
   const opts = [];
   const has = (t) => g.techAllowed(t) || g.hasTech(t);
   const armored = traits.includes('armored') && !traits.includes('flying');
-  if (traits.includes('flying') && has('archery')) opts.push('bow');
+  if ((traits.includes('flying') || traits.includes('burning')) && has('archery')) opts.push('bow');
   if (traits.includes('shade') && has('lamplight')) opts.push('lantern');
   if (armored && has('tactics')) opts.push('mace');
   // against armour, pierce does half damage: clubs and armour beat spears

@@ -72,6 +72,7 @@ export function makeExpedition(spec) {
   // nodes: every land has the basics (wood, stone, fibre, clay, water), then its own character
   const counts = { tree: 3, rock: 2, tall_grass: 2, clay_pit: 1, pond: 1 };
   if (spec.biome === 'ash' || spec.biome === 'tundra') counts.tree = 2;
+  if (spec.biome === 'tundra') counts.pine = 2;
   start.push({ c: 'sapling', n: 2 });
   for (const id of B.nodes.slice(0, 3)) counts[id] = (counts[id] || 0) + 1;
   for (let i = 0; i < 3 + Math.max(0, 3 - d); i++) { const id = rng.pick(B.nodes); counts[id] = (counts[id] || 0) + 1; }
@@ -96,7 +97,7 @@ export function makeExpedition(spec) {
     // none: endless runs end only in defeat; score = days survived
   } else {
     const BUILD = [['shrine', 'torch_post', 'drying_rack', 'stone_tablet'], ['workbench', 'kiln', 'granary', 'loom', 'cabin'], ['well', 'tannery', 'market', 'stone_house', 'smelter'], ['watchtower', 'library', 'mill', 'lamp_post']];
-    const MADE = [['cooked_fish', 'torch', 'roast'], ['rope', 'plank', 'jerky'], ['brick', 'cloth', 'bread'], ['bread', 'glass', 'leather']];
+    const MADE = [['cooked_fish', 'torch'], ['rope', 'plank', 'cooked_fish'], ['brick', 'cloth', 'bread'], ['bread', 'glass', 'leather']];
     const tier = (arr) => arr[Math.min(arr.length - 1, Math.floor((d - 1) / 1.4))];
     const pool = [
       () => ({ type: 'pop', n: 5 + d * 2 }),
@@ -133,14 +134,15 @@ export function makeExpedition(spec) {
   const rules = {
     seasons: true, seasonDays: 4, startSeason: rng.chance(0.7) ? 0 : 1, eventRate: 0.25 + d * 0.03,
     shades, shadeBase: shades ? Math.max(0, d - 3) : 0, fog0: shades ? d * 4 : 0, fogRate: shades ? 0.5 + d * 0.3 : 0,
-    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.13, enemyAtk: 0.8 + d * 0.08,
+    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07,
   };
   for (const m of muts) {
     if (m.rules) Object.assign(rules, m.rules);
     if (m.start) m.start(start);
   }
   const schedule = [];
-  if (boss) schedule.push({ day: 8 + d * 2, wake: B.boss, warn: `第 ${8 + d * 2} 天：${CARDS[B.boss].name}苏醒` });
+  const wakeDay = 10 + d * 3;
+  if (boss) schedule.push({ day: wakeDay, wake: B.boss, warn: `第 ${wakeDay} 天：${CARDS[B.boss].name}苏醒` });
   if (endless) {
     for (let day = 4; day <= 240; day += 3) {
       const n = 1 + Math.floor(day / 6);

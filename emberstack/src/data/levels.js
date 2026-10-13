@@ -381,12 +381,12 @@ level(4, {
   start: [
     { c: 'survivor', n: 6 }, { c: 'campfire', fuel: 5 }, { c: 'lean_to', n: 3 }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 }, { c: 'copper_vein', n: 2 },
     { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit' }, { c: 'berry_bush', n: 3 }, { c: 'pond', n: 2 }, { c: 'goat', n: 3 }, { c: 'tall_grass', n: 2 },
-    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' },
+    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' },
     { c: 'bandit_camp', at: [0.88, 0.16] }, { c: 'bandit_chief', at: [0.8, 0.1], wake: false },
   ],
   objectives: [{ type: 'kill', card: 'bandit_camp' }, { type: 'kill', card: 'bandit_chief' }],
-  stars: [{ type: 'days', lte: 14 }, { type: 'nodeath' }],
-  schedule: [{ day: 12, wake: 'bandit_chief', msg: '匪首亲自带人下山了！', warn: '第 12 天：匪首下山' }],
+  stars: [{ type: 'days', lte: 16 }, { type: 'nodeath' }],
+  schedule: [{ day: 14, wake: 'bandit_chief', msg: '匪首亲自带人下山了！', warn: '第 14 天：匪首下山' }],
   rules: { seasons: true, seasonDays: 4, startSeason: 1, eventRate: 0.25, events: ['wanderer', 'cache', 'migration', 'festival_mood', 'tribute', 'old_smith'] },
 });
 
@@ -583,7 +583,7 @@ level(7, {
   outro: '蒸汽机喷出了第一口白气。整个营地都在欢呼。',
   techs: [...ERA1, ...ERA2, ...ERA3, 'iron', 'mathematics', 'lamplight'], techAllowed: { maxEra: 6 },
   start: [
-    { c: 'survivor', n: 7 }, { c: 'artisan' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 2 }, { c: 'rock', n: 3 },
+    { c: 'survivor', n: 7 }, { c: 'artisan' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 3 }, { c: 'pine', n: 2 }, { c: 'sapling', n: 3 }, { c: 'rock', n: 3 },
     { c: 'iron_vein', n: 2 }, { c: 'coal_seam', n: 2 }, { c: 'clay_pit' }, { c: 'mushroom_ring', n: 2 }, { c: 'pond' }, { c: 'tall_grass', n: 2 },
     { c: 'smelter' }, { c: 'forge' }, { c: 'kiln' }, { c: 'workbench' }, { c: 'study' }, { c: 'iron_pick' }, { c: 'stone_pick' }, { c: 'jerky', n: 6 }, { c: 'ash_wastes' },
   ],

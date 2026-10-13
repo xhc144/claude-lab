@@ -25,7 +25,7 @@ function R(id, name, r) {
 }
 
 // ---- era 1: fire, tools, shelter ---------------------------------------------------------------
-R('make_campfire', '生火', { in: { wood: 2, flint: 1 }, w: 1, out: 'campfire', t: 8, tech: 'fire', skill: 'build', fx: 'build' });
+R('make_campfire', '生火', { in: { wood: 2, flint: 1 }, w: 1, out: 'campfire', t: 8, tech: 'fire', skill: 'build', fx: 'build', dark: true });
 R('make_tablet', '凿刻石', { in: { stone: 3 }, w: 1, out: 'stone_tablet', t: 8, skill: 'build', fx: 'build' });
 R('tablet_insight', '记录见闻', { keep: { stone_tablet: 1 }, w: 1, out: 'insight', t: 20, skill: 'research', aids: ['research_aid'], fx: 'research' });
 R('night_talk', '篝火夜话', { keep: { '#cook': 1 }, w: 2, out: 'insight', t: 30, tech: 'lore', night: true, dark: true, skill: 'research', fx: 'research' });
@@ -38,8 +38,8 @@ R('plant_sapling', '种树', { in: { sapling: 1 }, w: 1, out: 'young_tree', t: 5
 R('bury', '安葬', { in: { grave: 1 }, w: 1, out: [], t: 6, effect: { fog: -2 }, fx: 'bury', skill: 'none' });
 R('make_shrine', '立灯龛', { in: { stone: 3, wood: 2 }, w: 1, out: 'shrine', t: 12, tech: 'lore', skill: 'build', fx: 'build' });
 R('make_cairn', '垒石冢', { in: { grave: 1, stone: 2 }, w: 1, out: 'cairn', t: 10, tech: 'lore', skill: 'build', fx: 'build' });
-R('make_torch', '扎火把', { in: { wood: 1, fiber: 1 }, w: 1, out: 'torch', t: 5, tech: 'torches' });
-R('make_torch_post', '立火把桩', { in: { wood: 2, fiber: 1, stone: 1 }, w: 1, out: 'torch_post', t: 8, tech: 'torches', skill: 'build', fx: 'build' });
+R('make_torch', '扎火把', { in: { wood: 1, fiber: 1 }, w: 1, out: 'torch', t: 5, tech: 'torches', dark: true });
+R('make_torch_post', '立火把桩', { in: { wood: 2, fiber: 1, stone: 1 }, w: 1, out: 'torch_post', t: 8, tech: 'torches', skill: 'build', fx: 'build', dark: true });
 R('make_rod', '做钓竿', { in: { wood: 1, fiber: 2 }, w: 1, out: 'fishing_rod', t: 6, tech: 'fishing' });
 R('make_spear', '削木矛', { in: { wood: 2, flint: 1, fiber: 1 }, w: 1, out: 'spear', t: 6, tech: 'hunting' });
 R('make_drying_rack', '搭晾架', { in: { wood: 3, fiber: 1 }, w: 1, out: 'drying_rack', t: 10, tech: 'cooking', skill: 'build', fx: 'build' });

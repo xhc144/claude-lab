@@ -249,9 +249,19 @@ export class Brain {
       const tags = d.fuelTags;
       // pick a free fuel card
       let item = null;
-      for (const id of ['charcoal', 'coal', 'wood', 'driftwood', 'plank', 'resin', 'oil']) {
+      // burn what is plentiful: score each free fuel by how much of it there is, and keep a little
+      // coal back for the smelter and planks for building
+      let bestScore = 0;
+      const smelting = W.count('smelter') || W.count('forge') || W.count('clock_workshop');
+      for (const id of ['wood', 'driftwood', 'resin', 'charcoal', 'plank', 'coal', 'oil']) {
         if (!tags.some((t) => CARDS[id].tags.includes(t))) continue;
-        if (availFree(P, id) > (id === 'wood' ? 0 : 0)) { item = id; break; }
+        const n = availFree(P, id);
+        if (n <= 0) continue;
+        let sc = n * (id === 'oil' ? 3 : CARDS[id].fuel || 1);
+        if (id === 'plank') sc *= 0.3;
+        if (id === 'coal' && smelting && n <= 4) sc *= 0.25;
+        if (id === 'wood' && n <= 2) sc *= 0.5;
+        if (sc > bestScore) { bestScore = sc; item = id; }
       }
       if (item) {
         const per = item === 'oil' ? 3 : CARDS[item].fuel || 1;
@@ -523,6 +533,8 @@ export class Brain {
       const trainees = W.people.filter((c) => c.d === traineeId && !this.locked.has(c.id) && !g.s.stacks[c.s]?.battle);
       if (!trainees.length) continue;
       if (item === 'mace' && !W.freeN('shield')) continue;
+      // the Great Flame's heart needs a holy flame: don't spend one on a flamekeeper while the site waits
+      if (item === 'holy_flame' && W.count('great_flame_site')) continue;
       const soldier = CARDS[out].tags.includes('soldier');
       addJob(P, { key: 'c:' + spec.train, kind: 'craft', r: spec.train, item: out, n: 1, prio: soldier ? 70 : 38, why: `训练一名${nm(out)}`, cat: soldier ? '战斗' : '建设' });
     }
@@ -655,9 +667,17 @@ export class Brain {
       const danger = r.danger ?? rd.danger;
       if (danger > 0.3 && W.soldiers.length === 0) score *= 0.5;
       if (score < 10) continue;
-      addJob(P, { key: 'e:' + r.id, kind: 'explore', r: 'explore_' + r.d, site: r.id, prio: score, why: `探索${nm(r.d)}`, cat: '探索', want: P.exploreBoost ? 2 : 1 });
-      // if the best team we could send would lose an ambush there, train an escort first
+      // a lone explorer is easy prey: where the ambushers are stronger than one person, go in a group
       const foes = r.foes || rd.foes || [];
+      let strongFoes = false;
+      if (foes.length && danger >= 0.1) {
+        const lone = availableFighters(this, W, []).slice(0, 1).map((f) => f.p);
+        const fp = Math.max(...foes.map(([f]) => defsPower([[f, 1]])));
+        strongFoes = groupPower(g, lone, []).power < fp * 1.2;
+      }
+      const want = Math.min(3, (P.exploreBoost ? 2 : 1) + (strongFoes ? 1 : 0));
+      addJob(P, { key: 'e:' + r.id, kind: 'explore', r: 'explore_' + r.d, site: r.id, prio: score, why: `探索${nm(r.d)}`, cat: '探索', want });
+      // if the best team we could send would lose an ambush there, train an escort first
       if (foes.length && (r.danger ?? rd.danger) >= 0.05) {
         let foePow = 0;
         for (const [f] of foes) foePow = Math.max(foePow, defsPower([[f, 1]]));

@@ -213,6 +213,9 @@ button { font-family: inherit; }
 .pbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), var(--gold2)); transition: width 0.3s; }
 .obj.done .pbar i { background: var(--good); }
 .starline { font-size: 12px; color: var(--muted); margin-top: 6px; }
+.objectives.mini > :not(h3) { display: none; }
+.objectives h3::after { content: ' ▾'; font-size: 12px; color: var(--muted); }
+.objectives.mini h3::after { content: ' ▸'; }
 .starline .met { color: #ffcf4a; }
 .warnings { padding: 8px 12px; font-size: 13px; }
 .warnings div { padding: 3px 0; display: flex; gap: 6px; align-items: flex-start; }
@@ -1195,7 +1198,7 @@ function R(id, name, r) {
 }
 
 // ---- era 1: fire, tools, shelter ---------------------------------------------------------------
-R('make_campfire', '生火', { in: { wood: 2, flint: 1 }, w: 1, out: 'campfire', t: 8, tech: 'fire', skill: 'build', fx: 'build' });
+R('make_campfire', '生火', { in: { wood: 2, flint: 1 }, w: 1, out: 'campfire', t: 8, tech: 'fire', skill: 'build', fx: 'build', dark: true });
 R('make_tablet', '凿刻石', { in: { stone: 3 }, w: 1, out: 'stone_tablet', t: 8, skill: 'build', fx: 'build' });
 R('tablet_insight', '记录见闻', { keep: { stone_tablet: 1 }, w: 1, out: 'insight', t: 20, skill: 'research', aids: ['research_aid'], fx: 'research' });
 R('night_talk', '篝火夜话', { keep: { '#cook': 1 }, w: 2, out: 'insight', t: 30, tech: 'lore', night: true, dark: true, skill: 'research', fx: 'research' });
@@ -1208,8 +1211,8 @@ R('plant_sapling', '种树', { in: { sapling: 1 }, w: 1, out: 'young_tree', t: 5
 R('bury', '安葬', { in: { grave: 1 }, w: 1, out: [], t: 6, effect: { fog: -2 }, fx: 'bury', skill: 'none' });
 R('make_shrine', '立灯龛', { in: { stone: 3, wood: 2 }, w: 1, out: 'shrine', t: 12, tech: 'lore', skill: 'build', fx: 'build' });
 R('make_cairn', '垒石冢', { in: { grave: 1, stone: 2 }, w: 1, out: 'cairn', t: 10, tech: 'lore', skill: 'build', fx: 'build' });
-R('make_torch', '扎火把', { in: { wood: 1, fiber: 1 }, w: 1, out: 'torch', t: 5, tech: 'torches' });
-R('make_torch_post', '立火把桩', { in: { wood: 2, fiber: 1, stone: 1 }, w: 1, out: 'torch_post', t: 8, tech: 'torches', skill: 'build', fx: 'build' });
+R('make_torch', '扎火把', { in: { wood: 1, fiber: 1 }, w: 1, out: 'torch', t: 5, tech: 'torches', dark: true });
+R('make_torch_post', '立火把桩', { in: { wood: 2, fiber: 1, stone: 1 }, w: 1, out: 'torch_post', t: 8, tech: 'torches', skill: 'build', fx: 'build', dark: true });
 R('make_rod', '做钓竿', { in: { wood: 1, fiber: 2 }, w: 1, out: 'fishing_rod', t: 6, tech: 'fishing' });
 R('make_spear', '削木矛', { in: { wood: 2, flint: 1, fiber: 1 }, w: 1, out: 'spear', t: 6, tech: 'hunting' });
 R('make_drying_rack', '搭晾架', { in: { wood: 3, fiber: 1 }, w: 1, out: 'drying_rack', t: 10, tech: 'cooking', skill: 'build', fx: 'build' });
@@ -2923,7 +2926,6 @@ const { EVENTS } = __m["src/data/events.js"];
 const { CARDS } = __m["src/data/cards.js"];
 const { CARAVAN_POOL } = __m["src/data/trade.js"];
 const { CARD_W, CARD_H } = __m["src/sim/constants.js"];
-const { spawnAttacker } = __m["src/sim/mobs.js"];
 
 function rollEvents(g) {
   const R = g.rules;
@@ -5552,6 +5554,24 @@ class Exec {
   }
 }
 
+/** points the AI keeps its cards away from: sleeping bosses and lairs */
+function dangerPoints(g, W) {
+  return W.threats.filter((t) => ['boss', 'lair'].includes(t.d.mob?.beh) || t.d.kind === 'lair').map((t) => t.p)
+    .concat(W.lairs.map((l) => g.cardPos(l)));
+}
+
+/** move a card, but never into the reach of a sleeping boss: such spots are swapped for a safe work spot */
+function moveSafe(brain, g, id, x, y, who) {
+  const W = brain.W;
+  if (W && dangerPoints(g, W).some((p) => Math.hypot(p.x - x - CARD_W / 2, p.y - y - CARD_H / 2) < 520)) {
+    const c = g.s.cards[id];
+    const st = c && g.s.stacks[c.s];
+    const spot = workSpot(brain, g, W, CARD_H + 60, st ? st.id : null);
+    return g.actMove(id, spot.x, spot.y, who);
+  }
+  return g.actMove(id, x, y, who);
+}
+
 /** choose a free, lit spot near the camp for a new work stack */
 function workSpot(brain, g, W, h = CARD_H, avoid = null) {
   const a = W.anchor;
@@ -5568,8 +5588,7 @@ function workSpot(brain, g, W, h = CARD_H, avoid = null) {
     }
   }
   let fallback = null;
-  const danger = W.threats.filter((t) => ['boss', 'lair'].includes(t.d.mob?.beh) || t.d.kind === 'lair').map((t) => t.p)
-    .concat(W.lairs.map((l) => g.cardPos(l)));
+  const danger = dangerPoints(g, W);
   for (const [x, y] of cands) {
     const spot = g.freeSpot(x, y, h, { exclude: avoid });
     if (Math.hypot(spot.x - x, spot.y - y) > 30) continue;
@@ -5638,7 +5657,7 @@ function doStep(brain, g, ex, step) {
       const k = Math.min(step.n, src.run);
       const card = g.s.cards[src.st.cards[src.st.cards.length - k]];
       const spot = step.at || workSpot(brain, g, brain.W, CARD_H + 30 * (step.total || 3), src.st.id);
-      const r = g.actMove(card.id, spot.x, spot.y, who);
+      const r = moveSafe(brain, g, card.id, spot.x, spot.y, who);
       if (!r.ok) { ex.why = r.why; return 'fail'; }
       ex.site = card.id;
       ex.lockIds.add(card.id);
@@ -5677,7 +5696,7 @@ function doStep(brain, g, ex, step) {
       if (i < st.cards.length - 1) {
         const above = st.cards[i + 1];
         const spot = g.freeSpot(st.x + CARD_W + 20, st.y, CARD_H + 40, { exclude: st.id });
-        const r0 = g.actMove(above, spot.x, spot.y, who);
+        const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : 'fail';
       }
       const r = g.actDrop(c.id, ex.site, who);
@@ -5697,7 +5716,7 @@ function doStep(brain, g, ex, step) {
         const c = g.s.cards[site.cards[i]];
         if (keep.has(c.d)) continue;
         const spot = g.freeSpot(site.x - CARD_W - 30, site.y, CARD_H + 60, { exclude: site.id });
-        const r = g.actMove(c.id, spot.x, spot.y, who);
+        const r = moveSafe(brain, g, c.id, spot.x, spot.y, who);
         return r.ok ? 'actRepeat' : 'fail';
       }
       return 'next';
@@ -5714,7 +5733,7 @@ function doStep(brain, g, ex, step) {
       const spot = workSpot(brain, g, brain.W, g.stackH(site) + 20, site.id);
       const lit = brain.W.nightLights.some((L) => Math.hypot(L.x - spot.x - CARD_W / 2, L.y - spot.y - CARD_H / 2) < L.r - 30);
       if (!lit && !step.force) return 'next';
-      const r = g.actMove(root.id, spot.x, spot.y, who);
+      const r = moveSafe(brain, g, root.id, spot.x, spot.y, who);
       return r.ok ? 'act' : 'next';
     }
     case 'drop': {
@@ -5724,10 +5743,10 @@ function doStep(brain, g, ex, step) {
       if (!c || !t) { ex.why = '目标不在了'; return step.optional ? 'next' : 'fail'; }
       const cst = g.s.stacks[c.s];
       const ci = cst ? cst.cards.indexOf(c.id) : -1;
-      if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1) {
+      if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1 && !step.whole) {
         const above = cst.cards[ci + 1];
         const spot = g.freeSpot(cst.x + CARD_W + 20, cst.y, CARD_H + 40, { exclude: cst.id });
-        const r0 = g.actMove(above, spot.x, spot.y, who);
+        const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : (step.optional ? 'next' : 'fail');
       }
       const r = g.actDrop(c.id, t.id, who);
@@ -5752,7 +5771,7 @@ function doStep(brain, g, ex, step) {
     case 'move': {
       const c = g.s.cards[step.id];
       if (!c) return 'next';
-      const r = g.actMove(c.id, step.x, step.y, who);
+      const r = moveSafe(brain, g, c.id, step.x, step.y, who);
       return r.ok ? 'act' : 'next';
     }
     case 'note': {
@@ -5766,7 +5785,7 @@ function doStep(brain, g, ex, step) {
       if (!site || site.task || site.cards.length < 2) return 'next';
       const top = g.s.cards[site.cards[site.cards.length - 1]];
       const pile = Object.values(g.s.stacks).find((s2) => s2 !== site && !s2.task && !s2.mob && !s2.battle && !s2.held && s2.cards.length < 25 && s2.cards.every((id) => g.s.cards[id].d === top.d));
-      const r = pile ? g.actDrop(top.id, pile.cards[0], who) : g.actMove(top.id, ...Object.values(g.freeSpot(site.x + CARD_W + 30, site.y, CARD_H, { exclude: site.id })), who);
+      const r = pile ? g.actDrop(top.id, pile.cards[0], who) : moveSafe(brain, g, top.id, ...Object.values(g.freeSpot(site.x + CARD_W + 30, site.y, CARD_H, { exclude: site.id })), who);
       return r.ok ? 'actRepeat' : 'next';
     }
     case 'wait': {
@@ -5827,10 +5846,12 @@ __m["src/ai/tactics.js"] = (() => {
 // enough to go after a lair or a boss, and what kind of soldiers the coming threats call for.
 
 const { CARDS } = __m["src/data/cards.js"];
+const { RECIPES } = __m["src/data/recipes.js"];
+const { PRODUCERS } = __m["src/ai/knowledge.js"];
 const { combatStats, damageMult } = __m["src/sim/combat.js"];
 const { CARD_W, CARD_H } = __m["src/sim/constants.js"];
 const { Exec, workSpot } = __m["src/ai/executor.js"];
-const { produce, need, goal } = __m["src/ai/planner.js"];
+const { need, goal } = __m["src/ai/planner.js"];
 
 /** Lanchester-style group power: total damage per second × total hit points */
 function groupPower(g, cards, foeTraits = [], foeDef = 0) {
@@ -6041,15 +6062,22 @@ function assault(brain, W, targetCard, prio, why) {
   if (d.mob && d.mob.spawn) mult += 0.4;
   const need = foe.power * mult * (1.6 + S.caution * 1.2) / (S.aggressive ? 1.25 : 1);
   const avail = availableFighters(brain, W, tt);
+  // winning is not enough: the enemy focuses its blows, so estimate how many of ours would fall
+  const boss = tt.includes('boss');
+  const allow = (boss ? 1.5 : d.kind === 'lair' ? 1.1 : 0.7) * (S.aggressive ? 1.15 : 1) * (1.3 - S.caution * 0.5);
+  const sm = Math.sqrt(mult);
   const team = [];
-  let pw = 0;
+  let pw = 0, deaths = Infinity;
   for (const f of avail) {
     team.push(f.p);
-    pw = groupPower(g, team, tt, d.def || 0).power;
-    if (pw >= need * 1.15) break;
+    const gp = groupPower(g, team, tt, d.def || 0);
+    pw = gp.power;
+    const T = (foe.hp * sm) / Math.max(0.01, gp.dps);
+    deaths = (foe.dps * sm * T) / Math.max(1, gp.hp / team.length);
+    if (pw >= need * 1.15 && deaths <= allow) break;
   }
-  brain.armyReady = pw / Math.max(1, need);
-  if (pw < need) return null;
+  brain.armyReady = Math.min(pw / Math.max(1, need), deaths > 0 ? allow / deaths : 1);
+  if (pw < need || deaths > allow) return null;
   return new Exec({ key: 'assault:' + targetCard.id, kind: 'fight', prio, why: why || `进攻${d.name}`, cat: '战斗' },
     team.map((p) => ({ op: 'drop', id: p.id, target: targetCard.id, optional: true })), { lock: team.map((p) => p.id) });
 }
@@ -6125,7 +6153,8 @@ function militaryNeeds(brain, P) {
   }
   if (want <= 0 || have >= want) return;
   const soon = W.warnings.some((e) => e.day - W.day <= 2) || W.threats.some((t) => !t.inBattle && !['shade', 'flee', 'wander', 'neutral'].includes(t.d.mob.beh) && t.dist < 900);
-  const prio = (48 + 30 * (soon ? 1 : 0.5)) * Math.min(1.4, S.army);
+  // with nothing on the way, arming up waits behind the level's goals (even for a warlord)
+  const prio = soon ? 78 * Math.min(1.4, S.army) : 44 * Math.min(1.3, S.army);
   goal(P, '加强武备', prio, '战斗', `${Math.round((have / want) * 100)}%`);
   const units = Math.max(1, Math.min(3, Math.ceil((1 - have / want) * 4)));
   // a big gap needs more hands, not just better weapons
@@ -6140,7 +6169,7 @@ function trainSoldiers(brain, P, n, prio, traits) {
   const opts = [];
   const has = (t) => g.techAllowed(t) || g.hasTech(t);
   const armored = traits.includes('armored') && !traits.includes('flying');
-  if (traits.includes('flying') && has('archery')) opts.push('bow');
+  if ((traits.includes('flying') || traits.includes('burning')) && has('archery')) opts.push('bow');
   if (traits.includes('shade') && has('lamplight')) opts.push('lantern');
   if (armored && has('tactics')) opts.push('mace');
   // against armour, pierce does half damage: clubs and armour beat spears
@@ -6154,7 +6183,9 @@ function trainSoldiers(brain, P, n, prio, traits) {
   gearOpts.push('club');
   let made = 0;
   if (trainees > 0 && opts.length) {
-    const item = opts[0];
+    // the preferred kit may need research first; when soldiers are wanted now (a goal), use what can be made today
+    const ready = (it) => W.freeN(it) > 0 || (PRODUCERS.get(it) || []).some((p) => { const r = RECIPES[p.r]; return (!r.hidden || brain.mem.disc.has(r.id)) && (!r.tech || g.hasTech(r.tech)); });
+    const item = P.soldierTarget && !ready(opts[0]) ? opts.find(ready) || opts[0] : opts[0];
     const k = Math.min(n, trainees);
     if (item === 'mace') { need(P, 'mace', k, prio, '训练锤卫', '战斗'); need(P, 'shield', k, prio, '训练锤卫', '战斗'); }
     else need(P, item, k, prio, '训练士兵', '战斗');
@@ -6329,6 +6360,7 @@ class Brain {
       const r = runStep(this, g, ex);
       if (r === 'act') {
         this.stats.actions++;
+        this.current = { label: ex.label || '', cat: ex.job.cat || '' };
         this.refreshLocks();
         return true;
       }
@@ -6437,6 +6469,7 @@ class Brain {
     for (const ex of fresh) for (const st of ex.steps) if (st.op === 'dropRef' || st.op === 'bring') P.execClaims.set(st.ref, (P.execClaims.get(st.ref) || 0) + (st.n || 0));
     this.assign(W, P);
     if (W.idle.length > this.execs.length) this.experiment(W, P);
+    this.morningReport(W);
     if (!this.execs.length) this.tidy(W);
 
     this.goals = P.goals.sort((a, b) => b.prio - a.prio).slice(0, 8);
@@ -6475,9 +6508,19 @@ class Brain {
       const tags = d.fuelTags;
       // pick a free fuel card
       let item = null;
-      for (const id of ['charcoal', 'coal', 'wood', 'driftwood', 'plank', 'resin', 'oil']) {
+      // burn what is plentiful: score each free fuel by how much of it there is, and keep a little
+      // coal back for the smelter and planks for building
+      let bestScore = 0;
+      const smelting = W.count('smelter') || W.count('forge') || W.count('clock_workshop');
+      for (const id of ['wood', 'driftwood', 'resin', 'charcoal', 'plank', 'coal', 'oil']) {
         if (!tags.some((t) => CARDS[id].tags.includes(t))) continue;
-        if (availFree(P, id) > (id === 'wood' ? 0 : 0)) { item = id; break; }
+        const n = availFree(P, id);
+        if (n <= 0) continue;
+        let sc = n * (id === 'oil' ? 3 : CARDS[id].fuel || 1);
+        if (id === 'plank') sc *= 0.3;
+        if (id === 'coal' && smelting && n <= 4) sc *= 0.25;
+        if (id === 'wood' && n <= 2) sc *= 0.5;
+        if (sc > bestScore) { bestScore = sc; item = id; }
       }
       if (item) {
         const per = item === 'oil' ? 3 : CARDS[item].fuel || 1;
@@ -6749,6 +6792,8 @@ class Brain {
       const trainees = W.people.filter((c) => c.d === traineeId && !this.locked.has(c.id) && !g.s.stacks[c.s]?.battle);
       if (!trainees.length) continue;
       if (item === 'mace' && !W.freeN('shield')) continue;
+      // the Great Flame's heart needs a holy flame: don't spend one on a flamekeeper while the site waits
+      if (item === 'holy_flame' && W.count('great_flame_site')) continue;
       const soldier = CARDS[out].tags.includes('soldier');
       addJob(P, { key: 'c:' + spec.train, kind: 'craft', r: spec.train, item: out, n: 1, prio: soldier ? 70 : 38, why: `训练一名${nm(out)}`, cat: soldier ? '战斗' : '建设' });
     }
@@ -6881,9 +6926,17 @@ class Brain {
       const danger = r.danger ?? rd.danger;
       if (danger > 0.3 && W.soldiers.length === 0) score *= 0.5;
       if (score < 10) continue;
-      addJob(P, { key: 'e:' + r.id, kind: 'explore', r: 'explore_' + r.d, site: r.id, prio: score, why: `探索${nm(r.d)}`, cat: '探索', want: P.exploreBoost ? 2 : 1 });
-      // if the best team we could send would lose an ambush there, train an escort first
+      // a lone explorer is easy prey: where the ambushers are stronger than one person, go in a group
       const foes = r.foes || rd.foes || [];
+      let strongFoes = false;
+      if (foes.length && danger >= 0.1) {
+        const lone = availableFighters(this, W, []).slice(0, 1).map((f) => f.p);
+        const fp = Math.max(...foes.map(([f]) => defsPower([[f, 1]])));
+        strongFoes = groupPower(g, lone, []).power < fp * 1.2;
+      }
+      const want = Math.min(3, (P.exploreBoost ? 2 : 1) + (strongFoes ? 1 : 0));
+      addJob(P, { key: 'e:' + r.id, kind: 'explore', r: 'explore_' + r.d, site: r.id, prio: score, why: `探索${nm(r.d)}`, cat: '探索', want });
+      // if the best team we could send would lose an ambush there, train an escort first
       if (foes.length && (r.danger ?? rd.danger) >= 0.05) {
         let foePow = 0;
         for (const [f] of foes) foePow = Math.max(foePow, defsPower([[f, 1]]));
@@ -7508,6 +7561,21 @@ class Brain {
   }
 
   /** break up mixed idle stacks so piles stay tidy (also cleans up after experiments) */
+  /** once a day the AI writes a short stock-take into its log: where things stand and what matters most */
+  morningReport(W) {
+    const g = this.g;
+    if (this.reportDay === g.s.day) return;
+    this.reportDay = g.s.day;
+    const days = W.dailyNeed > 0 ? W.food / W.dailyNeed : 99;
+    const parts = [`人口 ${W.people.length}`, `粮食够 ${days >= 9 ? '9+' : days.toFixed(1)} 天`];
+    if (W.mainFire) parts.push(`${CARDS[W.mainFire.d].name}燃料 ${Math.round(W.mainFire.fuel || 0)}`);
+    if (g.rules.seasons !== false && W.daysToWinter < 6) parts.push(W.daysToWinter <= 0 ? '正值冬天' : `${W.daysToWinter} 天后入冬`);
+    if (W.threats.length) parts.push(`${W.threats.length} 个威胁`);
+    if (g.s.fog > 0) parts.push(`灰雾 ${Math.round(g.s.fog)}%`);
+    const focus = this.goals.slice(0, 3).map((x) => x.name).join('、');
+    this.note('盘点', `第 ${g.s.day} 天：${parts.join('，')}。${focus ? '今天的重点：' + focus + '。' : ''}`, true);
+  }
+
   tidy(W) {
     const g = this.g;
     for (const st of W.stacks) {
@@ -7526,6 +7594,25 @@ class Brain {
       const steps = pile && topRun(g, st, top.d) === st.cards.length - i ? [{ op: 'drop', id: top.id, target: pile.cards[0] }]
         : [{ op: 'move', id: top.id, ...g.freeSpot(st.x + CARD_W + 30, st.y, CARD_H + 30 * (defs.length - i), { exclude: st.id }) }];
       this.start(new Exec({ key: 'tidy:' + st.id, kind: 'tidy', prio: 2, why: '', cat: '整理' }, steps, { lock: [top.id] }));
+      return;
+    }
+    // merge scattered piles of the same material: a tidy camp is easier to read (and to plan with)
+    const piles = new Map();
+    for (const st of W.stacks) {
+      if (st.task || st.battle || st.mob || st.held) continue;
+      const d0 = g.s.cards[st.cards[0]].d;
+      if (!['resource', 'food', 'knowledge', 'coin'].includes(CARDS[d0].kind)) continue;
+      if (st.cards.some((id) => g.s.cards[id].d !== d0 || this.locked.has(id))) continue;
+      if (!piles.has(d0)) piles.set(d0, []);
+      piles.get(d0).push(st);
+    }
+    for (const list of piles.values()) {
+      if (list.length < 2) continue;
+      list.sort((a, b) => b.cards.length - a.cards.length);
+      const big = list[0], small = list[list.length - 1];
+      if (big.cards.length + small.cards.length > 30) continue;
+      if (Math.hypot(big.x - small.x, big.y - small.y) > 900) continue;
+      this.start(new Exec({ key: 'merge:' + small.id, kind: 'tidy', prio: 1, why: '', cat: '整理' }, [{ op: 'drop', id: small.cards[0], target: big.cards[0], whole: true }], { lock: small.cards.slice() }));
       return;
     }
   }
@@ -7920,12 +8007,12 @@ level(4, {
   start: [
     { c: 'survivor', n: 6 }, { c: 'campfire', fuel: 5 }, { c: 'lean_to', n: 3 }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 }, { c: 'copper_vein', n: 2 },
     { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit' }, { c: 'berry_bush', n: 3 }, { c: 'pond', n: 2 }, { c: 'goat', n: 3 }, { c: 'tall_grass', n: 2 },
-    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' },
+    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' },
     { c: 'bandit_camp', at: [0.88, 0.16] }, { c: 'bandit_chief', at: [0.8, 0.1], wake: false },
   ],
   objectives: [{ type: 'kill', card: 'bandit_camp' }, { type: 'kill', card: 'bandit_chief' }],
-  stars: [{ type: 'days', lte: 14 }, { type: 'nodeath' }],
-  schedule: [{ day: 12, wake: 'bandit_chief', msg: '匪首亲自带人下山了！', warn: '第 12 天：匪首下山' }],
+  stars: [{ type: 'days', lte: 16 }, { type: 'nodeath' }],
+  schedule: [{ day: 14, wake: 'bandit_chief', msg: '匪首亲自带人下山了！', warn: '第 14 天：匪首下山' }],
   rules: { seasons: true, seasonDays: 4, startSeason: 1, eventRate: 0.25, events: ['wanderer', 'cache', 'migration', 'festival_mood', 'tribute', 'old_smith'] },
 });
 
@@ -8122,7 +8209,7 @@ level(7, {
   outro: '蒸汽机喷出了第一口白气。整个营地都在欢呼。',
   techs: [...ERA1, ...ERA2, ...ERA3, 'iron', 'mathematics', 'lamplight'], techAllowed: { maxEra: 6 },
   start: [
-    { c: 'survivor', n: 7 }, { c: 'artisan' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 2 }, { c: 'rock', n: 3 },
+    { c: 'survivor', n: 7 }, { c: 'artisan' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 3 }, { c: 'pine', n: 2 }, { c: 'sapling', n: 3 }, { c: 'rock', n: 3 },
     { c: 'iron_vein', n: 2 }, { c: 'coal_seam', n: 2 }, { c: 'clay_pit' }, { c: 'mushroom_ring', n: 2 }, { c: 'pond' }, { c: 'tall_grass', n: 2 },
     { c: 'smelter' }, { c: 'forge' }, { c: 'kiln' }, { c: 'workbench' }, { c: 'study' }, { c: 'iron_pick' }, { c: 'stone_pick' }, { c: 'jerky', n: 6 }, { c: 'ash_wastes' },
   ],
@@ -9059,7 +9146,7 @@ __m["src/render/art_world.js"] = (() => {
 "use strict";
 // Plants, terrain features, buildings and objects for card illustrations.
 
-const { INK, lighten, darken, srand } = __m["src/render/paint.js"];
+const { lighten, darken, srand } = __m["src/render/paint.js"];
 const { flame } = __m["src/render/art_life.js"];
 
 // ---------------------------------------------------------------- plants --------------------------
@@ -9555,7 +9642,7 @@ __m["src/render/cardart.js"] = (() => {
 // the painter vocabulary. Coordinates are in the 100×76 art window.
 
 const { CARDS } = __m["src/data/cards.js"];
-const { INK, lighten, darken } = __m["src/render/paint.js"];
+const { INK } = __m["src/render/paint.js"];
 const { figure, item, flame, quadruped, bird, fish, shade, wisp, golem, treebeast, tentacle, beetle, serpent } = __m["src/render/art_life.js"];
 const { tree, pine, deadTree, bush, grass, wheat, mushroom, herbs, reeds, rocks, crystal, pit, pool, fireRing, hut, tower, post, anvil, furnace, tent, wall, logs, planks, bricks, ingot, ore, pile, sack, jar, bottle, plate, bowl, coin, scroll, book, gearShape, chest, boat, cart, grave } = __m["src/render/art_world.js"];
 
@@ -10798,8 +10885,12 @@ function bucketFor(scale) {
   return BUCKETS[BUCKETS.length - 1];
 }
 
+let frameBudget = Infinity;
+/** called once per frame by the board: limits how many new sprites are painted per frame */
+function spriteFrame(ms = 10) { frameBudget = performance.now() + ms; }
+
 /** a cached canvas with the face of card `id` (or '#back') rendered at `scale` pixels per unit */
-function cardSprite(id, scale) {
+function cardSprite(id, scale, force = false) {
   const b = bucketFor(scale);
   const key = id + '|' + b;
   let s = cache.get(key);
@@ -10807,6 +10898,13 @@ function cardSprite(id, scale) {
     cache.delete(key);
     cache.set(key, s); // LRU touch
     return s;
+  }
+  // over this frame's painting budget: reuse another resolution of the same card if there is one
+  if (!force && performance.now() > frameBudget) {
+    for (const bb of BUCKETS) {
+      const alt = cache.get(id + '|' + bb);
+      if (alt) return alt;
+    }
   }
   s = makeCanvas(Math.ceil(CARD_W * b), Math.ceil(CARD_H * b));
   const g = s.getContext('2d');
@@ -10856,7 +10954,7 @@ function artURL(id, px = 64) {
   return u;
 }
 
-return { FONT_TITLE, FONT_BODY, FONT_NUM, FACE, KIND_STYLE, RARITY, SKILL_NAMES, DMG_NAMES, cardStats, cardRole, paintFace, paintBack, bucketFor, cardSprite, flushSprites, spriteGeneration, cardURL, artURL };
+return { FONT_TITLE, FONT_BODY, FONT_NUM, FACE, KIND_STYLE, RARITY, SKILL_NAMES, DMG_NAMES, cardStats, cardRole, paintFace, paintBack, bucketFor, spriteFrame, cardSprite, flushSprites, spriteGeneration, cardURL, artURL };
 })();
 
 // ---- src/render/ground.js
@@ -11425,7 +11523,7 @@ const { CARD_W, CARD_H, stackOffsets, STACK_DY } = __m["src/sim/constants.js"];
 const { blockReason } = __m["src/sim/tasks.js"];
 const { GREAT_FLAME_STAGES } = __m["src/sim/drop.js"];
 const { makeCanvas } = __m["src/render/paint.js"];
-const { cardSprite, FACE, FONT_BODY, FONT_NUM } = __m["src/render/cardface.js"];
+const { cardSprite, spriteFrame, FACE, FONT_BODY, FONT_NUM } = __m["src/render/cardface.js"];
 const { drawIcon } = __m["src/render/icons.js"];
 const { paintGround, paintSnow } = __m["src/render/ground.js"];
 const { FX } = __m["src/render/fx.js"];
@@ -11444,6 +11542,7 @@ const SHADOW = (() => {
 })();
 
 const BLOCK_ICON = { 太暗了: 'sun', 等待夜晚: 'moon', 冬季休眠: 'snow', 等待恢复: 'leaf', 需要镐: 'pick', 需要光源: 'sun', 需要舟: 'boat', 房屋已满: 'house' };
+const FOIL = { rare: 'rgba(190,220,255,0.28)', epic: 'rgba(230,190,255,0.32)', legendary: 'rgba(255,225,150,0.4)' };
 const SPOIL_WHY = new Set(['absorb', 'consume', 'pay', 'research', 'sell', 'eat']);
 
 class BoardView {
@@ -11473,6 +11572,8 @@ class BoardView {
     this.meteors = [];
     this.lowFx = false;
     this.showHand = true;
+    this.followAI = false;
+    this.handEMA = null;
     this.lastSeason = -1;
   }
 
@@ -11482,6 +11583,7 @@ class BoardView {
     this.views.clear();
     this.ghosts.length = 0;
     this.spawnFrom.clear();
+    this.handEMA = null;
     this.fx.clear();
     this.weather.length = 0;
     const c = game.colonyCenter();
@@ -11734,12 +11836,16 @@ class BoardView {
     if (h.vis < 0.2) { h.fx = e.from.x; h.fy = e.from.y; }
     h.tx = e.to.x;
     h.ty = e.to.y;
+    const E = this.handEMA || (this.handEMA = { x: e.to.x, y: e.to.y });
+    E.x += (e.to.x - E.x) * 0.25;
+    E.y += (e.to.y - E.y) * 0.25;
     h.t = 0;
     h.dur = Math.max(0.06, 0.34 / Math.max(1, this.speed));
     h.vis = 1;
     h.tap = e.tap ? 1 : 0;
     h.card = e.id;
     h.from2 = e.from;
+    h.label = (this.handLabel || '').replace(/^目标：/, '').split(/[，。（→]/)[0].slice(0, 14);
   }
 
   // ------------------------------------------------------------------ per-frame update
@@ -11747,7 +11853,15 @@ class BoardView {
     const g = this.game;
     this.time += dt;
     // camera
-    if (this.autoCam && Math.floor(this.time * 2) !== Math.floor((this.time - dt) * 2)) this.fitColony();
+    if (this.autoCam && Math.floor(this.time * 2) !== Math.floor((this.time - dt) * 2)) {
+      if (this.followAI && this.hand.vis > 0.3 && this.handEMA) {
+        // follow the AI's hands at a readable zoom, drifting with where it works
+        const L = this.zoomLimits();
+        this.camT.x = this.handEMA.x;
+        this.camT.y = this.handEMA.y;
+        this.camT.z = Math.max(L.min, Math.min(L.max, 0.78));
+      } else this.fitColony();
+    }
     const kc = 1 - Math.exp(-dt * 3);
     this.cam.x += (this.camT.x - this.cam.x) * kc;
     this.cam.y += (this.camT.y - this.cam.y) * kc;
@@ -11857,6 +11971,7 @@ class BoardView {
   // ------------------------------------------------------------------ drawing
   draw() {
     const g = this.g, G = this.game, dpr = this.dpr, z = this.cam.z;
+    spriteFrame(10);
     g.setTransform(1, 0, 0, 1, 0, 0);
     g.fillStyle = '#120c08';
     g.fillRect(0, 0, this.cv.width, this.cv.height);
@@ -12023,12 +12138,43 @@ class BoardView {
     const x = v.x + v.lx + sh - lift * 0.3, y = v.y + v.ly - lift;
     const back = v.flipP < 0.5;
     const fx = back ? 1 - v.flipP * 2 : v.flipP * 2 - 1;
-    const spr = cardSprite(back ? '#back' : c.d, scale * s);
+    const spr = cardSprite(back ? '#back' : c.d, scale);
     g.save();
     g.globalAlpha = Math.max(0, Math.min(1, v.a));
     g.translate(x + CARD_W / 2, y + CARD_H / 2);
     g.scale(s * Math.max(0.02, fx), s);
     g.drawImage(spr, -CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H);
+    // foil: rare cards catch the light with a slow moving sheen
+    const def = CARDS[c.d];
+    const foil = !back && FOIL[def.rarity];
+    if (foil && !this.lowFx && scale > 0.45) {
+      const ph = ((this.time * 0.35 + c.id * 0.137) % 1.6) - 0.3;
+      const A = FACE.art;
+      g.save();
+      roundRect(g, -CARD_W / 2 + A.x, -CARD_H / 2 + A.y, A.w, A.h, 3);
+      g.clip();
+      const x0 = -CARD_W / 2 + A.x + ph * (A.w + 80) - 40;
+      const gr = g.createLinearGradient(x0 - 26, -CARD_H / 2, x0 + 26, -CARD_H / 2 + 40);
+      gr.addColorStop(0, 'rgba(255,255,255,0)');
+      gr.addColorStop(0.5, foil);
+      gr.addColorStop(1, 'rgba(255,255,255,0)');
+      g.globalCompositeOperation = 'lighter';
+      g.fillStyle = gr;
+      g.fillRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H);
+      g.restore();
+    }
+    if (def.kind === 'wonder' || (def.traits && def.traits.includes('boss'))) {
+      // wonders and bosses breathe with an aura of their own
+      const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.2 + c.id);
+      g.save();
+      g.shadowColor = def.kind === 'wonder' ? 'rgba(255,170,60,0.9)' : 'rgba(255,60,40,0.8)';
+      g.shadowBlur = 10 + pulse * 14;
+      g.strokeStyle = def.kind === 'wonder' ? `rgba(255,200,110,${0.4 + pulse * 0.4})` : `rgba(255,90,60,${0.3 + pulse * 0.4})`;
+      g.lineWidth = 2.5;
+      roundRect(g, -CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 7);
+      g.stroke();
+      g.restore();
+    }
     if (v.hit > 0) {
       g.globalAlpha = v.hit * 0.45;
       g.fillStyle = '#ff3020';
@@ -12052,7 +12198,7 @@ class BoardView {
 
   drawGhost(g, gh, scale) {
     const t = gh.life / gh.max;
-    const spr = cardSprite(gh.d, scale * 0.8);
+    const spr = cardSprite(gh.d, scale);
     g.save();
     g.globalAlpha = t;
     const cx = gh.x + CARD_W / 2, cy = gh.y + CARD_H / 2;
@@ -12331,6 +12477,16 @@ class BoardView {
     g.strokeText('AI', h.x, h.y - r - 9 * s);
     g.fillStyle = '#ffe2a0';
     g.fillText('AI', h.x, h.y - r - 9 * s);
+    if (h.label && this.speed <= 8) {
+      g.font = `${10 * s}px ${FONT_BODY}`;
+      const tw = g.measureText(h.label).width + 12 * s;
+      g.globalAlpha = Math.min(1, h.vis * 1.4) * 0.92;
+      g.fillStyle = 'rgba(28,18,10,0.85)';
+      roundRect(g, h.x - tw / 2, h.y + r + 4 * s, tw, 15 * s, 7 * s);
+      g.fill();
+      g.fillStyle = '#f6e6c4';
+      g.fillText(h.label, h.x, h.y + r + 11.5 * s);
+    }
     g.restore();
   }
 
@@ -12844,7 +13000,7 @@ const DEFAULTS = {
   progress: {}, // levelId -> { won, stars, bestDays, plays, aiWon }
   settings: {
     master: 0.8, music: 0.55, sfx: 0.8, lowFx: false, showHand: true, autoNext: true, strategy: 'balanced',
-    takeover: true, autoCam: true, tutorial: true, speed: 1, unlockAll: false,
+    takeover: true, autoCam: true, followAI: false, tutorial: true, speed: 1, unlockAll: false,
   },
   seen: [], // card ids
   recipes: [], // discovered recipe ids (hidden ones count as found)
@@ -12991,7 +13147,7 @@ function cardCanvas(id, w = 110) {
   c.style.width = '100%';
   c.style.aspectRatio = '110 / 150';
   c.style.borderRadius = '6px';
-  const s = cardSprite(id, (w / 110) * dpr);
+  const s = cardSprite(id, (w / 110) * dpr, true);
   c.getContext('2d').drawImage(s, 0, 0, c.width, c.height);
   return c;
 }
@@ -13156,7 +13312,7 @@ function helpTab(body) {
   const P = (t) => h('p', { style: { lineHeight: '1.75', margin: '4px 0 10px' } }, t);
   body.appendChild(h('div', { style: { maxWidth: '760px' } },
     h('h3', '堆叠即行动'), P('把一张卡拖到另一张卡上，它们就叠成一堆。当一堆卡正好凑齐某个配方时，进度条会出现，时间到了就会产出新卡。人物是“劳力”：把人叠在树上就会砍树，叠在刻石上就会记录见闻，叠在篝火和生鱼上就会烤鱼。'),
-    h('h3', '昼夜与光'), P('一天大约 72 秒（1 倍速）。入夜后，没有光的地方无法工作，暗影会从灰雾中走出来。篝火、火把桩、灯柱照亮周围；火把与灯笼可以叠在堆里随身携带。黎明时，每个人都要吃饭，燃料会被消耗。'),
+    h('h3', '昼夜与光'), P('一天大约 72 秒（1 倍速）。入夜后，没有光的地方无法工作（只有生火、扎火把、立火把桩可以摸黑完成），暗影会从灰雾中走出来。篝火、火把桩、灯柱照亮周围；火把与灯笼可以叠在堆里随身携带。黎明时，每个人都要吃饭，燃料会被消耗。'),
     h('h3', '灰雾'), P('灰雾是这个世界的倒计时。它随时间上涨，暗影越多涨得越快；灯龛、石冢、庆典与灯塔能让它退散。某些关卡里，灰雾涨满就是失败。'),
     h('h3', '科技'), P('研究消耗“灵感”卡。把人叠在刻石、书斋上产出灵感，然后打开科技树研究。新科技解锁新的配方、建筑与职业。'),
     h('h3', '战斗'), P('把人物拖到敌人或野兽身上就会开战，更多的人可以加入同一场战斗。三种伤害：穿刺（对野兽好用）、钝击（无视护甲）、光芒（重创暗影）。飞行的敌人需要远程。'),
@@ -13193,7 +13349,7 @@ const { store } = __m["src/ui/store.js"];
 
 const CAT_COLORS = {
   生存: '#ff9a7a', 食物: '#f2c14e', 战斗: '#ff6a5a', 经济: '#e8c86a', 整理: '#9a8a7a', 目标: '#ffd27a', 探索: '#7ad0c8', 建设: '#c8a87a',
-  实验: '#c89aff', 科技: '#8ab8f0', 思考: '#b8a37e', 训练: '#e89a5a', 世界: '#8a9aa8',
+  实验: '#c89aff', 科技: '#8ab8f0', 思考: '#b8a37e', 训练: '#e89a5a', 世界: '#8a9aa8', 盘点: '#f6e6c4',
 };
 const TOAST_KINDS = new Set(['goal', 'tech', 'danger', 'death', 'boss', 'discover', 'hint', 'win', 'story', 'season', 'event', 'birth', 'explore']);
 
@@ -13258,7 +13414,10 @@ class Hud {
     this.starList = h('div.starline');
     this.loseList = h('div.starline');
     this.warnList = h('div.warnings.panel');
-    this.left = h('div.leftcol', h('div.objectives.panel', h('h3', '目标'), this.objList, this.starList, this.loseList), this.warnList);
+    this.objHead = h('h3', { style: { cursor: 'pointer' }, title: '点击收起/展开', onclick: () => this.objBox.classList.toggle('mini') }, '目标');
+    this.objBox = h('div.objectives.panel', this.objHead, this.objList, this.starList, this.loseList);
+    if (window.innerWidth < 820) this.objBox.classList.add('mini');
+    this.left = h('div.leftcol', this.objBox, this.warnList);
     // AI panel
     this.aiToggle = h('div.toggle', { title: 'AI 自动游玩 (A)', onclick: () => app.setAI(!app.aiOn) });
     this.aiFocus = h('div.focus');
@@ -13282,6 +13441,7 @@ class Hud {
         opt('自动下一关', 'autoNext'),
         opt('显示 AI 之手', 'showHand', (v) => { app.view.showHand = v; }),
         opt('跟随镜头', 'autoCam', (v) => { app.view.autoCam = v; }),
+        opt('镜头追随 AI 之手', 'followAI', (v) => { app.view.followAI = v; if (v) app.view.autoCam = true; }),
         opt('手动操作时接管', 'takeover')));
     if (window.innerWidth < 820) this.ai.classList.add('collapsed');
     // inspector, toasts, takeover notice
@@ -13412,6 +13572,8 @@ class Hud {
     if (key === this.objKey) return;
     this.objKey = key;
     clear(this.objList);
+    const doneN = g.s.objectives.filter((o) => o.done || o.cur >= o.need).length;
+    setText(this.objHead, g.s.objectives.length ? `目标 ${doneN}/${g.s.objectives.length}` : '目标');
     if (!g.s.objectives.length) this.objList.appendChild(h('div.obj', h('div.t', h('span', '坚持下去'), h('span.num', `第 ${g.s.day} 天`))));
     for (const o of g.s.objectives) {
       const f = o.need ? Math.min(1, o.cur / o.need) : 0;
@@ -13704,6 +13866,7 @@ __m["src/modes/expedition.js"] = (() => {
 // A level is generated from a small `spec` so a run can be saved and rebuilt exactly.
 
 const { RNG } = __m["src/core/rng.js"];
+const { CARDS } = __m["src/data/cards.js"];
 const { TECHS } = __m["src/data/techs.js"];
 const { LEVELS, ensureFood } = __m["src/data/levels.js"];
 
@@ -13732,9 +13895,9 @@ const MUTATORS = [
 
 const CHALLENGES = [
   { id: 'c_dark_valley', name: '永夜河谷', base: '1-3', desc: '「长夜」，但太阳再也没有升起。', mutators: ['dark'], extra: { lose: [{ type: 'fog' }] } },
-  { id: 'c_lone_wolf', name: '孤狼', base: '1-4', desc: '「狼嚎」，只有你一个人。', mutators: ['lonely'] },
+  { id: 'c_lone_wolf', name: '孤身', base: '1-2', desc: '「河畔」，但只有一个人走出灰雾。没有第二个人，就没有孩子。', mutators: ['lonely'] },
   { id: 'c_famine_marsh', name: '盐沼饥荒', base: '3-2', desc: '食物腐坏飞快，冬天无比漫长。', mutators: ['famine', 'cold'] },
-  { id: 'c_horde_forest', name: '林海兽潮', base: '2-4', desc: '腐根兽和它的荆棘大军强了一半。', mutators: ['horde'] },
+  { id: 'c_horde_forest', name: '林海兽潮', base: '2-3', desc: '「迷雾林」里的野兽与暗影强了一半，夜袭更频繁。', mutators: ['horde'] },
   { id: 'c_swift_mountain', name: '急行山路', base: '4-1', desc: '日短夜长，时间就是一切。', mutators: ['swift'] },
   { id: 'c_misty_isles', name: '雾锁群岛', base: '6-1', desc: '灰雾翻倍地蔓延。', mutators: ['mist'] },
   { id: 'c_ash_horde', name: '灰烬狂潮', base: '7-1', desc: '灰烬中的敌人更强，夜更深。', mutators: ['horde', 'mist'] },
@@ -13761,15 +13924,17 @@ function makeExpedition(spec) {
     { c: 'jerky', n: 3 + d },
     { c: 'club', n: Math.ceil(d / 2) },
   ];
-  if (d >= 3) start.push({ c: 'spear', n: d - 2 });
+  if (d >= 3) start.push({ c: 'spear', n: 1 });
   if (spec.biome === 'tundra') start.push({ c: 'fur_cloak', n: 2 });
   if (era >= 3) start.push({ c: 'artisan' }, { c: 'stone_pick' }, { c: 'kiln' });
-  if (era >= 4) start.push({ c: 'cabin' }, { c: 'smelter' }, { c: 'spearman' });
-  if (era >= 5) start.push({ c: 'forge' }, { c: 'archer' }, { c: 'study' });
+  if (era >= 4) start.push({ c: 'cabin' }, { c: 'smelter' });
+  if (era >= 5) start.push({ c: 'forge' }, { c: 'study' });
   if (endless) start.push({ c: 'spearman' }, { c: spec.biome === 'isles' || spec.biome === 'tundra' ? 'archer' : 'spearman' }, { c: 'lean_to' }, { c: 'torch_post' });
   // nodes: every land has the basics (wood, stone, fibre, clay, water), then its own character
-  const counts = { tree: 2, rock: 2, tall_grass: 2, clay_pit: 1, pond: 1 };
-  if (spec.biome === 'ash' || spec.biome === 'tundra') counts.tree = 1;
+  const counts = { tree: 3, rock: 2, tall_grass: 2, clay_pit: 1, pond: 1 };
+  if (spec.biome === 'ash' || spec.biome === 'tundra') counts.tree = 2;
+  if (spec.biome === 'tundra') counts.pine = 2;
+  start.push({ c: 'sapling', n: 2 });
   for (const id of B.nodes.slice(0, 3)) counts[id] = (counts[id] || 0) + 1;
   for (let i = 0; i < 3 + Math.max(0, 3 - d); i++) { const id = rng.pick(B.nodes); counts[id] = (counts[id] || 0) + 1; }
   for (const [c, n] of Object.entries(counts)) start.push({ c, n });
@@ -13778,33 +13943,39 @@ function makeExpedition(spec) {
   // dangers
   const corner = () => [rng.chance(0.5) ? 0.1 : 0.9, rng.chance(0.5) ? 0.12 : 0.88];
   const lair = d >= 4 || endless;
-  if (lair) start.push({ c: B.lair, at: corner() });
+  // a lair is either hidden at the end of a trail (found by exploring) or lurks in a far corner
+  const trail = Object.values(CARDS).find((c) => c.kind === 'region' && c.region.reveal && c.region.reveal.includes(B.lair));
+  if (lair && trail && !endless) { if (!start.some((e) => e.c === trail.id)) start.push({ c: trail.id }); }
+  else if (lair) start.push({ c: B.lair, at: corner() });
+  if (d >= 4) start.push({ c: spec.biome === 'isles' || spec.biome === 'tundra' ? 'archer' : 'spearman' });
   const boss = d >= 4 && !endless;
   if (boss) start.push({ c: B.boss, at: corner(), wake: false });
 
+  const startFood = () => start.reduce((t, e) => t + (CARDS[e.c].food || 0) * (e.n || 1), 0);
   // goals
   const objectives = [];
   if (endless) {
     // none: endless runs end only in defeat; score = days survived
   } else {
     const BUILD = [['shrine', 'torch_post', 'drying_rack', 'stone_tablet'], ['workbench', 'kiln', 'granary', 'loom', 'cabin'], ['well', 'tannery', 'market', 'stone_house', 'smelter'], ['watchtower', 'library', 'mill', 'lamp_post']];
-    const MADE = [['cooked_fish', 'torch', 'roast'], ['rope', 'plank', 'jerky'], ['brick', 'cloth', 'bread'], ['bread', 'glass', 'leather']];
+    const MADE = [['cooked_fish', 'torch'], ['rope', 'plank', 'cooked_fish'], ['brick', 'cloth', 'bread'], ['bread', 'glass', 'leather']];
     const tier = (arr) => arr[Math.min(arr.length - 1, Math.floor((d - 1) / 1.4))];
     const pool = [
-      () => ({ type: 'pop', n: 4 + d * 2 }),
-      () => ({ type: 'research', n: 1 + d }),
-      () => ({ type: 'explore', n: 2 + d }),
+      () => ({ type: 'pop', n: 5 + d * 2 }),
+      () => ({ type: 'research', n: [3, 3, 4, 4, 4][d - 1] }),
+      () => ({ type: 'explore', n: 3 + d }),
       () => ({ type: 'build', card: rng.pick(tier(BUILD)) }),
-      () => ({ type: 'food', n: 10 + d * 5 }),
-      () => ({ type: 'made', card: rng.pick(tier(MADE)), n: 3 + d * 2 }),
+      () => ({ type: 'food', n: startFood() + 6 + d * 4 }),
+      () => ({ type: 'made', card: rng.pick(tier(MADE)), n: Math.round(3 + d * 1.5) }),
     ];
-    if (d >= 2) pool.push(() => ({ type: 'lights', n: 1 + Math.ceil(d / 2) }), () => ({ type: 'soldiers', n: d }));
+    if (d >= 2) pool.push(() => ({ type: 'lights', n: 1 + Math.ceil(d / 2) }), () => ({ type: 'soldiers', n: d - 1 }));
     if (lair) pool.push(() => ({ type: 'kill', card: B.lair }));
-    const want = 2 + (d >= 3 ? 1 : 0) + (muts.some((m) => m.extraGoal) ? 1 : 0);
+    const want = 3 + (muts.some((m) => m.extraGoal) ? 1 : 0);
     const seen = new Set();
     for (const f of rng.shuffle(pool)) {
       if (objectives.length >= want) break;
       const o = f();
+      if (o.type === 'build' && start.some((e) => e.c === o.card)) continue;
       const k = o.type + (o.card || '');
       if (seen.has(o.type)) continue;
       seen.add(k);
@@ -13822,32 +13993,38 @@ function makeExpedition(spec) {
   }
   const shades = d >= 3 || muts.some((m) => m.fog || m.id === 'dark') || spec.biome === 'ash';
   const rules = {
-    seasons: true, seasonDays: 3, startSeason: rng.int(0, 2), eventRate: 0.25 + d * 0.03,
+    seasons: true, seasonDays: 4, startSeason: rng.chance(0.7) ? 0 : 1, eventRate: 0.25 + d * 0.03,
     shades, shadeBase: shades ? Math.max(0, d - 3) : 0, fog0: shades ? d * 4 : 0, fogRate: shades ? 0.5 + d * 0.3 : 0,
-    cold: spec.biome === 'tundra', enemyHp: 0.8 + d * 0.1, enemyAtk: 0.85 + d * 0.08,
+    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07,
   };
   for (const m of muts) {
     if (m.rules) Object.assign(rules, m.rules);
     if (m.start) m.start(start);
   }
   const schedule = [];
+  const wakeDay = 10 + d * 3;
+  if (boss) schedule.push({ day: wakeDay, wake: B.boss, warn: `第 ${wakeDay} 天：${CARDS[B.boss].name}苏醒` });
   if (endless) {
     for (let day = 4; day <= 240; day += 3) {
-      const n = 1 + Math.floor(day / 7);
+      const n = 1 + Math.floor(day / 6);
       const foes = [];
       const kinds = Math.min(B.raid.length, 1 + Math.floor(day / 10));
-      for (let i = 0; i < Math.min(9, n); i++) foes.push(B.raid[(i + day) % kinds]);
+      for (let i = 0; i < Math.min(16, n); i++) foes.push(B.raid[(i + day) % kinds]);
       const grouped = {};
       for (const f of foes) grouped[f] = (grouped[f] || 0) + 1;
       schedule.push({ day, at: 'night', msg: `第 ${day} 夜：灰雾里的敌人来袭（${foes.length}）。`, kind: 'danger', spawn: Object.entries(grouped).map(([id, k]) => [id, k]), warn: `第 ${day} 夜：袭击` });
-      if (day % 15 === 0) schedule.push({ day, at: 'night', spawn: [[B.boss, 1, { boss: true }]], warn: `第 ${day} 夜：首领` });
+      if (day % 15 === 0 || (day > 36 && day % 12 === 0)) schedule.push({ day, at: 'night', spawn: [[B.boss, day > 60 ? 2 : 1, { boss: true }]], warn: `第 ${day} 夜：首领` });
     }
     rules.fogRate = 1.2;
   }
   const lose = [];
   if (shades) lose.push({ type: 'fog' });
   if (!endless) lose.push({ type: 'time', days: 22 + objectives.length * 6 + d * 2 });
-  ensureFood({ start, rules, biome: spec.biome });
+  // feed the camp it will grow into, not just the one it starts with
+  const grown = { start: [...start, { c: 'survivor', n: 2 + Math.ceil(d / 2) }], rules, biome: spec.biome };
+  const before = grown.start.length;
+  ensureFood(grown);
+  start.push(...grown.start.slice(before));
   const biomeName = B.name;
   const id = endless ? `endless-${spec.biome}-${spec.seed}` : `exp-${spec.biome}-${d}-${spec.seed}`;
   return {
@@ -14035,6 +14212,8 @@ class Menus {
       h('div', { class: 'result-title' + (won ? '' : ' lose') }, r.mode === 'endless' ? `坚持了 ${r.days} 天` : won ? '胜利' : '失败'),
       won && r.mode !== 'endless' ? h('div.result-stars', [0, 1, 2].map((i) => h('span', { class: i < r.stars ? 'on' : '', style: { animationDelay: 0.3 + i * 0.25 + 's' } }, '★'))) : null,
       h('p.story', { style: { textAlign: 'center' } }, won ? r.outro || r.reason : r.reason),
+      r.starList && r.starList.length && r.mode !== 'endless' ? h('div', { style: { textAlign: 'center', fontSize: '13.5px', color: '#6a5236' } }, h('span', { style: { color: won ? '#b8860b' : '#8a7a62' } }, '★ 通关  '), r.starList.map((x) => h('span', { style: { color: x.met ? '#b8860b' : '#9a8a72', marginLeft: '10px' } }, (x.met ? '★ ' : '☆ ') + x.text))) : null,
+      r.aiOnly ? h('div', { style: { textAlign: 'center', fontSize: '13px', color: '#6a5236', marginTop: '4px' } }, `由 AI 独立完成（${r.strategy}策略）`) : null,
       r.newAch.length ? h('div', { style: { textAlign: 'center', margin: '6px 0' } }, r.newAch.map((a) => h('span.mini', { style: { margin: '3px' } }, '🏅 ' + a.name))) : null,
       h('div.stat-grid', statRows.map(([k, v]) => h('div', h('span', k), h('b.num', String(v))))),
       h('div.row.center', { style: { marginTop: '10px' } },
@@ -14512,7 +14691,7 @@ const { DT } = __m["src/sim/constants.js"];
 const { CARDS } = __m["src/data/cards.js"];
 const { LEVELS, nextLevelId } = __m["src/data/levels.js"];
 const { ACHIEVEMENTS } = __m["src/data/achievements.js"];
-const { stars } = __m["src/sim/objectives.js"];
+const { stars, starText, starMet } = __m["src/sim/objectives.js"];
 const { BoardView } = __m["src/render/board.js"];
 const { flushSprites } = __m["src/render/cardface.js"];
 const { audio } = __m["src/audio/audio.js"];
@@ -14653,6 +14832,7 @@ class App {
     this.view.setGame(g);
     this.view.autoCam = S.settings.autoCam !== false;
     this.view.showHand = S.settings.showHand;
+    this.view.followAI = !!S.settings.followAI;
     if (!this.hud) this.hud = new Hud(this, this.hudRoot);
     else this.hud.build();
     this.hud.setHidden(false);
@@ -14892,6 +15072,7 @@ class App {
 
   dispatch(evs, demo) {
     if (!evs.length) return;
+    this.view.handLabel = this.brain && this.brain.current ? this.brain.current.label : '';
     this.view.onEvents(evs);
     if (demo) return;
     this.hud.onEvents(evs);
@@ -14925,6 +15106,7 @@ class App {
       coinsEarned: st.coinsEarned, actions: st.actions, reason: g.s.reason, outro: L.outro,
       aiOnly: (st.actions.player || 0) === 0 && (st.actions.ai || 0) > 0, noAi: (st.actions.ai || 0) === 0,
       next: mode === 'campaign' ? nextLevelId(L.id) : null, newAch: [],
+      strategy: this.brain.base.name, starList: (L.stars || []).map((c) => ({ text: starText(c), met: won && starMet(g, c) })),
     };
     this.newAch = [];
     if (mode === 'campaign' || mode === 'challenge') recordLevel(L.id, { won, stars: r.stars, days: r.days, ai: r.aiOnly });

@@ -35,6 +35,24 @@ export class Exec {
   }
 }
 
+/** points the AI keeps its cards away from: sleeping bosses and lairs */
+function dangerPoints(g, W) {
+  return W.threats.filter((t) => ['boss', 'lair'].includes(t.d.mob?.beh) || t.d.kind === 'lair').map((t) => t.p)
+    .concat(W.lairs.map((l) => g.cardPos(l)));
+}
+
+/** move a card, but never into the reach of a sleeping boss: such spots are swapped for a safe work spot */
+function moveSafe(brain, g, id, x, y, who) {
+  const W = brain.W;
+  if (W && dangerPoints(g, W).some((p) => Math.hypot(p.x - x - CARD_W / 2, p.y - y - CARD_H / 2) < 520)) {
+    const c = g.s.cards[id];
+    const st = c && g.s.stacks[c.s];
+    const spot = workSpot(brain, g, W, CARD_H + 60, st ? st.id : null);
+    return g.actMove(id, spot.x, spot.y, who);
+  }
+  return g.actMove(id, x, y, who);
+}
+
 /** choose a free, lit spot near the camp for a new work stack */
 export function workSpot(brain, g, W, h = CARD_H, avoid = null) {
   const a = W.anchor;
@@ -51,8 +69,7 @@ export function workSpot(brain, g, W, h = CARD_H, avoid = null) {
     }
   }
   let fallback = null;
-  const danger = W.threats.filter((t) => ['boss', 'lair'].includes(t.d.mob?.beh) || t.d.kind === 'lair').map((t) => t.p)
-    .concat(W.lairs.map((l) => g.cardPos(l)));
+  const danger = dangerPoints(g, W);
   for (const [x, y] of cands) {
     const spot = g.freeSpot(x, y, h, { exclude: avoid });
     if (Math.hypot(spot.x - x, spot.y - y) > 30) continue;
@@ -121,7 +138,7 @@ function doStep(brain, g, ex, step) {
       const k = Math.min(step.n, src.run);
       const card = g.s.cards[src.st.cards[src.st.cards.length - k]];
       const spot = step.at || workSpot(brain, g, brain.W, CARD_H + 30 * (step.total || 3), src.st.id);
-      const r = g.actMove(card.id, spot.x, spot.y, who);
+      const r = moveSafe(brain, g, card.id, spot.x, spot.y, who);
       if (!r.ok) { ex.why = r.why; return 'fail'; }
       ex.site = card.id;
       ex.lockIds.add(card.id);
@@ -160,7 +177,7 @@ function doStep(brain, g, ex, step) {
       if (i < st.cards.length - 1) {
         const above = st.cards[i + 1];
         const spot = g.freeSpot(st.x + CARD_W + 20, st.y, CARD_H + 40, { exclude: st.id });
-        const r0 = g.actMove(above, spot.x, spot.y, who);
+        const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : 'fail';
       }
       const r = g.actDrop(c.id, ex.site, who);
@@ -180,7 +197,7 @@ function doStep(brain, g, ex, step) {
         const c = g.s.cards[site.cards[i]];
         if (keep.has(c.d)) continue;
         const spot = g.freeSpot(site.x - CARD_W - 30, site.y, CARD_H + 60, { exclude: site.id });
-        const r = g.actMove(c.id, spot.x, spot.y, who);
+        const r = moveSafe(brain, g, c.id, spot.x, spot.y, who);
         return r.ok ? 'actRepeat' : 'fail';
       }
       return 'next';
@@ -197,7 +214,7 @@ function doStep(brain, g, ex, step) {
       const spot = workSpot(brain, g, brain.W, g.stackH(site) + 20, site.id);
       const lit = brain.W.nightLights.some((L) => Math.hypot(L.x - spot.x - CARD_W / 2, L.y - spot.y - CARD_H / 2) < L.r - 30);
       if (!lit && !step.force) return 'next';
-      const r = g.actMove(root.id, spot.x, spot.y, who);
+      const r = moveSafe(brain, g, root.id, spot.x, spot.y, who);
       return r.ok ? 'act' : 'next';
     }
     case 'drop': {
@@ -210,7 +227,7 @@ function doStep(brain, g, ex, step) {
       if (cst && !cst.battle && ci >= 0 && ci < cst.cards.length - 1 && !step.whole) {
         const above = cst.cards[ci + 1];
         const spot = g.freeSpot(cst.x + CARD_W + 20, cst.y, CARD_H + 40, { exclude: cst.id });
-        const r0 = g.actMove(above, spot.x, spot.y, who);
+        const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : (step.optional ? 'next' : 'fail');
       }
       const r = g.actDrop(c.id, t.id, who);
@@ -235,7 +252,7 @@ function doStep(brain, g, ex, step) {
     case 'move': {
       const c = g.s.cards[step.id];
       if (!c) return 'next';
-      const r = g.actMove(c.id, step.x, step.y, who);
+      const r = moveSafe(brain, g, c.id, step.x, step.y, who);
       return r.ok ? 'act' : 'next';
     }
     case 'note': {
@@ -249,7 +266,7 @@ function doStep(brain, g, ex, step) {
       if (!site || site.task || site.cards.length < 2) return 'next';
       const top = g.s.cards[site.cards[site.cards.length - 1]];
       const pile = Object.values(g.s.stacks).find((s2) => s2 !== site && !s2.task && !s2.mob && !s2.battle && !s2.held && s2.cards.length < 25 && s2.cards.every((id) => g.s.cards[id].d === top.d));
-      const r = pile ? g.actDrop(top.id, pile.cards[0], who) : g.actMove(top.id, ...Object.values(g.freeSpot(site.x + CARD_W + 30, site.y, CARD_H, { exclude: site.id })), who);
+      const r = pile ? g.actDrop(top.id, pile.cards[0], who) : moveSafe(brain, g, top.id, ...Object.values(g.freeSpot(site.x + CARD_W + 30, site.y, CARD_H, { exclude: site.id })), who);
       return r.ok ? 'actRepeat' : 'next';
     }
     case 'wait': {
