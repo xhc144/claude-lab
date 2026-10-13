@@ -398,6 +398,7 @@ export class Game {
     return !!(inv.slots[40] && (inv.slots[40].id === I.glider || inv.slots[40].id === I.star_wings));
   }
   inventoryHas(name) { return this.inventory.has(I[name]); }
+  biomeKey(index) { return BIOMES[index] ? BIOMES[index].key : null; }
   armorPoints() {
     let pts = 0;
     for (let s = 36; s < 40; s++) { const st = this.inventory.slots[s]; if (st && ITEMS[st.id].armor) pts += ITEMS[st.id].armor.points; }
