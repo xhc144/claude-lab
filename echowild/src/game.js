@@ -131,7 +131,7 @@ export class Game {
     requestAnimationFrame(this.loop);
     let dt = (now - this.last) / 1000;
     this.last = now;
-    if (dt > 0.1) dt = 0.1;
+    if (dt > 0.25) dt = 0.25; // slow machines: keep close to real time (ticks are capped per frame)
     if (dt <= 0) return;
     const t0 = performance.now();
     this.fps = this.fps * 0.95 + (1 / dt) * 0.05;
@@ -209,7 +209,7 @@ export class Game {
   tick() {
     this.ticks++;
     this.world.time++;
-    this.dayTime += 1;
+    if (!this.rules || this.rules.daylightCycle) this.dayTime += 1;
     if (this.dayTime >= DAY_TICKS) { this.dayTime -= DAY_TICKS; this.day++; this.emit('newDay', this.day); }
     this.world.runScheduled();
     const p = this.player;
@@ -381,6 +381,16 @@ export class Game {
       if (this.onHarvest) this.onHarvest(x, y, z, v, tool);
     }
     this.emit('blockBroken', x, y, z, v);
+  }
+
+  setGameMode(m) {
+    const p = this.player;
+    p.creative = m === 'creative';
+    this.meta.mode = p.creative ? 'creative' : 'survival';
+    if (!p.creative && !this.canFly()) p.flying = false;
+    if (p.creative) { p.health = p.maxHealth; p.hunger = 20; p.air = p.maxAir; p.fireTime = 0; }
+    this.hud.message(`游戏模式：${p.creative ? '创造' : '生存'}`);
+    this.emit('gameMode', this.meta.mode);
   }
 
   // name -> id lookups (handy from the console and for tests of the single-file build)

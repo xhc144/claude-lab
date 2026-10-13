@@ -39,7 +39,7 @@ export function installSurvival(game, state) {
   game.inventory.listeners.push(scan);
   scan();
 
-  game.keepInventory = () => game.player.creative || game.settings.difficulty === 0;
+  game.keepInventory = () => game.player.creative || game.settings.difficulty === 0 || !!(game.rules && game.rules.keepInventory);
   game.itemGlows = (id) => ['star_shard', 'echo_crystal', 'glow_spore', 'shard_sky', 'shard_abyss', 'shard_sand', 'shard_frost', 'shard_tide', 'star_wings', 'loom_thread'].includes(ITEMS[id] && ITEMS[id].name);
 
   game.dropStack = (st) => {

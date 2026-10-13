@@ -32,6 +32,9 @@ export function installSystems(game, state) {
   sharedAudio.applyVolume();
   game.audio = sharedAudio;
   game.stateSavers = [];
+  // world rules (creative world controls / cheats)
+  game.rules = Object.assign({ daylightCycle: true, weatherCycle: true, mobSpawning: true, keepInventory: false }, state && state.rules);
+  game.stateSavers.push((s) => { s.rules = { ...game.rules }; });
   if (state) {
     if (state.dayTime !== undefined) game.dayTime = state.dayTime;
     if (state.day) game.day = state.day;

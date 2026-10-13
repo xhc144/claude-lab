@@ -605,6 +605,7 @@ export function installMobs(game) {
         else if (e.kind === 'jelly') jelly++;
         else if (d < 96) passive++;
       }
+      if (g.rules && !g.rules.mobSpawning) return;
       const diff = g.settings.difficulty;
       const hostileCap = [0, 10, 18, 28][diff] || 18;
       for (let attempt = 0; attempt < 3; attempt++) {

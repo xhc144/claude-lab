@@ -47,6 +47,23 @@ function foundation(W, x, y, z, v, depth = 10) {
   }
 }
 const mix = (r, opts) => opts[Math.floor(r.next() * opts.length)];
+// the 16 cells of a 5×5 ring, in walking order (used by the frost spire's spiral stair)
+const FROST_RING = [[-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2], [2, 1], [2, 0], [2, -1], [2, -2], [1, -2], [0, -2], [-1, -2], [-2, -2], [-2, -1], [-2, 0], [-2, 1]];
+
+// A straight stairway descending toward -Z: `steps` stairs, step s at (x, yTop - s, zTop - s),
+// each with three cells of headroom; the side cells get `side` at step level (null = leave).
+// Build it after the rooms it connects, so they cannot overwrite the steps.
+function stairway(W, x, yTop, zTop, steps, stairBlock, side, width = 1, base = side || B.cobblestone) {
+  for (let s = 0; s < steps; s++) {
+    const sy = yTop - s, sz = zTop - s;
+    for (let dx = -width; dx <= width; dx++) {
+      for (let k = 1; k <= 3; k++) put(W, x + dx, sy + k, sz, 0);
+      if (dx === 0) put(W, x, sy, sz, pack(stairBlock, 2)); // tall half to the south (uphill)
+      else if (side !== null) put(W, x + dx, sy, sz, side);
+      if (dx === 0 || side !== null) foundation(W, x + dx, sy, sz, base, 3);
+    }
+  }
+}
 
 // ---------------------------------------------------------------- definitions
 const S = {};
@@ -138,17 +155,11 @@ S.ruin = {
       fill(W, cx - 2, y + 4, cz, cx + 2, y + 4, cz, B.ancient_bricks);
       put(W, cx, y + 4, cz, B.ancient_carved);
       put(W, cx, y + 3, cz, pack(B.lantern, 1));
-      // stair shaft going north, 6 steps down
-      for (let s = 0; s < 6; s++) {
-        const sz = cz - 1 - s, sy = y - 1 - s;
-        for (let dx = -1; dx <= 1; dx++) {
-          for (let k = 0; k < 4; k++) put(W, cx + dx, sy + 1 + k, sz, 0);
-          put(W, cx + dx, sy, sz, dx === 0 ? pack(B.cobblestone_stairs, 2) : wallA);
-        }
-      }
+      // the cellar, then a stair shaft from the surface down into it (7 steps, the last one
+      // standing in the cellar doorway at floor level)
       const ry = y - 7, rz = cz - 10;
       hollow(W, cx - 3, ry - 1, rz - 3, cx + 3, ry + 3, rz + 3, (x, yy) => (yy === ry - 1 ? floor : r.next() < 0.3 ? wallB : wallA));
-      fill(W, cx - 1, ry, rz + 3, cx + 1, ry + 2, rz + 3, 0);
+      stairway(W, cx, y - 1, cz - 1, 7, B.cobblestone_stairs, wallA);
       chest(W, cx, ry, rz - 2, 'ruin', 2);
       put(W, cx - 2, ry, rz - 2, B.loot_urn); put(W, cx + 2, ry, rz - 2, B.loot_urn);
       put(W, cx + 2, ry + 2, rz, pack(B.torch, 4));
@@ -282,9 +293,16 @@ S.sky = {
       const a = Math.PI / 2 + k * (Math.PI * 2 / 3) + 0.4;
       const ix = Math.round(cx + Math.cos(a) * 16), iz = Math.round(cz + Math.sin(a) * 16);
       island(ix, iz, 3);
+      // a two-wide cloud-plank bridge out to the rock
+      for (let t = 8; t <= 14; t += 0.5) for (const w of [0, 1]) {
+        const bx = Math.round(cx + Math.cos(a) * t - Math.sin(a) * w), bz = Math.round(cz + Math.sin(a) * t + Math.cos(a) * w);
+        if (W.get(bx, y - 1, bz) === 0) put(W, bx, y - 1, bz, B.cloud_planks);
+      }
       put(W, ix, y, iz, B.rune_pedestal);
       put(W, ix + 1, y, iz + 1, pack(B.crystal_lantern, 0));
     }
+    // a step up onto the threshold of the sealed door
+    put(W, cx, y, cz + 5, pack(B.stone_bricks_stairs, 0));
     // a launch pad and a sign of the way
     put(W, cx, y, cz + 7, B.launch_pad);
     W.feature({ type: 'structure', kind: 'sky', x: cx, y, z: cz });
@@ -336,17 +354,17 @@ S.sand = {
     for (let k = 1; k < 24; k++) fill(W, cx - 1, y + k, cz - 1, cx + 1, y + k, cz + 1, k % 6 === 0 ? B.chiseled_stone : k % 6 === 3 ? B.cut_sandstone : B.sandstone);
     fill(W, cx - 1, y + 24, cz - 1, cx + 1, y + 24, cz + 1, B.gold_block);
     put(W, cx, y + 25, cz, B.gold_block);
-    // hidden stairway on the north face
-    for (let s = 0; s < 9; s++) {
-      const sz = cz - 4 - s, sy = y - 1 - s;
-      for (let k = 0; k < 4; k++) put(W, cx, sy + 1 + k, sz, 0);
-      put(W, cx, sy, sz, pack(B.smooth_sandstone_stairs, 2));
-      put(W, cx - 1, sy + 1, sz, B.sandstone); put(W, cx + 1, sy + 1, sz, B.sandstone);
-    }
-    // the chamber
+    // the chamber under the sand, reached by a hidden stairway on the north face that runs
+    // all the way down to the chamber floor (11 steps; the last one stands inside the room)
     const ry = y - 11, rz = cz - 18;
     hollow(W, cx - 5, ry - 1, rz - 5, cx + 5, ry + 4, rz + 5, (x, yy) => (yy === ry - 1 ? B.smooth_sandstone : B.cut_sandstone));
-    fill(W, cx, ry, cz - 13, cx, ry + 2, cz - 13, 0);
+    stairway(W, cx, y - 1, cz - 4, 11, B.smooth_sandstone_stairs, null, 0, B.sandstone);
+    // line the cut below ground with sandstone so the loose sand around cannot pour in
+    for (let s = 0; s < 9; s++) {
+      const sy = y - 1 - s, sz = cz - 4 - s;
+      for (let k = 1; k <= 3; k++) if (sy + k <= y - 1) { put(W, cx - 1, sy + k, sz, B.cut_sandstone); put(W, cx + 1, sy + k, sz, B.cut_sandstone); }
+      if (sy + 4 <= y - 1) put(W, cx, sy + 4, sz, B.cut_sandstone);
+    }
     for (const [dx, dz] of [[-4, 0], [4, 0], [0, 4]]) put(W, cx + dx, ry, rz + dz, B.rune_pedestal);
     put(W, cx - 4, ry + 3, rz - 4, B.ancient_lamp); put(W, cx + 4, ry + 3, rz - 4, B.ancient_lamp);
     hollow(W, cx - 2, ry - 1, rz - 9, cx + 2, ry + 3, rz - 5, B.gold_block);
@@ -364,26 +382,44 @@ S.frost = {
     const H = 30;
     for (let k = -1; k <= H; k++) for (let dz = -5; dz <= 5; dz++) for (let dx = -5; dx <= 5; dx++) {
       const d = Math.hypot(dx, dz);
-      const rad = 4.6 - Math.max(0, k - 20) * 0.25;
+      const rad = 4.6 - Math.max(0, k - 25) * 0.25; // the crown narrows above its walkway
       if (d > rad + 0.5) continue;
       const x = cx + dx, z = cz + dz;
       if (k === -1) { put(W, x, y - 1, z, B.packed_ice); foundation(W, x, y - 1, z, B.packed_ice, 8); continue; }
       if (d > rad - 0.7 || k === H || k % 8 === 7) put(W, x, y + k, z, (dx + k) % 5 === 0 ? B.pale_crystal : B.packed_ice);
       else put(W, x, y + k, z, 0);
     }
-    // spiral stairs of slabs around the core
-    for (let k = 0; k < H - 1; k++) {
-      const a = k * 0.62;
-      const x = Math.round(cx + Math.cos(a) * 2.5), z = Math.round(cz + Math.sin(a) * 2.5);
-      put(W, x, y + k, z, B.polished_stone);
-      if (k % 8 === 7) { put(W, x, y + k, z, 0); put(W, x, y + k + 1, z, 0); }
+    // A spiral of half-block steps winds around a 3×3 ice core: 16 cells of the 5×5 ring per
+    // turn, half a block higher per cell, so each turn climbs exactly one storey (8 blocks).
+    // Every step keeps three cells of headroom, which also opens the way through each floor.
+    fill(W, cx - 1, y, cz - 1, cx + 1, y + 22, cz + 1, B.packed_ice);
+    for (const k of [3, 11, 19]) for (const [dx, dz] of [[0, -1], [0, 1], [-1, 0], [1, 0]]) put(W, cx + dx, y + k, cz + dz, B.ancient_lamp);
+    const ring = FROST_RING;
+    const top = 23; // the crown floor
+    for (let i = 0; i <= top * 2; i++) {
+      const [dx, dz] = ring[i % 16], L = i >> 1;
+      put(W, cx + dx, y + L, cz + dz, pack(B.polished_stone_slab, i & 1)); // bottom, then top half
+      for (let k = 1; k <= 3; k++) put(W, cx + dx, y + L + k, cz + dz, 0);
     }
-    for (let k = 0; k < H; k += 8) put(W, cx, y + k, cz, k === 0 ? 0 : B.pale_crystal);
+    // rune pedestals on the two upper storeys and in the crown
+    put(W, cx + 3, y + 8, cz, B.rune_pedestal);
+    put(W, cx - 3, y + 16, cz, B.rune_pedestal);
+    put(W, cx + ring[5][0], y + top + 1, cz + ring[5][1], B.rune_pedestal);
+    // ground-floor entrance on the south side, with a cleared, paved approach
     fill(W, cx - 1, y, cz + 4, cx + 1, y + 2, cz + 5, 0);
-    for (const k of [7, 15, 23]) { const a = k * 1.3; put(W, Math.round(cx + Math.cos(a) * 3), y + k + 1, Math.round(cz + Math.sin(a) * 3), B.rune_pedestal); }
-    // sealed crown chamber
-    sealRow(W, cx - 1, y + 23, cz - 1, cx + 1, y + 23, cz + 1);
-    shardRoomChest(W, cx, y + 26, cz, 'frost');
+    for (let dz = 5; dz <= 8; dz++) for (let dx = -1; dx <= 1; dx++) {
+      for (let k = 0; k < 3; k++) put(W, cx + dx, y + k, cz + dz, 0);
+      put(W, cx + dx, y - 1, cz + dz, B.packed_ice);
+      foundation(W, cx + dx, y - 1, cz + dz, B.packed_ice, 6);
+    }
+    // the crown vault: a sealed cell on top of the core, its door facing the spiral's last step
+    for (let k = 1; k <= 3; k++) for (let dz = -1; dz <= 1; dz++) for (let dx = -1; dx <= 1; dx++) {
+      if (dx === 0 && dz === 0) put(W, cx, y + top + k, cz, 0);
+      else put(W, cx + dx, y + top + k, cz + dz, B.packed_ice);
+    }
+    fill(W, cx - 1, y + top + 4, cz - 1, cx + 1, y + top + 4, cz + 1, B.pale_crystal);
+    sealRow(W, cx - 1, y + top + 1, cz, cx - 1, y + top + 2, cz);
+    shardRoomChest(W, cx, y + top + 1, cz, 'frost');
     put(W, cx, y + 29, cz, B.ancient_lamp);
     W.feature({ type: 'structure', kind: 'frost', x: cx, y, z: cz });
   },

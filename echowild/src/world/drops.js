@@ -5,7 +5,7 @@ import { ITEMS, I, canHarvest } from './items.js';
 
 const n = (spec, rng) => (Array.isArray(spec) ? spec[0] + Math.floor(rng() * (spec[1] - spec[0] + 1)) : spec);
 
-export function blockDrops(v, tool, rng = Math.random) {
+function rawDrops(v, tool, rng) {
   const id = v & ID_MASK, meta = v >>> ID_BITS;
   const d = BLOCKS[id];
   const out = [];
@@ -23,22 +23,22 @@ export function blockDrops(v, tool, rng = Math.random) {
   if (d.shape === 'door' && (meta & 8)) return out;
   if (d.shape === 'slab' && (meta & 3) === 2) { out.push({ id, n: 2 }); return out; }
   if (d.name === 'snow_layer') { out.push({ id: I.snowball, n: (meta & 7) + 1 }); return out; }
-  if (d.name === 'berry_bush') { if (meta & 1) out.push({ id: I.berries, n: 2 + Math.floor(rng() * 2) }); out.push({ id }); return out; }
-  if (d.name === 'furnace') { out.push({ id }); return out; }
-  if (d.name === 'crystal_lamp' || d.name === 'observer') { out.push({ id }); return out; }
+  if (d.name === 'berry_bush') { if (meta & 1) out.push({ id: I.berries, n: 2 + Math.floor(rng() * 2) }); out.push({ id, n: 1 }); return out; }
+  if (d.name === 'furnace') { out.push({ id, n: 1 }); return out; }
+  if (d.name === 'crystal_lamp' || d.name === 'observer') { out.push({ id, n: 1 }); return out; }
   const dr = d.drops;
   if (dr === null) return out;
-  if (dr === undefined) { if (d.item) out.push({ id }); return out; }
+  if (dr === undefined) { if (d.item) out.push({ id, n: 1 }); return out; }
   if (typeof dr === 'string') { out.push({ id: I[dr], n: 1 }); return out; }
   if (dr.sapling) {
-    if (shears) { out.push({ id }); return out; }
+    if (shears) { out.push({ id, n: 1 }); return out; }
     if (rng() < 0.06) out.push({ id: B[dr.sapling], n: 1 });
     if (rng() < 0.03) out.push({ id: I.stick, n: 1 + Math.floor(rng() * 2) });
     if ((d.name === 'oak_leaves' || d.name === 'blossom_leaves') && rng() < 0.02) out.push({ id: I.crabapple, n: 1 });
     return out;
   }
   if (dr.seeds) {
-    if (shears) { out.push({ id }); return out; }
+    if (shears) { out.push({ id, n: 1 }); return out; }
     if (rng() < 0.14) {
       const r = rng();
       out.push({ id: r < 0.6 ? I.wheat_seeds : r < 0.8 ? I.melon_seeds : I.sunroot, n: 1 });
@@ -53,4 +53,10 @@ export function blockDrops(v, tool, rng = Math.random) {
     return out;
   }
   return out;
+}
+
+// Every drop is a full stack ({ id, n >= 1 }); the entity system ignores anything else, which is
+// how logs and planks (they drop themselves) used to vanish when broken.
+export function blockDrops(v, tool, rng = Math.random) {
+  return rawDrops(v, tool, rng).filter((s) => s && s.id !== undefined && s.n >= 1);
 }

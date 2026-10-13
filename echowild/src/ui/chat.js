@@ -74,8 +74,7 @@ export function runCommand(game, text) {
     }
     case 'gamemode': case 'gm': {
       const m = a[0] === 'creative' || a[0] === 'c' || a[0] === '1' ? 'creative' : 'survival';
-      p.creative = m === 'creative'; game.meta.mode = m;
-      if (!p.creative) p.flying = false;
+      game.setGameMode(m);
       say(`游戏模式：${m === 'creative' ? '创造' : '生存'}`);
       break;
     }

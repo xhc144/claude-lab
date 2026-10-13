@@ -2,6 +2,7 @@
 
 import { h, Screen } from './ui.js';
 import { listWorlds, deleteWorld, exportWorld, importWorld, isPersistent } from '../save/storage.js';
+import { WorldControlScreen } from './creative.js';
 import { hashString } from '../core/noise.js';
 
 const fmtDate = (t) => { if (!t) return '—'; const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
@@ -166,6 +167,7 @@ export class PauseScreen extends Screen {
         h('div', { class: 'menu-col' },
           h('button', { class: 'btn primary', onclick: () => this.app.resume() }, '继续游戏'),
           h('button', { class: 'btn', onclick: () => this.ui.push(new SettingsScreen(this.app)) }, '设置'),
+          (g.player.creative || g.meta.cheats !== false) ? h('button', { class: 'btn', onclick: () => this.ui.push(new WorldControlScreen(this.app)) }, '世界控制') : null,
           h('button', { class: 'btn', onclick: () => this.ui.push(new HelpScreen(this.app)) }, '玩法指南'),
           h('button', { class: 'btn', onclick: async () => { await this.app.saveGame(); this.app.game.hud.toast('已保存', '世界进度已写入本地存档。'); } }, '立即保存'),
           h('button', { class: 'btn danger', onclick: () => this.app.quitToTitle() }, '保存并返回标题'))));
