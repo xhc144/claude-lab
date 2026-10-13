@@ -5,6 +5,7 @@
 // A level is generated from a small `spec` so a run can be saved and rebuilt exactly.
 
 import { RNG } from '../core/rng.js';
+import { CARDS } from '../data/cards.js';
 import { TECHS } from '../data/techs.js';
 import { LEVELS, ensureFood } from '../data/levels.js';
 
@@ -33,9 +34,9 @@ export const MUTATORS = [
 
 export const CHALLENGES = [
   { id: 'c_dark_valley', name: '永夜河谷', base: '1-3', desc: '「长夜」，但太阳再也没有升起。', mutators: ['dark'], extra: { lose: [{ type: 'fog' }] } },
-  { id: 'c_lone_wolf', name: '孤狼', base: '1-4', desc: '「狼嚎」，只有你一个人。', mutators: ['lonely'] },
+  { id: 'c_lone_wolf', name: '孤身', base: '1-2', desc: '「河畔」，但只有一个人走出灰雾。没有第二个人，就没有孩子。', mutators: ['lonely'] },
   { id: 'c_famine_marsh', name: '盐沼饥荒', base: '3-2', desc: '食物腐坏飞快，冬天无比漫长。', mutators: ['famine', 'cold'] },
-  { id: 'c_horde_forest', name: '林海兽潮', base: '2-4', desc: '腐根兽和它的荆棘大军强了一半。', mutators: ['horde'] },
+  { id: 'c_horde_forest', name: '林海兽潮', base: '2-3', desc: '「迷雾林」里的野兽与暗影强了一半，夜袭更频繁。', mutators: ['horde'] },
   { id: 'c_swift_mountain', name: '急行山路', base: '4-1', desc: '日短夜长，时间就是一切。', mutators: ['swift'] },
   { id: 'c_misty_isles', name: '雾锁群岛', base: '6-1', desc: '灰雾翻倍地蔓延。', mutators: ['mist'] },
   { id: 'c_ash_horde', name: '灰烬狂潮', base: '7-1', desc: '灰烬中的敌人更强，夜更深。', mutators: ['horde', 'mist'] },
@@ -62,15 +63,16 @@ export function makeExpedition(spec) {
     { c: 'jerky', n: 3 + d },
     { c: 'club', n: Math.ceil(d / 2) },
   ];
-  if (d >= 3) start.push({ c: 'spear', n: d - 2 });
+  if (d >= 3) start.push({ c: 'spear', n: 1 });
   if (spec.biome === 'tundra') start.push({ c: 'fur_cloak', n: 2 });
   if (era >= 3) start.push({ c: 'artisan' }, { c: 'stone_pick' }, { c: 'kiln' });
-  if (era >= 4) start.push({ c: 'cabin' }, { c: 'smelter' }, { c: 'spearman' });
-  if (era >= 5) start.push({ c: 'forge' }, { c: 'archer' }, { c: 'study' });
+  if (era >= 4) start.push({ c: 'cabin' }, { c: 'smelter' });
+  if (era >= 5) start.push({ c: 'forge' }, { c: 'study' });
   if (endless) start.push({ c: 'spearman' }, { c: spec.biome === 'isles' || spec.biome === 'tundra' ? 'archer' : 'spearman' }, { c: 'lean_to' }, { c: 'torch_post' });
   // nodes: every land has the basics (wood, stone, fibre, clay, water), then its own character
-  const counts = { tree: 2, rock: 2, tall_grass: 2, clay_pit: 1, pond: 1 };
-  if (spec.biome === 'ash' || spec.biome === 'tundra') counts.tree = 1;
+  const counts = { tree: 3, rock: 2, tall_grass: 2, clay_pit: 1, pond: 1 };
+  if (spec.biome === 'ash' || spec.biome === 'tundra') counts.tree = 2;
+  start.push({ c: 'sapling', n: 2 });
   for (const id of B.nodes.slice(0, 3)) counts[id] = (counts[id] || 0) + 1;
   for (let i = 0; i < 3 + Math.max(0, 3 - d); i++) { const id = rng.pick(B.nodes); counts[id] = (counts[id] || 0) + 1; }
   for (const [c, n] of Object.entries(counts)) start.push({ c, n });
@@ -79,10 +81,15 @@ export function makeExpedition(spec) {
   // dangers
   const corner = () => [rng.chance(0.5) ? 0.1 : 0.9, rng.chance(0.5) ? 0.12 : 0.88];
   const lair = d >= 4 || endless;
-  if (lair) start.push({ c: B.lair, at: corner() });
+  // a lair is either hidden at the end of a trail (found by exploring) or lurks in a far corner
+  const trail = Object.values(CARDS).find((c) => c.kind === 'region' && c.region.reveal && c.region.reveal.includes(B.lair));
+  if (lair && trail && !endless) { if (!start.some((e) => e.c === trail.id)) start.push({ c: trail.id }); }
+  else if (lair) start.push({ c: B.lair, at: corner() });
+  if (d >= 4) start.push({ c: spec.biome === 'isles' || spec.biome === 'tundra' ? 'archer' : 'spearman' });
   const boss = d >= 4 && !endless;
   if (boss) start.push({ c: B.boss, at: corner(), wake: false });
 
+  const startFood = () => start.reduce((t, e) => t + (CARDS[e.c].food || 0) * (e.n || 1), 0);
   // goals
   const objectives = [];
   if (endless) {
@@ -92,20 +99,21 @@ export function makeExpedition(spec) {
     const MADE = [['cooked_fish', 'torch', 'roast'], ['rope', 'plank', 'jerky'], ['brick', 'cloth', 'bread'], ['bread', 'glass', 'leather']];
     const tier = (arr) => arr[Math.min(arr.length - 1, Math.floor((d - 1) / 1.4))];
     const pool = [
-      () => ({ type: 'pop', n: 4 + d * 2 }),
-      () => ({ type: 'research', n: 1 + d }),
-      () => ({ type: 'explore', n: 2 + d }),
+      () => ({ type: 'pop', n: 5 + d * 2 }),
+      () => ({ type: 'research', n: [3, 3, 4, 4, 4][d - 1] }),
+      () => ({ type: 'explore', n: 3 + d }),
       () => ({ type: 'build', card: rng.pick(tier(BUILD)) }),
-      () => ({ type: 'food', n: 10 + d * 5 }),
-      () => ({ type: 'made', card: rng.pick(tier(MADE)), n: 3 + d * 2 }),
+      () => ({ type: 'food', n: startFood() + 6 + d * 4 }),
+      () => ({ type: 'made', card: rng.pick(tier(MADE)), n: Math.round(3 + d * 1.5) }),
     ];
-    if (d >= 2) pool.push(() => ({ type: 'lights', n: 1 + Math.ceil(d / 2) }), () => ({ type: 'soldiers', n: d }));
+    if (d >= 2) pool.push(() => ({ type: 'lights', n: 1 + Math.ceil(d / 2) }), () => ({ type: 'soldiers', n: d - 1 }));
     if (lair) pool.push(() => ({ type: 'kill', card: B.lair }));
-    const want = 2 + (d >= 3 ? 1 : 0) + (muts.some((m) => m.extraGoal) ? 1 : 0);
+    const want = 3 + (muts.some((m) => m.extraGoal) ? 1 : 0);
     const seen = new Set();
     for (const f of rng.shuffle(pool)) {
       if (objectives.length >= want) break;
       const o = f();
+      if (o.type === 'build' && start.some((e) => e.c === o.card)) continue;
       const k = o.type + (o.card || '');
       if (seen.has(o.type)) continue;
       seen.add(k);
@@ -123,32 +131,37 @@ export function makeExpedition(spec) {
   }
   const shades = d >= 3 || muts.some((m) => m.fog || m.id === 'dark') || spec.biome === 'ash';
   const rules = {
-    seasons: true, seasonDays: 3, startSeason: rng.int(0, 2), eventRate: 0.25 + d * 0.03,
+    seasons: true, seasonDays: 4, startSeason: rng.chance(0.7) ? 0 : 1, eventRate: 0.25 + d * 0.03,
     shades, shadeBase: shades ? Math.max(0, d - 3) : 0, fog0: shades ? d * 4 : 0, fogRate: shades ? 0.5 + d * 0.3 : 0,
-    cold: spec.biome === 'tundra', enemyHp: 0.8 + d * 0.1, enemyAtk: 0.85 + d * 0.08,
+    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.13, enemyAtk: 0.8 + d * 0.08,
   };
   for (const m of muts) {
     if (m.rules) Object.assign(rules, m.rules);
     if (m.start) m.start(start);
   }
   const schedule = [];
+  if (boss) schedule.push({ day: 8 + d * 2, wake: B.boss, warn: `第 ${8 + d * 2} 天：${CARDS[B.boss].name}苏醒` });
   if (endless) {
     for (let day = 4; day <= 240; day += 3) {
-      const n = 1 + Math.floor(day / 7);
+      const n = 1 + Math.floor(day / 6);
       const foes = [];
       const kinds = Math.min(B.raid.length, 1 + Math.floor(day / 10));
-      for (let i = 0; i < Math.min(9, n); i++) foes.push(B.raid[(i + day) % kinds]);
+      for (let i = 0; i < Math.min(16, n); i++) foes.push(B.raid[(i + day) % kinds]);
       const grouped = {};
       for (const f of foes) grouped[f] = (grouped[f] || 0) + 1;
       schedule.push({ day, at: 'night', msg: `第 ${day} 夜：灰雾里的敌人来袭（${foes.length}）。`, kind: 'danger', spawn: Object.entries(grouped).map(([id, k]) => [id, k]), warn: `第 ${day} 夜：袭击` });
-      if (day % 15 === 0) schedule.push({ day, at: 'night', spawn: [[B.boss, 1, { boss: true }]], warn: `第 ${day} 夜：首领` });
+      if (day % 15 === 0 || (day > 36 && day % 12 === 0)) schedule.push({ day, at: 'night', spawn: [[B.boss, day > 60 ? 2 : 1, { boss: true }]], warn: `第 ${day} 夜：首领` });
     }
     rules.fogRate = 1.2;
   }
   const lose = [];
   if (shades) lose.push({ type: 'fog' });
   if (!endless) lose.push({ type: 'time', days: 22 + objectives.length * 6 + d * 2 });
-  ensureFood({ start, rules, biome: spec.biome });
+  // feed the camp it will grow into, not just the one it starts with
+  const grown = { start: [...start, { c: 'survivor', n: 2 + Math.ceil(d / 2) }], rules, biome: spec.biome };
+  const before = grown.start.length;
+  ensureFood(grown);
+  start.push(...grown.start.slice(before));
   const biomeName = B.name;
   const id = endless ? `endless-${spec.biome}-${spec.seed}` : `exp-${spec.biome}-${d}-${spec.seed}`;
   return {

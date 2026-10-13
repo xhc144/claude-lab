@@ -2,10 +2,12 @@
 // enough to go after a lair or a boss, and what kind of soldiers the coming threats call for.
 
 import { CARDS } from '../data/cards.js';
+import { RECIPES } from '../data/recipes.js';
+import { PRODUCERS } from './knowledge.js';
 import { combatStats, damageMult } from '../sim/combat.js';
 import { CARD_W, CARD_H } from '../sim/constants.js';
 import { Exec, workSpot } from './executor.js';
-import { produce, need, goal } from './planner.js';
+import { need, goal } from './planner.js';
 
 /** Lanchester-style group power: total damage per second × total hit points */
 export function groupPower(g, cards, foeTraits = [], foeDef = 0) {
@@ -329,7 +331,9 @@ function trainSoldiers(brain, P, n, prio, traits) {
   gearOpts.push('club');
   let made = 0;
   if (trainees > 0 && opts.length) {
-    const item = opts[0];
+    // the preferred kit may need research first; when soldiers are wanted now (a goal), use what can be made today
+    const ready = (it) => W.freeN(it) > 0 || (PRODUCERS.get(it) || []).some((p) => { const r = RECIPES[p.r]; return (!r.hidden || brain.mem.disc.has(r.id)) && (!r.tech || g.hasTech(r.tech)); });
+    const item = P.soldierTarget && !ready(opts[0]) ? opts.find(ready) || opts[0] : opts[0];
     const k = Math.min(n, trainees);
     if (item === 'mace') { need(P, 'mace', k, prio, '训练锤卫', '战斗'); need(P, 'shield', k, prio, '训练锤卫', '战斗'); }
     else need(P, item, k, prio, '训练士兵', '战斗');

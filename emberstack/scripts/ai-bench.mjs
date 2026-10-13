@@ -2,6 +2,7 @@
 // Benchmark the AI across levels, strategies and seeds (headless, in parallel worker threads).
 //   node scripts/ai-bench.mjs [--levels 1-1,1-2] [--strategies balanced,rush] [--seeds 3] [--quick]
 //   node scripts/ai-bench.mjs --modes [--diffs 1,3,5] [--biomes valley,forest]   (expeditions, endless, challenges)
+//   --progress prints every finished run, --objs adds objective progress to failures
 // --quick runs every level once with the default strategy and exits 1 if any level is lost.
 // Level ids may also be specs: exp:<biome>:<diff>, endless:<biome>, ch:<challenge id>.
 import { Worker, isMainThread, parentPort, workerData } from 'node:worker_threads';
@@ -73,6 +74,7 @@ if (!isMainThread) {
       w.on('message', (r) => {
         results.push(r);
         if (r.result === 'error') console.error(r.id, r.strategy, r.reason);
+        else if (args.includes('--progress')) console.log(`  · ${r.id} ${r.strategy} ${r.result}@${r.day}${r.result === 'win' ? '' : ' ' + (r.reason || '').slice(0, 20) + (args.includes('--objs') ? ' {' + r.objs + ' pop ' + r.pop + '}' : '')}`);
         done++;
         if (done === jobs.length) resolve();
         feed();

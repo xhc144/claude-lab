@@ -138,6 +138,8 @@ export class Menus {
       h('div', { class: 'result-title' + (won ? '' : ' lose') }, r.mode === 'endless' ? `坚持了 ${r.days} 天` : won ? '胜利' : '失败'),
       won && r.mode !== 'endless' ? h('div.result-stars', [0, 1, 2].map((i) => h('span', { class: i < r.stars ? 'on' : '', style: { animationDelay: 0.3 + i * 0.25 + 's' } }, '★'))) : null,
       h('p.story', { style: { textAlign: 'center' } }, won ? r.outro || r.reason : r.reason),
+      r.starList && r.starList.length && r.mode !== 'endless' ? h('div', { style: { textAlign: 'center', fontSize: '13.5px', color: '#6a5236' } }, h('span', { style: { color: won ? '#b8860b' : '#8a7a62' } }, '★ 通关  '), r.starList.map((x) => h('span', { style: { color: x.met ? '#b8860b' : '#9a8a72', marginLeft: '10px' } }, (x.met ? '★ ' : '☆ ') + x.text))) : null,
+      r.aiOnly ? h('div', { style: { textAlign: 'center', fontSize: '13px', color: '#6a5236', marginTop: '4px' } }, `由 AI 独立完成（${r.strategy}策略）`) : null,
       r.newAch.length ? h('div', { style: { textAlign: 'center', margin: '6px 0' } }, r.newAch.map((a) => h('span.mini', { style: { margin: '3px' } }, '🏅 ' + a.name))) : null,
       h('div.stat-grid', statRows.map(([k, v]) => h('div', h('span', k), h('b.num', String(v))))),
       h('div.row.center', { style: { marginTop: '10px' } },

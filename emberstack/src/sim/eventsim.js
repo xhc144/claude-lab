@@ -4,7 +4,6 @@ import { EVENTS } from '../data/events.js';
 import { CARDS } from '../data/cards.js';
 import { CARAVAN_POOL } from '../data/trade.js';
 import { CARD_W, CARD_H } from './constants.js';
-import { spawnAttacker } from './mobs.js';
 
 export function rollEvents(g) {
   const R = g.rules;

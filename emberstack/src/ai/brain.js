@@ -101,6 +101,7 @@ export class Brain {
       const r = runStep(this, g, ex);
       if (r === 'act') {
         this.stats.actions++;
+        this.current = { label: ex.label || '', cat: ex.job.cat || '' };
         this.refreshLocks();
         return true;
       }
@@ -209,6 +210,7 @@ export class Brain {
     for (const ex of fresh) for (const st of ex.steps) if (st.op === 'dropRef' || st.op === 'bring') P.execClaims.set(st.ref, (P.execClaims.get(st.ref) || 0) + (st.n || 0));
     this.assign(W, P);
     if (W.idle.length > this.execs.length) this.experiment(W, P);
+    this.morningReport(W);
     if (!this.execs.length) this.tidy(W);
 
     this.goals = P.goals.sort((a, b) => b.prio - a.prio).slice(0, 8);
@@ -1280,6 +1282,21 @@ export class Brain {
   }
 
   /** break up mixed idle stacks so piles stay tidy (also cleans up after experiments) */
+  /** once a day the AI writes a short stock-take into its log: where things stand and what matters most */
+  morningReport(W) {
+    const g = this.g;
+    if (this.reportDay === g.s.day) return;
+    this.reportDay = g.s.day;
+    const days = W.dailyNeed > 0 ? W.food / W.dailyNeed : 99;
+    const parts = [`人口 ${W.people.length}`, `粮食够 ${days >= 9 ? '9+' : days.toFixed(1)} 天`];
+    if (W.mainFire) parts.push(`${CARDS[W.mainFire.d].name}燃料 ${Math.round(W.mainFire.fuel || 0)}`);
+    if (g.rules.seasons !== false && W.daysToWinter < 6) parts.push(W.daysToWinter <= 0 ? '正值冬天' : `${W.daysToWinter} 天后入冬`);
+    if (W.threats.length) parts.push(`${W.threats.length} 个威胁`);
+    if (g.s.fog > 0) parts.push(`灰雾 ${Math.round(g.s.fog)}%`);
+    const focus = this.goals.slice(0, 3).map((x) => x.name).join('、');
+    this.note('盘点', `第 ${g.s.day} 天：${parts.join('，')}。${focus ? '今天的重点：' + focus + '。' : ''}`, true);
+  }
+
   tidy(W) {
     const g = this.g;
     for (const st of W.stacks) {

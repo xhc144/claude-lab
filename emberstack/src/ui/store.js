@@ -7,7 +7,7 @@ const DEFAULTS = {
   progress: {}, // levelId -> { won, stars, bestDays, plays, aiWon }
   settings: {
     master: 0.8, music: 0.55, sfx: 0.8, lowFx: false, showHand: true, autoNext: true, strategy: 'balanced',
-    takeover: true, autoCam: true, tutorial: true, speed: 1, unlockAll: false,
+    takeover: true, autoCam: true, followAI: false, tutorial: true, speed: 1, unlockAll: false,
   },
   seen: [], // card ids
   recipes: [], // discovered recipe ids (hidden ones count as found)

@@ -1,6 +1,6 @@
 // Plants, terrain features, buildings and objects for card illustrations.
 
-import { INK, lighten, darken, srand } from './paint.js';
+import { lighten, darken, srand } from './paint.js';
 import { flame } from './art_life.js';
 
 // ---------------------------------------------------------------- plants --------------------------

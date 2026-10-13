@@ -7,7 +7,7 @@ import { DT } from './sim/constants.js';
 import { CARDS } from './data/cards.js';
 import { LEVELS, nextLevelId } from './data/levels.js';
 import { ACHIEVEMENTS } from './data/achievements.js';
-import { stars } from './sim/objectives.js';
+import { stars, starText, starMet } from './sim/objectives.js';
 import { BoardView } from './render/board.js';
 import { flushSprites } from './render/cardface.js';
 import { audio } from './audio/audio.js';
@@ -148,6 +148,7 @@ export class App {
     this.view.setGame(g);
     this.view.autoCam = S.settings.autoCam !== false;
     this.view.showHand = S.settings.showHand;
+    this.view.followAI = !!S.settings.followAI;
     if (!this.hud) this.hud = new Hud(this, this.hudRoot);
     else this.hud.build();
     this.hud.setHidden(false);
@@ -387,6 +388,7 @@ export class App {
 
   dispatch(evs, demo) {
     if (!evs.length) return;
+    this.view.handLabel = this.brain && this.brain.current ? this.brain.current.label : '';
     this.view.onEvents(evs);
     if (demo) return;
     this.hud.onEvents(evs);
@@ -420,6 +422,7 @@ export class App {
       coinsEarned: st.coinsEarned, actions: st.actions, reason: g.s.reason, outro: L.outro,
       aiOnly: (st.actions.player || 0) === 0 && (st.actions.ai || 0) > 0, noAi: (st.actions.ai || 0) === 0,
       next: mode === 'campaign' ? nextLevelId(L.id) : null, newAch: [],
+      strategy: this.brain.base.name, starList: (L.stars || []).map((c) => ({ text: starText(c), met: won && starMet(g, c) })),
     };
     this.newAch = [];
     if (mode === 'campaign' || mode === 'challenge') recordLevel(L.id, { won, stars: r.stars, days: r.days, ai: r.aiOnly });

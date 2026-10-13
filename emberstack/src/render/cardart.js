@@ -2,7 +2,7 @@
 // the painter vocabulary. Coordinates are in the 100×76 art window.
 
 import { CARDS } from '../data/cards.js';
-import { INK, lighten, darken } from './paint.js';
+import { INK } from './paint.js';
 import { figure, item, flame, quadruped, bird, fish, shade, wisp, golem, treebeast, tentacle, beetle, serpent } from './art_life.js';
 import {
   tree, pine, deadTree, bush, grass, wheat, mushroom, herbs, reeds, rocks, crystal, pit, pool, fireRing, hut, tower, post, anvil,

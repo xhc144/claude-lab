@@ -18,7 +18,7 @@ import { store } from './store.js';
 
 const CAT_COLORS = {
   生存: '#ff9a7a', 食物: '#f2c14e', 战斗: '#ff6a5a', 经济: '#e8c86a', 整理: '#9a8a7a', 目标: '#ffd27a', 探索: '#7ad0c8', 建设: '#c8a87a',
-  实验: '#c89aff', 科技: '#8ab8f0', 思考: '#b8a37e', 训练: '#e89a5a', 世界: '#8a9aa8',
+  实验: '#c89aff', 科技: '#8ab8f0', 思考: '#b8a37e', 训练: '#e89a5a', 世界: '#8a9aa8', 盘点: '#f6e6c4',
 };
 const TOAST_KINDS = new Set(['goal', 'tech', 'danger', 'death', 'boss', 'discover', 'hint', 'win', 'story', 'season', 'event', 'birth', 'explore']);
 
@@ -83,7 +83,10 @@ export class Hud {
     this.starList = h('div.starline');
     this.loseList = h('div.starline');
     this.warnList = h('div.warnings.panel');
-    this.left = h('div.leftcol', h('div.objectives.panel', h('h3', '目标'), this.objList, this.starList, this.loseList), this.warnList);
+    this.objHead = h('h3', { style: { cursor: 'pointer' }, title: '点击收起/展开', onclick: () => this.objBox.classList.toggle('mini') }, '目标');
+    this.objBox = h('div.objectives.panel', this.objHead, this.objList, this.starList, this.loseList);
+    if (window.innerWidth < 820) this.objBox.classList.add('mini');
+    this.left = h('div.leftcol', this.objBox, this.warnList);
     // AI panel
     this.aiToggle = h('div.toggle', { title: 'AI 自动游玩 (A)', onclick: () => app.setAI(!app.aiOn) });
     this.aiFocus = h('div.focus');
@@ -107,6 +110,7 @@ export class Hud {
         opt('自动下一关', 'autoNext'),
         opt('显示 AI 之手', 'showHand', (v) => { app.view.showHand = v; }),
         opt('跟随镜头', 'autoCam', (v) => { app.view.autoCam = v; }),
+        opt('镜头追随 AI 之手', 'followAI', (v) => { app.view.followAI = v; if (v) app.view.autoCam = true; }),
         opt('手动操作时接管', 'takeover')));
     if (window.innerWidth < 820) this.ai.classList.add('collapsed');
     // inspector, toasts, takeover notice
@@ -237,6 +241,8 @@ export class Hud {
     if (key === this.objKey) return;
     this.objKey = key;
     clear(this.objList);
+    const doneN = g.s.objectives.filter((o) => o.done || o.cur >= o.need).length;
+    setText(this.objHead, g.s.objectives.length ? `目标 ${doneN}/${g.s.objectives.length}` : '目标');
     if (!g.s.objectives.length) this.objList.appendChild(h('div.obj', h('div.t', h('span', '坚持下去'), h('span.num', `第 ${g.s.day} 天`))));
     for (const o of g.s.objectives) {
       const f = o.need ? Math.min(1, o.cur / o.need) : 0;

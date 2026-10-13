@@ -26,6 +26,7 @@ const SHADOW = (() => {
 })();
 
 const BLOCK_ICON = { 太暗了: 'sun', 等待夜晚: 'moon', 冬季休眠: 'snow', 等待恢复: 'leaf', 需要镐: 'pick', 需要光源: 'sun', 需要舟: 'boat', 房屋已满: 'house' };
+const FOIL = { rare: 'rgba(190,220,255,0.28)', epic: 'rgba(230,190,255,0.32)', legendary: 'rgba(255,225,150,0.4)' };
 const SPOIL_WHY = new Set(['absorb', 'consume', 'pay', 'research', 'sell', 'eat']);
 
 export class BoardView {
@@ -55,6 +56,8 @@ export class BoardView {
     this.meteors = [];
     this.lowFx = false;
     this.showHand = true;
+    this.followAI = false;
+    this.handEMA = null;
     this.lastSeason = -1;
   }
 
@@ -64,6 +67,7 @@ export class BoardView {
     this.views.clear();
     this.ghosts.length = 0;
     this.spawnFrom.clear();
+    this.handEMA = null;
     this.fx.clear();
     this.weather.length = 0;
     const c = game.colonyCenter();
@@ -316,12 +320,16 @@ export class BoardView {
     if (h.vis < 0.2) { h.fx = e.from.x; h.fy = e.from.y; }
     h.tx = e.to.x;
     h.ty = e.to.y;
+    const E = this.handEMA || (this.handEMA = { x: e.to.x, y: e.to.y });
+    E.x += (e.to.x - E.x) * 0.25;
+    E.y += (e.to.y - E.y) * 0.25;
     h.t = 0;
     h.dur = Math.max(0.06, 0.34 / Math.max(1, this.speed));
     h.vis = 1;
     h.tap = e.tap ? 1 : 0;
     h.card = e.id;
     h.from2 = e.from;
+    h.label = (this.handLabel || '').replace(/^目标：/, '').split(/[，。（→]/)[0].slice(0, 14);
   }
 
   // ------------------------------------------------------------------ per-frame update
@@ -329,7 +337,15 @@ export class BoardView {
     const g = this.game;
     this.time += dt;
     // camera
-    if (this.autoCam && Math.floor(this.time * 2) !== Math.floor((this.time - dt) * 2)) this.fitColony();
+    if (this.autoCam && Math.floor(this.time * 2) !== Math.floor((this.time - dt) * 2)) {
+      if (this.followAI && this.hand.vis > 0.3 && this.handEMA) {
+        // follow the AI's hands at a readable zoom, drifting with where it works
+        const L = this.zoomLimits();
+        this.camT.x = this.handEMA.x;
+        this.camT.y = this.handEMA.y;
+        this.camT.z = Math.max(L.min, Math.min(L.max, 0.78));
+      } else this.fitColony();
+    }
     const kc = 1 - Math.exp(-dt * 3);
     this.cam.x += (this.camT.x - this.cam.x) * kc;
     this.cam.y += (this.camT.y - this.cam.y) * kc;
@@ -612,6 +628,37 @@ export class BoardView {
     g.translate(x + CARD_W / 2, y + CARD_H / 2);
     g.scale(s * Math.max(0.02, fx), s);
     g.drawImage(spr, -CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H);
+    // foil: rare cards catch the light with a slow moving sheen
+    const def = CARDS[c.d];
+    const foil = !back && FOIL[def.rarity];
+    if (foil && !this.lowFx && scale > 0.45) {
+      const ph = ((this.time * 0.35 + c.id * 0.137) % 1.6) - 0.3;
+      const A = FACE.art;
+      g.save();
+      roundRect(g, -CARD_W / 2 + A.x, -CARD_H / 2 + A.y, A.w, A.h, 3);
+      g.clip();
+      const x0 = -CARD_W / 2 + A.x + ph * (A.w + 80) - 40;
+      const gr = g.createLinearGradient(x0 - 26, -CARD_H / 2, x0 + 26, -CARD_H / 2 + 40);
+      gr.addColorStop(0, 'rgba(255,255,255,0)');
+      gr.addColorStop(0.5, foil);
+      gr.addColorStop(1, 'rgba(255,255,255,0)');
+      g.globalCompositeOperation = 'lighter';
+      g.fillStyle = gr;
+      g.fillRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H);
+      g.restore();
+    }
+    if (def.kind === 'wonder' || (def.traits && def.traits.includes('boss'))) {
+      // wonders and bosses breathe with an aura of their own
+      const pulse = 0.5 + 0.5 * Math.sin(this.time * 2.2 + c.id);
+      g.save();
+      g.shadowColor = def.kind === 'wonder' ? 'rgba(255,170,60,0.9)' : 'rgba(255,60,40,0.8)';
+      g.shadowBlur = 10 + pulse * 14;
+      g.strokeStyle = def.kind === 'wonder' ? `rgba(255,200,110,${0.4 + pulse * 0.4})` : `rgba(255,90,60,${0.3 + pulse * 0.4})`;
+      g.lineWidth = 2.5;
+      roundRect(g, -CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 7);
+      g.stroke();
+      g.restore();
+    }
     if (v.hit > 0) {
       g.globalAlpha = v.hit * 0.45;
       g.fillStyle = '#ff3020';
@@ -914,6 +961,16 @@ export class BoardView {
     g.strokeText('AI', h.x, h.y - r - 9 * s);
     g.fillStyle = '#ffe2a0';
     g.fillText('AI', h.x, h.y - r - 9 * s);
+    if (h.label && this.speed <= 8) {
+      g.font = `${10 * s}px ${FONT_BODY}`;
+      const tw = g.measureText(h.label).width + 12 * s;
+      g.globalAlpha = Math.min(1, h.vis * 1.4) * 0.92;
+      g.fillStyle = 'rgba(28,18,10,0.85)';
+      roundRect(g, h.x - tw / 2, h.y + r + 4 * s, tw, 15 * s, 7 * s);
+      g.fill();
+      g.fillStyle = '#f6e6c4';
+      g.fillText(h.label, h.x, h.y + r + 11.5 * s);
+    }
     g.restore();
   }
 
