@@ -3742,6 +3742,8 @@ function setupLevel(g) {
         x = W / 2 - span / 2 + (regionIdx + 0.5) * (span / Math.max(1, regionsTotal)) - CARD_W / 2;
         y = Math.max(60, cy - 640 + (regionIdx % 2) * 40);
         regionIdx++;
+        // never put a region on a sleeping boss's doorstep: explorers would wake it
+        for (let k = 0; k < 6 && !safe(x, y); k++) y += 120;
       } else {
         const [r0, r1] = { camp: [0, 240], near: [260, 480], mid: [480, 700], far: [700, 950], edge: [900, 1300] }[zone] || [0, 200];
         for (let tries = 0; tries < 30; tries++) {
@@ -3802,6 +3804,9 @@ const DEFAULT_RULES = {
   workSpeed: 1, dark: false, spoilMult: 1,
 };
 
+// every game gets its own id so caches shared across games (recipe matching) never mix tech sets
+let GAME_SEQ = 0;
+
 const PILEABLE = new Set(['resource', 'food', 'knowledge', 'coin', 'misc', 'tool', 'gear', 'bundle']);
 const STICKY = new Set(['kill', 'explore', 'deliver', 'discover', 'made', 'trade', 'earn', 'survive', 'research', 'festival']);
 
@@ -3838,11 +3843,12 @@ class Game {
       if (!this.s.tech.includes('fire') && !(level.noFire)) this.s.tech.push('fire');
     }
     this.techSet = new Set(this.s.tech);
+    this.uid = ++GAME_SEQ;
     const self = this;
     this.ctx = {
       hasTech: (id) => self.techSet.has(id),
       isActive: (c) => self.isActive(c),
-      get techVersion() { return self.s.techV; },
+      get techVersion() { return self.uid + ':' + self.s.techV; },
     };
     if (!opts.load) {
       setupLevel(this);
@@ -4076,6 +4082,7 @@ class Game {
   scaleEnemy(c) {
     const def = CARDS[c.d];
     let mult = this.rules.enemyHp || 1;
+    if (def.traits.includes('boss') && this.rules.bossHp) mult = this.rules.bossHp;
     if (def.tags.includes('shade') && !def.traits.includes('boss')) mult *= 1 + this.s.fog / 150;
     c.mhp = Math.max(1, Math.round(def.hp * mult));
     c.hp = c.mhp;
@@ -5560,6 +5567,18 @@ function dangerPoints(g, W) {
     .concat(W.lairs.map((l) => g.cardPos(l)));
 }
 
+/** true when a non-combat job would send people to a target lying next to a sleeping boss or a lair */
+function riskyTarget(brain, g, ex, cardId, target) {
+  if (ex.job.kind === 'fight' || ex.job.kind === 'retreat' || !brain.W) return false;
+  const c = g.s.cards[cardId];
+  const st = c && g.s.stacks[c.s];
+  if (!st) return false;
+  const i = st.cards.indexOf(cardId);
+  if (!st.cards.slice(i).some((id) => CARDS[g.s.cards[id].d].tags.includes('person'))) return false;
+  const p = g.cardPos(target);
+  return dangerPoints(g, brain.W).some((d) => Math.hypot(d.x - p.x, d.y - p.y) < 480);
+}
+
 /** move a card, but never into the reach of a sleeping boss: such spots are swapped for a safe work spot */
 function moveSafe(brain, g, id, x, y, who) {
   const W = brain.W;
@@ -5749,6 +5768,7 @@ function doStep(brain, g, ex, step) {
         const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : (step.optional ? 'next' : 'fail');
       }
+      if (riskyTarget(brain, g, ex, c.id, t)) { ex.why = '离沉睡的首领太近'; return step.optional ? 'next' : 'fail'; }
       const r = g.actDrop(c.id, t.id, who);
       if (!r.ok) { ex.why = r.why; return step.optional ? 'next' : 'fail'; }
       return 'act';
@@ -5763,6 +5783,7 @@ function doStep(brain, g, ex, step) {
       if (!src) { if (step.optional) return 'next'; ex.why = '缺少' + (CARDS[step.ref]?.name || step.ref); return 'fail'; }
       const k = Math.min(step.n, src.run, step.each || 99);
       const card = g.s.cards[src.st.cards[src.st.cards.length - k]];
+      if (riskyTarget(brain, g, ex, card.id, t)) { ex.why = '离沉睡的首领太近'; return 'fail'; }
       const r = g.actDrop(card.id, t.id, who);
       if (!r.ok) { ex.why = r.why; return 'fail'; }
       step.n -= k;
@@ -6470,7 +6491,7 @@ class Brain {
     this.assign(W, P);
     if (W.idle.length > this.execs.length) this.experiment(W, P);
     this.morningReport(W);
-    if (!this.execs.length) this.tidy(W);
+    if (this.execs.filter((e) => e.job.kind !== 'tidy').length <= 2 && !this.execs.some((e) => e.job.kind === 'tidy')) this.tidy(W);
 
     this.goals = P.goals.sort((a, b) => b.prio - a.prio).slice(0, 8);
     this.focus = this.goals[0] ? this.goals[0].name : '';
@@ -8007,7 +8028,7 @@ level(4, {
   start: [
     { c: 'survivor', n: 6 }, { c: 'campfire', fuel: 5 }, { c: 'lean_to', n: 3 }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 }, { c: 'copper_vein', n: 2 },
     { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit' }, { c: 'berry_bush', n: 3 }, { c: 'pond', n: 2 }, { c: 'goat', n: 3 }, { c: 'tall_grass', n: 2 },
-    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' },
+    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' }, { c: 'bronze_sword', n: 2 }, { c: 'leather_armor', n: 2 },
     { c: 'bandit_camp', at: [0.88, 0.16] }, { c: 'bandit_chief', at: [0.8, 0.1], wake: false },
   ],
   objectives: [{ type: 'kill', card: 'bandit_camp' }, { type: 'kill', card: 'bandit_chief' }],
@@ -12093,7 +12114,7 @@ class BoardView {
     const lift = st.held ? 14 : 0;
     // shadow
     if (SHADOW) {
-      const h = vt.y - v0.y + CARD_H;
+      const h = Math.max(0, Math.min(vt.y - v0.y, G.stackH(st) - CARD_H)) + CARD_H;
       g.globalAlpha = Math.min(v0.a, 1) * (st.held ? 0.8 : 1);
       g.drawImage(SHADOW, v0.x - 25 + 4 + lift, v0.y - 25 + 7 + lift * 1.4, CARD_W + 50, h + 50);
       g.globalAlpha = 1;
@@ -13995,7 +14016,7 @@ function makeExpedition(spec) {
   const rules = {
     seasons: true, seasonDays: 4, startSeason: rng.chance(0.7) ? 0 : 1, eventRate: 0.25 + d * 0.03,
     shades, shadeBase: shades ? Math.max(0, d - 3) : 0, fog0: shades ? d * 4 : 0, fogRate: shades ? 0.5 + d * 0.3 : 0,
-    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07,
+    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07, bossHp: 0.85,
   };
   for (const m of muts) {
     if (m.rules) Object.assign(rules, m.rules);

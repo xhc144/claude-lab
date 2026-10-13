@@ -41,6 +41,18 @@ function dangerPoints(g, W) {
     .concat(W.lairs.map((l) => g.cardPos(l)));
 }
 
+/** true when a non-combat job would send people to a target lying next to a sleeping boss or a lair */
+function riskyTarget(brain, g, ex, cardId, target) {
+  if (ex.job.kind === 'fight' || ex.job.kind === 'retreat' || !brain.W) return false;
+  const c = g.s.cards[cardId];
+  const st = c && g.s.stacks[c.s];
+  if (!st) return false;
+  const i = st.cards.indexOf(cardId);
+  if (!st.cards.slice(i).some((id) => CARDS[g.s.cards[id].d].tags.includes('person'))) return false;
+  const p = g.cardPos(target);
+  return dangerPoints(g, brain.W).some((d) => Math.hypot(d.x - p.x, d.y - p.y) < 480);
+}
+
 /** move a card, but never into the reach of a sleeping boss: such spots are swapped for a safe work spot */
 function moveSafe(brain, g, id, x, y, who) {
   const W = brain.W;
@@ -230,6 +242,7 @@ function doStep(brain, g, ex, step) {
         const r0 = moveSafe(brain, g, above, spot.x, spot.y, who);
         return r0.ok ? 'actRepeat' : (step.optional ? 'next' : 'fail');
       }
+      if (riskyTarget(brain, g, ex, c.id, t)) { ex.why = '离沉睡的首领太近'; return step.optional ? 'next' : 'fail'; }
       const r = g.actDrop(c.id, t.id, who);
       if (!r.ok) { ex.why = r.why; return step.optional ? 'next' : 'fail'; }
       return 'act';
@@ -244,6 +257,7 @@ function doStep(brain, g, ex, step) {
       if (!src) { if (step.optional) return 'next'; ex.why = '缺少' + (CARDS[step.ref]?.name || step.ref); return 'fail'; }
       const k = Math.min(step.n, src.run, step.each || 99);
       const card = g.s.cards[src.st.cards[src.st.cards.length - k]];
+      if (riskyTarget(brain, g, ex, card.id, t)) { ex.why = '离沉睡的首领太近'; return 'fail'; }
       const r = g.actDrop(card.id, t.id, who);
       if (!r.ok) { ex.why = r.why; return 'fail'; }
       step.n -= k;

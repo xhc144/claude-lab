@@ -23,6 +23,9 @@ export const DEFAULT_RULES = {
   workSpeed: 1, dark: false, spoilMult: 1,
 };
 
+// every game gets its own id so caches shared across games (recipe matching) never mix tech sets
+let GAME_SEQ = 0;
+
 const PILEABLE = new Set(['resource', 'food', 'knowledge', 'coin', 'misc', 'tool', 'gear', 'bundle']);
 const STICKY = new Set(['kill', 'explore', 'deliver', 'discover', 'made', 'trade', 'earn', 'survive', 'research', 'festival']);
 
@@ -59,11 +62,12 @@ export class Game {
       if (!this.s.tech.includes('fire') && !(level.noFire)) this.s.tech.push('fire');
     }
     this.techSet = new Set(this.s.tech);
+    this.uid = ++GAME_SEQ;
     const self = this;
     this.ctx = {
       hasTech: (id) => self.techSet.has(id),
       isActive: (c) => self.isActive(c),
-      get techVersion() { return self.s.techV; },
+      get techVersion() { return self.uid + ':' + self.s.techV; },
     };
     if (!opts.load) {
       setupLevel(this);
@@ -297,6 +301,7 @@ export class Game {
   scaleEnemy(c) {
     const def = CARDS[c.d];
     let mult = this.rules.enemyHp || 1;
+    if (def.traits.includes('boss') && this.rules.bossHp) mult = this.rules.bossHp;
     if (def.tags.includes('shade') && !def.traits.includes('boss')) mult *= 1 + this.s.fog / 150;
     c.mhp = Math.max(1, Math.round(def.hp * mult));
     c.hp = c.mhp;

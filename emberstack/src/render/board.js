@@ -577,7 +577,7 @@ export class BoardView {
     const lift = st.held ? 14 : 0;
     // shadow
     if (SHADOW) {
-      const h = vt.y - v0.y + CARD_H;
+      const h = Math.max(0, Math.min(vt.y - v0.y, G.stackH(st) - CARD_H)) + CARD_H;
       g.globalAlpha = Math.min(v0.a, 1) * (st.held ? 0.8 : 1);
       g.drawImage(SHADOW, v0.x - 25 + 4 + lift, v0.y - 25 + 7 + lift * 1.4, CARD_W + 50, h + 50);
       g.globalAlpha = 1;

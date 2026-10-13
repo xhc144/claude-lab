@@ -44,6 +44,8 @@ export function setupLevel(g) {
         x = W / 2 - span / 2 + (regionIdx + 0.5) * (span / Math.max(1, regionsTotal)) - CARD_W / 2;
         y = Math.max(60, cy - 640 + (regionIdx % 2) * 40);
         regionIdx++;
+        // never put a region on a sleeping boss's doorstep: explorers would wake it
+        for (let k = 0; k < 6 && !safe(x, y); k++) y += 120;
       } else {
         const [r0, r1] = { camp: [0, 240], near: [260, 480], mid: [480, 700], far: [700, 950], edge: [900, 1300] }[zone] || [0, 200];
         for (let tries = 0; tries < 30; tries++) {

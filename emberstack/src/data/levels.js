@@ -381,7 +381,7 @@ level(4, {
   start: [
     { c: 'survivor', n: 6 }, { c: 'campfire', fuel: 5 }, { c: 'lean_to', n: 3 }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 }, { c: 'copper_vein', n: 2 },
     { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit' }, { c: 'berry_bush', n: 3 }, { c: 'pond', n: 2 }, { c: 'goat', n: 3 }, { c: 'tall_grass', n: 2 },
-    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' },
+    { c: 'wild_wheat', n: 2 }, { c: 'mushroom_ring' }, { c: 'field' }, { c: 'coin', n: 5 }, { c: 'stone_pick' }, { c: 'spear', n: 2 }, { c: 'bandit_trail' }, { c: 'palisade' }, { c: 'bronze_sword', n: 2 }, { c: 'leather_armor', n: 2 },
     { c: 'bandit_camp', at: [0.88, 0.16] }, { c: 'bandit_chief', at: [0.8, 0.1], wake: false },
   ],
   objectives: [{ type: 'kill', card: 'bandit_camp' }, { type: 'kill', card: 'bandit_chief' }],

@@ -211,7 +211,7 @@ export class Brain {
     this.assign(W, P);
     if (W.idle.length > this.execs.length) this.experiment(W, P);
     this.morningReport(W);
-    if (!this.execs.length) this.tidy(W);
+    if (this.execs.filter((e) => e.job.kind !== 'tidy').length <= 2 && !this.execs.some((e) => e.job.kind === 'tidy')) this.tidy(W);
 
     this.goals = P.goals.sort((a, b) => b.prio - a.prio).slice(0, 8);
     this.focus = this.goals[0] ? this.goals[0].name : '';

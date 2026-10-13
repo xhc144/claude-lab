@@ -134,7 +134,7 @@ export function makeExpedition(spec) {
   const rules = {
     seasons: true, seasonDays: 4, startSeason: rng.chance(0.7) ? 0 : 1, eventRate: 0.25 + d * 0.03,
     shades, shadeBase: shades ? Math.max(0, d - 3) : 0, fog0: shades ? d * 4 : 0, fogRate: shades ? 0.5 + d * 0.3 : 0,
-    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07,
+    cold: spec.biome === 'tundra', enemyHp: 0.75 + d * 0.1, enemyAtk: 0.8 + d * 0.07, bossHp: 0.85,
   };
   for (const m of muts) {
     if (m.rules) Object.assign(rules, m.rules);
