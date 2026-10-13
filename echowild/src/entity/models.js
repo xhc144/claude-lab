@@ -1,5 +1,12 @@
-// Creature box models: parts in pixel units (16 = one block, forward = -Z), procedurally painted
-// skins registered as extra texture layers, and a small pose/animation system.
+// Creature models: parts in pixel units (16 = one block, forward = -Z), procedurally painted
+// skins registered as extra texture layers, and a small skeletal pose/animation system.
+//
+// Animals are rigged: parts belong to groups (body, neck, head, ears, eyes, tail segments, legs,
+// wings) that form a hierarchy with their own pivots, so a grazing deer lowers its neck and the
+// head follows, ears flick, eyes blink, tails sway segment by segment and the body rises and
+// breathes with the gait. Meshes carry a baked height gradient (darker towards the belly and
+// legs, like light occluded by the body and the ground) and fur is painted at twice the block
+// texel density so creatures read finer than the terrain around them.
 
 import { registerTexture, hex, mix, mul, field } from '../render/textures.js';
 import { texLayer } from '../world/blocks.js';
@@ -49,29 +56,140 @@ function solidPainter(c, { glow = false, alpha = 255, noise = 0.08 } = {}) {
   return (img) => img.each((x, y) => { img.set(x, y, mul(C, 1 - noise + img.rng.next() * noise * 2), alpha); if (glow) img.glow(x, y, 0.85); });
 }
 
+// --- animal coats (tile seamlessly: box faces sample windows of the texture at any offset)
+const wrapD = (a, b) => { const d = Math.abs(a - b) % 16; return Math.min(d, 16 - d); };
+// fleece: tight curls, each lit from above with a soft shadow below
+function woolPainter(base, { light = 1.06, dark = 0.64, curls = 13, r = 2.4 } = {}) {
+  const B = hex(base);
+  return (img) => {
+    const pts = [];
+    for (let k = 0; k < curls; k++) pts.push([img.rng.next() * 16, img.rng.next() * 16, 0.8 + img.rng.next() * 0.45]);
+    const n = field(img, 4, 11);
+    img.each((x, y) => {
+      let best = 99, by = 0;
+      for (const [px, py, sz] of pts) {
+        const dx = wrapD(x + 0.5, px), dy = wrapD(y + 0.5, py);
+        const d = Math.hypot(dx, dy) / sz;
+        if (d < best) { best = d; by = ((y + 0.5 - py + 24) % 16) - 8; }
+      }
+      const v = Math.max(0, 1 - best / r);
+      const top = by < 0 ? 0.06 : -0.05; // upper half of a curl catches the light
+      const f = dark + (light - dark) * Math.pow(v, 0.55) + top * v + (n(x, y) - 0.5) * 0.08 + (img.rng.next() - 0.5) * 0.035;
+      img.set(x, y, mul(B, f));
+    });
+  };
+}
+// short hair: soft value noise with fine directional strands, optional spots and glints
+function hairPainter(base, { dark = 0.8, light = 1.14, strands = 0.5, spots = null, nSpots = 6, glow = null, nGlow = 4, flecks = null } = {}) {
+  const B = hex(base);
+  return (img) => {
+    const f = field(img, 4, 5), f2 = field(img, 8, 9);
+    const col = [];
+    for (let x = 0; x < 16; x++) col.push(img.rng.next());
+    img.each((x, y) => {
+      const n = f(x, y) * 0.55 + f2(x, y) * 0.3 + img.rng.next() * 0.15;
+      const s = (col[x] - 0.5) * strands * Math.sin((y + col[x] * 9) * 0.8);
+      const k = dark + (light - dark) * Math.min(1, Math.max(0, n + s));
+      img.set(x, y, mul(B, k));
+    });
+    if (flecks) for (let k = 0; k < 10; k++) { const x = img.rng.int(16), y = img.rng.int(16); img.blend(x, y, hex(flecks), 0.55); }
+    if (spots) for (let k = 0; k < nSpots; k++) {
+      const x = img.rng.int(16), y = img.rng.int(16), c = hex(spots);
+      img.blend(x, y, c, 0.9); img.blend(x + 1, y, c, 0.6); img.blend(x, y + 1, c, 0.5); img.blend(x + 1, y + 1, c, 0.3);
+    }
+    if (glow) for (let k = 0; k < nGlow; k++) { const x = img.rng.int(16), y = img.rng.int(16); img.set(x, y, hex(glow)); img.glow(x, y, 1); }
+  };
+}
+// feathers: overlapping rows of rounded scales, darker at their trailing edge
+function featherPainter(base, { tip = null, dark = 0.72, light = 1.15, rows = 4 } = {}) {
+  const B = hex(base), T = tip ? hex(tip) : mul(B, dark);
+  return (img) => {
+    const h = 16 / rows;
+    img.each((x, y) => {
+      const row = Math.floor(y / h), off = (row % 2) * 2;
+      const fx = ((x + off) % 4) / 4 - 0.5, fy = (y % h) / h;
+      const edge = fy + Math.abs(fx) * 0.9;
+      let c = mul(B, light - (light - 1) * fy * 2);
+      if (edge > 0.86) c = mix(c, T, 0.45);
+      img.set(x, y, mul(c, 0.96 + img.rng.next() * 0.08));
+    });
+  };
+}
+// a face texture for snouts and muzzles (fit to the front face): nostrils and a soft mouth line
+function snoutPainter(base, { nostril = '#2a1a1a', nose = null, mouth = true } = {}) {
+  const B = hex(base);
+  return (img) => {
+    img.each((x, y) => img.set(x, y, mul(B, 0.92 + img.rng.next() * 0.1 - (y > 11 ? 0.08 : 0))));
+    if (nose) for (let y = 1; y < 8; y++) for (let x = 3; x < 13; x++) if (Math.hypot((x - 7.5) / 5, (y - 4) / 3.6) < 1) img.set(x, y, mul(hex(nose), 0.9 + img.rng.next() * 0.15));
+    const N = hex(nostril);
+    for (const cx of [4, 10]) for (let y = 3; y < 6; y++) for (let x = cx; x < cx + 2; x++) img.set(x, y, N);
+    if (mouth) for (let x = 5; x < 11; x++) img.set(x, 12 + (x === 5 || x === 10 ? -1 : 0), mul(B, 0.55));
+  };
+}
+// ear with a pale inner shell (fit to the front face)
+function earPainter(base, inner) {
+  const B = hex(base), I = hex(inner);
+  return (img) => img.each((x, y) => {
+    const d = Math.hypot((x - 7.5) / 5.2, (y - 9) / 7.5);
+    img.set(x, y, d < 1 ? mix(I, mul(I, 0.85), d) : mul(B, 0.9 + img.rng.next() * 0.15));
+  });
+}
+// a bushy tail tip / ruff that fades to white
+function gradientPainter(a, b, { glow = false } = {}) {
+  const A = hex(a), Bc = hex(b);
+  return (img) => img.each((x, y) => { img.set(x, y, mul(mix(A, Bc, y / 15), 0.93 + img.rng.next() * 0.12)); if (glow && y > 9 && img.rng.next() < 0.15) img.glow(x, y, 0.8); });
+}
+
 const SKINS = {
-  deer_fur: furPainter('#a8743e', { pattern: 'spots', accent: '#e8d4b0' }),
+  // grazing animals
+  deer_fur: hairPainter('#9c6a3a', { spots: '#ead8b4', nSpots: 4, strands: 0.45 }),
+  deer_coat: hairPainter('#9c6a3a', { strands: 0.45 }),
+  deer_belly: hairPainter('#e4d3b2', { dark: 0.9, light: 1.04, strands: 0.2 }),
+  deer_leg: hairPainter('#7e5430', { strands: 0.6 }),
+  deer_nose: snoutPainter('#8a6038', { nose: '#2a1d16', nostril: '#120c0a' }),
   deer_face: facePainter('#a8743e', { nose: '#2a1a12' }),
-  antler: furPainter('#e6dcc2', { pattern: 'bone', dark: 0.85 }),
-  sheep_wool: furPainter('#eef3fb', { pattern: 'wool', dark: 0.86, light: 1.04 }),
-  sheep_face: facePainter('#7d88a6', { eyes: '#14121c', nose: '#4a5068' }),
-  sheep_skin: furPainter('#c8b8a8', { dark: 0.9 }),
-  horn_gold: furPainter('#d8b85a', { pattern: 'stripes' }),
-  bird_body: furPainter('#f2c26a', { pattern: 'scales', light: 1.12 }),
+  deer_ear: earPainter('#9c6a3a', '#e9c7b0'),
+  antler: hairPainter('#e2d6b8', { dark: 0.82, light: 1.06, strands: 0.9 }),
+  sheep_wool: woolPainter('#f2f5fb'),
+  sheep_wool_cream: woolPainter('#efe1c4'),
+  sheep_wool_gray: woolPainter('#a9adb8', { dark: 0.72 }),
+  sheep_wool_brown: woolPainter('#6e5444', { dark: 0.7, light: 1.12 }),
+  sheep_face: hairPainter('#5d6684', { strands: 0.35, dark: 0.85 }),
+  sheep_muzzle: snoutPainter('#76809c', { nose: '#3c4258', nostril: '#191b26' }),
+  sheep_skin: hairPainter('#d6c3b3', { dark: 0.88, strands: 0.25 }),
+  horn_gold: (img) => img.each((x, y) => img.set(x, y, mul(hex('#d9b65a'), (y % 3 === 0 ? 0.74 : 1.02) + img.rng.next() * 0.08))),
+  // fowl
+  bird_body: featherPainter('#f2c26a', { tip: '#c88a3c' }),
+  bird_breast: featherPainter('#fbe6b0', { tip: '#e8c88a', rows: 5 }),
+  bird_wing: featherPainter('#e3a24a', { tip: '#8a4f22', rows: 3 }),
   bird_face: facePainter('#f2c26a', { eyeY: 5, eyeGap: 4 }),
+  crest: gradientPainter('#ff8a4a', '#e8402e'),
   beak: solidPainter('#e8862a'),
-  boar_fur: furPainter('#5e3e2a', { pattern: 'fur', dark: 0.7 }),
+  // boar
+  boar_fur: hairPainter('#5a3b28', { dark: 0.72, light: 1.18, strands: 1.1, flecks: '#8a6a50' }),
+  boar_mane: hairPainter('#2e211a', { dark: 0.7, light: 1.3, strands: 1.4 }),
   boar_face: facePainter('#5e3e2a', { eyeY: 4, eyes: '#e8c048' }),
-  snout: solidPainter('#d8908a'),
+  snout: snoutPainter('#d48e86', { nostril: '#5a2a2a', mouth: false }),
   tusk: solidPainter('#f2ead8'),
-  fox_fur: furPainter('#dfe6f2', { pattern: 'fur', glow: '#6ff0e0' }),
+  // spirit fox
+  fox_fur: hairPainter('#dfe7f3', { dark: 0.82, light: 1.08, strands: 0.7, glow: '#6ff0e0', nGlow: 3 }),
+  fox_back: hairPainter('#b8cbe2', { dark: 0.8, light: 1.1, strands: 0.8 }),
+  fox_chest: hairPainter('#ffffff', { dark: 0.9, light: 1.0, strands: 0.3 }),
+  fox_ear: earPainter('#c3d5ea', '#2a3a52'),
+  fox_nose: snoutPainter('#e6edf6', { nose: '#22303e', nostril: '#0c1218', mouth: false }),
   fox_face: facePainter('#dfe6f2', { eyes: '#2ad8c8', eyeGlow: true, nose: '#2a3040', glowMarks: '#6ff0e0' }),
-  fox_tail: furPainter('#c8e0f0', { light: 1.2, glow: '#8ff6ec' }),
-  hare_fur: furPainter('#e6e4ea', { pattern: 'fur', dark: 0.82 }),
+  fox_tail: hairPainter('#d4e2f2', { dark: 0.84, light: 1.1, strands: 1.0, glow: '#8ff6ec', nGlow: 3 }),
+  fox_tip: gradientPainter('#e8f4ff', '#ffffff', { glow: true }),
+  // hare
+  hare_fur: hairPainter('#e4e2ea', { dark: 0.84, light: 1.06, strands: 0.5, flecks: '#c8c2d0' }),
+  hare_ear: earPainter('#e4e2ea', '#f2b8c4'),
   hare_face: facePainter('#e6e4ea', { eyes: '#c83a4a', nose: '#e88a9a' }),
-  fish_scales: furPainter('#9cc6de', { pattern: 'scales', light: 1.25 }),
+  hare_tail: hairPainter('#ffffff', { dark: 0.92, light: 1.0 }),
+  // fish
+  fish_scales: featherPainter('#9cc6de', { tip: '#5a86a8', rows: 5, light: 1.2 }),
   fish_face: facePainter('#9cc6de', { pattern: 'scales', eyeY: 5, eyeGap: 5 }),
-  fin: solidPainter('#6a9ec8'),
+  fin: gradientPainter('#8ab8dc', '#4f7ea8'),
+  // the rest of the bestiary
   jelly: solidPainter('#e8a8f0', { glow: true, alpha: 170, noise: 0.12 }),
   jelly_core: solidPainter('#fff0ff', { glow: true }),
   gloom: furPainter('#1c1630', { pattern: 'fur', dark: 0.6, light: 1.5 }),
@@ -103,12 +221,14 @@ const SKINS = {
   trader_robe: furPainter('#7a4fc4', { pattern: 'stripes', dark: 0.75 }),
   trader_face: facePainter('#d8a882', { eyes: '#2a2a3a', hood: '#7a4fc4', eyeY: 8 }),
 };
-const GLOWING_SKINS = new Set(['fox_fur', 'fox_face', 'fox_tail', 'jelly', 'jelly_core', 'gloom_face', 'bone_face', 'crystal', 'spider_face', 'ember', 'ember_core', 'warden_face', 'rune']);
+const GLOWING_SKINS = new Set(['fox_fur', 'fox_face', 'fox_tail', 'fox_tip', 'jelly', 'jelly_core', 'gloom_face', 'bone_face', 'crystal', 'spider_face', 'ember', 'ember_core', 'warden_face', 'rune']);
 export const SKIN = {};
 for (const [k, fn] of Object.entries(SKINS)) SKIN[k] = registerTexture(`mob_${k}`, fn, { glow: GLOWING_SKINS.has(k) });
 
 // ---------------------------------------------------------------- model definitions
-// part: { box:[x0,y0,z0,x1,y1,z1], pivot:[x,y,z], skin: name | {front,back,top,bottom,side}, group, rot:[rx,ry,rz], color, fit, emissive }
+// part: { box:[x0,y0,z0,x1,y1,z1], pivot:[x,y,z], skin: name | {front,back,top,bottom,side,default},
+//         group, rot:[rx,ry,rz], color, fit ('front' | 'all'), emissive, wool, shorn, antler, translucent }
+// model.groups (rigged models): { name: { pivot, parent, rot } } — parts take their group's pivot
 const P = (box, skin, o = {}) => ({ box, skin, ...o });
 const legs4 = (x, z0, z1, h, w, skin, groupA = 'legA', groupB = 'legB') => [
   P([-x - w / 2, 0, z0 - w / 2, -x + w / 2, h, z0 + w / 2], skin, { pivot: [-x, h, z0], group: groupA + 'FL' }),
@@ -116,95 +236,235 @@ const legs4 = (x, z0, z1, h, w, skin, groupA = 'legA', groupB = 'legB') => [
   P([-x - w / 2, 0, z1 - w / 2, -x + w / 2, h, z1 + w / 2], skin, { pivot: [-x, h, z1], group: groupB + 'BL' }),
   P([x - w / 2, 0, z1 - w / 2, x + w / 2, h, z1 + w / 2], skin, { pivot: [x, h, z1], group: groupA + 'BR' }),
 ];
+const EYE = [0.05, 0.045, 0.06, 1], GLINT = [0.95, 0.95, 1, 1], HOOF = [0.16, 0.13, 0.12, 1];
+// mirror a part across x = 0 (L ↔ R groups)
+const mirror = (p) => ({ ...p, box: [-p.box[3], p.box[1], p.box[2], -p.box[0], p.box[4], p.box[5]], group: p.group && p.group.replace(/L$/, '\u0000').replace(/R$/, 'L').replace('\u0000', 'R'), rot: p.rot && [p.rot[0], -p.rot[1], -p.rot[2]] });
+const both = (...parts) => [...parts, ...parts.map(mirror)];
+const mirrorGroups = (gs) => {
+  const out = { ...gs };
+  for (const [k, g] of Object.entries(gs)) if (/L$/.test(k)) out[k.replace(/L$/, 'R')] = { ...g, pivot: [-g.pivot[0], g.pivot[1], g.pivot[2]], parent: g.parent && g.parent.replace(/L$/, 'R'), rot: g.rot && [g.rot[0], -g.rot[1], -g.rot[2]] };
+  return out;
+};
+// a leg: thigh, shank and hoof (or paw), pivoting at the hip
+const leg = (group, x, z, len, w, skin, { lower = null, foot = HOOF, footH = 1, taper = 0.2 } = {}) => {
+  const k = len * 0.42;
+  return [
+    P([x - w / 2, k, z - w / 2, x + w / 2, len, z + w / 2], skin, { group }),
+    P([x - w / 2 + taper, footH, z - w / 2 + taper, x + w / 2 - taper, k, z + w / 2 - taper], lower || skin, { group }),
+    P([x - w / 2 - 0.1 + taper, 0, z - w / 2 - 0.1 + taper, x + w / 2 + 0.1 - taper, footH, z + w / 2 + 0.1 - taper], null, { group, color: foot }),
+  ];
+};
+// eyes: a dark lens with a glint, sitting just proud of a face (side = 'front' or 'side')
+const eyesFront = (group, x, y, z, w = 1.2, h = 1.2) => both(
+  P([x - w / 2, y - h / 2, z - 0.12, x + w / 2, y + h / 2, z + 0.08], null, { group: `${group}L`, color: EYE }),
+  P([x - w / 2 + 0.25, y + h / 2 - 0.55, z - 0.16, x - w / 2 + 0.6, y + h / 2 - 0.2, z - 0.1], null, { group: `${group}L`, color: GLINT }),
+);
+const eyesSide = (group, x, y, z, w = 1.1, h = 1.1) => both(
+  P([x - 0.12, y - h / 2, z - w / 2, x + 0.08, y + h / 2, z + w / 2], null, { group: `${group}L`, color: EYE }),
+  P([x - 0.16, y + h / 2 - 0.5, z - w / 2 + 0.2, x - 0.1, y + h / 2 - 0.15, z - w / 2 + 0.55], null, { group: `${group}L`, color: GLINT }),
+);
 
 export const MODELS = {
-  deer: {
-    head: [0, 24, -10],
-    parts: [
-      P([-4, 11, -9, 4, 19, 8], 'deer_fur'),
-      P([-2, 16, -12, 2, 25, -7], 'deer_fur', { group: 'head', pivot: [0, 18, -9] }),
-      P([-2.5, 23, -16, 2.5, 28, -9], { front: 'deer_face', default: 'deer_fur' }, { group: 'head', fit: 'front' }),
-      P([-1.5, 23, -18, 1.5, 26, -16], 'deer_fur', { group: 'head' }),
-      P([-4.5, 26.5, -11, -2.5, 28, -10], 'deer_fur', { group: 'head' }),
-      P([2.5, 26.5, -11, 4.5, 28, -10], 'deer_fur', { group: 'head' }),
-      P([-2.5, 28, -11, -1.5, 33, -10], 'antler', { group: 'head', antler: true }),
-      P([1.5, 28, -11, 2.5, 33, -10], 'antler', { group: 'head', antler: true }),
-      P([-5, 31, -11, -2.5, 32, -10], 'antler', { group: 'head', antler: true }),
-      P([2.5, 31, -11, 5, 32, -10], 'antler', { group: 'head', antler: true }),
-      P([-1, 16, 8, 1, 19.5, 10], 'deer_fur', { group: 'tail', pivot: [0, 19, 8] }),
-      ...legs4(2.5, -6.5, 5.5, 11, 2, 'deer_fur'),
-    ],
-  },
   sheep: {
-    head: [0, 16, -7],
+    texScale: 2,
+    variants: [[0.62, {}], [0.14, { sheep_wool: 'sheep_wool_cream' }], [0.14, { sheep_wool: 'sheep_wool_gray' }], [0.1, { sheep_wool: 'sheep_wool_brown' }]],
+    groups: mirrorGroups({
+      body: { pivot: [0, 9, 0] },
+      head: { pivot: [0, 14.5, -6.5], parent: 'body' },
+      earL: { pivot: [-2.4, 16.2, -9], parent: 'head', rot: [0, 0.2, 0.55] },
+      eyeL: { pivot: [-1.3, 15.6, -11.5], parent: 'head' },
+      tail: { pivot: [0, 14.5, 7.8], parent: 'body' },
+      legFL: { pivot: [-2.8, 9, -4.4] }, legBL: { pivot: [-2.8, 9, 4.4] },
+    }),
     parts: [
-      P([-5, 8, -7, 5, 17, 7], 'sheep_wool', { wool: true }),
-      P([-4, 9, -6, 4, 16, 6], 'sheep_skin', { shorn: true }),
-      P([-3, 13, -12, 3, 19, -6], { front: 'sheep_face', default: 'sheep_face' }, { group: 'head', fit: 'all' }),
-      P([-3.5, 18.5, -10, 3.5, 21, -6], 'sheep_wool', { group: 'head', wool: true }),
-      P([-5.5, 16, -9, -3, 19, -7], 'horn_gold', { group: 'head' }),
-      P([3, 16, -9, 5.5, 19, -7], 'horn_gold', { group: 'head' }),
-      P([-5.5, 14, -10, -4, 16.5, -8], 'horn_gold', { group: 'head' }),
-      P([4, 14, -10, 5.5, 16.5, -8], 'horn_gold', { group: 'head' }),
-      ...legs4(3, -4.5, 4.5, 8, 2.5, 'sheep_skin'),
+      // fleece: a main body with puffs that round off the silhouette
+      P([-5.5, 8, -7, 5.5, 17, 7], 'sheep_wool', { group: 'body', wool: true }),
+      P([-4.5, 16, -5.5, 4.5, 18.6, 5.8], 'sheep_wool', { group: 'body', wool: true }),
+      P([-4.6, 9.2, -8.6, 4.6, 15.6, -6.4], 'sheep_wool', { group: 'body', wool: true }),
+      P([-4.6, 9.6, 6.4, 4.6, 16.2, 8.6], 'sheep_wool', { group: 'body', wool: true }),
+      P([-4.5, 7, -5.6, 4.5, 8.4, 5.6], 'sheep_wool', { group: 'body', wool: true }),
+      ...both(P([-6.6, 10.2, -5.4, -5.2, 15.6, 4.6], 'sheep_wool', { group: 'body', wool: true })),
+      // shorn
+      P([-4.4, 8.6, -6.4, 4.4, 15.4, 6.4], 'sheep_skin', { group: 'body', shorn: true }),
+      P([-0.9, 12.6, 6.4, 0.9, 14.6, 8.2], 'sheep_skin', { group: 'tail', shorn: true }),
+      // head
+      P([-2.5, 12.5, -11.5, 2.5, 17.4, -6.4], 'sheep_face', { group: 'head' }),
+      P([-1.8, 12.4, -13.1, 1.8, 15, -11.3], { front: 'sheep_muzzle', default: 'sheep_face' }, { group: 'head', fit: 'front' }),
+      P([-3, 16.6, -10.6, 3, 19.4, -7], 'sheep_wool', { group: 'head', wool: true }),
+      ...both(
+        P([-4.3, 16.4, -9.1, -2.5, 18.4, -7.5], 'horn_gold', { group: 'head' }),
+        P([-5.1, 14.7, -8.3, -3.5, 17.2, -6.7], 'horn_gold', { group: 'head' }),
+        P([-4.7, 13.5, -9.7, -3.5, 15, -8.2], 'horn_gold', { group: 'head' }),
+        P([-5.3, 15.7, -9.7, -2.4, 16.8, -8.4], { front: 'sheep_face', default: 'sheep_face' }, { group: 'earL' }),
+      ),
+      ...eyesFront('eye', -1.3, 15.6, -11.5),
+      P([-1.6, 11.4, 7.6, 1.6, 15, 10.2], 'sheep_wool', { group: 'tail', wool: true }),
+      // legs with woolly tops
+      ...['FL', 'BL'].flatMap((k) => {
+        const z = k === 'FL' ? -4.4 : 4.4;
+        return both(...leg(`leg${k}`, -2.8, z, 9, 2.4, 'sheep_skin', { footH: 1.3, taper: 0.15 }),
+          P([-4.3, 6.4, z - 1.6, -1.3, 9, z + 1.6], 'sheep_wool', { group: `leg${k}`, wool: true }));
+      }),
     ],
   },
-  puffbird: {
-    head: [0, 10, -2],
+  deer: {
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 13, 0] },
+      neck: { pivot: [0, 16.5, -7.2], parent: 'body', rot: [-0.32, 0, 0] },
+      head: { pivot: [0, 23.6, -7.6], parent: 'neck', rot: [0.32, 0, 0] },
+      earL: { pivot: [-1.8, 25, -8.2], parent: 'head', rot: [0, 0.35, 0.3] },
+      eyeL: { pivot: [-2.2, 23.9, -9.6], parent: 'head' },
+      antlers: { pivot: [0, 25.5, -7.9], parent: 'head' },
+      tail: { pivot: [0, 17.6, 7.8], parent: 'body', rot: [0.35, 0, 0] },
+      legFL: { pivot: [-2.2, 11.5, -6] }, legBL: { pivot: [-2.2, 11.5, 5.2] },
+    }),
     parts: [
-      P([-4, 3, -4, 4, 10, 4], 'bird_body'),
-      P([-3, 8, -6, 3, 13.5, -1], { front: 'bird_face', default: 'bird_body' }, { group: 'head', fit: 'front' }),
-      P([-1, 9, -8, 1, 11, -6], 'beak', { group: 'head' }),
-      P([-0.5, 13.5, -4, 0.5, 16, -2], 'bird_body', { group: 'head' }),
-      P([-5, 5, -3, -4, 9, 3], 'bird_body', { group: 'wingL', pivot: [-4, 9, 0] }),
-      P([4, 5, -3, 5, 9, 3], 'bird_body', { group: 'wingR', pivot: [4, 9, 0] }),
-      P([-2, 0, -1, -1, 3, 0], 'beak', { group: 'legAFL', pivot: [-1.5, 3, -0.5] }),
-      P([1, 0, -1, 2, 3, 0], 'beak', { group: 'legBFR', pivot: [1.5, 3, -0.5] }),
-      P([-2.5, 7, 4, 2.5, 11, 6], 'bird_body', { group: 'tail', pivot: [0, 9, 4] }),
+      P([-3.5, 11, -7.5, 3.5, 18, 6.5], { bottom: 'deer_belly', default: 'deer_fur' }, { group: 'body' }),
+      P([-3, 11.6, -9.2, 3, 17.6, -7], { bottom: 'deer_belly', default: 'deer_coat' }, { group: 'body' }),
+      P([-3.2, 11.6, 6, 3.2, 17.8, 8.2], { back: 'deer_belly', bottom: 'deer_belly', default: 'deer_coat' }, { group: 'body' }),
+      P([-1.6, 15, -9, 1.6, 24.4, -5.8], { front: 'deer_belly', default: 'deer_coat' }, { group: 'neck' }),
+      P([-2.2, 21.6, -11.5, 2.2, 25.6, -6.8], 'deer_coat', { group: 'head' }),
+      P([-1.5, 21.6, -14.6, 1.5, 24.1, -11.2], { front: 'deer_nose', default: 'deer_coat' }, { group: 'head', fit: 'front' }),
+      ...eyesSide('eye', -2.2, 23.9, -9.6),
+      ...both(P([-5.4, 24.4, -8.7, -1.8, 26.2, -7.7], { front: 'deer_ear', default: 'deer_coat' }, { group: 'earL', fit: 'front' })),
+      // antlers: beam, brow tine, back tine and a forked crown
+      ...both(
+        P([-2.2, 25.5, -8.4, -1.2, 30.6, -7.4], 'antler', { group: 'antlers', antler: true }),
+        P([-2.2, 26.8, -10.6, -1.2, 27.8, -8.4], 'antler', { group: 'antlers', antler: true }),
+        P([-4.6, 28, -8.4, -2.2, 29, -7.4], 'antler', { group: 'antlers', antler: true }),
+        P([-3.6, 30.6, -8.4, -2.4, 33, -7.4], 'antler', { group: 'antlers', antler: true }),
+        P([-1.6, 30.6, -8.9, -0.6, 32.4, -7.9], 'antler', { group: 'antlers', antler: true }),
+      ),
+      P([-1.1, 15.2, 7.8, 1.1, 18, 9.4], { back: 'deer_belly', bottom: 'deer_belly', default: 'deer_coat' }, { group: 'tail' }),
+      ...['FL', 'BL'].flatMap((k) => both(...leg(`leg${k}`, -2.2, k === 'FL' ? -6 : 5.2, 11.5, 1.8, 'deer_leg', { taper: 0.25 }))),
     ],
   },
   boar: {
-    head: [0, 12, -9],
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 10, 0] },
+      head: { pivot: [0, 10.5, -8.4], parent: 'body' },
+      earL: { pivot: [-2.6, 13, -10], parent: 'head', rot: [0.3, 0, 0.35] },
+      eyeL: { pivot: [-3.5, 11, -12], parent: 'head' },
+      tail: { pivot: [0, 12.4, 8], parent: 'body' },
+      legFL: { pivot: [-3, 7, -5.4] }, legBL: { pivot: [-3, 7, 5.4] },
+    }),
     parts: [
-      P([-5, 7, -9, 5, 16, 9], 'boar_fur'),
-      P([-1, 16, -8, 1, 18, 6], 'boar_fur'),
-      P([-4, 8, -15, 4, 15, -8], { front: 'boar_face', default: 'boar_fur' }, { group: 'head', fit: 'front' }),
-      P([-2, 8, -17, 2, 11, -15], 'snout', { group: 'head' }),
-      P([-3, 10, -17, -2, 13.5, -16], 'tusk', { group: 'head' }),
-      P([2, 10, -17, 3, 13.5, -16], 'tusk', { group: 'head' }),
-      P([-0.5, 12, 9, 0.5, 15, 10], 'boar_fur', { group: 'tail', pivot: [0, 14, 9] }),
-      ...legs4(3, -6, 6, 7, 3, 'boar_fur'),
+      P([-4.5, 5.6, -8, 4.5, 14, 8.2], 'boar_fur', { group: 'body' }),
+      P([-5, 7, -8.6, 5, 15.6, -1.4], 'boar_fur', { group: 'body' }),
+      P([-1.1, 14, -8.6, 1.1, 17.2, 5], 'boar_mane', { group: 'body' }),
+      P([-0.8, 15.6, -9.2, 0.8, 16.6, -6], 'boar_mane', { group: 'body' }),
+      P([-3.6, 6, -14, 3.6, 13.2, -8], 'boar_fur', { group: 'head' }),
+      P([-2.3, 6.4, -16.6, 2.3, 10.2, -14], { front: 'snout', default: 'boar_fur' }, { group: 'head', fit: 'front' }),
+      P([-1.6, 12.6, -13.6, 1.6, 14.6, -8.6], 'boar_mane', { group: 'head' }),
+      ...both(
+        P([-3.1, 8.6, -16.3, -2.1, 11.6, -15.3], 'tusk', { group: 'head' }),
+        P([-3.1, 11.1, -15.5, -2.1, 12.6, -14.3], 'tusk', { group: 'head' }),
+        P([-4.6, 12.5, -10.6, -2.4, 15.2, -9.4], 'boar_mane', { group: 'earL' }),
+      ),
+      ...eyesSide('eye', -3.62, 11, -12, 1, 0.9),
+      P([-0.5, 9.6, 8, 0.5, 12.6, 9], 'boar_fur', { group: 'tail' }),
+      P([-0.9, 8.4, 8.1, 0.9, 9.8, 9.3], 'boar_mane', { group: 'tail' }),
+      ...['FL', 'BL'].flatMap((k) => both(...leg(`leg${k}`, -3, k === 'FL' ? -5.4 : 5.4, 7, 2.8, 'boar_fur', { taper: 0.2 }))),
+    ],
+  },
+  puffbird: {
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 5.5, 0] },
+      head: { pivot: [0, 9.2, -2.8], parent: 'body' },
+      eyeL: { pivot: [-2.5, 11.4, -4.2], parent: 'head' },
+      wingL: { pivot: [-3.5, 8.6, -1] , parent: 'body' },
+      tail: { pivot: [0, 7.2, 4.2], parent: 'body', rot: [-0.35, 0, 0] },
+      legL: { pivot: [-1.3, 3.2, 0] },
+    }),
+    parts: [
+      P([-3.5, 3, -4, 3.5, 9.6, 4.6], { front: 'bird_breast', bottom: 'bird_breast', default: 'bird_body' }, { group: 'body' }),
+      P([-3, 3.4, -5.1, 3, 8.6, -3.6], { default: 'bird_breast' }, { group: 'body' }),
+      P([-2.5, 8.4, -6, 2.5, 13, -1.4], { front: 'bird_breast', default: 'bird_body' }, { group: 'head' }),
+      P([-0.8, 9.9, -7.6, 0.8, 11.2, -6], 'beak', { group: 'head' }),
+      P([-0.6, 9.4, -7, 0.6, 9.9, -6], 'beak', { group: 'head' }),
+      ...both(P([-3, 8.6, -5.5, -2.4, 10.6, -2.2], 'bird_breast', { group: 'head' })),
+      P([-2, 12.9, -5.5, 2, 13.5, -2], 'bird_body', { group: 'head' }),
+      P([-0.4, 13, -4.6, 0.4, 15.6, -2.2], 'crest', { group: 'head' }),
+      P([-0.4, 12.6, -2.6, 0.4, 14.6, -1], 'crest', { group: 'head' }),
+      ...eyesSide('eye', -2.5, 11.4, -4.2, 1, 1),
+      ...both(P([-4.3, 4.4, -3, -3.4, 8.6, 3.8], 'bird_wing', { group: 'wingL' })),
+      P([-2.6, 6.4, 4.2, 2.6, 7.6, 7.4], 'bird_wing', { group: 'tail' }),
+      P([-2, 7.4, 5.8, 2, 10.4, 6.8], 'bird_wing', { group: 'tail' }),
+      ...both(
+        P([-1.6, 0.4, -0.3, -1, 3.2, 0.3], 'beak', { group: 'legL' }),
+        P([-2, 0, -1.4, -0.6, 0.4, 0.4], 'beak', { group: 'legL' }),
+      ),
     ],
   },
   fox: {
-    head: [0, 10, -7],
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 8, 0] },
+      head: { pivot: [0, 9.6, -6.4], parent: 'body' },
+      earL: { pivot: [-1.7, 12, -8.4], parent: 'head', rot: [0, 0, -0.12] },
+      eyeL: { pivot: [-1.45, 10.5, -10.5], parent: 'head' },
+      tail: { pivot: [0, 9.4, 5], parent: 'body', rot: [0.55, 0, 0] },
+      tail2: { pivot: [0, 9.6, 9.4], parent: 'tail', rot: [-0.25, 0, 0] },
+      tail3: { pivot: [0, 9.6, 13.4], parent: 'tail2', rot: [-0.2, 0, 0] },
+      legFL: { pivot: [-1.6, 6.2, -4.4] }, legBL: { pivot: [-1.6, 6.2, 3.8] },
+    }),
     parts: [
-      P([-3, 6, -7, 3, 12, 6], 'fox_fur'),
-      P([-3, 8, -12, 3, 13, -7], { front: 'fox_face', default: 'fox_fur' }, { group: 'head', fit: 'front' }),
-      P([-1.5, 8, -14, 1.5, 10.5, -12], 'fox_fur', { group: 'head' }),
-      P([-3, 13, -10, -1, 16.5, -9], 'fox_fur', { group: 'head' }),
-      P([1, 13, -10, 3, 16.5, -9], 'fox_fur', { group: 'head' }),
-      P([-2, 7, 6, 2, 11, 15], 'fox_tail', { group: 'tail', pivot: [0, 10, 6] }),
-      ...legs4(2, -5, 4.5, 6, 2, 'fox_fur'),
+      P([-2.5, 6, -6, 2.5, 10.6, 5.2], { top: 'fox_back', bottom: 'fox_chest', default: 'fox_fur' }, { group: 'body' }),
+      P([-2.1, 5.4, -7.2, 2.1, 10.2, -5.6], 'fox_chest', { group: 'body' }),
+      P([-2.6, 7.6, -10.6, 2.6, 12, -6.4], { top: 'fox_back', default: 'fox_fur' }, { group: 'head' }),
+      P([-1.3, 7.6, -13.2, 1.3, 9.7, -10.4], { front: 'fox_nose', default: 'fox_fur' }, { group: 'head', fit: 'front' }),
+      P([-3.3, 7.2, -9.4, 3.3, 10, -7], 'fox_chest', { group: 'head' }),
+      ...both(P([-2.6, 11.6, -9, -0.8, 15.6, -8], { front: 'fox_ear', default: 'fox_back' }, { group: 'earL', fit: 'front' })),
+      ...both(P([-2, 10.15, -10.72, -0.9, 10.85, -10.52], null, { group: 'eyeL', color: [0.35, 1, 0.92, 1], glowPart: true })),
+      P([-1.5, 8, 5, 1.5, 11, 9.6], 'fox_tail', { group: 'tail' }),
+      P([-2.1, 7.5, 9.4, 2.1, 11.7, 13.6], 'fox_tail', { group: 'tail2' }),
+      P([-1.6, 8, 13.4, 1.6, 11.2, 16.4], 'fox_tip', { group: 'tail3' }),
+      ...['FL', 'BL'].flatMap((k) => both(...leg(`leg${k}`, -1.6, k === 'FL' ? -4.4 : 3.8, 6.2, 1.6, 'fox_back', { lower: 'fox_fur', foot: [0.2, 0.26, 0.34, 1], footH: 0.9, taper: 0.15 }))),
     ],
   },
   hare: {
-    head: [0, 6, -3],
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 3.6, 0] },
+      head: { pivot: [0, 6, -3.4], parent: 'body' },
+      earL: { pivot: [-1.1, 8, -4.6], parent: 'head', rot: [0.3, 0, 0.12] },
+      eyeL: { pivot: [-2, 6.9, -5.6], parent: 'head' },
+      tail: { pivot: [0, 5, 3.8], parent: 'body' },
+      legFL: { pivot: [-1.2, 2.6, -2.6] }, legBL: { pivot: [-1.6, 3.6, 1.8] },
+    }),
     parts: [
-      P([-2.5, 2, -4, 2.5, 7, 4], 'hare_fur'),
-      P([-2, 5, -7, 2, 9, -3], { front: 'hare_face', default: 'hare_fur' }, { group: 'head', fit: 'front' }),
-      P([-2, 9, -5, -1, 15, -4], 'hare_fur', { group: 'head' }),
-      P([1, 9, -5, 2, 15, -4], 'hare_fur', { group: 'head' }),
-      P([-1, 4, 4, 1, 6, 6], 'hare_fur'),
-      ...legs4(1.5, -3, 3, 2, 1.5, 'hare_fur'),
+      P([-2.5, 2, -3.6, 2.5, 6.6, 3.4], 'hare_fur', { group: 'body' }),
+      P([-2.8, 1.4, 0.4, 2.8, 6, 3.9], 'hare_fur', { group: 'body' }),
+      P([-2, 4.5, -7, 2, 8.1, -3.4], 'hare_fur', { group: 'head' }),
+      P([-0.5, 5.4, -7.15, 0.5, 6.1, -6.95], null, { group: 'head', color: [0.9, 0.5, 0.58, 1] }),
+      ...eyesSide('eye', -2, 6.9, -5.6, 0.9, 0.9),
+      ...both(P([-1.7, 8, -5.1, -0.5, 13.2, -4.1], { front: 'hare_ear', default: 'hare_fur' }, { group: 'earL', fit: 'front' })),
+      P([-1.2, 4, 3.6, 1.2, 6.2, 5.1], 'hare_tail', { group: 'tail' }),
+      ...both(
+        P([-1.6, 0.5, -3.2, -0.8, 2.6, -2.2], 'hare_fur', { group: 'legFL' }),
+        P([-1.7, 0, -3.6, -0.7, 0.5, -2.2], 'hare_fur', { group: 'legFL' }),
+        P([-2.4, 0, -0.6, -0.8, 1.2, 3.6], 'hare_fur', { group: 'legBL' }),
+      ),
     ],
   },
   fish: {
-    head: [0, 2, -3],
+    texScale: 2,
+    groups: mirrorGroups({
+      body: { pivot: [0, 2, 0] },
+      tail: { pivot: [0, 2.2, 3.2], parent: 'body' },
+      finL: { pivot: [-1, 1.4, -1.6], parent: 'body', rot: [0, -0.5, 0.4] },
+    }),
     parts: [
-      P([-1, 0, -4, 1, 4, 4], { front: 'fish_face', default: 'fish_scales' }, { fit: 'front' }),
-      P([-0.25, 0, 4, 0.25, 4, 7.5], 'fin', { group: 'tail', pivot: [0, 2, 4] }),
-      P([-0.25, 4, -1, 0.25, 6, 2], 'fin'),
+      P([-1, 0.4, -4, 1, 4, 3.4], { front: 'fish_scales', default: 'fish_scales' }, { group: 'body' }),
+      P([-0.75, 0.9, -5.2, 0.75, 3.5, -4], 'fish_scales', { group: 'body' }),
+      P([-0.6, 1.2, 3.2, 0.6, 3.4, 4.6], 'fish_scales', { group: 'tail' }),
+      P([-0.2, -0.2, 4.4, 0.2, 4.8, 7.4], 'fin', { group: 'tail' }),
+      P([-0.2, 4, -1.8, 0.2, 5.6, 1.8], 'fin', { group: 'body' }),
+      ...both(P([-1.8, 1.2, -2, -1, 1.5, -0.4], 'fin', { group: 'finL' })),
+      ...eyesSide('eye', -1, 2.7, -3.2, 0.8, 0.8).map((p) => ({ ...p, group: 'body' })),
     ],
   },
   jelly: {
@@ -332,8 +592,20 @@ export const MODELS = {
 
 // ---------------------------------------------------------------- mesh building
 const FACE_KEYS = ['side', 'side', 'top', 'bottom', 'back', 'front'];
+for (const def of Object.values(MODELS)) {
+  // rigged parts default to their group's pivot; the model's height drives the baked shading
+  if (def.groups) for (const p of def.parts) if (!p.pivot && p.group && def.groups[p.group]) p.pivot = def.groups[p.group].pivot;
+  def.height = Math.max(...def.parts.filter((p) => !p.antler).map((p) => p.box[4]));
+}
 
-function partMesh(renderer, part) {
+// light falls off towards the belly and the ground, a cheap stand-in for occlusion by the body
+function shadeAt(def, y, f) {
+  const t = Math.min(1, Math.max(0, y / (def.height * 0.8)));
+  const k = 0.6 + 0.4 * t * t * (3 - 2 * t);
+  return f === 3 ? k * 0.78 : k;
+}
+
+function partMesh(renderer, def, part, swap) {
   const mb = new MeshBuilder();
   const [x0, y0, z0, x1, y1, z1] = part.box;
   const pv = part.pivot || [0, 0, 0];
@@ -341,41 +613,116 @@ function partMesh(renderer, part) {
   const bx0 = (x0 - pv[0]) * s, by0 = (y0 - pv[1]) * s, bz0 = (z0 - pv[2]) * s;
   const bx1 = (x1 - pv[0]) * s, by1 = (y1 - pv[1]) * s, bz1 = (z1 - pv[2]) * s;
   const dims = [[z1 - z0, y1 - y0], [z1 - z0, y1 - y0], [x1 - x0, z1 - z0], [x1 - x0, z1 - z0], [x1 - x0, y1 - y0], [x1 - x0, y1 - y0]];
+  const ts = def.texScale || 1;
   const faces = [];
   const cols = [];
+  const rig = !part.offset && !part.glowPart;
   for (let f = 0; f < 6; f++) {
     let skin = part.skin;
     if (skin && typeof skin === 'object') skin = skin[FACE_KEYS[f]] || skin.default;
-    if (!skin) { faces.push(null); cols.push(part.color || [1, 1, 1, 1]); continue; }
-    const alpha = part.translucent ? 0.62 : 1;
+    if (skin && swap && swap[skin]) skin = swap[skin];
+    const base = skin ? [1, 1, 1, part.translucent ? 0.62 : 1] : (part.color || [1, 1, 1, 1]);
+    // per-vertex baked shading (rigged models): corners at the bottom of the face are darker
+    if (rig) {
+      const yLo = shadeAt(def, y0, f), yHi = shadeAt(def, y1, f);
+      const c = (k) => [base[0] * k, base[1] * k, base[2] * k, base[3]];
+      cols.push(f === 2 ? c(yHi) : f === 3 ? c(yLo) : [c(yLo), c(yLo), c(yHi), c(yHi)]);
+    } else cols.push(base);
+    if (!skin) { faces.push(null); continue; }
     const layer = SKIN[skin] !== undefined ? SKIN[skin] : texLayer(`mob_${skin}`);
     const fit = part.fit === 'all' || (part.fit === 'front' && f === 5);
     const [w, hgt] = dims[f];
-    const u1 = fit ? 1 : w / 16, v1 = fit ? 1 : hgt / 16;
-    const o = fit ? 0 : ((x0 * 7 + y0 * 3 + f * 5) % 16) / 16;
+    const u1 = fit ? 1 : (w * ts) / 16, v1 = fit ? 1 : (hgt * ts) / 16;
+    const o = fit ? 0 : ((x0 * 7 + y0 * 3 + z0 * 5 + f * 5) % 16 + 16) % 16 / 16;
     faces.push({ layer, uv: [[o, o + v1], [o + u1, o + v1], [o + u1, o], [o, o]] });
-    cols.push([1, 1, 1, alpha]);
   }
   mb.box(bx0, by0, bz0, bx1, by1, bz1, cols, faces);
   return mb.build(renderer);
 }
 
 const meshCache = new Map();
-export function modelMeshes(renderer, kind) {
-  let m = meshCache.get(kind);
+export function modelMeshes(renderer, kind, variant = 0) {
+  const key = `${kind}:${variant}`;
+  let m = meshCache.get(key);
   if (m) return m;
   const def = MODELS[kind];
-  m = def.parts.map((p) => ({ part: p, mesh: partMesh(renderer, p) }));
-  meshCache.set(kind, m);
+  const swap = def.variants && def.variants[variant] ? def.variants[variant][1] : null;
+  m = def.parts.map((p) => ({ part: p, mesh: partMesh(renderer, def, p, swap) }));
+  meshCache.set(key, m);
   return m;
+}
+// pick a coat for a creature from a stable number (its id)
+export function modelVariant(kind, seed) {
+  const vs = MODELS[kind] && MODELS[kind].variants;
+  if (!vs) return 0;
+  let r = ((Math.sin(seed * 12.9898) * 43758.5453) % 1 + 1) % 1;
+  for (let i = 0; i < vs.length; i++) { r -= vs[i][0]; if (r < 0) return i; }
+  return 0;
 }
 
 // ---------------------------------------------------------------- posing
-// pose: { walk (phase), walkAmt (0..1), headYaw, headPitch, time, attack (0..1), flap, tail, dead (0..1), scale, inflate, sheared, lying }
+// pose: { walk (phase), walkAmt (0..1), headYaw, headPitch, time, attack (0..1), flap, tail, dead (0..1), scale,
+//         inflate, sheared, graze, flee, air, seed, baby, variant, swim }
 const tmp = mat4(), base = mat4(), pm = mat4();
+const GM = new Map(); // group name -> matrix, reused between draws
+
+function emissiveOf(part, boost) {
+  if (part.glowPart) return 0.9;
+  return (part.skin === 'ember' || part.skin === 'ember_core' || part.skin === 'jelly_core' || part.skin === 'rune' || part.skin === 'crystal') ? 0.9 : boost;
+}
+
+// animation of one rig group (applied at its pivot, after its rest rotation)
+function animateGroup(m, name, pose, walkSw, legSw) {
+  const t = pose.time || 0, amt = pose.walkAmt || 0, seed = pose.seed || 0;
+  const graze = pose.graze || 0;
+  if (name === 'body') {
+    // the body rises twice per stride and breathes when idle
+    const bob = Math.abs(Math.sin(pose.walk || 0)) * 0.045 * amt;
+    translate(m, m, 0, bob, 0);
+    rotateZ(m, m, Math.sin(pose.walk || 0) * 0.03 * amt);
+    if (pose.swim) rotateY(m, m, Math.sin(t * 7 + seed) * 0.12);
+    const br = 1 + Math.sin(t * 2.1 + seed) * 0.012 * (1 - amt);
+    scale(m, m, br, br, 1);
+  } else if (name === 'neck') {
+    rotateX(m, m, -0.95 * graze + Math.sin((pose.walk || 0) * 2) * 0.04 * amt + (pose.headPitch || 0) * 0.5);
+    rotateY(m, m, (pose.headYaw || 0) * 0.5);
+  } else if (name === 'head') {
+    const neck = !!pose.hasNeck;
+    rotateY(m, m, (pose.headYaw || 0) * (neck ? 0.5 : 1));
+    rotateX(m, m, (pose.headPitch || 0) * (neck ? 0.5 : 1) - (neck ? 0.35 : 0.9) * graze + Math.sin(t * 13) * 0.05 * graze - Math.sin((pose.walk || 0) * 2) * 0.05 * amt);
+    if (pose.baby) { const b = 1.3; scale(m, m, b, b, b); }
+  } else if (name === 'earL' || name === 'earR') {
+    const side = name === 'earL' ? 1 : -1;
+    const twitch = Math.pow(Math.max(0, Math.sin(t * 0.83 + seed * 1.7 + side)), 40);
+    rotateZ(m, m, side * twitch * 0.45);
+    if (pose.flee) rotateX(m, m, 0.55);
+  } else if (name === 'eyeL' || name === 'eyeR') {
+    const ph = (t + seed * 0.37) % 4.1;
+    if (ph < 0.13 || pose.dead) scale(m, m, 1, 0.12, 1);
+  } else if (name === 'tail' || name === 'tail2' || name === 'tail3') {
+    const d = name === 'tail' ? 0 : name === 'tail2' ? 1 : 2;
+    const sp = pose.tailSpeed || 4;
+    rotateY(m, m, Math.sin(t * sp - d * 0.9) * (pose.swim ? 0.5 : 0.28) * (1 + d * 0.2));
+    if (d === 0) rotateX(m, m, (pose.flee ? 0.5 : 0) + (pose.tailUp || 0) + Math.sin((pose.walk || 0) * 2) * 0.08 * amt);
+  } else if (name.startsWith('leg')) {
+    // diagonal pairs move together (front-left with back-right); birds alternate L / R
+    const a = name === 'legFL' || name === 'legBR' || name === 'legL' ? walkSw : -walkSw;
+    let r = a * legSw;
+    if (pose.air) r = name.startsWith('legF') ? -0.7 : name.startsWith('legB') ? 0.9 : r;
+    if (pose.dead || pose.lying) r = 0;
+    rotateX(m, m, r);
+  } else if (name === 'wingL' || name === 'wingR') {
+    const side = name === 'wingL' ? -1 : 1;
+    const f = pose.flap ? Math.abs(Math.sin(t * 22)) * 1.2 : 0.05 + Math.max(0, Math.sin(t * 0.7 + seed)) ** 20 * 0.5;
+    rotateZ(m, m, side * f);
+  } else if (name === 'finL' || name === 'finR') {
+    rotateY(m, m, Math.sin(t * 6 + (name === 'finL' ? 0 : 1.5)) * 0.3);
+  }
+}
+
 export function drawModel(r, kind, x, y, z, yaw, pose, light, overlay, emissiveBoost = 0) {
-  const meshes = modelMeshes(r, kind);
   const def = MODELS[kind];
+  const meshes = modelMeshes(r, kind, pose.variant || 0);
   const sc = pose.scale || 1;
   identity(base);
   translate(base, base, x, y, z);
@@ -390,6 +737,45 @@ export function drawModel(r, kind, x, y, z, yaw, pose, light, overlay, emissiveB
   const walk = pose.walk || 0, amt = pose.walkAmt || 0;
   const sw = Math.sin(walk) * 0.75 * amt;
   const t = pose.time || 0;
+
+  if (def.groups) {
+    // rigged: build each group's matrix from its parent's
+    pose.hasNeck = !!def.groups.neck;
+    for (const [name, g] of Object.entries(def.groups)) {
+      let m = GM.get(name);
+      if (!m) { m = mat4(); GM.set(name, m); }
+      const parent = g.parent ? def.groups[g.parent] : null;
+      if (parent) {
+        m.set(GM.get(g.parent));
+        translate(m, m, (g.pivot[0] - parent.pivot[0]) / 16, (g.pivot[1] - parent.pivot[1]) / 16, (g.pivot[2] - parent.pivot[2]) / 16);
+      } else {
+        m.set(base);
+        translate(m, m, g.pivot[0] / 16, g.pivot[1] / 16, g.pivot[2] / 16);
+      }
+      if (g.rot) { rotateY(m, m, g.rot[1]); rotateZ(m, m, g.rot[2]); rotateX(m, m, g.rot[0]); }
+      animateGroup(m, name, pose, Math.sin(walk), 0.75 * amt);
+    }
+    for (const { part, mesh } of meshes) {
+      if (part.antler && pose.noAntlers) continue;
+      if (part.wool && pose.sheared) continue;
+      if (part.shorn && !pose.sheared) continue;
+      const g = def.groups[part.group];
+      const gm = GM.get(part.group);
+      if (g && gm) {
+        tmp.set(gm);
+        const pv = part.pivot;
+        if (pv !== g.pivot) translate(tmp, tmp, (pv[0] - g.pivot[0]) / 16, (pv[1] - g.pivot[1]) / 16, (pv[2] - g.pivot[2]) / 16);
+      } else {
+        const pv = part.pivot || [0, 0, 0];
+        tmp.set(base);
+        translate(tmp, tmp, pv[0] / 16, pv[1] / 16, pv[2] / 16);
+      }
+      if (part.rot) { rotateY(tmp, tmp, part.rot[1]); rotateZ(tmp, tmp, part.rot[2]); rotateX(tmp, tmp, part.rot[0]); }
+      drawPart(r, part, mesh, tmp, light, overlay, emissiveOf(part, emissiveBoost));
+    }
+    return;
+  }
+
   for (const { part, mesh } of meshes) {
     if (part.antler && pose.noAntlers) continue;
     if (part.wool && pose.sheared) continue;
@@ -419,12 +805,14 @@ export function drawModel(r, kind, x, y, z, yaw, pose, light, overlay, emissiveB
     else if (g.startsWith('sleg')) { const i = Number(g[4]); const side = g.endsWith('R') ? 1 : -1; rotateY(pm, pm, Math.sin(walk + i * 1.6) * 0.35 * amt * side); }
     if (part.rot) { rotateY(pm, pm, part.rot[1]); rotateZ(pm, pm, part.rot[2]); rotateX(pm, pm, part.rot[0]); }
     multiply(tmp, base, pm);
-    const em = (part.skin === 'ember' || part.skin === 'ember_core' || part.skin === 'jelly_core' || part.skin === 'rune' || part.skin === 'crystal') ? 0.9 : emissiveBoost;
-    if (part.translucent) { r.gl.enable(r.gl.BLEND); r.gl.blendFunc(r.gl.SRC_ALPHA, r.gl.ONE_MINUS_SRC_ALPHA); }
-    r.setGlowMask(1);
-    r.drawMesh(mesh, tmp, light, overlay, em);
-    r.setGlowMask(0);
-    if (part.translucent) r.gl.disable(r.gl.BLEND);
+    drawPart(r, part, mesh, tmp, light, overlay, emissiveOf(part, emissiveBoost));
   }
-  void def;
+}
+
+function drawPart(r, part, mesh, m, light, overlay, em) {
+  if (part.translucent) { r.gl.enable(r.gl.BLEND); r.gl.blendFunc(r.gl.SRC_ALPHA, r.gl.ONE_MINUS_SRC_ALPHA); }
+  r.setGlowMask(1);
+  r.drawMesh(mesh, m, light, overlay, em);
+  r.setGlowMask(0);
+  if (part.translucent) r.gl.disable(r.gl.BLEND);
 }

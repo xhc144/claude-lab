@@ -3,7 +3,7 @@
 
 import { Entity, ENTITY_TYPES, Projectile } from './entities.js';
 import { moveAndCollide, sampleMedium, boxBlocked } from './physics.js';
-import { drawModel, MODELS } from './models.js';
+import { drawModel, MODELS, modelVariant } from './models.js';
 import { BLOCKS, B, ID_MASK, SOLID, LIQUID, OPAQUE } from '../world/blocks.js';
 import { I, ITEMS } from '../world/items.js';
 import { BIOMES, BI, biomeOf } from '../world/biomes.js';
@@ -427,6 +427,8 @@ export class Mob extends Entity {
       noAntlers: this.baby || (this.id % 3 === 0), tailSpeed: this.state === 'flee' ? 12 : this.tamed ? 9 : 4,
       bob: this.def.flies ? Math.sin(t * 2) * 0.08 : 0, squash: this.def.hops && this.kind === 'gloop' ? 1 + Math.max(-0.3, Math.min(0.3, -this.vy * 0.05)) : 1,
       spin: this.kind === 'emberling' ? t * 1.5 : 0,
+      variant: this.variant ?? (this.variant = modelVariant(this.kind, this.id)), seed: this.id % 97,
+      flee: this.state === 'flee', air: !this.onGround && !this.def.swims && !this.def.flies, baby: this.baby, swim: !!this.def.swims,
     };
     const overlay = this.hurtT > 0.25 ? [1, 0.15, 0.1, 0.45] : this.fuse > 0 && Math.floor(this.fuse * 8) % 2 ? [1, 1, 1, 0.5] : this.love > 0 ? [1, 0.6, 0.7, 0.12] : null;
     drawModel(r, this.def.model, x, y, z, yaw, pose, light, overlay, this.def.glow || 0);
