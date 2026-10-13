@@ -123,6 +123,17 @@ export function updateMobs(g, dt) {
     const pos = center(st);
     const speed = mob.speed * (g.rules.enemySpeed || 1);
 
+    // the Great Flame sears even the greatest shade
+    if (def.tags.includes('shade') && def.traits.includes('boss') && g.countDef('great_flame')) {
+      c.burnAcc = (c.burnAcc || 0) + 1.5 * dt;
+      if (c.burnAcc >= 1) {
+        const n = Math.floor(c.burnAcc);
+        c.burnAcc -= n;
+        g.emit({ type: 'burn', id: c.id });
+        g.hurt(c, n, '');
+        if (!g.s.cards[c.id]) continue;
+      }
+    }
     // shades suffer in light even while fighting
     if ((def.tags.includes('shade')) && !def.traits.includes('boss') && def.kind === 'enemy') {
       const lit = g.lightAt(pos.x, pos.y);

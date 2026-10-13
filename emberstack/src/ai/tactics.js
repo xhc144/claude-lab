@@ -13,8 +13,7 @@ export function groupPower(g, cards, foeTraits = [], foeDef = 0) {
   for (const c of cards) {
     const s = combatStats(g, c);
     const ts = { traits: foeTraits };
-    let d = (Math.max(1, s.atk * damageMult(s, ts) - foeDef) * 0.88) / s.spd;
-    if (foeTraits.includes('flying') && !s.ranged) d = 0;
+    const d = (Math.max(1, s.atk * damageMult(s, ts) - foeDef) * 0.88) / s.spd;
     dps += d;
     hp += Math.max(0, c.hp || 0);
   }
@@ -53,9 +52,7 @@ export function availableFighters(brain, W, traits = []) {
     if ((p.hp || 0) <= 2) continue;
     const s = combatStats(g, p);
     const ts = { traits };
-    let v = (s.atk * damageMult(s, ts)) / s.spd;
-    if (traits.includes('flying') && !s.ranged) v = 0;
-    if (v <= 0) continue;
+    const v = Math.max(0.3, s.atk * damageMult(s, ts)) / s.spd;
     out.push({ p, v: v * (p.hp || 1), soldier: d.tags.includes('soldier') });
   }
   out.sort((a, b) => (b.soldier - a.soldier) || b.v - a.v);
@@ -191,7 +188,7 @@ export function combatActions(brain, W) {
       if (pw >= foe.power * (1.8 + S.caution)) break;
       if (!f.soldier && team.length >= 1 && g.s.stacks[f.p.s].task && pw > foe.power) continue;
       team.push(f.p);
-      pw = groupPower(g, team, tt).power;
+      pw = groupPower(g, team, tt, th.d.def || 0).power;
     }
     if (pw >= foe.power * 1.3 && team.length && (team.length >= 2 || pw >= foe.power * 3)) {
       for (const p of team) used.add(p.id);
@@ -223,7 +220,7 @@ export function assault(brain, W, targetCard, prio, why) {
   let pw = 0;
   for (const f of avail) {
     team.push(f.p);
-    pw = groupPower(g, team, tt).power;
+    pw = groupPower(g, team, tt, d.def || 0).power;
     if (pw >= need * 1.15) break;
   }
   brain.armyReady = pw / Math.max(1, need);
@@ -292,6 +289,11 @@ export function militaryNeeds(brain, P) {
   const fighters = W.people.filter((p) => CARDS[p.d].kind === 'folk' && !CARDS[p.d].tags.includes('child'));
   const have = groupPower(g, fighters, [...traits]).power;
   brain.threat = { want: Math.round(want), have: Math.round(have), traits: [...traits] };
+  if (P.escort) {
+    for (const t of P.escort.traits) traits.add(t);
+    const n = W.soldiers.length;
+    trainSoldiers(brain, P, Math.max(1, 2 - n), P.escort.prio, [...traits]);
+  }
   if (P.soldierTarget) {
     const n = W.soldiers.length;
     if (n < P.soldierTarget) trainSoldiers(brain, P, P.soldierTarget - n, P.soldierPrio, [...traits]);
@@ -301,6 +303,8 @@ export function militaryNeeds(brain, P) {
   const prio = (48 + 30 * (soon ? 1 : 0.5)) * Math.min(1.4, S.army);
   goal(P, '加强武备', prio, '战斗', `${Math.round((have / want) * 100)}%`);
   const units = Math.max(1, Math.min(3, Math.ceil((1 - have / want) * 4)));
+  // a big gap needs more hands, not just better weapons
+  if (have < want * 0.6) P.popTarget = Math.max(P.popTarget || 0, Math.min(W.pop + 3, Math.round(S.popTarget * 1.5)));
   trainSoldiers(brain, P, units, prio, [...traits]);
 }
 
@@ -349,6 +353,8 @@ export function equipAndHeal(brain, W) {
   const execs = [];
   for (const gc of W.gear) {
     const gd = CARDS[gc.d].gear;
+    // a shield is worth more as half of a maceguard's kit than as a trinket
+    if (CARDS[gc.d].tags.includes('trainer') && (g.hasTech('tactics') || (g.techAllowed('tactics') && brain.threat && brain.threat.traits.includes('armored')))) continue;
     let best = null, bs = 0;
     for (const p of W.people) {
       const d = CARDS[p.d];
@@ -356,7 +362,8 @@ export function equipAndHeal(brain, W) {
       const st = g.s.stacks[p.s];
       if (!st || st.held) continue;
       const cur = p.gear && p.gear[gd.slot];
-      const curV = cur ? (CARDS[cur].gear.atk || 0) * 3 + (CARDS[cur].gear.hp || 0) + (CARDS[cur].gear.def || 0) * 3 + (CARDS[cur].gear.light ? 3 : 0) : 0;
+      const cg = cur ? CARDS[cur].gear : null;
+      const curV = cg ? (cg.atk || 0) * 3 + (cg.hp || 0) + (cg.def || 0) * 3 + (cg.light ? 3 : 0) + (cg.warm && g.rules.cold ? 6 : 0) : 0;
       const newV = (gd.atk || 0) * 3 + (gd.hp || 0) + (gd.def || 0) * 3 + (gd.light ? 3 : 0) + (gd.warm && g.rules.cold ? 6 : 0);
       if (newV <= curV) continue;
       let s = newV - curV;

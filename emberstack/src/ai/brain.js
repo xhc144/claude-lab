@@ -22,6 +22,10 @@ import { combatActions, assault, militaryNeeds, equipAndHeal, availableFighters,
 
 const nm = (id) => CARDS[id]?.name || id;
 
+function PRODUCERS_KNOWN(g, mem, item) {
+  return Object.values(RECIPES).some((r) => r.out.some(([o]) => o === item) && isKnown(g, mem, r.id));
+}
+
 export function newMemory() {
   return { disc: new Set(), tried: new Set(), wins: 0, games: 0 };
 }
@@ -160,6 +164,7 @@ export class Brain {
     this.execs = this.execs.filter((e) => e.state === 'run');
     this.refreshLocks();
     const W = (this.W = perceive(g, this));
+    this.curfew = false;
     this.adapt(W);
     const P = newPlan(W, this.strat);
     this.P = P;
@@ -182,6 +187,7 @@ export class Brain {
     this.growthNeeds(W, P);
     this.fogNeeds(W, P);
     this.lightNeeds(W, P);
+    this.exploreNeeds(W, P);
     militaryNeeds(this, P);
     this.trainingJobs(W, P);
     // ---- 5. knowledge
@@ -190,11 +196,11 @@ export class Brain {
     this.tradeNeeds(W, P, fresh);
     // ---- 7. background: stock, exploration, curiosity
     this.stockNeeds(W, P);
-    this.exploreNeeds(W, P);
     this.housekeeping(W, P, fresh);
 
     this.hintJobs(W, P);
     this.darkFix(W, fresh);
+    this.coldPrep(W, P, fresh);
 
     // ---- assign
     for (const ex of fresh) this.start(ex);
@@ -385,6 +391,8 @@ export class Brain {
       const target = cards[0];
       const st = g.s.stacks[target.s];
       if (st && st.battle) continue;
+      // the Ash King is only mortal once the Great Flame burns: until then, build it and wait
+      if (target.d === 'ash_king' && !W.count('great_flame') && !(target.ai && target.ai.act)) { goal(P, '先点燃大薪火', t.prio, '战斗', '灰烬之王在火光之外不可战胜'); continue; }
       const ex = assault(this, W, target, Math.max(150, t.prio + 80), `军力已足，进攻${nm(t.card)}！`);
       if (ex) fresh.push(ex);
       else goal(P, '集结军队：' + nm(t.card), t.prio, '战斗', `${Math.round((this.armyReady || 0) * 100)}%`);
@@ -395,6 +403,7 @@ export class Brain {
     const g = this.g, S = this.strat;
     const objPop = P.popTarget || 0;
     let target = Math.max(objPop, Math.round(S.popTarget * S.growth));
+    const militaryPop = objPop > 0 && !g.s.objectives.some((o) => o.type === 'pop');
     if (g.rules.noBirth) return;
     // food stock and production, dawn to dawn: production = stock change + what was eaten
     const prod = this.foodProduction(W);
@@ -509,7 +518,7 @@ export class Brain {
       if (W.count(out) >= spec.max) continue;
       if (spec.needs && !W.count(spec.needs)) continue;
       const traineeId = Object.keys(r.in).find((k) => CARDS[k] && CARDS[k].kind === 'folk');
-      const trainees = W.free(traineeId).filter((c) => !this.locked.has(c.id));
+      const trainees = W.people.filter((c) => c.d === traineeId && !this.locked.has(c.id) && !g.s.stacks[c.s]?.battle);
       if (!trainees.length) continue;
       if (item === 'mace' && !W.freeN('shield')) continue;
       const soldier = CARDS[out].tags.includes('soldier');
@@ -581,6 +590,8 @@ export class Brain {
           const keep = (P.claimed.get(id) || 0) + (['wood', 'stone', 'food'].includes(id) ? 2 : 0);
           const surplus = list.length - keep;
           if (surplus <= 0 || d.kind === 'folk') continue;
+          if (d.tags.some((t) => ['boat', 'trainer', 'portable_light', 'pot', 'axe', 'pick', 'rod', 'hoe', 'livestock'].includes(t))) continue;
+          if (P.unmet.some((u) => CARDS[u.item] && CARDS[u.item].name.includes(d.name))) continue; // keep what a wanted thing is probably made of
           if (d.food > 0 && W.food < W.dailyNeed * 2) continue;
           cands.push([id, v, surplus]);
         }
@@ -643,6 +654,18 @@ export class Brain {
       if (danger > 0.3 && W.soldiers.length === 0) score *= 0.5;
       if (score < 10) continue;
       addJob(P, { key: 'e:' + r.id, kind: 'explore', r: 'explore_' + r.d, site: r.id, prio: score, why: `探索${nm(r.d)}`, cat: '探索', want: P.exploreBoost ? 2 : 1 });
+      // if the best team we could send would lose an ambush there, train an escort first
+      const foes = r.foes || rd.foes || [];
+      if (foes.length && (r.danger ?? rd.danger) >= 0.05) {
+        let foePow = 0;
+        for (const [f] of foes) foePow = Math.max(foePow, defsPower([[f, 1]]));
+        const ft = [...new Set(foes.flatMap(([f]) => CARDS[f].traits || []))];
+        const best = availableFighters(this, W, ft).slice(0, 3).map((f) => f.p);
+        if (groupPower(g, best, ft).power < foePow * 1.4 && score >= 30) {
+          goal(P, '组建护卫队', score * 0.8, '战斗', nm(r.d));
+          P.escort = { traits: ft, prio: score * 0.8 };
+        }
+      }
       if (rd.need === 'light' || rd.needLight) {
         if (!W.free('#portable_light').length && !W.people.some((p) => g.cardLight(p) > 0)) {
           if (g.hasTech('torches') || g.techAllowed('torches')) need(P, 'torch', 1, score, `探索${nm(r.d)}需要火把`, '探索');
@@ -808,6 +831,15 @@ export class Brain {
 
   buildExec(W, P, job, idle, taken, reserved, busyVal) {
     const g = this.g;
+    if (this.curfew && (job.kind === 'harvest' || job.kind === 'explore' || job.kind === 'hunt' || job.kind === 'craft')) {
+      // before a freezing dawn nobody leaves the warmth
+      const site = job.site ? g.s.cards[job.site] : null;
+      if (job.kind === 'explore' || job.kind === 'hunt') return null;
+      if (site) {
+        const p = g.cardPos(site);
+        if (!g.lights.some((L) => L.warm && Math.hypot(L.x - p.x, L.y - p.y) < L.r - 20)) return null;
+      }
+    }
     const take = (w) => { taken.add(w.id); busyVal.delete(w.id); };
     const freeCount = (ref) => W.free(ref).filter((c) => !this.locked.has(c.id)).length - (reserved.get(ref) || 0);
     const reserve = (ref, n) => reserved.set(ref, (reserved.get(ref) || 0) + n);
@@ -908,9 +940,15 @@ export class Brain {
         // people consumed by the recipe (training)
         const trainees = [];
         for (const [ref, n] of personInputs) {
-          const cands = W.free(ref).filter((c) => !this.locked.has(c.id) && !taken.has(c.id));
+          let cands = W.free(ref).filter((c) => !this.locked.has(c.id) && !taken.has(c.id));
+          if (cands.length < n) {
+            // pull someone off less important work
+            const busy = W.people.filter((p) => p.d === ref && !this.locked.has(p.id) && !taken.has(p.id) && !cands.includes(p))
+              .filter((p) => { const b = busyVal.get(p.id); const st = g.s.stacks[p.s]; return st && !st.battle && (!b || b.v + 15 < job.prio); });
+            cands = cands.concat(busy);
+          }
           if (cands.length < n) return null;
-          for (let i = 0; i < n; i++) { trainees.push(cands[i]); taken.add(cands[i].id); }
+          for (let i = 0; i < n; i++) { trainees.push(cands[i]); taken.add(cands[i].id); busyVal.delete(cands[i].id); }
         }
         // workers (and adults for births)
         const ws = [];
@@ -1020,7 +1058,7 @@ export class Brain {
           ws.push(w);
           steps.push({ op: 'bringCard', id: w.id, optional: true });
         }
-        if (!safe() && danger * foePow > 8) {
+        if (!safe() && (danger * foePow > 8 || (danger >= 0.05 && teamPow() < foePow * 1.1 && job.prio < 100))) {
           for (const w of ws) { taken.delete(w.id); }
           return null;
         }
@@ -1037,15 +1075,16 @@ export class Brain {
         const team = [];
         let pw = 0;
         const foe = enemyPower(g, [beast]).power;
+        const margin = (d.atk || 0) >= 2 ? 2.4 + this.strat.caution : 1.6;
         for (const f of availableFighters(this, W, d.traits || [])) {
           if (taken.has(f.p.id)) continue;
           const st = g.s.stacks[f.p.s];
           if (st.task && (busyVal.get(f.p.id)?.v || 0) + 10 > job.prio) continue;
           team.push(f.p);
-          pw = groupPower(g, team, d.traits || []).power;
-          if (pw > foe * 2.2) break;
+          pw = groupPower(g, team, d.traits || [], d.def || 0).power;
+          if (pw > foe * (margin + 0.4)) break;
         }
-        if (!team.length || pw < foe * 1.6) return null;
+        if (!team.length || pw < foe * margin) return null;
         for (const p of team) take(p);
         const ex = new Exec(job, team.map((p) => ({ op: 'drop', id: p.id, target: beast.id, optional: true })), { lock: team.map((p) => p.id) });
         ex.desc = `${team.map((p) => p.name).join('、')}去捕猎${d.name}`;
@@ -1071,11 +1110,62 @@ export class Brain {
   hintJobs(W, P) {
     const g = this.g;
     const boost = P.experimentBoost || 0;
+    const objUnmet = P.unmet.some((u) => u.prio >= 55 && CARDS[u.item] && !PRODUCERS_KNOWN(g, this.mem, u.item));
+    if (objUnmet || boost > 30) {
+      // things to bind, wrap and mount with — most hidden crafts need one of them
+      for (const id of ['rope', 'fiber', 'wood', 'leather']) if (!W.freeN(id) && itemCost(W, id, P.memo) < 60) { need(P, id, 1, 34, '备些材料做实验', '实验'); break; }
+    }
     for (const rid of Object.keys(g.s.hints)) {
       if (g.s.disc.includes(rid)) continue;
       const r = RECIPES[rid];
       if (r.tech && !g.hasTech(r.tech)) continue;
       addJob(P, { key: 'c:' + rid, kind: 'craft', r: rid, item: r.out[0]?.[0], n: 1, prio: 24 + boost + this.strat.curiosity * 20, why: `按残卷的线索尝试「${r.name}」`, cat: '实验' });
+    }
+  }
+
+  /** in cold lands, everyone must sleep by a fire (or wear fur) when dawn comes */
+  coldPrep(W, P, fresh) {
+    const g = this.g;
+    const winter = g.rules.seasons && W.season === 3;
+    const cold = g.rules.cold === 'always' || (g.rules.cold && (winter || (g.rules.seasons && W.daysToWinter <= 1)));
+    if (!cold) return;
+    const unwarm = W.people.filter((p) => !CARDS[p.d].tags.includes('construct') && !g.isWarm(p));
+    if (unwarm.length) {
+      goal(P, '御寒', 70 + unwarm.length * 4, '生存', `${W.people.length - unwarm.length}/${W.people.length} 人暖和`);
+      if (g.techAllowed('husbandry')) need(P, 'fur_cloak', Math.min(2, unwarm.length), 58, '缝毛皮斗篷御寒', '生存');
+      if (g.techAllowed('masonry') && !W.count('hearth') && W.mainFire && W.mainFire.d === 'campfire') produce(P, 'hearth', 1, 52, '把篝火砌成火塘（暖和又省柴）', '生存');
+    }
+    if (W.phase < 0.8) return;
+    this.curfew = true;
+    // nightfall before a freezing dawn: bring everyone into the warmth of a fire
+    const warmLights = g.lights.filter((L) => L.warm);
+    if (!warmLights.length) return;
+    let n = 0;
+    for (const p of unwarm) {
+      if (n >= 3) break;
+      const st = g.s.stacks[p.s];
+      if (!st || st.battle || this.locked.has(p.id)) continue;
+      // huddle with someone already warm (or at the fire itself if nothing is cooking there)
+      const host = W.people.find((q) => q !== p && g.isWarm(q) && !this.locked.has(q.id) && (() => {
+        const qs = g.s.stacks[q.s];
+        return qs && !qs.battle && qs.cards.length < 5 && qs.cards[qs.cards.length - 1] === q.id && qs.cards.every((id) => CARDS[g.s.cards[id].d].tags.includes('person') || CARDS[g.s.cards[id].d].tags.includes('fire') || CARDS[g.s.cards[id].d].tags.includes('house'));
+      })());
+      if (host && st.cards[st.cards.length - 1] === p.id) {
+        fresh.push(new Exec({ key: 'warm:' + p.id, kind: 'shelter', prio: 160, why: `${p.name}会在黎明冻伤，去和${host.name}挤在火边过夜`, cat: '生存' },
+          [{ op: 'drop', id: p.id, target: host.id }], { lock: [p.id, host.id] }));
+        n++;
+        continue;
+      }
+      const root = g.s.cards[st.cards[0]];
+      const movable = !CARDS[root.d].fixed && st.cards.every((id) => !this.locked.has(id));
+      const L = warmLights.sort((a, b) => Math.hypot(a.x - st.x, a.y - st.y) - Math.hypot(b.x - st.x, b.y - st.y))[0];
+      const a = (p.id * 2.399 + W.day) % (Math.PI * 2);
+      const spot = g.freeSpot(L.x + Math.cos(a) * L.r * 0.55 - CARD_W / 2, L.y + Math.sin(a) * L.r * 0.55 - CARD_H / 2, g.stackH(st), { exclude: st.id });
+      if (Math.hypot(spot.x + CARD_W / 2 - L.x, spot.y + CARD_H / 2 - L.y) > L.r - 10) continue;
+      const id = movable ? root.id : p.id;
+      fresh.push(new Exec({ key: 'warm:' + p.id, kind: 'shelter', prio: 160, why: `${p.name}会在黎明冻伤，${movable && root.id !== p.id ? '把活计搬到' : '回到'}火边过夜`, cat: '生存' },
+        [{ op: 'move', id, x: spot.x, y: spot.y }], { lock: [id] }));
+      n++;
     }
   }
 
@@ -1106,20 +1196,44 @@ export class Brain {
 
   experiment(W, P) {
     const g = this.g, S = this.strat;
-    const boost = P.experimentBoost || 0;
+    const objUnmet = P.unmet.some((u) => u.prio >= 55 && CARDS[u.item] && !(PRODUCERS_KNOWN(g, this.mem, u.item)));
+    const boost = (P.experimentBoost || 0) + (objUnmet ? 60 : 0);
+
     const rate = S.curiosity + boost / 50;
     if (rate <= 0.02) return;
     const gap = 40 / rate;
     if (g.s.t - this.lastExperiment < gap) return;
     const worker = W.idle.find((w) => !this.locked.has(w.id));
     // blind combination: two kinds of free cards (+ a worker), never tried before
-    const kinds = [...new Set(W.cards.filter((c) => g.isFree(c) && !this.locked.has(c.id) && ['resource', 'food', 'tool', 'gear', 'knowledge', 'misc'].includes(CARDS[c.d].kind)).map((c) => c.d))];
+    const kinds = [...new Set(W.cards.filter((c) => {
+      if (!g.isFree(c) || this.locked.has(c.id)) return false;
+      const d = CARDS[c.d];
+      if ((P.claimed.get(c.d) || 0) >= W.freeN(c.d)) return false; // everything of it is spoken for
+      if (['resource', 'food', 'knowledge', 'misc'].includes(d.kind)) return d.id !== 'insight' && d.id !== 'coin';
+      return (d.kind === 'tool' || d.kind === 'gear') && d.rarity !== 'common' && !d.tags.includes('trainer');
+    }).map((c) => c.d))];
     if (kinds.length < 2) return;
     const rng = g.rng; // the AI's own choices don't need a separate stream; it doesn't affect fairness
     void rng;
+    // wanted items nobody knows how to make: guess ingredients from their names (珍珠 → 珍珠项链)
+    const wanted = P.unmet.map((u) => u.item).filter((id) => CARDS[id]);
+    const related = (id) => {
+      const n1 = CARDS[id].name;
+      let best = 0;
+      for (const w of wanted) {
+        const n2 = CARDS[w].name;
+        if (n2.includes(n1) || n1.includes(n2)) best = Math.max(best, 12);
+        else {
+          let shared = 0;
+          for (const ch of n1) if (n2.includes(ch)) shared++;
+          if (shared >= 1) best = Math.max(best, shared * 2);
+        }
+      }
+      return best;
+    };
     const interesting = (id) => {
       const d = CARDS[id];
-      return (d.rarity !== 'common' ? 3 : 1) + (['wolf_pelt', 'heartwood', 'croc_tooth', 'molten_core', 'frost_heart', 'ember_shard', 'shadow_dust', 'obsidian', 'star_metal', 'pearl', 'feather', 'bone', 'resin', 'wax', 'ice', 'driftwood', 'seaweed', 'relic', 'ivory', 'crystal'].includes(id) ? 3 : 0);
+      return (d.rarity !== 'common' ? 3 : 1) + related(id) + (['wolf_pelt', 'heartwood', 'croc_tooth', 'molten_core', 'frost_heart', 'ember_shard', 'shadow_dust', 'obsidian', 'star_metal', 'pearl', 'feather', 'bone', 'resin', 'wax', 'ice', 'driftwood', 'seaweed', 'relic', 'ivory', 'crystal'].includes(id) ? 3 : 0);
     };
     const cands = [];
     for (let i = 0; i < kinds.length; i++) {

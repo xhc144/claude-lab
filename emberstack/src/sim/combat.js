@@ -3,7 +3,7 @@
 //   穿刺 pierce  ×1.25 vs beasts, ×0.5 vs armored
 //   钝击 blunt   ×1.25 vs armored
 //   光芒 light   ×2 vs shades (everything else deals ×0.5 to shades)
-// Flying enemies can only be hit by ranged attackers.
+// Flying enemies are hard to reach: melee attacks against them deal only a third of the damage.
 
 import { CARDS } from '../data/cards.js';
 import { CARD_W } from './constants.js';
@@ -86,9 +86,12 @@ export function combatStats(g, c) {
     atk = Math.round(atk * (g.rules.enemyAtk || 1));
   }
   if (def.kind === 'structure' && def.taunt) atk = 0;
+  let traits = def.traits || [];
+  // the Great Flame strips the Ash King of his armour
+  if (c.d === 'ash_king' && g.countDef('great_flame')) { dfn = 0; traits = traits.filter((t) => t !== 'armored'); }
   return {
     atk, def: dfn, dmg, ranged, crit, thorns, spd: def.spd || 1.6,
-    traits: def.traits || [], taunt: !!def.taunt, flying: (def.traits || []).includes('flying'),
+    traits, taunt: !!def.taunt, flying: traits.includes('flying'),
   };
 }
 
@@ -98,8 +101,8 @@ function pickTarget(g, attacker, as, foes) {
     const t = g.s.cards[id];
     if (!t) continue;
     const ts = combatStats(g, t);
-    if (ts.flying && !as.ranged) continue;
     let w = 1;
+    if (ts.flying && !as.ranged) w = 0.4;
     if (ts.taunt) w = 6;
     if (CARDS[attacker.d].kind === 'folk') {
       if (as.ranged && ts.flying) w *= 4;
@@ -114,6 +117,7 @@ function pickTarget(g, attacker, as, foes) {
 
 export function damageMult(as, ts) {
   let mult = 1;
+  if (ts.traits.includes('flying') && !as.ranged) mult *= 0.34;
   if (ts.traits.includes('shade')) mult *= as.dmg === 'light' ? 2 : 0.5;
   if (ts.traits.includes('armored')) {
     if (as.dmg === 'pierce') mult *= 0.5;
@@ -227,7 +231,6 @@ export function battleOf(g, cardId) {
 export function strengthOf(g, c, vsTraits = []) {
   const s = combatStats(g, c);
   const ts = { traits: vsTraits };
-  let dps = (s.atk * damageMult(s, ts) * 0.88) / s.spd;
-  if (vsTraits.includes('flying') && !s.ranged) dps = 0;
+  const dps = (s.atk * damageMult(s, ts) * 0.88) / s.spd;
   return Math.max(0.05, dps) * Math.max(1, c.hp || 1);
 }

@@ -37,7 +37,7 @@ folk('scout', '斥候', { hp: 7, atk: 2, dmg: 'pierce', skills: { explore: 1.8 }
 folk('merchant', '行商', { hp: 5, skills: { trade: 1 }, tradeBonus: 0.5, desc: '在集市出售货物时多得 50% 铜贝。商队会多给一个报价。' });
 folk('lampwarden', '掌灯人', { hp: 8, atk: 2, dmg: 'light', light: 120, tags: ['soldier'], desc: '提灯巡夜。自带 120 光照，以光芒伤敌（对暗影双倍）。' });
 folk('spearman', '矛兵', { hp: 10, atk: 2, dmg: 'pierce', skills: { hunt: 1.3 }, tags: ['soldier'], desc: '持矛的卫士。穿刺伤害，擅长对付野兽。' });
-folk('archer', '弓手', { hp: 7, atk: 2, dmg: 'pierce', ranged: true, tags: ['soldier'], desc: '远程穿刺，可以命中飞行的敌人。' });
+folk('archer', '弓手', { hp: 7, atk: 2, dmg: 'pierce', ranged: true, tags: ['soldier'], desc: '远程穿刺，对飞行的敌人造成全额伤害。' });
 folk('maceguard', '锤卫', { hp: 13, atk: 2, def: 1, dmg: 'blunt', taunt: true, tags: ['soldier'], desc: '钝击无视护甲。嘲讽：敌人优先攻击锤卫。' });
 folk('knight', '骑卫', { hp: 19, atk: 3, def: 2, spd: 1.3, dmg: 'pierce', tags: ['soldier'], desc: '铁甲骑手，营地最坚实的矛尖。' });
 folk('musketeer', '火铳手', { hp: 9, atk: 5, dmg: 'pierce', ranged: true, spd: 2.2, tags: ['soldier'], desc: '火铳一响，猛兽也要倒下。远程。' });
@@ -233,7 +233,7 @@ node('young_tree', '幼树', { t: 1, out: [], charges: 0, skill: 'wood' }, { tag
 node('rock', '岩石', { t: 10, out: [['stone', 1]], extra: [['flint', 0.3]], charges: 5, skill: 'stone', tool: 'pick' }, { desc: '可采集石块与燧石。' });
 node('river', '河流', { t: 14, out: [['raw_fish', 1]], extra: [['reed', 0.08]], charges: -1, skill: 'fish', tool: 'rod', season: { 3: 0.5 } }, { fixed: true, desc: '取之不尽的鱼。冬季结冰，捕鱼减半。' });
 node('pond', '池塘', { t: 13, out: [['raw_fish', 1]], extra: [['reed', 0.25]], charges: 6, perennial: true, regen: 2, skill: 'fish', tool: 'rod', season: { 3: 0.4 } }, { desc: '可以捕鱼，鱼群每天恢复。' });
-node('clay_pit', '黏土坑', { t: 10, out: [['clay', 1]], charges: 6, skill: 'stone', tool: 'pick' }, { desc: '湿润的黏土。' });
+node('clay_pit', '黏土坑', { t: 10, out: [['clay', 1]], charges: 6, perennial: true, regen: 1, skill: 'stone', tool: 'pick', season: { 3: 0.5 } }, { desc: '湿润的黏土。挖空后雨水会慢慢把它填回来（每天 +1）。' });
 node('reed_bed', '芦苇荡', { t: 8, out: [['reed', 1]], charges: 5, perennial: true, regen: 2, skill: 'forage', season: { 3: 0.3 } }, { desc: '可采集芦苇。' });
 node('wild_wheat', '野麦', { t: 10, out: [['grain', 1]], charges: 4, perennial: true, regen: 1, skill: 'farm', season: NOWINTER }, { desc: '野生的麦子。学会农耕后可以种成田地。' });
 node('herb_patch', '草药丛', { t: 10, out: [['herb', 1]], charges: 4, perennial: true, regen: 1, skill: 'forage', season: NOWINTER }, { desc: '可采集草药。' });
@@ -279,7 +279,7 @@ enemy('wolf', '狼', { hp: 6, atk: 2, spd: 1.3, traits: ['beast'] }, { beh: 'hun
 enemy('alpha_wolf', '头狼', { hp: 30, atk: 3, spd: 1.2, traits: ['beast', 'boss'] }, { beh: 'boss', speed: 45, summon: { id: 'wolf', every: 16, max: 2 }, loot: [['wolf_pelt', 1], ['raw_meat', 3], ['relic', 1]] }, { rarity: 'epic', desc: '狼群之王。战斗中会召唤狼。' });
 enemy('bear', '熊', { hp: 16, atk: 3, traits: ['beast'] }, { beh: 'neutral', speed: 30, loot: [['raw_meat', 4], ['fur', 1], ['hide', 1]] }, { desc: '别去惹它，除非你准备好了。' });
 enemy('shade', '灰影', { hp: 5, atk: 1, traits: ['shade'] }, { beh: 'shade', speed: 38, loot: [['shadow_dust', 1, 0.35]] }, { tags: ['shade'], desc: '灰雾中诞生的暗影。畏光，黎明时消散。非光芒伤害减半。' });
-enemy('wisp', '鬼火', { hp: 4, atk: 1, spd: 1.2, traits: ['shade', 'flying'] }, { beh: 'shade', speed: 60, loot: [['shadow_dust', 1, 0.3]] }, { tags: ['shade'], desc: '飘忽的鬼火。飞行：只有远程能命中。' });
+enemy('wisp', '鬼火', { hp: 4, atk: 1, spd: 1.2, traits: ['shade', 'flying'] }, { beh: 'shade', speed: 60, loot: [['shadow_dust', 1, 0.3]] }, { tags: ['shade'], desc: '飘忽的鬼火。飞行：近战只能造成三分之一伤害。' });
 enemy('greater_shade', '魇', { hp: 16, atk: 3, traits: ['shade'] }, { beh: 'shade', speed: 34, loot: [['shadow_dust', 2], ['ember_shard', 1, 0.15]] }, { tags: ['shade'], rarity: 'uncommon', desc: '浓雾凝成的巨大暗影。' });
 enemy('thornling', '刺藤', { hp: 6, atk: 1, traits: ['armored'] }, { beh: 'hunter', speed: 25, loot: [['wood', 1]] }, { desc: '会走路的荆棘。有甲：穿刺伤害减半。' });
 enemy('rotroot', '腐根兽', { hp: 60, atk: 4, def: 1, spd: 1.8, traits: ['armored', 'boss', 'regen'] }, { beh: 'boss', speed: 14, summon: { id: 'thornling', every: 12, max: 3 }, regen: 1, loot: [['heartwood', 1], ['wood', 4], ['relic', 1]] }, { rarity: 'epic', desc: '古树腐烂的心。甲壳坚硬（钝击克制），会再生。' });
@@ -293,13 +293,13 @@ enemy('cave_crawler', '穴爬虫', { hp: 7, atk: 2, traits: ['armored'] }, { beh
 enemy('slag_golem', '熔渣巨人', { hp: 96, atk: 5, def: 1, spd: 2.0, traits: ['armored', 'boss', 'burning'] }, { beh: 'boss', speed: 12, summon: { id: 'cave_crawler', every: 16, max: 2 }, loot: [['molten_core', 1], ['iron', 4], ['coal', 4]] }, { rarity: 'epic', light: 140, desc: '熔炉里醒来的巨人。灼烧：近战攻击它的人有三分之一几率被反烧。' });
 enemy('frost_wolf', '霜狼', { hp: 10, atk: 3, spd: 1.3, traits: ['beast'] }, { beh: 'hunter', speed: 55, nocturnal: true, loot: [['fur', 1], ['raw_meat', 1]] }, { desc: '冻原的狼，比河谷的狼更凶。' });
 enemy('frost_wraith', '冰魇', { hp: 95, atk: 5, spd: 1.6, traits: ['shade', 'boss'] }, { beh: 'boss', speed: 22, summon: { id: 'wisp', every: 10, max: 4 }, loot: [['frost_heart', 1], ['shadow_dust', 3]] }, { tags: ['shade'], rarity: 'epic', desc: '极夜的化身。暗影：只有光芒能重创它；它召唤的鬼火会飞，需要远程。' });
-enemy('harpy', '海妖鸟', { hp: 7, atk: 2, spd: 1.3, traits: ['flying'] }, { beh: 'hunter', speed: 60, loot: [['feather', 2]] }, { desc: '飞行：只有远程能命中。' });
+enemy('harpy', '海妖鸟', { hp: 7, atk: 2, spd: 1.3, traits: ['flying'] }, { beh: 'hunter', speed: 60, loot: [['feather', 2]] }, { desc: '飞行：近战只能造成三分之一伤害，弓手克制。' });
 enemy('sea_serpent', '海蛇', { hp: 18, atk: 4, traits: ['beast'] }, { beh: 'hunter', speed: 40, loot: [['raw_meat', 3], ['hide', 1], ['pearl', 1, 0.2]] }, { desc: '从海里爬上岸的长蛇。' });
 enemy('tentacle', '触手', { hp: 14, atk: 3, traits: ['armored'] }, { beh: 'hunter', speed: 20, loot: [['raw_meat', 1]] }, { desc: '深渊海妖的触手。' });
-enemy('kraken', '深渊海妖', { hp: 150, atk: 6, def: 1, spd: 1.8, traits: ['armored', 'boss'] }, { beh: 'boss', speed: 10, summon: { id: 'tentacle', every: 11, max: 4 }, loot: [['abyss_pearl', 1], ['pearl', 3], ['oil', 4]] }, { rarity: 'legendary', desc: '雾海深处的巨物。不断伸出触手。' });
+enemy('kraken', '深渊海妖', { hp: 130, atk: 5, def: 1, spd: 1.8, traits: ['armored', 'boss'] }, { beh: 'boss', speed: 10, summon: { id: 'tentacle', every: 14, max: 3 }, loot: [['abyss_pearl', 1], ['pearl', 3], ['oil', 4]] }, { rarity: 'legendary', desc: '雾海深处的巨物。不断伸出触手。' });
 enemy('ash_hound', '灰犬', { hp: 11, atk: 3, spd: 1.2, traits: ['shade', 'beast'] }, { beh: 'shade', speed: 58, loot: [['shadow_dust', 1, 0.5]] }, { tags: ['shade'], desc: '灰烬里奔跑的猎犬。' });
 enemy('ash_knight', '灰烬骑士', { hp: 26, atk: 4, def: 2, traits: ['shade', 'armored'] }, { beh: 'shade', speed: 32, loot: [['shadow_dust', 2], ['iron', 1, 0.5], ['ember_shard', 1, 0.2]] }, { tags: ['shade'], rarity: 'uncommon', desc: '盔甲里只有灰。' });
-enemy('ash_king', '灰烬之王', { hp: 260, atk: 7, def: 2, spd: 1.7, traits: ['shade', 'boss', 'armored'] }, { beh: 'boss', speed: 8, summon: { id: 'ash_knight', every: 18, max: 3 }, darkPulse: 30, loot: [['ember_shard', 6], ['star_metal', 2]] }, { tags: ['shade'], rarity: 'legendary', desc: '灰雾的源头。会周期性地熄灭附近的火焰。' });
+enemy('ash_king', '灰烬之王', { hp: 220, atk: 6, def: 2, spd: 1.7, traits: ['shade', 'boss', 'armored'] }, { beh: 'boss', speed: 8, summon: { id: 'ash_knight', every: 20, max: 2 }, darkPulse: 30, loot: [['ember_shard', 6], ['star_metal', 2]] }, { tags: ['shade'], rarity: 'legendary', desc: '灰雾的源头。会周期性地熄灭附近的火焰。大薪火燃起之前，他刀枪不入；大薪火燃起之后，他失去护甲，并被火光持续灼烧。' });
 
 // lairs: stationary spawners; destroy them by attacking
 function lair(id, name, st, spawn, p = {}) {
@@ -408,10 +408,10 @@ region('abandoned_mine', '废弃矿井', { t: 21, charges: 5, need: 'light', loo
 region('mountain_pass', '山口', { t: 18, charges: 4, loot: [['rock', 2], ['iron_vein', 1], ['goat', 2], ['horse', 1], ['pine', 2], ['flint', 2], ['survivor', 0.45], ['copper_vein', 0.8], ['coal_seam', 0.6], ['clay_pit', 1.2], ['tin_vein', 0.6]], danger: 0.14, foes: [['wolf', 1.5], ['bandit', 1]] }, { desc: '通往群山的隘口。' });
 region('frozen_waste', '冻原', { t: 20, charges: 5, loot: [['pine', 2], ['ice_shelf', 2], ['mammoth', 1], ['fur', 1], ['ivory', 0.3], ['meteor_crater', 0.25], ['survivor', 0.35], ['seal', 1], ['rock', 1]], danger: 0.18, foes: [['frost_wolf', 2]] }, { desc: '一望无际的冰原。' });
 region('ice_cave', '冰窟', { t: 22, charges: 4, need: 'light', loot: [['crystal_geode', 1.5], ['ice_shelf', 2], ['relic', 1], ['ember_shard', 0.5], ['fur', 1], ['scroll', 0.8]], danger: 0.22, foes: [['frost_wolf', 1], ['wisp', 1.5]] }, { desc: '幽蓝的冰洞。需要光源。' });
-region('coast', '海岸', { t: 15, charges: 5, loot: [['tidepool', 2], ['driftwood_shore', 2], ['sand_bank', 2], ['seal', 1.5], ['fowl', 1], ['raw_fish', 2], ['salt_flat', 1], ['survivor', 0.4]], danger: 0.06, foes: [['harpy', 1]] }, { desc: '海风与盐。' });
+region('coast', '海岸', { t: 15, charges: 6, loot: [['tidepool', 2], ['driftwood_shore', 2], ['sand_bank', 2], ['seal', 1.5], ['fowl', 1], ['raw_fish', 2], ['salt_flat', 1], ['rock', 1.2], ['clay_pit', 1], ['survivor', 0.4]], danger: 0.06, foes: [['harpy', 1]] }, { desc: '海风与盐。' });
 region('misty_isle', '雾岛', { t: 19, charges: 5, need: 'boat', loot: [['tidepool', 2], ['driftwood_shore', 1.5], ['tree', 1], ['seal', 1.5], ['pearl', 0.8], ['relic', 1], ['survivor', 0.5], ['scroll', 1], ['sand_bank', 1]], danger: 0.18, foes: [['harpy', 2], ['sea_serpent', 0.5]] }, { desc: '雾中的小岛。需要舟或筏才能前往。' });
 region('sunken_temple', '沉没神殿', { t: 24, charges: 4, need: 'boat', needLight: true, loot: [['relic', 2.5], ['tome', 1], ['pearl', 1], ['gold', 0.6], ['ember_shard', 1], ['scroll', 1], ['treasure_chest', 0.3]], danger: 0.28, foes: [['sea_serpent', 1], ['shade', 1.5]] }, { rarity: 'uncommon', desc: '半没在海里的神殿。需要舟与光源。' });
-region('ash_wastes', '灰烬荒原', { t: 20, charges: 5, loot: [['dead_tree', 2], ['ember_vein', 1], ['obsidian_flow', 1.5], ['sulfur_vent', 1.5], ['relic', 1], ['shadow_dust', 1], ['survivor', 0.3], ['coal_seam', 1]], danger: 0.25, foes: [['ash_hound', 2], ['shade', 1.5], ['greater_shade', 0.4]] }, { desc: '被灰雾吞没的土地。' });
+region('ash_wastes', '灰烬荒原', { t: 20, charges: 6, loot: [['dead_tree', 2], ['ember_vein', 1], ['obsidian_flow', 1.5], ['sulfur_vent', 1.5], ['relic', 1], ['shadow_dust', 1], ['survivor', 0.3], ['coal_seam', 1], ['rock', 1.5], ['clay_pit', 1], ['ruins_rubble', 1], ['iron_vein', 0.6]], danger: 0.25, foes: [['ash_hound', 2], ['shade', 1.5], ['greater_shade', 0.4]] }, { desc: '被灰雾吞没的土地。' });
 region('star_fall', '星陨之地', { t: 20, charges: 3, loot: [['meteor_crater', 2], ['crystal_geode', 1], ['star_metal', 1], ['insight', 1]], danger: 0.15, foes: [['wisp', 1]] }, { rarity: 'rare', desc: '流星坠落的地方。' });
 region('bandit_trail', '匪径', { t: 16, charges: 3, loot: [['coin', 2], ['leather', 1], ['iron_sword', 0.3], ['food_crate', 0.4], ['rope', 1]], danger: 0.45, foes: [['bandit', 2], ['bandit_archer', 1]], reveal: ['bandit_camp'] }, { desc: '盗匪留下的足迹。探索到底会找到匪寨。' });
 region('wolf_trail', '狼径', { t: 14, charges: 3, loot: [['bone', 2], ['hide', 1.5], ['raw_meat', 1]], danger: 0.4, foes: [['wolf', 1]], reveal: ['wolf_den'] }, { desc: '狼群的踪迹。探索到底会找到狼窝。' });

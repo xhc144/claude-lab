@@ -104,7 +104,7 @@ export function openCard(g, cardId) {
       return { ok: true, got };
     }
     case 'scroll': {
-      const hid = pickHint(g);
+      const hid = c.hint && !g.s.disc.includes(c.hint) ? c.hint : pickHint(g);
       g.removeCard(c.id, 'open');
       g.spawn('insight', at, {});
       if (hid) {

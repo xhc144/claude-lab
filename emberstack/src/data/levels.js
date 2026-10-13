@@ -13,6 +13,31 @@ function level(ch, l) {
   const c = CHAPTERS.find((x) => x.id === ch);
   const id = `${ch}-${c.levels.length + 1}`;
   const L = { id, chapter: ch, biome: c.biome, board: [2400, 1700], stars: [], lose: [], schedule: [], ...l };
+  // the land must be able to feed the camp: top up thin maps with food sources fitting the biome
+  if (ch >= 2 && L.forage !== false) {
+    const pop = L.start.filter((e) => CARDS[e.c].kind === 'folk').reduce((a, e) => a + (e.n || 1), 0);
+    const perDay = (id) => {
+      const nd = CARDS[id].node;
+      const f = nd.out.reduce((a, [o, k]) => a + (CARDS[o].food || 0) * k * (CARDS[o].tags.includes('raw') ? 2 : 1), 0);
+      const sm = L.rules?.seasons === false ? nd.season?.[L.rules?.season ?? 1] ?? 1 : 1;
+      return (nd.charges < 0 ? (72 / nd.t) * f : nd.perennial ? (nd.regen || 1) * f : 0) * sm;
+    };
+    let sustain = 0;
+    for (const e of L.start) if (CARDS[e.c].node) sustain += perDay(e.c) * (e.n || 1);
+    const pool = { valley: ['berry_bush', 'pond', 'wild_wheat'], forest: ['berry_bush', 'mushroom_ring', 'pond'], marsh: ['pond', 'mushroom_ring', 'berry_bush'],
+      mountain: ['berry_bush', 'pond', 'wild_wheat'], tundra: ['pond', 'mushroom_ring'], isles: ['tidepool', 'pond', 'berry_bush'], ash: ['mushroom_ring', 'pond'] }[L.biome] || ['berry_bush', 'pond'];
+    let i = 0;
+    const add = {};
+    while (sustain < pop * 2 * 1.35 && i < 12) {
+      const id = pool[i % pool.length];
+      const v = perDay(id);
+      i++;
+      if (v <= 0) continue;
+      add[id] = (add[id] || 0) + 1;
+      sustain += v;
+    }
+    for (const [c, n] of Object.entries(add)) L.start.push({ c, n });
+  }
   // provisions: every camp from chapter 2 on starts with about a day of preserved food
   if (ch >= 2 && L.provisions !== false) {
     const pop = L.start.filter((e) => CARDS[e.c].kind === 'folk').reduce((a, e) => a + (e.n || 1), 0);
@@ -392,8 +417,9 @@ level(5, {
   outro: '十个黎明过去了，营地的火从未熄灭。',
   techs: [...ERA1, 'pottery', 'weaving', 'husbandry'], techAllowed: { maxEra: 3 },
   start: [
-    { c: 'survivor', n: 5 }, { c: 'campfire', fuel: 6 }, { c: 'lean_to', n: 2 }, { c: 'pine', n: 5 }, { c: 'rock', n: 3 }, { c: 'pond' },
-    { c: 'mushroom_ring' }, { c: 'tall_grass', n: 2 }, { c: 'wood', n: 4 }, { c: 'fur', n: 2 }, { c: 'seal', n: 2 }, { c: 'hot_spring' }, { c: 'frozen_waste' },
+    { c: 'survivor', n: 5 }, { c: 'campfire', fuel: 6 }, { c: 'lean_to', n: 2 }, { c: 'pine', n: 5 }, { c: 'rock', n: 3 }, { c: 'pond', n: 2 },
+    { c: 'mushroom_ring', n: 3 }, { c: 'tall_grass', n: 2 }, { c: 'wood', n: 6 }, { c: 'fur', n: 4 }, { c: 'seal', n: 3 }, { c: 'hot_spring' },
+    { c: 'jerky', n: 8 }, { c: 'frozen_waste' },
   ],
   objectives: [{ type: 'survive', days: 10 }, { type: 'pop', n: 5 }],
   stars: [{ type: 'nodeath' }, { type: 'pop', n: 7 }],
@@ -432,7 +458,7 @@ level(5, {
   techs: [...ERA1, ...ERA2, 'masonry', 'mining', 'smelting', 'bronze', 'writing'], techAllowed: { maxEra: 5 },
   start: [
     { c: 'survivor', n: 6 }, { c: 'scholar' }, { c: 'hearth', fuel: 6 }, { c: 'cabin' }, { c: 'lean_to' }, { c: 'pine', n: 4 }, { c: 'rock', n: 3 },
-    { c: 'copper_vein' }, { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit' }, { c: 'sand_bank' }, { c: 'pond' }, { c: 'reed_bed' },
+    { c: 'copper_vein' }, { c: 'tin_vein' }, { c: 'coal_seam' }, { c: 'clay_pit', n: 2 }, { c: 'sand_bank' }, { c: 'pond' }, { c: 'reed_bed' }, { c: 'brick', n: 4 },
     { c: 'tall_grass', n: 2 }, { c: 'stone_pick' }, { c: 'study' }, { c: 'smelter' }, { c: 'kiln' }, { c: 'fur', n: 3 }, { c: 'jerky', n: 6 }, { c: 'ice_cave' }, { c: 'star_fall' },
   ],
   objectives: [{ type: 'research', tech: 'astronomy' }, { type: 'build', card: 'observatory' }],
@@ -488,10 +514,11 @@ level(6, {
     '烧出琉璃，榨出灯油，建起两座灯塔——在灰雾吞没营地之前。',
   ],
   outro: '两道光柱刺破了雾海。灰雾第一次退到了海平线以外。',
-  techs: [...ERA1, ...ERA2, 'masonry', 'mining', 'smelting', 'writing', 'trade'], techAllowed: { maxEra: 5 },
+  techs: [...ERA1, ...ERA2, 'masonry', 'mining', 'smelting', 'writing', 'trade', 'fortification', 'glassmaking', 'lamplight'], techAllowed: { maxEra: 5 },
   start: [
     { c: 'survivor', n: 7 }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 }, { c: 'sand_bank', n: 2 },
-    { c: 'clay_pit', n: 2 }, { c: 'copper_vein', n: 2 }, { c: 'coal_seam', n: 2 }, { c: 'tidepool', n: 2 }, { c: 'tall_grass', n: 2 }, { c: 'seal', n: 2 },
+    { c: 'glassworks' }, { c: 'oil_press' }, { c: 'insight', n: 5 }, { c: 'copper', n: 2 },
+    { c: 'clay_pit', n: 3 }, { c: 'copper_vein', n: 2 }, { c: 'coal_seam', n: 2 }, { c: 'tidepool', n: 2 }, { c: 'tall_grass', n: 2 }, { c: 'seal', n: 2 }, { c: 'rock', n: 2 }, { c: 'brick', n: 4 },
     { c: 'pond' }, { c: 'kiln' }, { c: 'smelter' }, { c: 'workbench' }, { c: 'study' }, { c: 'stone_pick', n: 2 }, { c: 'coast' },
   ],
   objectives: [{ type: 'build', card: 'lighthouse', n: 2, lit: true }, { type: 'fog', below: 30 }],
@@ -504,16 +531,17 @@ level(6, {
   name: '海市', sub: '珍珠与财富',
   intro: [
     '雾海的商人只认珍珠和金子。',
-    '潜进潮池，出海寻宝，串起珍珠项链——攒下 60 铜贝的家底。',
+    '潜进潮池，出海寻宝。营地里有一卷残卷，记着珍珠项链的串法。',
+    '串起一条珍珠项链，再攒下 120 铜贝的家底。',
   ],
   outro: '营地的仓库里堆满了金锭。雾海诸岛都知道了这个名字。',
   techs: [...ERA1, ...ERA2, 'masonry', 'trade', 'writing', 'sailing', 'smelting', 'mining'], techAllowed: { maxEra: 5 },
   start: [
-    { c: 'survivor', n: 7 }, { c: 'merchant' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'tree', n: 4 }, { c: 'rock', n: 2 }, { c: 'tidepool', n: 3 },
+    { c: 'survivor', n: 7 }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'tree', n: 4 }, { c: 'rock', n: 2 }, { c: 'tidepool', n: 3 },
     { c: 'driftwood_shore' }, { c: 'sand_bank' }, { c: 'salt_flat' }, { c: 'clay_pit' }, { c: 'tall_grass', n: 2 }, { c: 'seal', n: 2 }, { c: 'dock' },
-    { c: 'market' }, { c: 'workbench' }, { c: 'loom' }, { c: 'boat' }, { c: 'misty_isle', ch: 6 }, { c: 'sunken_temple' },
+    { c: 'market' }, { c: 'workbench' }, { c: 'loom' }, { c: 'boat' }, { c: 'scroll', hint: 'h_pearl_necklace' }, { c: 'misty_isle', ch: 6 }, { c: 'sunken_temple' },
   ],
-  objectives: [{ type: 'coins', n: 60 }],
+  objectives: [{ type: 'coins', n: 120 }, { type: 'made', card: 'pearl_necklace', n: 1 }],
   stars: [{ type: 'days', lte: 14 }, { type: 'nodeath' }],
   rules: { seasons: true, seasonDays: 4, startSeason: 1, eventRate: 0.3, caravanEvery: 3 },
 });
@@ -527,14 +555,14 @@ level(6, {
   outro: '海妖沉回了深渊。海面上漂着一颗发光的巨珠。',
   techs: [...ERA1, ...ERA2, ...ERA3, 'iron', 'tactics', 'sailing'], techAllowed: { maxEra: 5 },
   start: [
-    { c: 'survivor', n: 8 }, { c: 'spearman', n: 2 }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'stone_house' }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 },
+    { c: 'survivor', n: 8 }, { c: 'maceguard', n: 2 }, { c: 'archer', n: 2 }, { c: 'iron_armor', n: 2 }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'stone_house' }, { c: 'tree', n: 4 }, { c: 'rock', n: 3 },
     { c: 'iron_vein', n: 2 }, { c: 'coal_seam', n: 2 }, { c: 'copper_vein' }, { c: 'tin_vein' }, { c: 'tidepool', n: 2 }, { c: 'pond', n: 2 }, { c: 'tall_grass', n: 2 },
     { c: 'smelter' }, { c: 'forge' }, { c: 'workbench' }, { c: 'tannery' }, { c: 'iron_pick' }, { c: 'seal', n: 2 }, { c: 'salted_fish', n: 8 },
     { c: 'kraken', at: [0.84, 0.86], wake: false }, { c: 'serpent_nest', at: [0.12, 0.88] },
   ],
   objectives: [{ type: 'kill', card: 'kraken' }],
-  stars: [{ type: 'days', lte: 18 }, { type: 'nodeath' }],
-  schedule: [{ day: 18, wake: 'kraken', msg: '深渊海妖向营地伸出了触手！', warn: '第 18 天：海妖上岸' }],
+  stars: [{ type: 'days', lte: 20 }, { type: 'nodeath' }],
+  schedule: [{ day: 20, wake: 'kraken', msg: '深渊海妖向营地伸出了触手！', warn: '第 20 天：海妖上岸' }],
   rules: { seasons: true, seasonDays: 4, startSeason: 1, eventRate: 0.25, caravanEvery: 5 },
 });
 
@@ -568,14 +596,15 @@ level(7, {
   outro: '三座烽燧连成一线。灰烬王座的轮廓第一次从雾中显露出来。',
   techs: [...ERA1, ...ERA2, ...ERA3, ...ERA4, 'civics', 'glassmaking', 'architecture'], techAllowed: { maxEra: 6 },
   start: [
-    { c: 'survivor', n: 7 }, { c: 'lampwarden' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 2 }, { c: 'rock', n: 4 },
+    { c: 'survivor', n: 7 }, { c: 'lampwarden' }, { c: 'hearth', fuel: 6 }, { c: 'cabin', n: 2 }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 4 }, { c: 'rock', n: 7 },
     { c: 'iron_vein', n: 2 }, { c: 'coal_seam', n: 3 }, { c: 'ember_vein', n: 2 }, { c: 'clay_pit' }, { c: 'mushroom_ring', n: 2 }, { c: 'pond' },
-    { c: 'tall_grass', n: 2 }, { c: 'smelter' }, { c: 'forge' }, { c: 'kiln' }, { c: 'study' }, { c: 'iron_pick', n: 2 }, { c: 'jerky', n: 6 }, { c: 'ash_wastes' },
+    { c: 'tall_grass', n: 2 }, { c: 'smelter' }, { c: 'forge' }, { c: 'kiln' }, { c: 'study' }, { c: 'iron_pick', n: 2 }, { c: 'jerky', n: 6 }, { c: 'coal', n: 6 },
+    { c: 'stone', n: 6 }, { c: 'ash_wastes' }, { c: 'ash_wastes' },
   ],
   objectives: [{ type: 'build', card: 'beacon', n: 3, lit: true }, { type: 'fog', below: 30 }],
   lose: [{ type: 'fog' }],
   stars: [{ type: 'days', lte: 18 }, { type: 'fog', below: 75 }],
-  rules: { seasons: true, seasonDays: 4, startSeason: 1, shades: true, shadeBase: 2, fog0: 40, fogRate: 3, eventRate: 0.25 },
+  rules: { seasons: true, seasonDays: 4, startSeason: 1, shades: true, shadeBase: 2, fog0: 40, fogRate: 3, eventRate: 0.25, caravanEvery: 3 },
 });
 
 level(7, {
@@ -611,18 +640,20 @@ level(7, {
     '分三个阶段献上材料，重新点燃大薪火。然后——击败灰烬之王。',
   ],
   outro: '大薪火冲天而起。光芒所及之处，灰雾像晨露一样消散。长夜结束了。',
-  techs: [...ERA1, ...ERA2, ...ERA3, ...ERA4, ...ERA5, 'clockwork'], techAllowed: { maxEra: 6 },
+  techs: [...ERA1, ...ERA2, ...ERA3, ...ERA4, ...ERA5, 'clockwork', 'beacon_lore'], techAllowed: { maxEra: 6 },
   start: [
     { c: 'survivor', n: 8 }, { c: 'lampwarden', n: 2 }, { c: 'archer', n: 2 }, { c: 'maceguard' }, { c: 'artisan' }, { c: 'hearth', fuel: 8 },
     { c: 'cabin', n: 2 }, { c: 'stone_house' }, { c: 'dead_tree', n: 4 }, { c: 'tree', n: 3 }, { c: 'rock', n: 4 }, { c: 'iron_vein', n: 2 },
     { c: 'coal_seam', n: 2 }, { c: 'ember_vein', n: 2 }, { c: 'sand_bank' }, { c: 'clay_pit' }, { c: 'mushroom_ring', n: 3 }, { c: 'pond', n: 2 },
     { c: 'tall_grass', n: 2 }, { c: 'smelter' }, { c: 'forge' }, { c: 'kiln' }, { c: 'glassworks' }, { c: 'clock_workshop' }, { c: 'shrine' },
-    { c: 'oil_press' }, { c: 'iron_pick', n: 2 }, { c: 'jerky', n: 8 }, { c: 'great_flame_site', at: [0.5, 0.3] },
+    { c: 'oil_press' }, { c: 'iron_pick', n: 2 }, { c: 'jerky', n: 8 }, { c: 'field', n: 3 }, { c: 'granary', store: 30 }, { c: 'iron', n: 4 },
+    { c: 'glass', n: 2 }, { c: 'brick', n: 4 }, { c: 'copper_vein' }, { c: 'copper', n: 2 }, { c: 'lantern' }, { c: 'ember_vein' }, { c: 'reed_bed' },
+    { c: 'great_flame_site', at: [0.5, 0.3] },
     { c: 'ash_king', at: [0.88, 0.12], wake: false },
   ],
   objectives: [{ type: 'build', card: 'great_flame' }, { type: 'kill', card: 'ash_king' }],
-  stars: [{ type: 'days', lte: 22 }, { type: 'nodeath' }],
-  schedule: [{ day: 20, wake: 'ash_king', msg: '灰烬之王从王座上站了起来！', warn: '第 20 天：灰烬之王' }],
+  stars: [{ type: 'days', lte: 24 }, { type: 'nodeath' }],
+  schedule: [{ day: 24, wake: 'ash_king', msg: '灰烬之王从王座上站了起来！', warn: '第 24 天：灰烬之王' }],
   rules: { seasons: true, seasonDays: 4, startSeason: 1, shades: true, shadeBase: 2, fog0: 45, fogRate: 2, eventRate: 0.2 },
 });
 

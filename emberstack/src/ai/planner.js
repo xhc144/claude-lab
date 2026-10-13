@@ -9,6 +9,7 @@ import { PRODUCERS, REGION_LOOT, BEAST_LOOT, isKnown, techGap, itemCost, foodRat
 import { objectiveProgress, objectiveText } from '../sim/objectives.js';
 import { techStatus } from '../sim/economy.js';
 import { seasonMult } from '../sim/tasks.js';
+import { GREAT_FLAME_STAGES } from '../sim/drop.js';
 
 const nm = (id) => CARDS[id]?.name || id;
 
@@ -156,7 +157,7 @@ function recipeCost(P, r, yieldN) {
     if (ref[0] === '#') {
       const id = resolveTag(P, ref.slice(1));
       sub = id ? (availFree(P, id) > 0 ? 1 : itemCost(W, id, P.memo)) : Infinity;
-    } else sub = availFree(P, ref) >= n ? 1 : itemCost(W, ref, P.memo);
+    } else sub = availFree(P, ref) >= n ? 1 : W.freeN(ref) >= n ? 3 : itemCost(W, ref, P.memo, 1);
     c += (sub * n) / Math.max(0.05, yieldN);
   }
   for (const ref of Object.keys(r.keep)) {
@@ -177,9 +178,20 @@ export function produce(P, item, n, prio, why, cat, depth = 0) {
   }
   const label = why;
   switch (m.kind) {
-    case 'tech':
+    case 'tech': {
       P.techNeed.set(m.tech, Math.max(P.techNeed.get(m.tech) || 0, prio));
+      // while the research runs, get the ingredients ready (only when the tech is within reach)
+      const r = RECIPES[m.r];
+      const gap = techGap(W.g, m.tech);
+      if (r && r.kind !== 'harvest' && gap <= 18 && depth < 4) {
+        for (const [ref, k] of Object.entries(r.in)) need(P, ref, k * Math.min(n, 2), prio * 0.55, `为${nm(item)}提前备料`, cat, depth + 1);
+        for (const [ref, k] of Object.entries(r.keep)) {
+          if (ref[0] === '#' || W.count(ref) >= k) continue;
+          if (CARDS[ref].kind === 'structure') produce(P, ref, 1, prio * 0.55, `为${nm(item)}提前建造${nm(ref)}`, cat, depth + 1);
+        }
+      }
       break;
+    }
     case 'harvest': {
       const node = pickNode(P, m.nodes);
       const nd = CARDS[node.d].node;
@@ -314,6 +326,7 @@ export function objectiveNeeds(P) {
     const why = '目标：' + objectiveText(o);
     switch (o.type) {
       case 'build': {
+        if (o.card === 'great_flame') { greatFlame(P, prio); break; }
         const have = W.cards.filter((c) => c.d === o.card).length;
         const lit = o.lit ? W.cards.filter((c) => c.d === o.card && g.cardLight(c) > 0).length : have;
         goal(P, '建造' + nm(o.card), prio, '目标', `${pr.cur}/${pr.need}`);
@@ -401,6 +414,23 @@ export function objectiveNeeds(P) {
       default:
         break;
     }
+  }
+}
+
+/** the Great Flame is built by feeding its site, stage by stage */
+function greatFlame(P, prio) {
+  const W = P.W;
+  const site = W.cards.find((c) => c.d === 'great_flame_site');
+  if (!site) { produce(P, 'great_flame_site', 1, prio, '奠基大薪火', '目标'); return; }
+  const stg = GREAT_FLAME_STAGES[site.stage || 0];
+  if (!stg) return;
+  goal(P, `大薪火·${stg.name}`, prio + 4, '目标', `第 ${(site.stage || 0) + 1}/${GREAT_FLAME_STAGES.length} 阶段`);
+  for (const [id, n] of Object.entries(stg.need)) {
+    const left = n - ((site.prog && site.prog[id]) || 0);
+    if (left <= 0) continue;
+    const free = W.free(id).length;
+    if (free > 0) addJob(P, { key: 'deliver:' + id, kind: 'deliver', target: site.id, item: id, n: Math.min(left, free), prio: prio + 6, why: `向大薪火献上${nm(id)}（${stg.name}）`, cat: '目标' });
+    if (free < left) produce(P, id, left - free, prio + 2, `大薪火的「${stg.name}」还需要${nm(id)} ×${left - free}`, '目标');
   }
 }
 

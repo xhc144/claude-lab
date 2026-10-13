@@ -27,7 +27,7 @@ export function setupLevel(g) {
     let pileStack = null;
     for (let i = 0; i < n; i++) {
       const props = {};
-      for (const k of ['fuel', 'ch', 'once', 'loot', 'foes', 'danger', 'reveal', 'name', 'store', 'hp']) if (e[k] !== undefined) props[k] = Array.isArray(e[k]) ? e[k].slice() : e[k];
+      for (const k of ['fuel', 'ch', 'once', 'loot', 'foes', 'danger', 'reveal', 'name', 'store', 'hp', 'hint']) if (e[k] !== undefined) props[k] = Array.isArray(e[k]) ? e[k].slice() : e[k];
       const c = g.newCard(e.c, props);
       if (pile && pileStack) {
         pileStack.cards.push(c.id);
