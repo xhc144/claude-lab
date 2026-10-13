@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { WorldGen, SEA } from '../../src/world/gen/worldgen.js';
 import { locateStructures, STRUCTURE_INFO, SHRINE_KINDS } from '../../src/world/gen/structures.js';
 import { B, ID_MASK, LIQUID, SOLID } from '../../src/world/blocks.js';
-import { BIOMES } from '../../src/world/biomes.js';
+import { BIOMES, biomeOf, ISLAND_FLAG, ISLAND_Y } from '../../src/world/biomes.js';
+import { lightChunk } from '../../src/world/light.js';
 
 const digest = (arr) => { let h = 2166136261; for (let i = 0; i < arr.length; i++) { h ^= arr[i]; h = Math.imul(h, 16777619); } return h >>> 0; };
 
@@ -26,7 +27,7 @@ test('generated chunks are well formed', () => {
     assert.equal(r.blocks[i] & ID_MASK, B.bedrock, 'bedrock floor');
     const hgt = r.heights[i];
     assert.ok(hgt > 0 && hgt < 256);
-    assert.ok(BIOMES[r.biomes[i]], 'valid biome');
+    assert.ok(BIOMES[biomeOf(r.biomes[i])], 'valid biome');
   }
 });
 
@@ -66,4 +67,27 @@ test('structures are carved into generated terrain', () => {
   assert.ok(feats.some((f) => f.type === 'chest'), 'heart shrine has a chest');
   assert.ok(feats.some((f) => f.type === 'waystone'), 'heart shrine has a waystone');
   void LIQUID; void SOLID;
+});
+
+test('the ground beneath floating islands keeps its own biome and daylight', () => {
+  const g = new WorldGen(20261012);
+  let checked = 0;
+  for (let cz = -6; cz <= 2 && checked < 40; cz++) for (let cx = -6; cx <= 6 && checked < 40; cx++) {
+    const r = g.generate(cx, cz);
+    const light = new Uint16Array(65536);
+    lightChunk(r.blocks, light);
+    for (let i = 0; i < 256; i++) {
+      if (!(r.biomes[i] & ISLAND_FLAG)) continue;
+      assert.notEqual(BIOMES[biomeOf(r.biomes[i], 70)].key, 'sky', 'ground biome under the island');
+      assert.equal(BIOMES[biomeOf(r.biomes[i], ISLAND_Y + 20)].key, 'sky');
+      // first open cell above the ground under the island gets full sky light
+      let y = ISLAND_Y - 1;
+      while (y > 0 && !(r.blocks[(y << 8) | i] & ID_MASK)) y--;
+      if (y >= ISLAND_Y - 2) continue; // something tall reaches the island band
+      if ((r.blocks[((y + 1) << 8) | i] & ID_MASK) !== 0) continue;
+      assert.equal(light[((y + 1) << 8) | i] & 15, 15, `column ${cx},${cz}:${i} sunlit under the island`);
+      checked++;
+    }
+  }
+  assert.ok(checked > 0, 'found island columns to check');
 });

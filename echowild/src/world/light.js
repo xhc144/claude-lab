@@ -5,6 +5,7 @@
 // chunk, edges treated as walls) and on the main thread (across loaded chunks).
 
 import { OPAQUE, FILTER, ID_MASK, emissionOf } from './blocks.js';
+import { ISLAND_Y } from './biomes.js';
 
 export const SHIFT = [0, 4, 8, 12];          // sky, r, g, b
 const DX = [1, -1, 0, 0, 0, 0], DY = [0, 0, 1, -1, 0, 0], DZ = [0, 0, 0, 0, 1, -1];
@@ -158,17 +159,31 @@ export function lightChunk(blocks, light) {
   };
   const eng = new LightEngine(w);
   const stop = new Uint8Array(256); // first y (from top) where sky light stops being 15
+  const q = eng.add[0];
+  const blocker = (x, y, z) => { const id = blocks[(y << 8) | (z << 4) | x] & ID_MASK; return OPAQUE[id] || FILTER[id]; };
   for (let z = 0; z < 16; z++) for (let x = 0; x < 16; x++) {
     let y = 255;
     for (; y >= 0; y--) {
-      const id = blocks[(y << 8) | (z << 4) | x] & ID_MASK;
-      if (OPAQUE[id] || FILTER[id]) break;
+      if (blocker(x, y, z)) break;
       light[(y << 8) | (z << 4) | x] = 15;
+    }
+    // Floating islands hang 50+ blocks above open ground: daylight reaches the ground beneath
+    // them from all around, so their masses do not cast a sky shadow. (Otherwise a wide island
+    // leaves the land below pitch black at noon.) Cells skipped here are lit by the spread.
+    if (y >= ISLAND_Y && !blocker(x, ISLAND_Y - 1, z)) {
+      for (; y >= 0; y--) {
+        if (blocker(x, y, z)) {
+          if (y < ISLAND_Y) break;
+          if (y < 255 && light[((y + 1) << 8) | (z << 4) | x] === 15) q.push(x, y + 1, z);
+          continue;
+        }
+        if (light[((y + 1) << 8) | (z << 4) | x] !== 15) q.push(x, y, z); // just below a skipped block
+        light[(y << 8) | (z << 4) | x] = 15;
+      }
     }
     stop[(z << 4) | x] = y + 1;
   }
   // sky seeds: lit cells beside shaded columns, and the cell just above the stop
-  const q = eng.add[0];
   for (let z = 0; z < 16; z++) for (let x = 0; x < 16; x++) {
     const s = stop[(z << 4) | x];
     let maxN = s;

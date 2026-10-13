@@ -4,6 +4,7 @@
 
 import { Chunk, ckey, SECTIONS } from './chunk.js';
 import { LightEngine, SHIFT } from './light.js';
+import { biomeOf } from './biomes.js';
 import { BLOCKS, B, ID_MASK, ID_BITS, OPAQUE, emissionOf, MAX_BLOCKS } from './blocks.js';
 
 export const posKey = (x, y, z) => ((x + 1048576) * 2097152 + (z + 1048576)) * 256 + y;
@@ -300,10 +301,11 @@ export class World {
     }
     return y;
   }
-  biomeAt(x, z) {
+  // the ground biome, or the sky biome when y is up among the floating islands
+  biomeAt(x, z, y = 0) {
     const c = this.chunkAt(x, z);
     if (!c || !c.ready) return 2;
-    return c.biomes[((z & 15) << 4) | (x & 15)];
+    return biomeOf(c.biomes[((z & 15) << 4) | (x & 15)], y);
   }
 
   // DDA voxel ray cast. Returns { x,y,z, face, v, dist, px,py,pz } or null.

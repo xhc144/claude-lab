@@ -129,7 +129,7 @@ export function installEvents(game, state) {
       for (const s of ev.streaks) s.t += dt;
       ev.streaks = ev.streaks.filter((s) => s.t < s.life);
       // aurora: cold biomes, special nights, or after the world is rewoven
-      const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z))].key;
+      const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y)].key;
       const cold = ['tundra', 'taiga', 'barrens', 'frozen_ocean', 'mountains'].includes(biome);
       let target = 0;
       if (night) target = cold ? 1 : ev.auroraNight === g.day ? 0.6 : 0;

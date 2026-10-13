@@ -248,12 +248,12 @@ export function installAdventure(game, state) {
   });
 
   // ---------------------------------------------------------------- waystones
-  function biomeName(x, z) { return BIOMES[w.biomeAt(x, z)].zh; }
+  function biomeName(x, z, y) { return BIOMES[w.biomeAt(x, z, y)].zh; }
   function useWaystone(x, y, z, v) {
     const on = (v >>> ID_BITS) & 1;
     if (!on) {
       w.setBlock(x, y, z, pack(B.waystone, 1));
-      const nm = (game.waystoneNames && game.waystoneNames[`${x},${y},${z}`]) || `${biomeName(x, z)}石碑`;
+      const nm = (game.waystoneNames && game.waystoneNames[`${x},${y},${z}`]) || `${biomeName(x, z, y)}石碑`;
       if (!game.waystones.some((s) => s.x === x && s.y === y && s.z === z)) game.waystones.push({ x, y, z, name: nm });
       game.audio && game.audio.play('teleport', { x, y, z });
       game.particles && game.particles.sparks(x + 0.5, y + 1, z + 0.5, 30, [0.45, 0.9, 1], 3);

@@ -372,7 +372,7 @@ export class Audio {
     set(this.amb.lava, (this.lavaT || 0) * 0.3);
     // sporadic ambient one-shots
     const day = game.sky ? game.sky.daylight : 1;
-    const biome = w.biomeAt(Math.floor(p.x), Math.floor(p.z));
+    const biome = w.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y);
     if (Math.random() < dt * 0.25 && !this.inCave && day > 0.5 && rain < 0.3 && (biome === 3 || biome === 4 || biome === 2)) {
       const a = Math.random() * Math.PI * 2;
       this.play('mob', { x: p.x + Math.cos(a) * 12, y: p.y + 6, z: p.z + Math.sin(a) * 12, voice: 'chirp', pitch: 0.8 + Math.random() * 0.5, minGap: 1500, volume: 0.6 });

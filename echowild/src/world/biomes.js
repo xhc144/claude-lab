@@ -39,3 +39,9 @@ biome('river', '清溪', { water: '#3f86c8', desc: '蜿蜒的河流。' });
 biome('sky', '浮空群岛', { grass: '#6fd0a0', foliage: '#bcd8f2', temp: 0.5, desc: '悬浮在云端的岛屿，由逆重晶托起。' });
 biome('underworld', '幽光深层', { grass: '#4a6a7a', foliage: '#3a8a9a', water: '#2a5a8a', temp: 0.7, rain: false, fog: '#1a2030', desc: '世界深处的巨大洞穴，荧光菌林与熔岩湖。' });
 biome('frozen_ocean', '冰封之海', { water: '#3a68b0', temp: 0.0, snow: true, desc: '寒冷的海面上漂浮着浮冰。' });
+
+// Chunk biome cells store the ground biome; columns with a floating island overhead carry
+// ISLAND_FLAG, and read as the sky biome only at island height.
+export const ISLAND_FLAG = 0x80;
+export const ISLAND_Y = 136;
+export const biomeOf = (cell, y = 0) => ((cell & ISLAND_FLAG) && y >= ISLAND_Y ? BI.sky : cell & 0x7f);

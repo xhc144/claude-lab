@@ -221,7 +221,7 @@ export class Game {
   // ---------------------------------------------------------------- rendering
   envState() {
     const p = this.player, w = this.world;
-    const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z))];
+    const biome = BIOMES[w.biomeAt(Math.floor(p.x), Math.floor(p.z), p.y)];
     const weather = this.weather ? this.weather.state() : { rain: 0, storm: 0 };
     const flash = this.weather ? this.weather.flash : 0;
     const s = skyState(this.dayTime, weather, biome, flash);
