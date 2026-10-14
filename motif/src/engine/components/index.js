@@ -5,10 +5,11 @@ import chartComps from './chart.js';
 import diagramComps from './diagram.js';
 import mediaComps from './media.js';
 import mathComps from './math.js';
+import threeComps from './three.js';
 
 const REGISTRY = new Map();
 export function register(list) { for (const c of list) REGISTRY.set(c.type, c); }
-register([...textComps, ...statComps, ...chartComps, ...diagramComps, ...mediaComps, ...mathComps]);
+register([...textComps, ...statComps, ...chartComps, ...diagramComps, ...mediaComps, ...mathComps, ...threeComps]);
 
 export function getComponent(type) { return REGISTRY.get(type); }
 export function componentTypes() { return [...REGISTRY.keys()]; }

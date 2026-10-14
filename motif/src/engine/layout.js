@@ -117,8 +117,9 @@ export function layoutScene(scene, env, mk, index, count) {
           if (title) hint(title, { onImage: true });
         } else if (portrait || align === 'center') {
           const vr = portrait ? { x: 0, y: H * 0.42, w: W, h: H * 0.58 } : { x: 0, y: 0, w: W, h: H };
-          out.push({ block: backdrop, rect: vr, hint: { backdrop: true, dim: align === 'center' && !portrait ? 0.55 : 0 } });
+          out.push({ block: backdrop, rect: vr, hint: { backdrop: true } });
           if (portrait) textR = { ...S, h: H * 0.42 - S.y };
+          else textR = { x: S.x + S.w * 0.1, y: S.y, w: S.w * 0.8, h: S.h * (backdrop.type === 'globe' ? 0.5 : 1) };
         } else {
           const vx = S.x + S.w * (flip ? 0 : 0.46);
           out.push({ block: backdrop, rect: { x: flip ? 0 : vx, y: 0, w: W - vx + (flip ? -W + S.x + S.w * 0.54 + vx : 0), h: H }, hint: { backdrop: true } });
