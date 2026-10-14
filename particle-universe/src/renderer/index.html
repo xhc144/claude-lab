@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self' blob: data:; font-src 'self' data:; connect-src 'self' blob: data:" />
+  <title>音乐粒子宇宙</title>
+  <link rel="icon" href="./assets/icon-64.png" />
+  <link rel="stylesheet" href="./styles/app.css" />
+</head>
+<body class="booting">
+  <canvas id="gl" tabindex="-1"></canvas>
+  <div class="vignette-ui"></div>
+
+  <div id="ui" class="ui">
+    <header class="topbar" id="topbar">
+      <div class="brand" id="brand">
+        <span class="brand-mark" id="brandMark"></span>
+        <div class="brand-text"><b>音乐粒子宇宙</b><span>PARTICLE UNIVERSE</span></div>
+      </div>
+      <div class="scene-chip" id="sceneChip" title="切换场景 (G)">
+        <span class="chip-dot"></span>
+        <span class="chip-name" id="sceneName">星云</span>
+        <span class="chip-en" id="sceneEn">STELLAR NEBULA</span>
+        <span class="chip-variant" id="sceneVariant"></span>
+      </div>
+      <div class="top-actions" id="topActions"></div>
+    </header>
+
+    <div class="hud" id="hud"></div>
+
+    <section class="welcome" id="welcome">
+      <div class="welcome-inner">
+        <div class="welcome-kicker">GPU MUSIC VISUALIZER</div>
+        <h1 class="welcome-title">音乐粒子宇宙</h1>
+        <p class="welcome-sub">让每一个鼓点、每一段旋律，化作数百万颗粒子的星辰宇宙</p>
+        <div class="welcome-actions" id="welcomeActions"></div>
+        <div class="welcome-hint">拖放音频文件到窗口任意位置 · 支持 MP3 / FLAC / WAV / OGG / M4A / AAC</div>
+      </div>
+    </section>
+
+    <aside class="panel panel-left" id="playlistPanel" aria-label="播放列表"></aside>
+    <aside class="panel panel-right" id="settingsPanel" aria-label="参数"></aside>
+    <section class="scene-strip" id="sceneStrip" aria-label="场景"></section>
+
+    <footer class="dock" id="dock"></footer>
+    <div class="toasts" id="toasts"></div>
+  </div>
+
+  <div class="drop-overlay" id="dropOverlay"><div class="drop-box"><div class="drop-icon"></div><b>松开以导入音乐</b><span>文件会加入播放列表并开始解析节奏</span></div></div>
+  <div class="modal" id="exportModal" role="dialog" aria-modal="true"></div>
+  <div class="modal" id="helpModal" role="dialog" aria-modal="true"></div>
+  <div class="fatal" id="fatal"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

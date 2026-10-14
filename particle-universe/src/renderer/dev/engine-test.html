@@ -1,0 +1,57 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000;overflow:hidden}canvas{width:100vw;height:100vh;display:block}</style></head>
+<body><canvas id="c"></canvas>
+<script type="module">
+import { Engine } from '../gfx/engine.js';
+import { loadSettings } from '../core/settings.js';
+import { createFrame } from '../audio/track.js';
+import { Director } from '../camera/director.js';
+import { sceneById } from '../scenes/index.js';
+const q = new URLSearchParams(location.search);
+const settings = loadSettings();
+const canvas = document.getElementById('c');
+window.__log = [];
+try {
+  const engine = new Engine(canvas, settings);
+  engine.tierIndex = Number(q.get('tier') || 1);
+  engine.particles.resize((await import('../gfx/particles.js')).TIERS[engine.tierIndex]);
+  engine.setOutputSize(Number(q.get('w') || 960), Number(q.get('h') || 540));
+  const sceneId = q.get('scene') || 'nebula';
+  const director = new Director();
+  engine.start(sceneId, { intro: q.get('intro') === '1' });
+  director.setScene(sceneById(sceneId));
+  const f = createFrame();
+  f.active = true;
+  window.__engine = engine;
+  window.__step = (n, t0) => {
+    let t = t0;
+    for (let i = 0; i < n; i++) {
+      t += 1/60;
+      const beat = (t * 2.066) % 1;
+      f.bass = 0.5 + 0.4 * Math.exp(-beat * 6); f.sub = f.bass; f.mid = 0.45; f.lowMid = 0.4; f.highMid = 0.35; f.treble = 0.35; f.rms = 0.6;
+      f.kick = Math.exp(-beat * 7); f.snare = 0.2; f.hat = 0.3; f.onset = 0.3; f.intensity = 0.7; f.centroid = 0.5; f.drop = 0; f.build = 0;
+      f.beatPhase = beat; f.bar = Math.floor(t / 1.93); f.hasTempo = true;
+      for (let k = 0; k < 128; k++) f.spectrum[k] = 0.3 + 0.4 * Math.exp(-k / 30) + 0.2 * Math.sin(k * 0.3 + t * 3) ** 2;
+      const kicks = (beat < 1/60 * 2.066) ? [{ t, strength: 0.9 }] : [];
+      const pose = director.update(1/60, f, { drop: false });
+      const ev = { kicks, snares: [], hats: [], drop: false, section: false };
+      if (i < n - 1 && window.__simOnly) engine.simulate(1/60, f, ev); else engine.frame(1/60, f, ev, pose);
+    }
+    return t;
+  };
+  window.__shot = (t) => { window.__step(1, t); return canvas.toDataURL('image/png'); };
+  window.__read = (which = 'pos', n = 2000) => {
+    const gl = engine.gl, ps = engine.particles, set = ps.state;
+    const tex = which === 'pos' ? set.pos : which === 'vel' ? set.vel : set.home;
+    const fb = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex.handle, 0);
+    const buf = new Float32Array(ps.w * 4 * 4);
+    gl.readPixels(0, 0, ps.w, 4, gl.RGBA, gl.FLOAT, buf);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null); gl.deleteFramebuffer(fb);
+    const out = []; for (let i = 0; i < Math.min(n, ps.w * 4); i++) out.push([buf[i*4], buf[i*4+1], buf[i*4+2], buf[i*4+3]]);
+    return out;
+  };
+  window.__ready = true; window.__simOnly = true;
+} catch (e) { window.__error = String(e && e.stack || e); }
+</script></body></html>
