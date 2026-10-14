@@ -595,19 +595,19 @@ class S05_SetSwap(NarratedScene):
             chk = mtx(r"%d+4\cdot%d\cdot%d=13" % (x * x, y, z), size=32, color=MUTED).next_to(tt, DOWN, 0.3)
             ic = windmill_icon(t, size=0.0001)  # placeholder (windmill appears later in chapter 06)
             cards.add(VGroup(c, tt, chk))
-        cards.arrange(RIGHT, buff=0.55).move_to(DOWN * 1.15)
+        cards.arrange(RIGHT, buff=0.55).move_to(DOWN * 0.7)
         with self.say("s3") as d:
             self.play(FadeOut(relax), VGroup(e3).animate.scale(0.8).to_edge(UP, buff=0.9),
                       Sdef.animate.scale(0.8).move_to(UP * 2.2 + RIGHT * 0.0), run_time=0.8)
             self.play(e3.animate.shift(LEFT * 3.6), Sdef.animate.shift(RIGHT * 2.2 + UP * 0.6), run_time=0.6)
             fin = tx(T("有限集", "finite"), size=30, color=GOLD).next_to(Sdef, DOWN, 0.3)
             self.play(FadeIn(fin), run_time=0.5)
-            p13 = mtx(r"p=13", size=46, color=GOLD).move_to(UP * 0.75)
+            p13 = mtx(r"p=13", size=46, color=GOLD).move_to(UP * 1.1)
             self.at(1, lead=0.2) if LANG == "en" else self.at_frac(0.35)
             self.play(FadeIn(p13), run_time=0.5)
             self.play(LaggedStart(*[FadeIn(c, shift=UP * 0.2) for c in cards], lag_ratio=0.3), run_time=1.6)
         with self.say("s4") as d:
-            tau = mtx(r"\tau(x,y,z)=(x,z,y)", size=46, color=SKY).move_to(UP * 1.05)
+            tau = mtx(r"\tau(x,y,z)=(x,z,y)", size=46, color=SKY).move_to(UP * 1.4)
             self.play(FadeOut(fin), ReplacementTransform(p13, tau), run_time=0.9)
             # swap the y and z entries of each card
             swaps = []

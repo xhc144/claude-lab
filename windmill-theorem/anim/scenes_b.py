@@ -290,7 +290,7 @@ class S07_Proof(NarratedScene):
             n = tx(str(k + 1), size=24, color=MUTED, font="Inter").move_to(c)
             t = tx(l, size=26, color=MUTED)
             items.add(VGroup(VGroup(c, n), t).arrange(RIGHT, buff=0.22))
-        items.arrange(DOWN, buff=0.42, aligned_edge=LEFT).move_to(LEFT * 4.75 + UP * 0.45)
+        items.arrange(DOWN, buff=0.38, aligned_edge=LEFT).move_to(LEFT * 4.75 + UP * 0.75)
         X0 = -1.7
 
         def activate(k):
@@ -585,8 +585,9 @@ class S08_Insight(NarratedScene):
                           Indicate(edges[k][1], scale_factor=1.4), nodes[k][0].animate.set_opacity(0.45),
                           run_time=per, rate_func=ease)
             self.play(Create(end_loop), Flash(nodes[-1][0], color=LIME, flash_radius=0.9), run_time=0.8)
-            res = mtx(r"41=5^2+(2\cdot 2)^2=25+16", size=40, color=LIME).move_to(DOWN * 2.55 + LEFT * 2.6)
-            alg = chip(T("存在性证明 → 算法", "existence proof → algorithm"), color=GOLD, size=28).next_to(res, RIGHT, 0.6)
+            res = mtx(r"41=5^2+(2\cdot 2)^2=25+16", size=40, color=LIME)
+            alg = chip(T("存在性证明 → 算法", "existence proof → algorithm"), color=GOLD, size=28)
+            VGroup(res, alg).arrange(RIGHT, buff=0.6).move_to(UP * 2.75)
             self.play(Write(res), run_time=0.9)
             self.play(FadeIn(alg, shift=LEFT * 0.2), run_time=0.6)
         self.clear_stage(0.7)
