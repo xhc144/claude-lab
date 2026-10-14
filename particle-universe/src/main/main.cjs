@@ -114,7 +114,7 @@ function createWindow() {
     if (isSmoke) finishSmoke({ ok: false, error: 'renderer-gone:' + details.reason });
   });
 
-  const query = isSmoke ? '?smoke=1' : '';
+  const query = isSmoke ? '?smoke=1' + (process.env.PU_SMOKE_QUERY ? '&' + process.env.PU_SMOKE_QUERY : '') : '';
   if (devUrl) win.loadURL(devUrl + query);
   else win.loadURL('app://bundle/index.html' + query);
 }

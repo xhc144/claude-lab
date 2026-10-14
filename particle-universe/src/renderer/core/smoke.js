@@ -20,7 +20,7 @@ export async function runSmoke(app) {
     app.set('scene.autoSwitch', 'off');
     app.seek(42);
     const per = Number(q.get('sceneMs') || 3500);
-    for (const s of SCENES) {
+    for (const s of q.get('scenes') === '0' ? [] : SCENES) {
       app.setScene(s.id);
       const fpsSamples = [];
       const start = performance.now();
@@ -44,7 +44,9 @@ export async function runSmoke(app) {
         };
       };
       app.set('scene.autoSwitch', 'music');
-      const res = await app.exporter.run({ w: 1280, h: 720, fps: 30, quality: 'standard', format: q.get('format') || 'mp4', start: 40, end: 46, tier: Math.min(app.engine.tierIndex, 3), name: 'smoke', onProgress: (p) => { if (p.frame % 30 === 0) log(`export ${p.frame}/${p.total} ${p.speed.toFixed(2)}x`); } });
+      if (q.get('scene')) { app.setScene(q.get('scene')); await wait(4000); }
+      const num = (k, d) => (q.get(k) != null ? Number(q.get(k)) : d);
+      const res = await app.exporter.run({ w: num('w', 1280), h: num('h', 720), fps: num('fps', 30), quality: q.get('quality') || 'standard', format: q.get('format') || 'mp4', start: num('start', 40), end: num('end', 46), tier: num('tier', Math.min(app.engine.tierIndex, 3)), name: 'smoke', onProgress: (p) => { if (p.frame % 30 === 0) log(`export ${p.frame}/${p.total} ${p.speed.toFixed(2)}x`); } });
       platform.videoWriter = orig;
       const st = await window.pu.statFile(res.path);
       result.export = { ...res, bytes: st ? st.size : 0 };

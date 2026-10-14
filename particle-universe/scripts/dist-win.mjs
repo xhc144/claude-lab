@@ -85,10 +85,10 @@ fs.rmSync(stage, { recursive: true, force: true });
 fs.rmSync(zipFile, { force: true });
 fs.cpSync(unpacked, stage, { recursive: true });
 const readme = fs.readFileSync(path.join(root, 'scripts/README-win.txt'), 'utf8').replace(/\r?\n/g, '\r\n').replace('{VERSION}', version);
-fs.writeFileSync(path.join(stage, '使用说明.txt'), '﻿' + readme);
-fs.writeFileSync(path.join(stage, 'README.txt'), '﻿' + readme);
-fs.rmSync(path.join(stage, '使用说明.txt'));
-run('zip', ['-q', '-r', '-9', '-X', zipFile, folder], { cwd: release });
+fs.writeFileSync(path.join(stage, 'README.txt'), '\ufeff' + readme);
+if (!isWin && has('zip')) run('zip', ['-q', '-r', '-9', '-X', zipFile, folder], { cwd: release });
+else if (has('7z')) run('7z', ['a', '-tzip', '-mx=9', zipFile, folder], { cwd: release, stdio: 'ignore' });
+else run('powershell', ['-NoProfile', '-Command', `Compress-Archive -Path '${folder}' -DestinationPath '${zipFile}' -CompressionLevel Optimal`], { cwd: release });
 fs.rmSync(stage, { recursive: true, force: true });
 
 const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
