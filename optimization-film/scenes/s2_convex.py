@@ -339,7 +339,7 @@ class S2(VScene):
             self.add(ell)
             self.play(rr.animate.set_value(2.828), run_time=d * 0.38, rate_func=rate_functions.ease_in_out_sine)
             hit = Dot(ax.c2p(t, 0), color=YELLOW, radius=0.11)
-            hl = M(r"\beta_2 = 0", size=40, color=YELLOW).next_to(hit, DOWN + RIGHT * 0.2, buff=0.2)
+            hl = label_box(M(r"\beta_2 = 0", size=40, color=YELLOW), buff=0.06).next_to(hit, DL, buff=0.12)
             self.play(FadeIn(hit, scale=0.5), Flash(hit, color=YELLOW), run_time=0.8)
             self.play(Write(hl), run_time=1.0)
         self.remove(ell)
