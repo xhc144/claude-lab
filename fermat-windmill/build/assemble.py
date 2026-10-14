@@ -157,7 +157,7 @@ def weight(s: str, lang: str) -> float:
     return len(re.findall(r"[A-Za-z0-9]", s)) + 1.0
 
 
-def chunk_zh(s: str, maxlen=21):
+def chunk_zh(s: str, maxlen=20):
     parts = re.split(r"(?<=[，、：；,])", s)
     out, cur = [], ""
     for p in parts:
@@ -178,7 +178,7 @@ def chunk_zh(s: str, maxlen=21):
     return [r.rstrip("，、；,") if r.endswith(("，", "、", "；")) else r for r in res]
 
 
-def chunk_en(s: str, maxlen=88):
+def chunk_en(s: str, maxlen=80):
     if len(s) <= maxlen:
         return [s]
     parts = re.split(r"(?<=[,;:])\s+", s)
@@ -249,10 +249,10 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Main,{main_font},{50 if lang == 'zh' else 46},&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,{1 if lang == 'zh' else 0},0,1,3,0,2,140,140,{58 if lang == 'en' else 46},1
-Style: Q,Inter,44,{FLIP_ASS},&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3,0,2,140,140,96,1
-Style: QZ,Noto Sans CJK SC,40,&H00E6E6E6,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3,0,2,140,140,40,1
-Style: Vocab,Inter,31,{SQ_ASS},&H00FFFFFF,&H00101010,&H90000000,0,0,0,0,100,100,0,0,1,2.4,0,2,80,80,14,1
+Style: Main,{main_font},{66 if lang == 'zh' else 54},&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,{2 if lang == 'zh' else 0},0,1,3.5,0,2,120,120,{40 if lang == 'zh' else 58},1
+Style: Q,Inter,{50 if lang == 'zh' else 54},{FLIP_ASS},&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3.5,0,2,120,120,{104 if lang == 'zh' else 58},1
+Style: QZ,Noto Sans CJK SC,56,&H00E6E6E6,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,1,0,1,3.5,0,2,120,120,36,1
+Style: Vocab,Inter,38,{SQ_ASS},&H00FFFFFF,&H00101010,&H90000000,0,0,0,0,100,100,0,0,1,3,0,2,60,60,10,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
