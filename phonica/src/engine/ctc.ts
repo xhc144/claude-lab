@@ -228,6 +228,56 @@ export class CtcVerifier {
     return { phones: res, llPerFrame: best / Math.max(1, hi - lo), heardIpa: this.greedy(post, lo, hi) };
   }
 
+  /**
+   * Rhoticity of a word with a post-vocalic /r/ or /ɝ ɚ/: log-likelihood of the
+   * r-coloured realisation minus the non-rhotic one (British style). Positive =
+   * the speaker produced the /r/. null when the word has no such position.
+   */
+  rhoticPreference(post: Posteriors, phones: string[], region: { start: number; end: number }): number | null {
+    const { logp, frames, vocab } = post;
+    const lo = Math.max(0, Math.floor(region.start / post.hop));
+    const hi = Math.min(frames, Math.ceil(region.end / post.hop));
+    const base = phones.map(stripStress);
+    const ids = (toks: string[]) => toks.map((t) => this.model.index(t)).filter((i) => i >= 0);
+    const r = ids(['ɹ', 'r']);
+    const rhoticER = ids(['ɚ']);
+    const plainER = ids(['ɜː', 'ɜ', 'ə']);
+    const rhoA: number[][] = [];
+    const rhoB: number[][] = [];
+    const non: number[][] = [];
+    let any = false;
+    for (let i = 0; i < base.length; i++) {
+      const b = base[i];
+      const own = this.groupIds.get(b) ?? [];
+      const next = base[i + 1];
+      const codaR = next === 'R' && (i + 2 >= base.length || !isVowel(base[i + 2])) && isVowel(b) && b !== 'ER';
+      if (codaR) {
+        const merged = this.mergedIds.find((m) => m.seq[0] === b && m.seq[1] === 'R')?.ids ?? [];
+        rhoA.push(merged.length ? merged : own);
+        if (!merged.length) rhoA.push(r);
+        rhoB.push(own, r);
+        non.push(own);
+        any = true;
+        i++;
+        continue;
+      }
+      if (b === 'ER') {
+        rhoA.push(rhoticER);
+        rhoB.push(plainER, r);
+        non.push(plainER);
+        any = true;
+        continue;
+      }
+      rhoA.push(own);
+      rhoB.push(own);
+      non.push(own);
+    }
+    if (!any) return null;
+    const rho = Math.max(this.ctcLL(logp, frames, vocab, rhoA, lo, hi), this.ctcLL(logp, frames, vocab, rhoB, lo, hi));
+    const plain = this.ctcLL(logp, frames, vocab, non, lo, hi);
+    return clampFinite(rho - plain, -30, 30);
+  }
+
   greedy(post: Posteriors, lo = 0, hi = post.frames): string {
     const { logp, vocab } = post;
     const out: string[] = [];

@@ -116,6 +116,28 @@ export function ResultView({ recordId, result, audioUrl, ai, onRetry, compact }:
         )}
       </div>
 
+      {result.sentences.length > 1 && (
+        <div className="card pad">
+          <div className="card-title">逐句得分 <span className="sub">长文按句评分后按词数加权汇总；点击播放该句</span></div>
+          <table className="tbl">
+            <thead><tr><th>#</th><th>句子</th><th>总分</th><th>准确</th><th>流利</th><th>韵律</th><th></th></tr></thead>
+            <tbody>
+              {result.sentences.map((st) => (
+                <tr key={st.index} className="click" onClick={() => st.end > st.start && player.play(src, { tag: `${tag}:s${st.index}`, start: Math.max(0, st.start - 0.1), end: st.end + 0.15, rate: speed })}>
+                  <td className="muted">{st.index + 1}</td>
+                  <td style={{ maxWidth: 560 }}>{st.text}</td>
+                  <td><span className={`chip ${rate(st.score)}`}>{st.score}</span></td>
+                  <td>{st.scores?.accuracy ?? '—'}</td>
+                  <td>{st.scores?.fluency ?? '—'}</td>
+                  <td>{st.scores?.prosody ?? '—'}</td>
+                  <td>{player.playing && player.tag === `${tag}:s${st.index}` ? <IconStop style={{ width: 14 }} /> : <IconPlay style={{ width: 14 }} />}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <div className="card pad">
         <Tabs value={tab} onChange={setTab} tabs={[
           { id: 'timeline', label: '波形与音高' },

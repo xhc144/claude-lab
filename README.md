@@ -39,6 +39,8 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 ## 桌面项目与隔离内容
 
+[声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`），未做代码签名。
+
 [鸿雁邮箱 Hongyan Mail](hongyan-mail/) 是 Electron / Node.js 的本地多账户邮件客户端，需要本地程序、SQLite 与 IMAP / SMTP，无法在 Pages 上运行。
 
 用户报告历史安装包被 Defender 检出 `Trojan:Win32/Sabsik.FL.A!ml`，真伪未确认。当前主树移除安装包、保留源码与合并历史；没有运行安装包或关闭防护。详情见 [隔离记录](hongyan-mail/QUARANTINE.md)。源码审查也发现本地凭据/缓存存储限制，详见项目 README。Pages 不包含邮件界面、测试截图、安装包或用户邮件数据。

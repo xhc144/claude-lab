@@ -80,6 +80,8 @@ export interface SentenceResult {
   start: number;
   end: number;
   score: number;
+  /** calibrated sentence-level scores (0–100) for this sentence */
+  scores?: { accuracy: number; fluency: number; prosody: number; total: number };
 }
 
 export interface PauseResult {

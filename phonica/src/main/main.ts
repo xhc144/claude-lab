@@ -124,9 +124,10 @@ app.on('second-instance', () => {
 app.whenReady().then(async () => {
   nativeTheme.themeSource = loadSettings().theme;
   registerProtocol();
-  // microphone access for our own pages only
-  session.defaultSession.setPermissionRequestHandler((wc, permission, cb) => cb(permission === 'media' && wc.getURL().startsWith('file://')));
-  session.defaultSession.setPermissionCheckHandler((_wc, permission, origin) => permission === 'media' && (origin?.startsWith('file://') ?? true));
+  // microphone and clipboard-write for our own pages only; everything else is denied
+  const allowed = new Set(['media', 'clipboard-sanitized-write']);
+  session.defaultSession.setPermissionRequestHandler((wc, permission, cb) => cb(allowed.has(permission) && wc.getURL().startsWith('file://')));
+  session.defaultSession.setPermissionCheckHandler((wc, permission, origin) => allowed.has(permission) && ((origin ?? wc?.getURL() ?? '').startsWith('file://')));
   registerIpc({ engine, store: getStore, win: () => win });
   engine.onStatus = (s) => win?.webContents.send('engine:status', s);
   if (SELF_TEST) {

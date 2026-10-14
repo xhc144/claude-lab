@@ -119,7 +119,7 @@ export class Engine {
     const specs: AlignWordSpec[] = prons.map((ps) => ({
       variants: ps.map((p) => ({
         classIds: p.phones.map((x) => this.model.index(stripStress(x))),
-        penalty: p.accent === 'both' || p.accent === accent ? (p.source === 'espeak-us' ? -0.5 : 0) : -2.5,
+        penalty: p.accent === 'both' || p.accent === accent ? (p.source === 'espeak-us' ? -0.5 : 0) : -5,
       })),
     }));
     const minF = hop < 0.015 ? 2 : 1;
@@ -215,11 +215,21 @@ export class Engine {
     // ---- CTC verification (alignment-free GOP per word region) ----
     progress?.('verify', 0.65);
     const ctcWords: Array<CtcWordResult | null> = pw.map(() => null);
+    const rhotic: Array<number | null> = pw.map(() => null);
     if (this.verifier && this.verifierModel) {
       const vpost = await this.verifierModel.posteriors(audio);
       pw.forEach((w, i) => {
         if (w.skipped) return;
-        ctcWords[i] = this.verifier!.scoreWord(vpost, w.pron.phones, { start: w.start - 0.03, end: w.end + 0.03 });
+        const region = { start: w.start - 0.03, end: w.end + 0.03 };
+        ctcWords[i] = this.verifier!.scoreWord(vpost, w.pron.phones, region);
+        // for accent notes: did the speaker produce a post-vocalic /r/? Only for words
+        // whose British and American forms differ, and not before a vowel, where
+        // RP also links with /r/ ("far away").
+        const us = w.unit.prons.find((p) => p.accent === 'us');
+        const hasUk = w.unit.prons.some((p) => p.accent === 'uk');
+        const next = pw[i + 1];
+        const linking = !!next && !next.skipped && isVowel(next.pron.phones[0] ?? '');
+        if (us && hasUk && !linking) rhotic[i] = this.verifier!.rhoticPreference(vpost, us.phones, region);
       });
     }
 
@@ -277,27 +287,43 @@ export class Engine {
     // ---- sentence-level scores ----
     const allPhone = phoneScore.flat();
     const allLpr = pw.flatMap((w) => w.phones.map((p) => (p.ev ? p.ev.lpr : -20)));
-    const sx = sentenceFeatures({
-      phoneScores: allPhone,
-      wordScores: wordScore,
-      phoneLpr: allLpr,
-      skippedFrac: pw.filter((w) => w.skipped).length / pw.length,
-      wordCount: pw.length,
-      recognizedRatio: rec.length / Math.max(1, canonicalCount),
-      fluency: flu,
-      prosody: pro,
-      leadSilence: flu.speechStart,
-    });
     const mean = (a: number[]) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0);
     const readWords = pw.filter((w, i) => !w.skipped && (wordScore[i] >= 2 || mean(w.phones.map((p) => p.ev?.frameAcc ?? 0)) > 0.25)).length;
     const completeness = Math.round((100 * readWords) / pw.length);
-    const S = sc
-      ? {
-          accuracy: sc.sentence.accuracy.predict(sx) * 10,
-          fluency: sc.sentence.fluency.predict(sx) * 10,
-          prosody: sc.sentence.prosody.predict(sx) * 10,
-          total: sc.sentence.total.predict(sx) * 10,
-        }
+    // The regressors were trained on single sentences, so longer readings are scored
+    // sentence by sentence (keeping every feature in its training range) and averaged
+    // by word count.
+    const perSentence: Array<{ index: number; words: number; accuracy: number; fluency: number; prosody: number; total: number } | null> = [];
+    for (const sr of sentRanges) {
+      const idx: number[] = [];
+      for (let i = sr.firstWord; i <= sr.lastWord; i++) idx.push(i);
+      const live = idx.filter((i) => !pw[i].skipped);
+      if (!idx.length || !live.length || !sc) { perSentence.push(null); continue; }
+      const t0 = pw[live[0]].start;
+      const t1 = pw[live[live.length - 1]].end;
+      const sFlu = sentRanges.length === 1 ? flu : fluencyStats(idx.map((i) => timed[i]), gaps.filter((g) => g.start >= t0 - 0.01 && g.end <= t1 + 0.01));
+      const sPro = sentRanges.length === 1 ? pro : prosodyStats(idx.map((i) => prosWords[i]), energy, pitch.f0, [sr], sFlu.speechStart, sFlu.speechEnd);
+      const canon = idx.reduce((n, i) => n + pw[i].phones.length, 0);
+      const recIn = rec.filter((r) => r.start * hop >= t0 - 0.05 && r.end * hop <= t1 + 0.05).length;
+      const prevEnd = sr.index > 0 ? [...pw.slice(0, sr.firstWord)].reverse().find((w) => !w.skipped)?.end : undefined;
+      const sx = sentenceFeatures({
+        phoneScores: idx.flatMap((i) => phoneScore[i]),
+        wordScores: idx.map((i) => wordScore[i]),
+        phoneLpr: idx.flatMap((i) => pw[i].phones.map((p) => (p.ev ? p.ev.lpr : -20))),
+        skippedFrac: idx.filter((i) => pw[i].skipped).length / idx.length,
+        wordCount: idx.length,
+        recognizedRatio: (sentRanges.length === 1 ? rec.length : recIn) / Math.max(1, canon),
+        fluency: sFlu,
+        prosody: sPro,
+        leadSilence: sentRanges.length === 1 || prevEnd === undefined ? sFlu.speechStart : Math.min(1, Math.max(0, t0 - prevEnd)),
+      });
+      perSentence.push({ index: sr.index, words: idx.length, accuracy: sc.sentence.accuracy.predict(sx) * 10, fluency: sc.sentence.fluency.predict(sx) * 10, prosody: sc.sentence.prosody.predict(sx) * 10, total: sc.sentence.total.predict(sx) * 10 });
+    }
+    const scored = perSentence.filter((x): x is NonNullable<typeof x> => !!x);
+    const wsum = scored.reduce((n, x) => n + x.words, 0) || 1;
+    const avg = (k: 'accuracy' | 'fluency' | 'prosody' | 'total') => scored.reduce((n, x) => n + x[k] * x.words, 0) / wsum;
+    const S = sc && scored.length
+      ? { accuracy: avg('accuracy'), fluency: avg('fluency'), prosody: avg('prosody'), total: avg('total') }
       : { accuracy: mean(wordScore) * 10, fluency: 0, prosody: 0, total: mean(wordScore) * 10 };
     // The speechocean762 sentences are read completely; scale for omitted text in longer readings.
     const completenessFactor = 0.4 + 0.6 * (completeness / 100);
@@ -314,7 +340,7 @@ export class Engine {
       const stressInfo = pro.stress.find((s) => s.index === i);
       const syl = syllabify(w.pron.phones);
       const notes: string[] = [];
-      if (!w.skipped && w.pron.accent !== 'both' && w.pron.accent !== accent) {
+      if (!w.skipped && accentEvidence(rhotic[i], accent)) {
         notes.push(accent === 'us' ? '你使用了英式读法（如不卷舌）。按美音目标练习时可注意卷舌 /r/。' : '你使用了美式读法（如卷舌 /r/）。按英音目标练习时句末/辅音前的 r 不发音。');
       }
       if (stressInfo && !stressInfo.correct && !timed[i].isFunction) {
@@ -393,7 +419,12 @@ export class Engine {
       sentences: sentRanges.map((s) => {
         const ws = words.slice(s.firstWord, s.lastWord + 1);
         const live = ws.filter((w) => !w.skipped);
-        return { index: s.index, text: sentences[s.index].text, type: s.type, firstWord: s.firstWord, lastWord: s.lastWord, start: live[0]?.start ?? 0, end: live[live.length - 1]?.end ?? 0, score: Math.round(mean(ws.map((w) => w.score))) };
+        const ps = perSentence[s.index];
+        return {
+          index: s.index, text: sentences[s.index].text, type: s.type, firstWord: s.firstWord, lastWord: s.lastWord, start: live[0]?.start ?? 0, end: live[live.length - 1]?.end ?? 0,
+          score: ps ? Math.round(ps.total) : Math.round(mean(ws.map((w) => w.score))),
+          scores: ps ? { accuracy: Math.round(ps.accuracy), fluency: Math.round(ps.fluency), prosody: Math.round(ps.prosody), total: Math.round(ps.total) } : undefined,
+        };
       }),
       fluency: {
         speechStart: round3(flu.speechStart),
@@ -508,6 +539,16 @@ export class Engine {
   }
 }
 
+/**
+ * Only report an accent mismatch when it is audible: for a British target the
+ * r-coloured realisation must be clearly more likely than the non-rhotic one
+ * (and the reverse for an American target).
+ */
+function accentEvidence(rhoticPref: number | null, target: Accent): boolean {
+  if (rhoticPref === null) return false;
+  return target === 'uk' ? rhoticPref > 3 : rhoticPref < -3;
+}
+
 function isLastUnitOfToken(units: Array<{ token: number }>, i: number): boolean {
   return i + 1 >= units.length || units[i + 1].token !== units[i].token;
 }
@@ -568,7 +609,7 @@ function buildIssues(r: AssessmentResult, fillers: Array<{ start: number; end: n
     else if (f.articulationRate > 6.2) issues.push({ severity: 'low', category: 'rate', title: '语速偏快', detail: `发音速度 ${f.articulationRate.toFixed(1)} 音节/秒，可能影响清晰度。` });
   }
   if (r.words.length >= 12 && r.prosody.contentFunctionDiff < 0.15) issues.push({ severity: 'low', category: 'rhythm', title: '节奏偏平均', detail: `实词与虚词的突显度差异较小（${r.prosody.contentFunctionDiff}）。英语是重音计时语言：实词重读，冠词、介词、代词等功能词要弱读、读得更轻更短。` });
-  const accentNotes = r.words.filter((w) => !w.skipped && !w.pron.matchesTarget);
+  const accentNotes = r.words.filter((w) => !w.skipped && w.notes.some((n) => n.includes('读法')));
   if (accentNotes.length) issues.push({ severity: 'low', category: 'accent', title: r.accent === 'us' ? '部分单词使用了英式读法' : '部分单词使用了美式读法', detail: `${accentNotes.slice(0, 6).map((w) => w.text).join('、')}。这不算发音错误，只是与所选目标口音不一致。`, words: accentNotes.map((w) => w.index) });
   const rank = { high: 0, medium: 1, low: 2 };
   return issues.sort((a, b) => rank[a.severity] - rank[b.severity]);
