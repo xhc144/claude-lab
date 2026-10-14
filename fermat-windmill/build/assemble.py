@@ -73,7 +73,8 @@ def music_bed(total: float, seed=3) -> np.ndarray:
         for m in ch:
             for det in (-0.12, 0.0, 0.11):
                 fr = f(m - 12) * (1 + det / 100)
-                sig += np.sin(2 * np.pi * fr * tt + det * 7) * 0.5 + 0.18 * np.sin(4 * np.pi * fr * tt)
+                ph = (2 * np.pi * fr * tt).astype(np.float32)
+                sig += np.sin(ph + det * 7) * 0.5 + 0.18 * np.sin(2 * ph)
         out[a:b] += (sig * env).astype(np.float32)
         start += bar
         k += 1
@@ -95,6 +96,15 @@ def chime(dur=2.2) -> np.ndarray:
     return (x * np.exp(-t * 2.4) * np.minimum(1, t / 0.01)).astype(np.float32)
 
 
+def moving_average(x: np.ndarray, k: int) -> np.ndarray:
+    c = np.concatenate([[0.0], np.cumsum(x, dtype=np.float64)])
+    h = k // 2
+    i = np.arange(len(x))
+    a = np.clip(i - h, 0, len(x))
+    b = np.clip(i + k - h, 0, len(x))
+    return ((c[b] - c[a]) / k).astype(np.float32)
+
+
 def build_audio(lang, placements, total, chimes) -> np.ndarray:
     n = int((total + 1.0) * SR)
     voice = np.zeros(n, np.float32)
@@ -109,13 +119,9 @@ def build_audio(lang, placements, total, chimes) -> np.ndarray:
     if rms > 0:
         voice *= 10 ** (-19 / 20) / rms
     voice = np.where(np.abs(voice) > 0.8, np.sign(voice) * (0.8 + 0.2 * np.tanh((np.abs(voice) - 0.8) / 0.2)), voice)
-    # ducking envelope from narration activity
-    win = int(0.05 * SR)
-    act = np.convolve(np.abs(voice), np.ones(win) / win, mode="same") > 0.01
-    env = act.astype(np.float32)
-    k = int(0.6 * SR)
-    env = np.convolve(env, np.ones(k) / k, mode="same")
-    env = np.clip(env * 1.6, 0, 1)
+    # ducking envelope from narration activity (moving averages via cumulative sums: O(n))
+    act = (moving_average(np.abs(voice), int(0.05 * SR)) > 0.01).astype(np.float32)
+    env = np.clip(moving_average(act, int(0.6 * SR)) * 1.6, 0, 1)
     mus = music_bed(total + 1.0)[:n]
     level = 10 ** (-29 / 20) * (1 - env) + 10 ** (-37 / 20) * env
     mix = voice + mus * level
