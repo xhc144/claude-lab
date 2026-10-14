@@ -1,0 +1,212 @@
+%% mojing-theorem.sty
+%% 墨经 Mojing —— 定理类环境
+%%
+%% 以 amsthm 处理编号与交叉引用，以 tcolorbox 的 \tcolorboxenvironment
+%% 为个别环境加上可跨页的装饰（左侧细线、浅底色……）。字体与间距通过
+%% 下列宏控制，文档类或用户均可 \renewcommand：
+%%   \mojingthmheadfont   定理名与编号的字体（含颜色）
+%%   \mojingthmnotefont   定理附注（括号内文字）的字体
+%%   \mojingthmbodyfont   定理、命题等正文字体
+%%   \mojingdefnbodyfont  定义、例等正文字体
+%%   \mojingremarkheadfont / \mojingremarkbodyfont   注
+%%   \mojingproofheadfont 证明、解等标题字体
+%%   \mojingthmindent     标题缩进（中式排版常为 2em，西式为 0pt）
+%%   \mojingthmabove / \mojingthmbelow   环境前后间距
+%%
+%% 本文件以 LPPL 1.3c 发布。
+\NeedsTeXFormat{LaTeX2e}[2022/06/01]
+\ProvidesExplPackage{mojing-theorem}{2026/10/13}{1.0}
+  {Mojing: theorem-like environments}
+
+\RequirePackage { amsthm }
+\RequirePackage [ most ] { tcolorbox }
+
+%% ---------------------------------------------------------------------------
+%% 可调参数
+%% ---------------------------------------------------------------------------
+\NewDocumentCommand \mojingthmheadfont    { } { \mojingheadfont \color{mjAccent} }
+\NewDocumentCommand \mojingthmnotefont    { } { \normalfont \heitimd \color{mjInk} }
+\NewDocumentCommand \mojingthmbodyfont    { } { \normalfont }
+\NewDocumentCommand \mojingdefnbodyfont   { } { \normalfont }
+\NewDocumentCommand \mojingremarkheadfont { } { \mojingheadfont }
+\NewDocumentCommand \mojingremarkbodyfont { } { \normalfont }
+\NewDocumentCommand \mojingproofheadfont  { } { \mojingheadfont }
+\NewDocumentCommand \mojingthmindent      { } { 0pt }
+\NewDocumentCommand \mojingthmheadsep     { } { 1em }
+\NewDocumentCommand \mojingthmabove       { } { .55\baselineskip plus .2\baselineskip }
+\NewDocumentCommand \mojingthmbelow       { } { .55\baselineskip plus .2\baselineskip }
+\NewDocumentCommand \mojingqedsymbol      { }
+  { \textcolor{mjAccentMid}{\ensuremath{\square}} }
+
+%% ---------------------------------------------------------------------------
+%% amsthm 样式
+%% ---------------------------------------------------------------------------
+\cs_new_protected:Npn \__mojing_thm_headspec:nnn #1#2#3
+  {
+    \thmname {#1}
+    \thmnumber { \nobreakspace #2 }
+    \thmnote { { \mojingthmnotefont （#3） } }
+  }
+
+%% 样式在 \mojingtheoremcounter 中定义：此时文档类已设置好缩进等参数
+%% （amsthm 在定义样式时即读取缩进量）。
+\cs_new_protected:Npn \__mojing_define_styles:
+  {
+    \newtheoremstyle { mjplain }
+      { \mojingthmabove } { \mojingthmbelow }
+      { \mojingthmbodyfont } { \mojingthmindent }
+      { \mojingthmheadfont } { } { \mojingthmheadsep }
+      { \__mojing_thm_headspec:nnn {##1} {##2} {##3} }
+
+    \newtheoremstyle { mjdefinition }
+      { \mojingthmabove } { \mojingthmbelow }
+      { \mojingdefnbodyfont } { \mojingthmindent }
+      { \mojingthmheadfont } { } { \mojingthmheadsep }
+      { \__mojing_thm_headspec:nnn {##1} {##2} {##3} }
+
+    \newtheoremstyle { mjremark }
+      { \mojingthmabove } { \mojingthmbelow }
+      { \mojingremarkbodyfont } { \mojingthmindent }
+      { \mojingremarkheadfont } { } { \mojingthmheadsep }
+      { \__mojing_thm_headspec:nnn {##1} {##2} {##3} }
+  }
+
+%% ---------------------------------------------------------------------------
+%% 定义新环境：\mojingnewtheorem[样式]{环境名}{显示名}
+%%   带 * 的版本不编号；未编号环境同时定义。
+%%   所有编号环境共用计数器 mjthm（读者按编号翻找最方便）。
+%% ---------------------------------------------------------------------------
+\tl_new:N \l__mojing_thm_within_tl
+
+\NewDocumentCommand \mojingtheoremcounter { m }
+  {
+    \__mojing_define_styles:
+    \tl_set:Nn \l__mojing_thm_within_tl {#1}
+    \str_if_eq:nnTF {#1} { none }
+      { \newcounter { mjthm } }
+      {
+        \newcounter { mjthm } [ #1 ]
+        \cs_set:Npe \themjthm
+          { \exp_not:c { the #1 } . \exp_not:N \arabic { mjthm } }
+      }
+  }
+
+\NewDocumentCommand \mojingnewtheorem { s O{mjplain} m m }
+  {
+    \theoremstyle {#2}
+    \IfBooleanTF {#1}
+      { \newtheorem* {#3} {#4} }
+      {
+        \newtheorem {#3} [ mjthm ] {#4}
+        \newtheorem* { #3* } {#4}
+        \cs_if_exist:NT \crefname { \crefname {#3} {#4} {#4} }
+      }
+  }
+
+%% 一次性定义常用环境
+\NewDocumentCommand \mojingdefinetheorems { }
+  {
+    \mojingnewtheorem [ mjplain ] { theorem }     { 定理 }
+    \mojingnewtheorem [ mjplain ] { lemma }       { 引理 }
+    \mojingnewtheorem [ mjplain ] { proposition } { 命题 }
+    \mojingnewtheorem [ mjplain ] { corollary }   { 推论 }
+    \mojingnewtheorem [ mjplain ] { conjecture }  { 猜想 }
+    \mojingnewtheorem [ mjdefinition ] { definition } { 定义 }
+    \mojingnewtheorem [ mjdefinition ] { axiom }      { 公理 }
+    \mojingnewtheorem [ mjdefinition ] { example }    { 例 }
+    \mojingnewtheorem [ mjdefinition ] { problem }    { 问题 }
+    \mojingnewtheorem * [ mjremark ] { remark } { 注 }
+    \mojingnewtheorem * [ mjremark ] { notation } { 记号 }
+  }
+
+%% ---------------------------------------------------------------------------
+%% 证明、解、分析
+%% ---------------------------------------------------------------------------
+\tl_set:Nn \proofname { 证明 }
+\RenewDocumentCommand \qedsymbol { } { \mojingqedsymbol }
+
+\cs_new_protected:Npn \__mojing_proof_begin:nn #1#2
+  {
+    \par
+    #2
+    \normalfont
+    \topsep = .3\baselineskip plus .15\baselineskip \relax
+    \trivlist
+    \item [ \hskip \labelsep \hskip \mojingthmindent
+            { \mojingproofheadfont #1 } \hskip \mojingthmheadsep ]
+    \ignorespaces
+  }
+
+\RenewDocumentEnvironment { proof } { O{\proofname} }
+  { \__mojing_proof_begin:nn {#1} { \pushQED { \qed } } }
+  { \popQED \endtrivlist \@endpefalse }
+
+\NewDocumentEnvironment { solution } { O{解} }
+  { \__mojing_proof_begin:nn {#1} { } }
+  { \endtrivlist \@endpefalse }
+
+\NewDocumentEnvironment { analysis } { O{分析} }
+  { \__mojing_proof_begin:nn {#1} { } \mojingremarkbodyfont }
+  { \endtrivlist \@endpefalse }
+
+%% ---------------------------------------------------------------------------
+%% 装饰：\mojingdecorate{环境名}{样式}
+%%   bar     左侧细竖线（主题色）
+%%   shade   极浅底色 + 左侧细竖线
+%%   frame   细线框
+%%   rules   上下两条细线
+%% ---------------------------------------------------------------------------
+\tcbset
+  {
+    mojing/base/.style =
+      {
+        enhanced , breakable ,
+        boxrule = 0pt , arc = 0pt , outer~arc = 0pt , boxsep = 0pt ,
+        before~skip = \mojingthmabove , after~skip = \mojingthmbelow ,
+        before~upper = { \setlength \topsep { 0pt } \setlength \partopsep { 0pt } } ,
+        parbox = false ,
+      } ,
+    mojing/bar/.style =
+      {
+        mojing/base , blanker ,
+        left = 9pt , right = 0pt , top = 1pt , bottom = 1pt ,
+        borderline~west = { 1.1pt } { 0pt } { mjAccent } ,
+      } ,
+    mojing/graybar/.style =
+      {
+        mojing/base , blanker ,
+        left = 9pt , right = 0pt , top = 1pt , bottom = 1pt ,
+        borderline~west = { .8pt } { 0pt } { mjRule!70 } ,
+      } ,
+    mojing/shade/.style =
+      {
+        mojing/base , frame~hidden , colback = mjAccentLight ,
+        left = 9pt , right = 8pt , top = 5pt , bottom = 5pt ,
+        borderline~west = { 1.1pt } { 0pt } { mjAccent } ,
+      } ,
+    mojing/tint/.style =
+      {
+        mojing/base , frame~hidden , colback = mjAccentLight ,
+        left = 9pt , right = 8pt , top = 5pt , bottom = 5pt ,
+      } ,
+    mojing/frame/.style =
+      {
+        mojing/base , blanker ,
+        left = 8pt , right = 8pt , top = 5pt , bottom = 5pt ,
+        borderline = { .5pt } { 0pt } { mjAccent!70 } ,
+      } ,
+    mojing/rules/.style =
+      {
+        mojing/base , blanker ,
+        left = 0pt , right = 0pt , top = 4pt , bottom = 4pt ,
+        borderline~north = { .5pt } { 0pt } { mjAccent!70 } ,
+        borderline~south = { .5pt } { 0pt } { mjAccent!70 } ,
+      } ,
+  }
+
+\NewDocumentCommand \mojingdecorate { m m }
+  {
+    \tcolorboxenvironment {#1} { mojing/#2 }
+  }
+
+\endinput

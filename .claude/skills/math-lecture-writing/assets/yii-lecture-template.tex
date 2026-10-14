@@ -1,0 +1,54 @@
+% Derived from user-uploaded old B template; sample content and attribution removed.
+\documentclass[10pt,a4paper,fontset=none]{ctexart}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{txfonts}
+\usepackage{fontspec}
+\usepackage[a4paper,left=89.858bp,right=89.858bp,top=65.5pt,bottom=39bp]{geometry}
+
+% Windows / XeLaTeX. 原资料对应的字体族。
+\setmainfont{Palatino Linotype}
+\setCJKmainfont{SimSun}[BoldFont=SimHei]
+\setCJKsansfont{SimHei}
+
+\setlength{\parindent}{19.925bp}
+\setlength{\parskip}{0pt}
+\makeatletter
+\renewcommand\@maketitle{%
+  \newpage\null
+  \vskip \dimexpr2em+3.265bp\relax
+  \begin{center}%
+    {\LARGE \@title \par}%
+    \vskip \dimexpr1.5em+1.390bp\relax
+    {\large\lineskip .5em\begin{tabular}[t]{c}\@author\end{tabular}\par}%
+    \vskip \dimexpr1em+1.204bp\relax
+    {\large \@date}%
+  \end{center}\par
+  \vskip 32.90bp
+}
+\makeatother
+
+
+% Functional packages only; no decorative boxes or added colors.
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+\theoremstyle{definition}
+\newtheorem{theorem}{定理}
+\newtheorem{lemma}[theorem]{引理}
+\newtheorem{proposition}[theorem]{命题}
+\newtheorem{corollary}[theorem]{推论}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{定义}
+\newtheorem{example}[theorem]{例}
+\renewcommand{\proofname}{\textup{证明}}
+\title{@@TITLE@@}
+\author{}
+\date{}
+\begin{document}
+\pagestyle{plain}
+@@TITLEBLOCK@@
+\normalsize
+\setlength{\baselineskip}{16.73bp}
+\setlength{\parindent}{19.925bp}
+\setlength{\parskip}{9.55bp}
+@@BODY@@
+\end{document}

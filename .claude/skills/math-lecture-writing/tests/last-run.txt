@@ -1,0 +1,49 @@
+test_actual_files (test_lecture.ArtifactTests.test_actual_files) ... ok
+test_duplicate_input (test_lecture.ArtifactTests.test_duplicate_input) ... ok
+test_failed_build_record (test_lecture.ArtifactTests.test_failed_build_record) ... ok
+test_fake_declared_page_count (test_lecture.ArtifactTests.test_fake_declared_page_count) ... ok
+test_fake_pdf_header (test_lecture.ArtifactTests.test_fake_pdf_header) ... ok
+test_json_not_object (test_lecture.ArtifactTests.test_json_not_object) ... ok
+test_last_page_omission (test_lecture.ArtifactTests.test_last_page_omission) ... ok
+test_light_uses_real_records (test_lecture.ArtifactTests.test_light_uses_real_records) ... ok
+test_missing_render_not_silent_pass (test_lecture.ArtifactTests.test_missing_render_not_silent_pass) ... ok
+test_nonimage_even_with_hash (test_lecture.ArtifactTests.test_nonimage_even_with_hash) ... ok
+test_record_path_escape (test_lecture.ArtifactTests.test_record_path_escape) ... ok
+test_repeated_number (test_lecture.ArtifactTests.test_repeated_number) ... ok
+test_same_png_reuse (test_lecture.ArtifactTests.test_same_png_reuse) ... ok
+test_source_modified (test_lecture.ArtifactTests.test_source_modified) ... ok
+test_stale_page (test_lecture.ArtifactTests.test_stale_page) ... ok
+test_boolean_schema_rejected (test_lecture.LedgerTests.test_boolean_schema_rejected) ... ok
+test_comment_label_not_proof (test_lecture.LedgerTests.test_comment_label_not_proof) ... ok
+test_core_without_scope_rejected (test_lecture.LedgerTests.test_core_without_scope_rejected) ... ok
+test_cycle_rejected (test_lecture.LedgerTests.test_cycle_rejected) ... ok
+test_literal_label_not_proof (test_lecture.LedgerTests.test_literal_label_not_proof) ... ok
+test_nested_main_light_mode (test_lecture.LedgerTests.test_nested_main_light_mode) ... ok
+test_no_admin_record_light_mode (test_lecture.LedgerTests.test_no_admin_record_light_mode) ... ok
+test_offline_source_accepted (test_lecture.LedgerTests.test_offline_source_accepted) ... ok
+test_required_proof_cannot_be_external (test_lecture.LedgerTests.test_required_proof_cannot_be_external) ... ok
+test_stale_snapshot (test_lecture.LedgerTests.test_stale_snapshot) ... ok
+test_top_array_rejected (test_lecture.LedgerTests.test_top_array_rejected) ... ok
+test_unknown_dependency (test_lecture.LedgerTests.test_unknown_dependency) ... ok
+test_use_only_core_with_scope (test_lecture.LedgerTests.test_use_only_core_with_scope) ... ok
+test_valid_ledger_not_mathematical_proof (test_lecture.LedgerTests.test_valid_ledger_not_mathematical_proof) ... ok
+test_comments_ignored (test_lecture.ProseTests.test_comments_ignored) ... ok
+test_fenced_code_ignored (test_lecture.ProseTests.test_fenced_code_ignored) ... ok
+test_gap_advisory_only (test_lecture.ProseTests.test_gap_advisory_only) ... ok
+test_long_proof_no_length_rejection (test_lecture.ProseTests.test_long_proof_no_length_rejection) ... ok
+test_multifile_line_mapping (test_lecture.ProseTests.test_multifile_line_mapping) ... ok
+test_preamble_ignored (test_lecture.ProseTests.test_preamble_ignored) ... ok
+test_short_manuscript_no_quota (test_lecture.ProseTests.test_short_manuscript_no_quota) ... ok
+test_steps_not_banned (test_lecture.ProseTests.test_steps_not_banned) ... ok
+test_verbatim_ignored (test_lecture.ProseTests.test_verbatim_ignored) ... ok
+test_prepare_ignores_commented_full_document (test_lecture.ToolTests.test_prepare_ignores_commented_full_document) ... ok
+test_prepare_no_overwrite (test_lecture.ToolTests.test_prepare_no_overwrite) ... ok
+test_prepare_preview_explicit (test_lecture.ToolTests.test_prepare_preview_explicit) ... ok
+test_prepare_strict_unchanged (test_lecture.ToolTests.test_prepare_strict_unchanged) ... ok
+test_snapshot_fonts_excluded_qa_included (test_lecture.ToolTests.test_snapshot_fonts_excluded_qa_included) ... ok
+test_timeout_records_failure (test_lecture.ToolTests.test_timeout_records_failure) ... ok
+
+----------------------------------------------------------------------
+Ran 44 tests in 1.054s
+
+OK

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "status": "built",
+  "source": "style_preview.tex",
+  "inputs": [
+    {
+      "path": "style_preview.tex",
+      "sha256": "68a5f693fce368a58583fb7e07302731e39ebe4e2872ab5b6ecc8099912bb4fc"
+    }
+  ],
+  "started_at": "2026-09-24T05:08:01.363835+00:00",
+  "passes": 2,
+  "pdf": {
+    "path": "build/style_preview.pdf",
+    "sha256": "9f36400a1ed370643937a286dab861f5a38b520597acb9c368f3da9b53f7fcf1"
+  },
+  "mathematical_verification": false,
+  "visual_review": "not_performed",
+  "guard_warnings": [],
+  "converged": true,
+  "generated_inputs": [
+    "elegantbook-original-adapter.cls"
+  ],
+  "finished_at": "2026-09-24T05:08:03.293623+00:00"
+}

@@ -1,0 +1,365 @@
+% !TEX program = xelatex
+% =============================================================================
+%  墨经 Mojing · 数学论文模板示例
+%  Bernstein 多项式逼近的收敛阶
+%
+%  编译：latexmk main.tex   （自动调用 biber 处理参考文献）
+%  图表数据由 data/make_data.py 生成，可直接重新运行以核对数值。
+%  选项：preprint（预印本样式，不排刊头）、thmstyle=song（定理正文用宋体）、
+%        enabstract=front（英文摘要排在首页，默认排在文末）、oneside
+% =============================================================================
+\documentclass{mojing-paper}
+\addbibresource{refs.bib}
+
+\journalinfo{
+  name      = 墨经数学通讯,
+  enname    = Mojing Mathematical Letters,
+  volume    = 1, issue = 1, year = 2026, month = 10,
+  doi       = 10.0000/mojing.2026.0001,
+  arxiv     = 2610.00000,   % 预印本样式（preprint 选项）时显示
+  firstpage = 1,
+}
+
+\title[Bernstein 多项式逼近的收敛阶]
+  {Bernstein 多项式逼近的收敛阶：\\一个概率论证明及其精确性}
+\author[张三，李四]{张\quad 三\affil{1}，\quad 李\quad 四\affil{1,2}}
+\affiliation{1.\ 示例大学数学科学学院，北京 100000；\quad
+             2.\ 示例大学统计与数据科学研究中心，北京 100000}
+\entitle{The Rate of Convergence of Bernstein Polynomials:\\
+         A Probabilistic Proof and Its Sharpness}
+\enauthor{ZHANG San\textsuperscript{1}, \ LI Si\textsuperscript{1,2}}
+\enaffiliation{1. School of Mathematical Sciences, Example University, Beijing 100000, China;\\
+               2. Center for Statistics and Data Science, Example University, Beijing 100000, China}
+
+\begin{abstract}
+本文用概率论的语言给出 Popoviciu 关于 Bernstein 多项式逼近阶的估计
+$\norm{B_nf-f}\le\frac32\,\omega(f,n^{-1/2})$ 的一个简短证明。通过对函数
+$f_0(x)=\abs{x-\frac12}$ 的精确计算，我们证明
+$B_{2m}f_0(\frac12)=\binom{2m}{m}\big/\bigl(2\cdot4^m\bigr)\sim(2\pi n)^{-1/2}$，从而阶 $n^{-1/2}$
+对 Lipschitz 函数类不能改进。对二阶连续可微函数，我们给出 Voronovskaya 渐近公式的一个
+定量形式：$\abs{n(B_nf-f)-\frac12x(1-x)f''}\le\frac{7}{32}\,\omega(f'',n^{-1/2})$。
+数值实验印证了上述结论。
+\end{abstract}
+\keywords{Bernstein 多项式；连续模；收敛阶；Voronovskaya 公式；二项分布}
+\msc{41A10；41A25；41A36}
+
+\begin{enabstract}
+We give a short probabilistic proof of Popoviciu's estimate
+$\norm{B_nf-f}\le\frac32\,\omega(f,n^{-1/2})$ for Bernstein polynomials. An exact computation for
+$f_0(x)=\abs{x-\frac12}$ shows that $B_{2m}f_0(\frac12)=\binom{2m}{m}/(2\cdot4^m)\sim(2\pi n)^{-1/2}$,
+so the order $n^{-1/2}$ cannot be improved on the class of Lipschitz functions. For
+$f\in C^2[0,1]$ we prove a quantitative Voronovskaya formula with the error bound
+$\frac{7}{32}\,\omega(f'',n^{-1/2})$. Numerical experiments illustrate the results.
+\end{enabstract}
+\enkeywords{Bernstein polynomials; modulus of continuity; rate of convergence;
+Voronovskaya formula; binomial distribution}
+
+\received{2026-06-18}
+\revised{2026-09-02}
+\funding{示例基金资助项目（编号：0000000）。本文为排版模板示例，作者与单位均为虚构。}
+\authorinfo{张三（1990—），男，博士，主要研究方向为函数逼近论。
+通信作者：李四，E-mail：lisi@example.edu.cn}
+
+\begin{document}
+\maketitle
+
+% =============================================================================
+\section{引言}
+% =============================================================================
+
+Weierstrass 于 1885 年证明，闭区间上的连续函数可以用多项式一致逼近\cite{weierstrass1885}。
+1912 年，Bernstein 给出了一个构造性的、带有鲜明概率色彩的证明\cite{bernstein1912}：对
+$f\in C[0,1]$，令
+\begin{equation}\label{eq:bernstein}
+  B_nf(x)=\sum_{k=0}^{n}f\Bigl(\frac{k}{n}\Bigr)\binom{n}{k}x^k(1-x)^{n-k},\qquad x\in[0,1],
+\end{equation}
+则 $B_nf$ 在 $[0,1]$ 上一致收敛于 $f$。若 $S_n$ 服从参数为 $n$、$x$ 的二项分布，记作
+$S_n\sim\mathrm{Bin}(n,x)$，则 \cref{eq:bernstein} 可以写成
+\begin{equation}\label{eq:expectation}
+  B_nf(x)=\mathbb{E}\,f\Bigl(\frac{S_n}{n}\Bigr).
+\end{equation}
+由大数定律，$S_n/n$ 依概率收敛于 $x$，而 $f$ 一致连续，于是 $B_nf(x)\to f(x)$。这正是
+Bernstein 原始证明的思路。
+
+本文关心收敛的速度。记 $\norm{\cdot}$ 为 $[0,1]$ 上的上确界范数，
+\[
+  \omega(f,\delta)=\sup\set{\abs{f(s)-f(t)}\given s,t\in[0,1],\ \abs{s-t}\le\delta}
+\]
+为 $f$ 的连续模。Popoviciu\cite{popoviciu1935}证明了
+$\norm{B_nf-f}\le\frac32\,\omega(f,n^{-1/2})$；Sikkema\cite{sikkema1961}进一步求出了其中的最优常数。
+对于光滑函数，Voronovskaya\cite{voronovskaya1932}得到了渐近公式
+$\lim_{n\to\infty}n\bigl(B_nf(x)-f(x)\bigr)=\frac12x(1-x)f''(x)$。这些结果的系统论述可参见专著
+\cite{lorentz1953,devore1993}。
+
+本文的目的是在统一的概率框架下处理上述结果。我们的主要贡献有三点：
+\begin{enumerate}
+  \item 利用 \cref{eq:expectation} 与二阶矩，给出 Popoviciu 估计的一个四行证明（\cref{thm:popoviciu}）；
+  \item 通过精确计算说明阶 $n^{-1/2}$ 对 Lipschitz 函数类是最优的，并给出误差的渐近常数
+        $(2\pi)^{-1/2}$（\cref{thm:sharp}）；
+  \item 利用四阶矩，得到 Voronovskaya 公式的一个带显式常数的定量形式（\cref{thm:voronovskaya}）。
+\end{enumerate}
+第 2 节准备二项分布的矩估计，第 3--5 节依次证明上述结果，第 6 节为结语。
+
+% =============================================================================
+\section{二项分布的矩}
+% =============================================================================
+
+以下总设 $S_n\sim\mathrm{Bin}(n,x)$，$x\in[0,1]$，并记 $T_n=S_n/n-x$。
+
+\begin{lemma}\label{lem:moments}
+对一切 $n\ge1$ 与 $x\in[0,1]$，有
+\begin{equation}\label{eq:moments}
+  \mathbb{E}\,T_n=0,\qquad
+  \mathbb{E}\,T_n^2=\frac{x(1-x)}{n}\le\frac{1}{4n},\qquad
+  \mathbb{E}\,T_n^4=\frac{x(1-x)\bigl[1+3(n-2)x(1-x)\bigr]}{n^3}<\frac{3}{16n^2}.
+\end{equation}
+\end{lemma}
+
+\begin{proof}
+把 $S_n$ 写成 $n$ 个独立的 Bernoulli 变量之和 $S_n=\sum_{i=1}^n\xi_i$，$\mathbb{P}(\xi_i=1)=x$。
+令 $\eta_i=\xi_i-x$，则 $\mathbb{E}\,\eta_i=0$，$\mathbb{E}\,\eta_i^2=x(1-x)$，
+$\mathbb{E}\,\eta_i^4=x(1-x)\bigl(1-3x(1-x)\bigr)$。展开 $(\sum\eta_i)^4$ 并利用独立性，只有
+$\eta_i^4$ 与 $\eta_i^2\eta_j^2$（$i\ne j$）两类项的期望非零，故
+\[
+  \mathbb{E}\Bigl(\sum_{i=1}^n\eta_i\Bigr)^4=n\,\mathbb{E}\,\eta_1^4+3n(n-1)\bigl(\mathbb{E}\,\eta_1^2\bigr)^2
+  =nx(1-x)\bigl[1+3(n-2)x(1-x)\bigr].
+\]
+除以 $n^4$ 即得 \cref{eq:moments} 中的等式（二阶矩同理）。最后，由 $x(1-x)\le\frac14$，
+$\mathbb{E}\,T_n^4\le\frac{1}{4n^3}\bigl(1+\frac{3(n-2)}{4}\bigr)=\frac{3n-2}{16n^3}<\frac{3}{16n^2}$。
+\end{proof}
+
+我们还需要连续模的一个熟知性质，其证明可见文献 \parencite[第 2 章]{devore1993}。
+
+\begin{lemma}\label{lem:modulus}
+对 $f\in C[0,1]$ 及 $\delta>0$，$h\ge0$，有
+$\omega(f,h)\le\bigl(1+\frac{h}{\delta}\bigr)\omega(f,\delta)$，并且
+$\omega(f,h)\le\bigl(1+\frac{h^2}{\delta^2}\bigr)\omega(f,\delta)$。
+\end{lemma}
+
+\begin{proof}
+第一式来自次可加性 $\omega(f,h_1+h_2)\le\omega(f,h_1)+\omega(f,h_2)$：
+$\omega(f,h)\le\lceil h/\delta\rceil\,\omega(f,\delta)\le(1+h/\delta)\,\omega(f,\delta)$。
+对第二式，$h\le\delta$ 时由单调性显然；$h>\delta$ 时 $h/\delta<h^2/\delta^2$，由第一式即得。
+\end{proof}
+
+% =============================================================================
+\section{Popoviciu 估计}
+% =============================================================================
+
+\begin{theorem}[Popoviciu]\label{thm:popoviciu}
+对一切 $f\in C[0,1]$ 与 $n\ge1$，有
+\[
+  \norm{B_nf-f}\le\frac32\,\omega\Bigl(f,\frac{1}{\sqrt n}\Bigr).
+\]
+\end{theorem}
+
+\begin{proof}
+固定 $x\in[0,1]$ 与 $\delta>0$。由 \cref{eq:expectation}、\cref{lem:modulus} 与 Cauchy--Schwarz 不等式，
+\[
+  \abs{B_nf(x)-f(x)}\le\mathbb{E}\,\abs{f(x+T_n)-f(x)}
+  \le\omega(f,\delta)\Bigl(1+\frac{\mathbb{E}\abs{T_n}}{\delta}\Bigr)
+  \le\omega(f,\delta)\Bigl(1+\frac{(\mathbb{E}\,T_n^2)^{1/2}}{\delta}\Bigr).
+\]
+由 \cref{lem:moments}，$(\mathbb{E}\,T_n^2)^{1/2}\le\frac{1}{2\sqrt n}$。取 $\delta=n^{-1/2}$ 即得。
+\end{proof}
+
+\begin{corollary}\label{cor:lipschitz}
+若 $f$ 满足 Lipschitz 条件 $\abs{f(s)-f(t)}\le L\abs{s-t}$，则 $\norm{B_nf-f}\le\dfrac{L}{2\sqrt n}$。
+\end{corollary}
+
+\begin{proof}
+$\abs{B_nf(x)-f(x)}\le L\,\mathbb{E}\abs{T_n}\le L\,(\mathbb{E}\,T_n^2)^{1/2}\le\frac{L}{2\sqrt n}$。
+\end{proof}
+
+\begin{remark}
+\cref{thm:popoviciu} 中的常数 $\frac32$ 不是最优的。Sikkema\cite{sikkema1961}证明了最优常数为
+$\frac{4306+837\sqrt6}{5832}\approx1.0899$。
+\end{remark}
+
+% =============================================================================
+\section{阶的精确性}
+% =============================================================================
+
+自然要问：阶 $n^{-1/2}$ 能否改进？下面的定理表明，对 Lipschitz 函数类，答案是否定的，
+而且 \cref{cor:lipschitz} 中的常数 $\frac12$ 至多只能改进到 $(2\pi)^{-1/2}\approx0.3989$。
+
+\begin{theorem}\label{thm:sharp}
+设 $f_0(x)=\abs{x-\frac12}$，则对一切正整数 $m$，
+\begin{equation}\label{eq:exact}
+  B_{2m}f_0\Bigl(\frac12\Bigr)=\frac{1}{2\cdot4^m}\binom{2m}{m}.
+\end{equation}
+特别地，当 $n=2m\to\infty$ 时，$B_nf_0(\frac12)-f_0(\frac12)\sim\dfrac{1}{\sqrt{2\pi n}}$。
+\end{theorem}
+
+\begin{proof}
+取 $x=\frac12$，$S\sim\mathrm{Bin}(2m,\frac12)$。由 \cref{eq:expectation}，
+\[
+  B_{2m}f_0\Bigl(\frac12\Bigr)=\mathbb{E}\,\Bigl\lvert\frac{S}{2m}-\frac12\Bigr\rvert
+  =\frac{1}{2m\cdot4^m}\sum_{k=0}^{2m}\abs{k-m}\binom{2m}{k}
+  =\frac{1}{m\cdot4^m}\sum_{k=m+1}^{2m}(k-m)\binom{2m}{k},
+\]
+最后一步用了对称性 $\binom{2m}{k}=\binom{2m}{2m-k}$。利用
+$k\binom{2m}{k}=2m\binom{2m-1}{k-1}$ 与 $\binom{2m}{k}=\binom{2m-1}{k}+\binom{2m-1}{k-1}$，得
+\[
+  (k-m)\binom{2m}{k}=m\left[\binom{2m-1}{k-1}-\binom{2m-1}{k}\right].
+\]
+对 $k=m+1,\dotsc,2m$ 求和，右端相消为 $m\binom{2m-1}{m}=\frac m2\binom{2m}{m}$，代入即得
+\cref{eq:exact}。最后，由 Stirling 公式（见文献 \parencite{zhang1990,feller1968}），
+$\binom{2m}{m}4^{-m}\sim(\pi m)^{-1/2}$，于是
+$B_{2m}f_0(\frac12)\sim\frac{1}{2\sqrt{\pi m}}=\frac{1}{\sqrt{2\pi n}}$。
+\end{proof}
+
+\Cref{tab:sharp} 列出了 $e_n=B_nf_0(\frac12)$ 的精确值。可以看到 $\sqrt n\,e_n$ 自下而上
+单调地趋于 $(2\pi)^{-1/2}=0.398942\dotso$，而 $e_n$ 与 Popoviciu 上界之比稳定在
+$\frac{2}{3\sqrt{2\pi}}\approx0.266$ 附近。\Cref{fig:bernstein} 显示了 $B_nf_0$ 在尖点附近的
+“圆角化”现象：多项式逼近光滑地绕过了 $f_0$ 的不可导点，这正是误差集中于 $x=\frac12$ 的原因。
+
+\begin{table}[htbp]
+\centering
+\caption{$e_n=B_nf_0(\frac12)$ 的精确值与理论界的比较}\label{tab:sharp}
+\begin{tabular}{@{}r S[table-format=1.6] S[table-format=1.6] S[table-format=1.6] S[table-format=1.4]@{}}
+\toprule
+{$n$} & {$e_n$} & {$\sqrt{n}\,e_n$} & {$\frac32 n^{-1/2}$} & {$e_n\big/\bigl(\frac32n^{-1/2}\bigr)$} \\
+\midrule
+2    & 0.250000 & 0.353553 & 1.060660 & 0.2357 \\
+4    & 0.187500 & 0.375000 & 0.750000 & 0.2500 \\
+8    & 0.136719 & 0.386699 & 0.530330 & 0.2578 \\
+16   & 0.098190 & 0.392761 & 0.375000 & 0.2618 \\
+32   & 0.069975 & 0.395838 & 0.265165 & 0.2639 \\
+64   & 0.049673 & 0.397387 & 0.187500 & 0.2649 \\
+128  & 0.035193 & 0.398164 & 0.132583 & 0.2654 \\
+256  & 0.024910 & 0.398553 & 0.093750 & 0.2657 \\
+1024 & 0.012464 & 0.398845 & 0.046875 & 0.2659 \\
+\midrule
+{$\infty$} & {---} & 0.398942 & {---} & 0.2660 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, width=.72\textwidth, height=.42\textwidth,
+    xmin=0, xmax=1, ymin=0, ymax=.52, xtick={0,.25,.5,.75,1}, ytick={0,.1,.2,.3,.4,.5},
+    xlabel={$x$}, grid=major, legend pos=north east, legend columns=2,
+    yticklabel style={/pgf/number format/fixed}]
+  \addplot[mjInk, line width=.7pt] table[x=x, y=f] {data/bernstein-abs.dat};
+  \addlegendentry{$f_0$}
+  \addplot[mjGray, dashed] table[x=x, y=B2] {data/bernstein-abs.dat};
+  \addlegendentry{$B_2f_0$}
+  \addplot[mjSecond] table[x=x, y=B6] {data/bernstein-abs.dat};
+  \addlegendentry{$B_6f_0$}
+  \addplot[mjAccent] table[x=x, y=B20] {data/bernstein-abs.dat};
+  \addlegendentry{$B_{20}f_0$}
+\end{axis}
+\end{tikzpicture}
+\caption{$f_0(x)=\abs{x-\frac12}$ 及其 Bernstein 多项式。$B_nf_0\ge f_0$，数值上最大偏差位于尖点 $x=\frac12$}
+\label{fig:bernstein}
+\end{figure}
+
+% =============================================================================
+\section{Voronovskaya 公式的定量形式}
+% =============================================================================
+
+\begin{theorem}\label{thm:voronovskaya}
+设 $f\in C^2[0,1]$，则对一切 $n\ge1$ 与 $x\in[0,1]$，
+\begin{equation}\label{eq:voronovskaya}
+  \Bigl\lvert n\bigl(B_nf(x)-f(x)\bigr)-\frac{x(1-x)}{2}f''(x)\Bigr\rvert
+  \le\frac{7}{32}\,\omega\Bigl(f'',\frac{1}{\sqrt n}\Bigr).
+\end{equation}
+特别地，$n(B_nf-f)$ 在 $[0,1]$ 上一致收敛于 $\frac12x(1-x)f''$。
+\end{theorem}
+
+\begin{proof}
+由带 Lagrange 余项的 Taylor 公式，$f(x+t)=f(x)+f'(x)t+\frac12f''(x)t^2+r(x,t)\,t^2$，其中
+$r(x,t)=\frac12\bigl(f''(\xi)-f''(x)\bigr)$，$\xi$ 介于 $x$ 与 $x+t$ 之间。由 \cref{lem:modulus}，对任意 $\delta>0$，
+\[
+  \abs{r(x,t)}\le\frac12\,\omega(f'',\abs{t})\le\frac12\Bigl(1+\frac{t^2}{\delta^2}\Bigr)\omega(f'',\delta).
+\]
+以 $t=T_n$ 代入并取期望，利用 \cref{lem:moments} 中的 $\mathbb{E}\,T_n=0$ 与 $\mathbb{E}\,T_n^2=\frac{x(1-x)}{n}$，得
+\[
+  \Bigl\lvert n\bigl(B_nf(x)-f(x)\bigr)-\frac{x(1-x)}{2}f''(x)\Bigr\rvert
+  =n\,\abs[\big]{\mathbb{E}\,r(x,T_n)T_n^2}
+  \le\frac n2\,\omega(f'',\delta)\Bigl(\mathbb{E}\,T_n^2+\frac{\mathbb{E}\,T_n^4}{\delta^2}\Bigr).
+\]
+取 $\delta=n^{-1/2}$，并用 $\mathbb{E}\,T_n^2\le\frac{1}{4n}$，$\mathbb{E}\,T_n^4<\frac{3}{16n^2}$，右端不超过
+$\frac12\bigl(\frac14+\frac{3}{16}\bigr)\omega(f'',n^{-1/2})=\frac{7}{32}\,\omega(f'',n^{-1/2})$。
+\end{proof}
+
+\begin{remark}
+当 $f''$ 满足 Lipschitz 条件时，\cref{eq:voronovskaya} 给出 $O(n^{-1/2})$ 的误差；对更光滑的 $f$，
+误差实际上是 $O(n^{-1})$。以 $f(x)=\sin\pi x$ 为例，此时极限函数为
+$-\frac{\pi^2}{2}x(1-x)\sin\pi x$，在 $x=\frac12$ 处等于 $-\frac{\pi^2}{8}$。\Cref{tab:voronovskaya}
+中 $n\cdot d_n$ 趋于常数，说明误差 $d_n$ 确为 $O(n^{-1})$；\cref{fig:voronovskaya} 则显示了
+$n(B_nf-f)$ 在整个区间上向极限函数的一致逼近。
+\end{remark}
+
+\begin{table}[htbp]
+\centering
+\caption{$f(x)=\sin\pi x$ 时 $n(B_nf-f)(\frac12)$ 的数值，极限为 $-\frac{\pi^2}{8}=-1.233701$}
+\label{tab:voronovskaya}
+\begin{tabular}{@{}r S[table-format=-1.6] S[table-format=1.6] S[table-format=1.4]@{}}
+\toprule
+{$n$} & {$n\bigl(B_nf-f\bigr)(\frac12)$} & {$d_n$} & {$n\cdot d_n$} \\
+\midrule
+5   & -1.109534 & 0.124167 & 0.6208 \\
+10  & -1.165148 & 0.068552 & 0.6855 \\
+20  & -1.197615 & 0.036086 & 0.7217 \\
+40  & -1.215177 & 0.018524 & 0.7409 \\
+80  & -1.224315 & 0.009386 & 0.7509 \\
+160 & -1.228976 & 0.004724 & 0.7559 \\
+320 & -1.231330 & 0.002370 & 0.7585 \\
+\bottomrule
+\end{tabular}
+\par\smallskip
+{\footnotesize 注：$d_n=n(B_nf-f)(\frac12)+\frac{\pi^2}{8}$。}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, width=.72\textwidth, height=.4\textwidth,
+    xmin=0, xmax=1, ymin=-1.35, ymax=.08, xtick={0,.25,.5,.75,1},
+    xlabel={$x$}, grid=major, legend columns=4,
+    legend style={at={(.5,.97)}, anchor=north},
+    yticklabel style={/pgf/number format/fixed}]
+  \addplot[mjInk, line width=1pt] table[x=x, y=limit] {data/voronovskaya.dat};
+  \addlegendentry{$\frac12x(1-x)f''(x)$}
+  \addplot[mjGray, dashed] table[x=x, y=n5] {data/voronovskaya.dat};
+  \addlegendentry{$n=5$}
+  \addplot[mjSecond] table[x=x, y=n20] {data/voronovskaya.dat};
+  \addlegendentry{$n=20$}
+  \addplot[mjAccent] table[x=x, y=n80] {data/voronovskaya.dat};
+  \addlegendentry{$n=80$}
+\end{axis}
+\end{tikzpicture}
+\caption{$f(x)=\sin\pi x$ 时 $n\bigl(B_nf(x)-f(x)\bigr)$ 与 Voronovskaya 极限的比较}
+\label{fig:voronovskaya}
+\end{figure}
+
+% =============================================================================
+\section{结语}
+% =============================================================================
+
+本文的论证只用到了 $B_n$ 是保正线性算子、并且精确再生 $1$、$x$ 两个函数这一事实，以及
+二项分布的二阶、四阶矩。因此，同样的方法适用于一切由概率分布生成的保正算子，例如
+Sz\'asz--Mirakyan 算子与 Baskakov 算子；这与 Korovkin 定理\cite{korovkin1953}的精神是一致的：
+保正线性算子的收敛性由它在少数几个检验函数上的表现决定。
+
+\section*{致谢}
+作者感谢审稿人提出的宝贵意见。
+
+\printreferences
+
+\appendix
+\section{\cref{eq:exact} 的另一证明}
+
+记 $p_k=\binom{2m}{k}4^{-m}$。由 $\sum_kp_k=1$ 及对称性，$\sum_{k>m}p_k=\frac12(1-p_m)$；由
+$kp_k=m\cdot\binom{2m-1}{k-1}2^{-(2m-1)}$，有
+$\sum_{k>m}kp_k=m\sum_{j\ge m}\binom{2m-1}{j}2^{-(2m-1)}=\frac m2$。于是
+\[
+  \sum_{k>m}(k-m)p_k=\frac m2-\frac m2(1-p_m)=\frac m2\,p_m ,
+\]
+这与正文中的计算一致。
+
+\end{document}

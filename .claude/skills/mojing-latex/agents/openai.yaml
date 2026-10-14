@@ -1,0 +1,13 @@
+interface:
+  display_name: 墨经 LaTeX 模板
+  short_description: 保留六套原生中文数学版式，生成讲义、试卷、书籍与对照译文
+  default_prompt: 使用 $mojing-latex 选择合适的墨经模板，制作可编辑的中文数学文档并检查编译结果。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

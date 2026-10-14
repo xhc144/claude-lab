@@ -1,0 +1,308 @@
+% !TEX program = xelatex
+% =============================================================================
+%  墨经 Mojing · 习题与解答模板示例
+%  《数学分析（Ⅲ）》习题课：函数项级数的一致收敛
+%
+%  同一份源文件可输出三种版本：
+%    latexmk main.tex                                   教师版（解答紧随题目）
+%    xelatex -jobname=main-student "\def\MojingAnswers{none}\input{main}"   学生版
+%    xelatex -jobname=main-key "\def\MojingAnswers{end}\input{main}"        解答附后
+%  也可以直接写 \documentclass[answers=none]{mojing-exercise}。
+% =============================================================================
+\documentclass{mojing-exercise}
+
+\sheetinfo{
+  course  = 数学分析（Ⅲ）· 习题课,
+  session = 第 7 周,
+  title   = 函数项级数的一致收敛,
+  date    = 2026 年 10 月 20 日,
+  ta      = 赵六,
+  scope   = 教材 §13.1—§13.3,
+}
+
+\begin{document}
+\maketitle
+
+\begin{recap}
+\begin{itemize}
+  \item \textbf{定义}\quad $f_n\rightrightarrows f$（于 $I$）当且仅当
+        $\displaystyle\beta_n=\sup_{x\in I}\abs{f_n(x)-f(x)}\to0$。判断不一致收敛时，
+        常找一列点 $x_n\in I$ 使 $\abs{f_n(x_n)-f(x_n)}$ 不趋于零。
+  \item \textbf{判别法}\quad 柯西准则；魏尔斯特拉斯 $M$ 判别法；阿贝尔判别法与狄利克雷判别法；
+        狄尼定理（紧集上单调收敛于连续函数的连续函数列必一致收敛）。
+  \item \textbf{分析性质}\quad 一致收敛保持连续性，允许极限与积分交换次序；逐项求导则要求
+        \emph{导函数级数}一致收敛，且原级数至少在一点收敛。
+\end{itemize}
+\end{recap}
+
+\difficultylegend
+
+% -----------------------------------------------------------------------------
+\section{一致收敛的判定}
+% -----------------------------------------------------------------------------
+
+\begin{problem}[difficulty=1, space=3.5cm]\label{prob:xn}
+讨论函数列 $f_n(x)=x^n$ 在下列区间上的一致收敛性：
+\begin{inlinelist}
+  \item $[0,q]$，其中 $0<q<1$；
+  \item $[0,1)$。
+\end{inlinelist}
+\end{problem}
+
+\begin{solution}
+在 $[0,1)$ 上 $f_n(x)\to0$，极限函数 $f\equiv0$。
+
+(1)~$\beta_n=\sup_{[0,q]}x^n=q^n\to0$，故一致收敛。
+
+(2)~$\beta_n=\sup_{[0,1)}x^n=1$，不趋于零，故不一致收敛。也可取 $x_n=2^{-1/n}\in[0,1)$，
+则 $f_n(x_n)=\frac12$ 恒不趋于零。
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[mojing, width=62mm, height=46mm, xmin=0, xmax=1.12, ymin=0, ymax=1.15,
+    xtick={0.5,1}, ytick={0.5,1}, xlabel=$x$, samples=80, domain=0:1]
+  \pgfplotsinvokeforeach{1,2,4,8,16,40}{
+    \addplot[mjAccent!\fpeval{round(30+70*ln(#1)/ln(40))}, line width=.75pt] {x^#1};
+  }
+  \node[font=\footnotesize, mjAccent] at (axis cs:.42,.72) {$n=1$};
+  \node[font=\footnotesize, mjAccent, anchor=west] at (axis cs:1.01,.32) {$n=40$};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{$x^n$ 的图像：$n$ 越大，曲线越贴近横轴，但在 $x=1$ 附近总有“翘起”的一段}
+\end{center}
+
+\begin{note}
+区间右端点附近的“翘起”正是破坏一致收敛的原因。把区间截短到 $[0,q]$，就把这一段排除在外了。
+\end{note}
+\end{solution}
+
+\begin{problem}[difficulty=1, space=4cm]\label{prob:bump}
+设 $f_n(x)=\dfrac{nx}{1+n^2x^2}$，$x\in[0,1]$。证明 $\{f_n\}$ 在 $[0,1]$ 上逐点收敛于 $0$
+但不一致收敛；而对任意 $0<\delta<1$，它在 $[\delta,1]$ 上一致收敛。
+\end{problem}
+
+\begin{solution}
+$f_n(0)=0$；当 $x>0$ 时，$0\le f_n(x)\le\dfrac{nx}{n^2x^2}=\dfrac{1}{nx}\to0$，故逐点收敛于 $0$。
+
+由 $f_n'(x)=\dfrac{n(1-n^2x^2)}{(1+n^2x^2)^2}$ 知 $f_n$ 在 $x=1/n$ 处取最大值 $f_n(1/n)=\frac12$，
+所以 $\beta_n=\frac12$，在 $[0,1]$ 上不一致收敛。在 $[\delta,1]$ 上，
+$\abs{f_n(x)}\le\dfrac{1}{n\delta}\to0$，与 $x$ 无关，故一致收敛。
+
+\begin{center}
+\begin{tikzpicture}
+\begin{axis}[mojing, width=70mm, height=40mm, xmin=0, xmax=1.08, ymin=0, ymax=.62,
+    xtick={1}, ytick={.5}, yticklabels={$\frac12$}, xlabel=$x$, samples=200, domain=0:1]
+  \addplot[mjAccent!35] {2*x/(1+4*x^2)};
+  \addplot[mjAccent!65] {5*x/(1+25*x^2)};
+  \addplot[mjAccent]    {15*x/(1+225*x^2)};
+  \addplot[mj aux, domain=0:1] {.5};
+  \node[font=\footnotesize, mjAccent] at (axis cs:.12,.56) {$n=15$};
+  \node[font=\footnotesize, mjAccent!65] at (axis cs:.33,.43) {$n=5$};
+  \node[font=\footnotesize, mjAccent!45] at (axis cs:.78,.53) {$n=2$};
+\end{axis}
+\end{tikzpicture}
+\captionof{figure}{“滑动的驼峰”：峰高始终为 $\frac12$，峰顶位置 $x=1/n$ 向原点移动}
+\end{center}
+\end{solution}
+
+\begin{problem}[difficulty=2, space=5cm]
+讨论级数 $\displaystyle\sum_{n=0}^{\infty}\frac{x^2}{(1+x^2)^n}$ 在 $\R$ 上的收敛性与一致收敛性。
+\end{problem}
+
+\begin{solution}
+$x=0$ 时各项为零，和为 $0$。$x\ne0$ 时这是公比为 $\frac{1}{1+x^2}\in(0,1)$ 的等比级数，
+\[
+  S(x)=x^2\cdot\frac{1}{1-\frac{1}{1+x^2}}=1+x^2 .
+\]
+于是级数在 $\R$ 上处处收敛，和函数
+$S(x)=\begin{cases}1+x^2,&x\ne0,\\0,&x=0\end{cases}$ 在 $x=0$ 处间断。
+而每一项都是连续函数，若级数在含 $0$ 的某区间上一致收敛，和函数必在 $0$ 处连续，矛盾。
+所以级数在任何含 $0$ 的区间上都不一致收敛。
+
+另一方面，余项可以精确算出：
+$R_N(x)=\sum_{n>N}\frac{x^2}{(1+x^2)^n}=(1+x^2)^{-N}$（$x\ne0$）。对任意 $\delta>0$，
+\[
+  \sup_{\abs{x}\ge\delta}\abs{R_N(x)}=(1+\delta^2)^{-N}\to0,
+\]
+故级数在 $\set{x\given\abs{x}\ge\delta}$ 上一致收敛。
+
+\begin{center}
+\begin{tikzpicture}[scale=.95]
+  \draw[mj axis] (-2,0) -- (2.1,0) node[below] {$x$};
+  \draw[mj axis] (0,-.3) -- (0,2.6) node[left] {$y$};
+  \draw[mj curve, domain=-1.3:-.04, samples=40] plot (\x,{1+\x*\x});
+  \draw[mj curve, domain=.04:1.3, samples=40] plot (\x,{1+\x*\x});
+  \node[mj hollow, draw=mjAccent] at (0,1) {};
+  \node[mj apoint] at (0,0) {};
+  \node[left, font=\footnotesize] at (0,1) {$1$};
+  \node[mjAccent, font=\footnotesize] at (1.55,2.35) {$y=S(x)$};
+\end{tikzpicture}
+\captionof{figure}{和函数在原点“跳”到 $0$}
+\end{center}
+\end{solution}
+
+\begin{problem}[difficulty=2, space=5cm]
+设 $\displaystyle f(x)=\sum_{n=1}^{\infty}\frac{\sin nx}{n^3}$。
+\begin{enumerate}
+  \item 证明 $f$ 在 $\R$ 上连续可微，并求 $f'(x)$；
+  \item 已知 $\displaystyle\sum_{n=1}^{\infty}\frac{\cos nx}{n^2}=\frac{\pi^2}{6}-\frac{\pi x}{2}+\frac{x^2}{4}$
+        （$0\le x\le2\pi$），求 $f$ 在 $[0,2\pi]$ 上的表达式，并由此求
+        $\displaystyle1-\frac{1}{3^3}+\frac{1}{5^3}-\frac{1}{7^3}+\dotsb$ 的值。
+\end{enumerate}
+\end{problem}
+
+\begin{solution}
+(1)~由 $\abs{\frac{\sin nx}{n^3}}\le\frac{1}{n^3}$ 及 $M$ 判别法，级数在 $\R$ 上一致收敛，$f$ 连续。
+逐项求导所得级数 $\sum\frac{\cos nx}{n^2}$ 满足 $\abs{\frac{\cos nx}{n^2}}\le\frac{1}{n^2}$，也在 $\R$ 上
+一致收敛。由逐项求导定理，$f$ 可微，且
+\[
+  f'(x)=\sum_{n=1}^{\infty}\frac{\cos nx}{n^2},
+\]
+它作为连续函数项级数的一致极限是连续的，故 $f\in C^1(\R)$。
+
+(2)~由 $f(0)=0$ 及 (1)，对 $0\le x\le2\pi$，
+\[
+  f(x)=\int_0^x\Bigl(\frac{\pi^2}{6}-\frac{\pi t}{2}+\frac{t^2}{4}\Bigr)\dd t
+      =\frac{\pi^2x}{6}-\frac{\pi x^2}{4}+\frac{x^3}{12}.
+\]
+取 $x=\frac{\pi}{2}$，左端为 $\sum_n\frac{\sin(n\pi/2)}{n^3}=1-\frac{1}{3^3}+\frac{1}{5^3}-\dotsb$，右端为
+$\frac{\pi^3}{12}-\frac{\pi^3}{16}+\frac{\pi^3}{96}=\frac{\pi^3}{32}$。
+\answer{$\displaystyle1-\frac{1}{3^3}+\frac{1}{5^3}-\dotsb=\frac{\pi^3}{32}$}
+\begin{note}
+验算：取 $x=\pi$，表达式给出 $\frac{\pi^3}{6}-\frac{\pi^3}{4}+\frac{\pi^3}{12}=0$，与 $\sin n\pi=0$ 吻合。
+\end{note}
+\end{solution}
+
+% -----------------------------------------------------------------------------
+\section{一致收敛与极限运算}
+% -----------------------------------------------------------------------------
+
+\begin{problem}[difficulty=1, space=4.5cm]
+设 $f_n(x)=2nx\ee^{-nx^2}$，$x\in[0,1]$。
+\begin{enumerate}
+  \item 求 $\lim_{n\to\infty}f_n(x)$；
+  \item 比较 $\displaystyle\lim_{n\to\infty}\int_0^1f_n(x)\dd x$ 与
+        $\displaystyle\int_0^1\lim_{n\to\infty}f_n(x)\dd x$；
+  \item 由此说明 $\{f_n\}$ 在 $[0,1]$ 上不一致收敛。
+\end{enumerate}
+\end{problem}
+
+\begin{solution}
+(1)~$f_n(0)=0$；$x>0$ 时指数衰减快于线性增长，$f_n(x)\to0$。故极限函数恒为 $0$。
+
+(2)~$\displaystyle\int_0^1 2nx\ee^{-nx^2}\dd x=\Bigl[-\ee^{-nx^2}\Bigr]_0^1=1-\ee^{-n}\to1$，
+而 $\int_0^1 0\dd x=0$，两者不等。
+
+(3)~若一致收敛，则积分与极限可以交换，与 (2) 矛盾。直接计算也可：$f_n$ 在
+$x=1/\sqrt{2n}$ 处取最大值 $\sqrt{2n}\,\ee^{-1/2}\to\infty$。
+\end{solution}
+
+\begin{problem}[difficulty=3, title=“二年级学生之梦”, space=6cm]
+证明 $\displaystyle\int_0^1x^{-x}\dd x=\sum_{n=1}^{\infty}\frac{1}{n^n}$。
+\begin{hint}
+把 $x^{-x}=\ee^{-x\ln x}$ 展开为指数级数，再逐项积分。
+\end{hint}
+\end{problem}
+
+\begin{solution}
+在 $(0,1]$ 上，$x^{-x}=\ee^{-x\ln x}=\sum_{k=0}^{\infty}\frac{(-x\ln x)^k}{k!}$。补充定义各项在
+$x=0$ 处的值为其极限，它们都是 $[0,1]$ 上的连续函数。由于 $0\le-x\ln x\le\frac1\ee$，有
+\[
+  0\le\frac{(-x\ln x)^k}{k!}\le\frac{\ee^{-k}}{k!},\qquad\sum_k\frac{\ee^{-k}}{k!}<\infty,
+\]
+由 $M$ 判别法，级数在 $[0,1]$ 上一致收敛，可以逐项积分。作代换 $x=\ee^{-t}$，
+\[
+  \int_0^1x^k(-\ln x)^k\dd x=\int_0^{\infty}t^k\ee^{-(k+1)t}\dd t=\frac{k!}{(k+1)^{k+1}} .
+\]
+于是 $\displaystyle\int_0^1x^{-x}\dd x=\sum_{k=0}^{\infty}\frac{1}{(k+1)^{k+1}}=\sum_{n=1}^{\infty}\frac{1}{n^n}$。
+\begin{note}
+这个漂亮的等式由约翰·伯努利于 1697 年发现，因其形式“好得不像真的”而得名。
+数值上两边都约等于 $1.29129$。
+\end{note}
+\end{solution}
+
+\begin{problem}[difficulty=2, space=4.5cm]
+设 $a>0$。证明函数列 $\Bigl(1+\dfrac{x}{n}\Bigr)^n$ 在 $[0,a]$ 上一致收敛于 $\ee^x$。
+\end{problem}
+
+\begin{solution}
+记 $g_n(x)=(1+x/n)^n$。对 $n$ 个 $1+\frac xn$ 与一个 $1$ 用算术--几何平均不等式：
+\[
+  \Bigl(1+\frac xn\Bigr)^{\frac{n}{n+1}}\le\frac{n\bigl(1+\frac xn\bigr)+1}{n+1}=1+\frac{x}{n+1},
+\]
+即 $g_n(x)\le g_{n+1}(x)$。于是 $\{g_n\}$ 是 $[0,a]$ 上单调递增的连续函数列，逐点收敛于连续函数
+$\ee^x$，而 $[0,a]$ 是紧集。由狄尼定理，收敛是一致的。
+\begin{note}
+狄尼定理的三个条件——紧性、单调性、极限函数连续——缺一不可。\cref{prob:xn}(2) 中
+$x^n$ 在 $[0,1)$ 上单调递减地收敛于连续函数 $0$，但 $[0,1)$ 不紧，一致收敛就不成立。
+\end{note}
+\end{solution}
+
+% -----------------------------------------------------------------------------
+\section{综合与提高}
+% -----------------------------------------------------------------------------
+
+\begin{problem}[difficulty=2, space=4.5cm]
+设 $f\in C^1(\R)$，$f_n(x)=n\bigl[f(x+\tfrac1n)-f(x)\bigr]$。证明在任意闭区间 $[a,b]$ 上，
+$f_n\rightrightarrows f'$。
+\end{problem}
+
+\begin{solution}
+由拉格朗日中值定理，$f_n(x)=f'(\xi_{n,x})$，其中 $x<\xi_{n,x}<x+\frac1n$。$f'$ 在 $[a,b+1]$ 上
+一致连续：对任意 $\varepsilon>0$，存在 $\delta>0$，当 $s,t\in[a,b+1]$，$\abs{s-t}<\delta$ 时
+$\abs{f'(s)-f'(t)}<\varepsilon$。于是当 $n>\max\{1,1/\delta\}$ 时，对一切 $x\in[a,b]$，
+\[
+  \abs{f_n(x)-f'(x)}=\abs{f'(\xi_{n,x})-f'(x)}<\varepsilon .
+\]
+\end{solution}
+
+\begin{problem}[difficulty=3, title=阿贝尔第二定理, space=6cm]
+设 $\sum_{n=0}^{\infty}a_n$ 收敛。证明幂级数 $\sum_{n=0}^{\infty}a_nx^n$ 在 $[0,1]$ 上一致收敛，从而
+\[
+  \lim_{x\to1^-}\sum_{n=0}^{\infty}a_nx^n=\sum_{n=0}^{\infty}a_n .
+\]
+并由此求 $1-\frac12+\frac13-\frac14+\dotsb$ 的和。
+\end{problem}
+
+\begin{solution}
+回忆\textbf{阿贝尔引理}：若 $b_1\ge b_2\ge\dotsb\ge b_p\ge0$，且部分和
+$A_j=a_1+\dotsb+a_j$ 满足 $\abs{A_j}\le M$（$1\le j\le p$），则 $\abs{\sum_{k=1}^pa_kb_k}\le b_1M$。
+
+由柯西准则，对任意 $\varepsilon>0$，存在 $N$，使当 $m>n\ge N$ 时
+$\abs{a_{n+1}+\dotsb+a_m}<\varepsilon$。对 $x\in[0,1]$，数列 $x^{n+1}\ge x^{n+2}\ge\dotsb\ge0$，由阿贝尔引理，
+\[
+  \abs[\Big]{\sum_{k=n+1}^{m}a_kx^k}\le x^{n+1}\max_{n<j\le m}\abs[\Big]{\sum_{k=n+1}^{j}a_k}
+  \le\varepsilon .
+\]
+$N$ 与 $x$ 无关，故由一致收敛的柯西准则，级数在 $[0,1]$ 上一致收敛，和函数在 $[0,1]$ 上连续，
+特别地在 $x=1$ 处左连续，即得所要的等式。
+
+对 $\abs{x}<1$，$\ln(1+x)=\sum_{n=1}^{\infty}\frac{(-1)^{n-1}}{n}x^n$。而
+$\sum\frac{(-1)^{n-1}}{n}$ 收敛（莱布尼茨判别法），由上述结论，
+\[
+  1-\frac12+\frac13-\frac14+\dotsb=\lim_{x\to1^-}\ln(1+x)=\ln2 .
+\]
+\answer{$\ln 2$}
+\end{solution}
+
+\begin{problem}[difficulty=2, space=4cm]
+证明级数 $\displaystyle\sum_{n=1}^{\infty}\frac{(-1)^n}{n+x^2}$ 在 $\R$ 上一致收敛，但对任何
+$x\in\R$ 都不绝对收敛。
+\end{problem}
+
+\begin{solution}
+对固定的 $x$，$\frac{1}{n+x^2}$ 关于 $n$ 单调递减趋于零，由莱布尼茨判别法级数收敛，且余项满足
+\[
+  \abs{R_N(x)}\le\frac{1}{N+1+x^2}\le\frac{1}{N+1}.
+\]
+右端与 $x$ 无关且趋于零，故在 $\R$ 上一致收敛。另一方面
+$\frac{1}{n+x^2}\ge\frac{1}{(1+x^2)n}$，而调和级数发散，故对每个 $x$ 都不绝对收敛。
+\begin{note}
+此例说明，一致收敛与绝对收敛是两回事；$M$ 判别法得到的一致收敛必然伴随绝对收敛，
+因此本题无法用 $M$ 判别法处理。
+\end{note}
+\end{solution}
+
+\printsolutions
+
+\end{document}
