@@ -81,8 +81,10 @@ class ChartCtx {
     this.u = u;
     this.T = this.env.motion.tempo;
     this.cs = this.env.theme.chart || {};
-    this.small = this.env.sizes.small;
-    this.cap = this.env.sizes.caption;
+    // charts are read on phones in 9:16 and from a distance on wide frames: scale labels with the box
+    const k = this.env.portrait ? 1.4 : Math.max(1, Math.min(1.25, this.rect.w / (this.env.W * 0.6)));
+    this.small = this.env.sizes.small * k;
+    this.cap = this.env.sizes.caption * k;
     this.labelFont = fontString(role(this.env, 'text', { weight: 450 }), this.cap * 1.08);
     this.valueFont = fontString(role(this.env, 'number', { weight: Math.max(600, this.env.fonts.number.weight) }), this.small * 1.02);
     this.allVals = this.series.flatMap((s) => s.values).filter((v) => v != null);
@@ -296,6 +298,7 @@ function cartesian(C, kind) {
     // x labels
     C.labels.forEach((l, i) => {
       if (i % every !== 0 && i !== n - 1) return;
+      if (i !== n - 1 && n - 1 - i < every) return; // the last label always shows; drop its crowded neighbour
       const a = clamp01((t - tMarks - i * per) / 0.45);
       if (a <= 0) return;
       ctx.save(); ctx.globalAlpha *= a;
@@ -952,7 +955,7 @@ const chart = {
     const kind = block.kind || 'bar';
     const n = block.data?.labels?.length || 4;
     if (kind === 'progress') return { h: Math.min(maxH, n * c.env.sizes.small * 4.2), fill: false };
-    if (kind === 'hbar') return { h: Math.min(maxH, Math.max(n * c.env.sizes.small * 2.6, maxH * 0.6)), fill: true };
+    if (kind === 'hbar') { const nn = block.data?.series ? n : (Array.isArray(block.data) ? block.data.length : n); return { h: Math.min(maxH, Math.max(nn * c.env.sizes.small * 2.6, Math.min(maxH * 0.6, nn * c.env.sizes.body * 3))), fill: true, max: nn * c.env.sizes.body * 3.6 + c.env.sizes.body * 2 }; }
     return { h: Math.min(maxH, w * 0.62), fill: true };
   },
   build(block, c, rect) {

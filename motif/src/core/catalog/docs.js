@@ -8,7 +8,7 @@ import { OPS } from '../ops.js';
 
 function typeStr(p) {
   switch (p.type) {
-    case 'enum': return p.values.map((v) => JSON.stringify(v)).join(' | ');
+    case 'enum': return p.values.map((v) => JSON.stringify(v)).join(' / ');
     case 'array': return `${p.item ? typeStr(p.item) : 'any'}[]`;
     case 'object': return p.fields ? `{ ${Object.keys(p.fields).join(', ')} }` : 'object';
     case 'richtext': return 'string (rich)';

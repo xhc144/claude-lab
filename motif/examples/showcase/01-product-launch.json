@@ -1,0 +1,79 @@
+{
+  "title": "Motif Cloud 发布",
+  "theme": "aurora",
+  "aspect": "16:9",
+  "meta": { "description": "3D 主视觉、痛点数字、能力网格、增长图表、全球网络、证言" },
+  "style": { "energy": 0.72, "progress": true },
+  "brand": { "name": "MOTIF CLOUD" },
+  "scenes": [
+    {
+      "layout": "cover",
+      "blocks": [
+        { "type": "title", "kicker": "2026 秋季发布会", "text": "让数据 ==自己讲故事==", "subtitle": "Motif Cloud —— 十分钟接入，一键生成动态数据报告" },
+        { "type": "shape3d", "shape": "torusknot", "material": "glass" }
+      ],
+      "notes": "开场：先抛出主张，不急着介绍产品。"
+    },
+    {
+      "layout": "split",
+      "blocks": [
+        { "type": "title", "kicker": "问题", "text": "分析师 **62%** 的时间在做报表" },
+        { "type": "stat", "value": 62, "suffix": "%", "label": "时间花在整理数据与排版", "delta": "+14%", "deltaLabel": "三年增幅", "ring": 0.62 }
+      ],
+      "notes": "这个数字来自我们对 420 位分析师的访谈。"
+    },
+    {
+      "blocks": [
+        { "type": "title", "text": "三步，从数据到成片" },
+        { "type": "steps", "items": [
+          { "title": "连接", "text": "30+ 数据源，十分钟接入", "icon": "plug" },
+          { "title": "理解", "text": "自动识别趋势、异常与重点", "icon": "brain" },
+          { "title": "成片", "text": "生成动态报告，一键分享", "icon": "clapperboard" }
+        ] }
+      ]
+    },
+    {
+      "blocks": [
+        { "type": "title", "text": "为团队设计的能力" },
+        { "type": "features", "items": [
+          { "icon": "wand-sparkles", "title": "自动设计", "text": "十套专业主题与动画语言" },
+          { "icon": "chart-column", "title": "动态图表", "text": "14 种图表，数据驱动生长" },
+          { "icon": "users", "title": "协同编辑", "text": "人与 AI 共同修改同一作品" },
+          { "icon": "shield-check", "title": "私有部署", "text": "数据不出企业内网" },
+          { "icon": "languages", "title": "多语言", "text": "中英日韩自动排版" },
+          { "icon": "film", "title": "多端导出", "text": "视频、网页、PDF" }
+        ] }
+      ]
+    },
+    {
+      "layout": "split",
+      "tone": "inverse",
+      "blocks": [
+        { "type": "title", "text": "内测企业 18 个月增长 ==9 倍==" },
+        { "type": "text", "text": "其中一半来自老客户的主动推荐。" },
+        { "type": "chart", "kind": "area", "suffix": "家", "data": { "labels": ["Q1", "Q2", "Q3", "Q4", "Q5", "Q6"], "series": [{ "name": "企业客户", "values": [14, 22, 37, 58, 86, 126] }] }, "annotate": [{ "at": "Q4", "text": "开放 API" }] }
+      ]
+    },
+    {
+      "layout": "split",
+      "variant": { "flip": true },
+      "blocks": [
+        { "type": "title", "text": "服务 23 个国家和地区", "subtitle": "边缘节点就近渲染，延迟低于 80ms" },
+        { "type": "globe", "points": ["上海", "新加坡", "东京", "法兰克福", "旧金山", "圣保罗"], "arcs": [{ "from": "上海", "to": "新加坡" }, { "from": "上海", "to": "东京" }, { "from": "上海", "to": "法兰克福" }, { "from": "上海", "to": "旧金山" }, { "from": "新加坡", "to": "圣保罗" }], "focus": "上海" }
+      ]
+    },
+    {
+      "layout": "quote",
+      "blocks": [
+        { "type": "quote", "text": "过去一周的报表工作，现在一个下午就做完了，而且老板第一次主动把报告转发给了全公司。", "author": "陈思远", "role": "某连锁零售 数据负责人" }
+      ]
+    },
+    {
+      "layout": "closing",
+      "tone": "accent",
+      "blocks": [
+        { "type": "title", "text": "今天起，免费试用", "subtitle": "motif.example/cloud" }
+      ]
+    }
+  ]
+}

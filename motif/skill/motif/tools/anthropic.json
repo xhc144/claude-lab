@@ -1,0 +1,437 @@
+[
+  {
+    "name": "motif_list_projects",
+    "description": "列出素材库中的所有项目（ID、标题、主题、画幅、场景数、修订号）。",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_list_templates",
+    "description": "列出内置与用户模板。用模板创建项目是最快得到高质量结构的方式。",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_list_themes",
+    "description": "列出主题（设计系统）及其风格说明，用于选择 theme。",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_catalog",
+    "description": "查询组件参考文档。不带参数返回组件列表；component 为类型名（如 chart、timeline、equation）返回详细参数；也可传 \"scene\"（版式/转场/动画）、\"themes\"、\"ops\"。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "component": {
+          "type": "string",
+          "description": "组件类型或 scene / themes / ops"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_create_project",
+    "description": "新建项目。可指定 template（模板 ID）或 document（完整文档对象）；theme、aspect（16:9/9:16/1:1/4:5）、accent（#hex）可选。返回项目 ID。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "标题"
+        },
+        "template": {
+          "type": "string",
+          "description": "模板 ID"
+        },
+        "theme": {
+          "type": "string",
+          "description": "主题 ID"
+        },
+        "aspect": {
+          "type": "string",
+          "description": "画幅"
+        },
+        "accent": {
+          "type": "string",
+          "description": "强调色 #hex"
+        },
+        "document": {
+          "type": "object",
+          "description": "完整文档（可用场景简写）"
+        }
+      },
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_get_project",
+    "description": "读取项目：默认返回摘要（场景与块的 ID、类型、要点）；full=true 返回完整 JSON 文档。修改前先读取以获得 ID。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "full": {
+          "type": "boolean",
+          "description": "返回完整文档"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_apply_ops",
+    "description": "对项目原子地应用一组编辑操作（add_scene / update_scene / remove_scene / move_scene / add_block / update_block / remove_block / set_theme / set_style / set_format / set …）。任一失败则全部不生效并返回错误与提示。用 motif_catalog(\"ops\") 查看全部操作。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "ops": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          },
+          "description": "操作数组，如 [{\"op\":\"update_block\",\"block\":\"b_x\",\"set\":{\"text\":\"…\"}}]"
+        },
+        "message": {
+          "type": "string",
+          "description": "写入历史的说明"
+        }
+      },
+      "required": [
+        "project",
+        "ops"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_write_document",
+    "description": "用完整文档替换项目内容（保留项目 ID 与资源）。适合一次写入整套场景。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "document": {
+          "type": "object",
+          "description": "文档对象"
+        }
+      },
+      "required": [
+        "project",
+        "document"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_lint",
+    "description": "设计检查：结构校验 + 版面检查（文字溢出、重叠、文字密度、时长、对比度、节奏）。修改后务必运行。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_preview",
+    "description": "渲染所有场景的定格画面拼成一张联系表（PNG），用于目视检查整体设计。返回图片。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_render_still",
+    "description": "渲染单帧图片。scene 为场景序号或 ID，at 为 end（动画完成后，默认）/ start / mid / 秒数。返回图片。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "scene": {
+          "type": "string",
+          "description": "场景序号或 ID"
+        },
+        "at": {
+          "type": "string",
+          "description": "end | start | mid | 场景内秒数"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_export",
+    "description": "导出成品：format 为 mp4 / webm / mov / gif / png（帧序列）/ pdf（讲义）/ html（可离线播放的交互演示）。返回文件路径。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "format": {
+          "type": "string",
+          "description": "格式",
+          "enum": [
+            "mp4",
+            "webm",
+            "mov",
+            "gif",
+            "png",
+            "pdf",
+            "html"
+          ]
+        },
+        "out": {
+          "type": "string",
+          "description": "输出路径（可选）"
+        },
+        "quality": {
+          "type": "string",
+          "description": "high | standard | small"
+        },
+        "width": {
+          "type": "number",
+          "description": "输出宽度（可选）"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_analyze_files",
+    "description": "分析素材文件（pptx/docx/xlsx/pdf/md/txt/csv/json/图片），返回结构化大纲：章节、要点、表格（含图表建议）、关键数字、图片。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "文件路径"
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_auto_create",
+    "description": "一步完成：分析素材 → 自动设计 → 新建项目。之后可用 motif_get_project / motif_apply_ops 精修。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "title": {
+          "type": "string",
+          "description": "标题"
+        },
+        "theme": {
+          "type": "string",
+          "description": "主题"
+        },
+        "aspect": {
+          "type": "string",
+          "description": "画幅"
+        }
+      },
+      "required": [
+        "files"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_import_asset",
+    "description": "把本地文件（图片/视频/音频/3D 模型）导入项目，返回资源 ID，供 image.asset / video.asset / model.asset / audio.music.asset 引用。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "file": {
+          "type": "string",
+          "description": "文件路径"
+        }
+      },
+      "required": [
+        "project",
+        "file"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_list_components",
+    "description": "列出用户保存的可复用组件（块或整场景）。",
+    "input_schema": {
+      "type": "object",
+      "properties": {},
+      "required": [],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_insert_component",
+    "description": "把已保存的组件插入项目（块插入到 scene，场景插入到 position）。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "component": {
+          "type": "string",
+          "description": "组件 ID"
+        },
+        "scene": {
+          "type": "string",
+          "description": "目标场景（块组件）"
+        },
+        "position": {
+          "type": "number",
+          "description": "位置（1 起始）"
+        }
+      },
+      "required": [
+        "project",
+        "component"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_save_component",
+    "description": "把项目中的块或场景保存为可复用组件。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "block": {
+          "type": "string",
+          "description": "块 ID"
+        },
+        "scene": {
+          "type": "string",
+          "description": "场景 ID 或序号"
+        },
+        "name": {
+          "type": "string",
+          "description": "名称"
+        }
+      },
+      "required": [
+        "project",
+        "name"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_history",
+    "description": "查看项目修订历史（谁在何时做了什么）。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        }
+      },
+      "required": [
+        "project"
+      ],
+      "additionalProperties": false
+    }
+  },
+  {
+    "name": "motif_restore",
+    "description": "把项目恢复到某个修订（会生成新修订，不丢失历史）。",
+    "input_schema": {
+      "type": "object",
+      "properties": {
+        "project": {
+          "type": "string",
+          "description": "项目 ID（如 prj_ab12cd34）、标题或项目目录路径"
+        },
+        "revision": {
+          "type": "number",
+          "description": "修订号"
+        }
+      },
+      "required": [
+        "project",
+        "revision"
+      ],
+      "additionalProperties": false
+    }
+  }
+]

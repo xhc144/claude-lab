@@ -7,6 +7,7 @@ import { COMPONENTS } from '../core/catalog/components.js';
 export const isFramed = (b) => !!b.frame && typeof b.frame === 'object';
 
 const BACKDROP = new Set(['image', 'video', 'shape3d', 'particles', 'globe', 'model', 'surface', 'simulation', 'vectorfield']);
+const SOLID_3D = new Set(['shape3d', 'model', 'molecule', 'surface', 'bars3d']);
 const WIDE_VISUAL = new Set(['timeline', 'steps', 'table', 'flow', 'compare', 'features', 'stats', 'gallery', 'hierarchy']);
 
 export function natureOf(b) {
@@ -87,7 +88,9 @@ function flow(blocks, r, env, measureFn, valign = 'top') {
 export function layoutScene(scene, env, mk, index, count) {
   const layout = resolveLayout(scene, index, count);
   const { W, H, grid } = env;
-  const S = grid.safe;
+  let S = grid.safe;
+  // keep content clear of burned-in captions
+  if (env.doc?.style?.captions && scene.narration?.text) S = { ...S, h: S.h - env.sizes.small * 3 };
   const th = env.theme.layout || {};
   const portrait = env.portrait;
   const square = !portrait && env.aspect < 1.2;
@@ -110,8 +113,10 @@ export function layoutScene(scene, env, mk, index, count) {
   switch (layout) {
     case 'cover':
     case 'closing': {
-      const align = variant.align || (layout === 'closing' ? 'center' : th.coverAlign || 'left');
       const backdrop = vis.find((b) => BACKDROP.has(b.type));
+      // A solid 3D object behind centred type fights the headline; give it its own half instead.
+      const sideObject = backdrop && !portrait && !variant.align && SOLID_3D.has(backdrop.type);
+      const align = variant.align || (sideObject ? 'left' : layout === 'closing' ? 'center' : th.coverAlign || 'left');
       let textR = { ...S };
       if (backdrop) {
         if (backdrop.type === 'image' || backdrop.type === 'video') {
@@ -141,13 +146,22 @@ export function layoutScene(scene, env, mk, index, count) {
     }
     case 'section': {
       const align = variant.align || (th.section === 'rule' ? 'center' : 'left');
-      const num = scene.sectionNumber ?? index;
+      let num = scene.sectionNumber;
+      if (num == null) {
+        const visible = (env.doc?.scenes || []).filter((sc) => !sc.hidden);
+        num = 0;
+        for (let i = 0; i <= index && i < visible.length; i++) if (resolveLayout(visible[i], i, visible.length) === 'section') num++;
+        num = num || index;
+      }
       const r = align === 'center' ? { x: S.x + S.w * 0.1, y: S.y, w: S.w * 0.8, h: S.h } : { x: S.x, y: S.y, w: S.w * (portrait ? 1 : 0.78), h: S.h };
       if (title) hint(title, { titleRole: 'display', align, maxLines: 3 });
       copy.forEach((b) => hint(b, { align, textSize: 'lead' }));
       const items = [title, ...copy, ...vis].filter(Boolean);
-      const numH = th.section === 'giant-number' ? 0 : env.sizes.display * 1.25;
-      const placed = flow(items, { ...r, y: r.y + numH * 0.5, h: r.h - numH * 0.5 }, env, measure, 'center');
+      const giant = th.section === 'giant-number';
+      const numH = giant ? 0 : env.sizes.display * 1.25;
+      // portrait: the giant numeral owns the lower half, so the words sit above it
+      const tr = giant && portrait ? { ...r, h: r.h * 0.5 } : { ...r, y: r.y + numH * 0.5, h: r.h - numH * 0.5 };
+      const placed = flow(items, tr, env, measure, 'center');
       const top = placed.length ? placed[0].rect.y : r.y + r.h / 2;
       decor.push({ kind: 'section-number', n: num, x: align === 'center' ? W / 2 : r.x, y: top - numH * 1.0, size: env.sizes.display * 1.15, align, style: th.section || 'number' });
       place(placed);
@@ -156,7 +170,7 @@ export function layoutScene(scene, env, mk, index, count) {
     case 'quote': {
       const q = copy.find((b) => b.type === 'quote') || copy[0];
       const align = variant.align || (env.theme.layout?.titleAlign === 'center' ? 'center' : 'left');
-      const r = { x: S.x + S.w * (align === 'center' ? 0.1 : 0.06), y: S.y, w: S.w * (align === 'center' ? 0.8 : 0.76), h: S.h };
+      const r = portrait ? { ...S } : { x: S.x + S.w * (align === 'center' ? 0.1 : 0.06), y: S.y, w: S.w * (align === 'center' ? 0.8 : 0.76), h: S.h };
       const items = [title, q, ...copy.filter((b) => b !== q), ...vis].filter(Boolean);
       items.forEach((b) => hint(b, { align, titleRole: 'h2' }));
       place(flow(items, r, env, measure, 'center'));
@@ -167,13 +181,23 @@ export function layoutScene(scene, env, mk, index, count) {
       const text = [title, ...copy.filter((b) => !media.includes(b))].filter(Boolean);
       const textHeavy = copy.reduce((s, b) => s + String(b.text || '').length + (b.items?.length || 0) * 18, 0) > 140;
       if (portrait || square && media.some((b) => WIDE_VISUAL.has(b.type))) {
-        if (title) hint(title, { titleRole: 'h1', align: 'left', maxLines: 3 });
-        copy.forEach((b) => hint(b, { compact: true }));
-        const tp = flow(text, { ...S, h: S.h * 0.45 }, env, measure, 'top');
+        if (title) hint(title, { titleRole: 'h1', align: 'left', maxLines: 4 });
+        copy.forEach((b) => hint(b, { textSize: 'lead' }));
+        media.forEach((b) => hint(b, { valign: 'center', ...(text.length ? {} : { hero: true, align: 'center' }) }));
+        if (!text.length) { place(gridOrStack(media, S, env, measure, 'center')); break; }
+        const fills = media.length === 1 && measure(media[0], S.w, S.h * 0.6).fill;
+        if (!fills) { place(flow([...text, ...media], S, env, measure, 'center')); break; }
+        const tp = flow(text, { ...S, h: S.h * 0.42 }, env, measure, 'top');
         const usedH = tp.length ? tp[tp.length - 1].rect.y + tp[tp.length - 1].rect.h - S.y : 0;
-        place(tp);
-        const mr = { x: S.x, y: S.y + usedH + env.sizes.body * 1.5, w: S.w, h: S.h - usedH - env.sizes.body * 1.5 };
-        place(gridOrStack(media, mr, env, measure));
+        const gap = env.sizes.body * 1.6;
+        const mr = { x: S.x, y: S.y + usedH + gap, w: S.w, h: S.h - usedH - gap };
+        const mp = gridOrStack(media, mr, env, measure, 'top');
+        // a capped visual leaves slack: centre title + visual together as one group
+        const mh = mp[0].rect.h;
+        const off = Math.max(0, (S.h - (usedH + gap + mh)) / 2);
+        tp.forEach((p) => { p.rect = { ...p.rect, y: p.rect.y + off }; });
+        mp[0].rect = { ...mp[0].rect, y: S.y + off + usedH + gap };
+        place(tp); place(mp);
         break;
       }
       const copyMedia = !vis.length;
@@ -197,15 +221,25 @@ export function layoutScene(scene, env, mk, index, count) {
       if (title) hint(title, { titleRole: vis.length || copy.length > 1 ? 'h2' : 'h1', align: variant.align || 'left', maxLines: 2 });
       const rem = flowB.filter((b) => !header.includes(b));
       const hp = flow(header, { ...S, h: S.h * 0.32 }, env, measure, 'top');
-      place(hp);
+      const placeHeader = () => place(hp);
       const hEnd = hp.length ? hp[hp.length - 1].rect.y + hp[hp.length - 1].rect.h : S.y;
       const gap = hp.length ? env.sizes.body * 1.5 : 0;
       const body = { x: S.x, y: hEnd + gap, w: S.w, h: S.y + S.h - hEnd - gap };
-      if (layout === 'grid') place(gridOrStack(rem, body, env, measure, 'center', true));
+      let bp;
+      if (layout === 'grid') bp = gridOrStack(rem, body, env, measure, portrait ? 'top' : 'center', true);
       else {
-        rem.forEach((b) => { if (natureOf(b) === 'copy' && layout === 'stack') hint(b, { textSize: rem.length === 1 ? 'lead' : 'body' }); });
-        place(flow(rem, body, env, measure, 'center'));
+        rem.forEach((b) => { if (natureOf(b) === 'copy' && layout === 'stack') hint(b, { textSize: rem.length === 1 || portrait ? 'lead' : 'body' }); });
+        bp = flow(rem, body, env, measure, portrait ? 'top' : 'center');
       }
+      // Portrait (short video): the title + content read as one centred group, not a header
+      // pinned to the top with a gap below.
+      if (portrait && bp.length) {
+        const bottom = Math.max(...bp.map((p) => p.rect.y + p.rect.h));
+        const off = Math.max(0, (S.y + S.h - bottom) / 2);
+        if (off > 0) for (const p of [...hp, ...bp]) p.rect = { ...p.rect, y: p.rect.y + off };
+      }
+      placeHeader();
+      place(bp);
       break;
     }
     case 'full': {
@@ -236,7 +270,10 @@ function gridOrStack(blocks, r, env, measure, valign = 'top', forceGrid = false)
   if (!blocks.length) return [];
   if (blocks.length === 1) {
     const m = measure(blocks[0], r.w, r.h);
-    if (m.fill) return [{ block: blocks[0], rect: { ...r } }];
+    if (m.fill) {
+      const h = Math.min(r.h, Math.max(m.h, m.max ?? Infinity));
+      return [{ block: blocks[0], rect: { x: r.x, y: r.y + (valign === 'center' ? (r.h - h) / 2 : 0), w: r.w, h } }];
+    }
     const h = Math.min(m.h, r.h);
     return [{ block: blocks[0], rect: { x: r.x, y: r.y + (valign === 'center' ? (r.h - h) / 2 : 0), w: r.w, h } }];
   }

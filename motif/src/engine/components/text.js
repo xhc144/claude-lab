@@ -121,7 +121,7 @@ function titleLayout(block, c, w, maxH = Infinity) {
   const titleRole = role(env, sizeKey === 'display' || sizeKey === 'h1' ? 'display' : 'heading');
   const kicker = block.kicker ? kickerMetrics(c, block.kicker, w) : null;
   const subSize = sizeKey === 'display' ? env.sizes.lead : env.sizes.lead * 0.88;
-  const sub = block.subtitle ? te.layout(block.subtitle, role(env, 'text'), subSize, { maxWidth: Math.min(w, Math.max(w * 0.82, subSize * 22)), balance: true, align }) : null;
+  const sub = block.subtitle ? te.layout(block.subtitle, role(env, 'text'), subSize, { maxWidth: Math.min(w, Math.max(w * (sizeKey === 'display' ? 1 : 0.82), subSize * 22)), balance: true, align }) : null;
   const kGap = kicker ? Math.max(env.sizes.label * 1.1, target * 0.3) : 0;
   const sGap = sub ? Math.max(env.sizes.body * 0.8, target * 0.36) : 0;
   const avail = maxH - (kicker ? kicker.h + kGap : 0) - (sub ? sub.height + sGap : 0);
@@ -434,7 +434,7 @@ function quoteLayout(block, c, w, maxH = Infinity) {
   const { env, te } = c;
   const align = alignOf(block, c, 'left');
   const len = String(block.text || '').length;
-  const target = len < 30 ? env.sizes.h1 : len < 70 ? env.sizes.h2 : env.sizes.h3;
+  const target = (len < 30 ? env.sizes.h1 : len < 70 ? env.sizes.h2 : env.sizes.h3) * (env.portrait ? 0.8 : 1);
   const qRole = role(env, 'heading', env.theme.id === 'editorial' || env.theme.id === 'noir' ? { weight: 400 } : {});
   const markSize = Math.min(target * 2.4, env.sizes.display * 1.4);
   const att = [block.author, block.role].filter(Boolean).length;

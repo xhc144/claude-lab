@@ -1,0 +1,50 @@
+{
+  "title": "实时数据管道重构",
+  "theme": "blueprint",
+  "aspect": "16:9",
+  "meta": { "description": "技术讲解：流程图、层级结构、代码、矩阵、3D 柱状、步骤" },
+  "style": { "energy": 0.55 },
+  "scenes": [
+    { "layout": "cover", "blocks": [{ "type": "title", "kicker": "TECH TALK · 2026", "text": "实时数据管道重构", "subtitle": "从 T+1 到 3 秒：我们做对的五件事" }] },
+    {
+      "blocks": [
+        { "type": "title", "text": "新架构：事件流贯穿全链路" },
+        { "type": "flow", "nodes": [{ "id": "app", "label": "业务系统", "icon": "app-window" }, { "id": "cdc", "label": "CDC 采集", "icon": "radio-tower" }, { "id": "bus", "label": "事件总线", "icon": "workflow" }, { "id": "olap", "label": "实时数仓", "icon": "database" }, { "id": "bi", "label": "看板 / API", "icon": "chart-column" }], "edges": [["app", "cdc"], ["cdc", "bus"], ["bus", "olap"], ["olap", "bi"]] }
+      ]
+    },
+    {
+      "blocks": [
+        { "type": "title", "text": "服务分层" },
+        { "type": "hierarchy", "root": { "label": "数据平台", "children": [{ "label": "接入层", "children": [{ "label": "CDC" }, { "label": "埋点" }] }, { "label": "计算层", "children": [{ "label": "流计算" }, { "label": "批处理" }] }, { "label": "服务层", "children": [{ "label": "查询 API" }, { "label": "订阅推送" }] }] } }
+      ]
+    },
+    {
+      "layout": "split",
+      "blocks": [
+        { "type": "title", "text": "一条规则，替代 400 行 ETL", "subtitle": "声明式定义，平台负责调度与容错" },
+        { "type": "code", "language": "sql", "title": "orders_rt.sql", "code": "CREATE MATERIALIZED VIEW orders_rt AS\nSELECT region,\n       window_start,\n       SUM(amount) AS gmv,\n       COUNT(*)    AS orders\nFROM TUMBLE(orders, ts, INTERVAL '1' MINUTE)\nGROUP BY region, window_start;", "highlight": [4, 5] }
+      ]
+    },
+    {
+      "layout": "split",
+      "variant": { "flip": true },
+      "blocks": [
+        { "type": "title", "text": "延迟从 26 小时降到 3 秒" },
+        { "type": "bars3d", "data": { "labels": ["旧架构", "第一阶段", "第二阶段", "现在"], "series": [{ "name": "P95 延迟（秒）", "values": [93600, 3600, 60, 3] }] } }
+      ]
+    },
+    {
+      "blocks": [
+        { "type": "title", "text": "技术选型" },
+        { "type": "matrix", "axes": { "xLabel": "运维成本 →", "yLabel": "实时性 →" }, "quadrants": ["重而快", "理想区", "传统批处理", "轻而慢"], "items": [{ "label": "流式物化视图", "x": 0.78, "y": 0.86 }, { "label": "Lambda 架构", "x": 0.25, "y": 0.7 }, { "label": "定时 ETL", "x": 0.7, "y": 0.18 }], "highlight": 0 }
+      ]
+    },
+    {
+      "blocks": [
+        { "type": "title", "text": "迁移路线" },
+        { "type": "steps", "items": [{ "title": "双写验证", "text": "两周", "icon": "git-compare" }, { "title": "灰度切流", "text": "10% → 50%", "icon": "sliders-horizontal" }, { "title": "全量切换", "text": "零停机", "icon": "rocket" }, { "title": "下线旧链路", "text": "节省 38% 成本", "icon": "trash" }] }
+      ]
+    },
+    { "layout": "closing", "blocks": [{ "type": "title", "text": "Q & A", "subtitle": "data-platform@example.com" }] }
+  ]
+}

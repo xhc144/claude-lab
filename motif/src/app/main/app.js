@@ -29,6 +29,8 @@ function saveWindowState(win) {
 
 /** Files or folders passed on the command line (double-clicked .pptx, a project folder…). */
 function filesFromArgv(argv) {
+  const explicit = argv.filter((a) => a.startsWith('--open=')).map((a) => a.slice(7)).filter((f) => fs.existsSync(f));
+  if (explicit.length) return explicit;
   return argv.slice(1).filter((a) => !a.startsWith('-') && a !== '.' && fs.existsSync(a) && path.resolve(a) !== path.resolve(process.cwd()) && !/\.(asar|cjs|js)$/.test(a) && !/electron(\.exe)?$/i.test(a));
 }
 

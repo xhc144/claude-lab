@@ -120,8 +120,8 @@ const timeline = {
   type: 'timeline',
   measure(block, c, w, maxH) {
     const vertical = block.orientation === 'vertical' || (block.orientation !== 'horizontal' && (c.env.portrait || (block.items || []).length > 6));
-    if (vertical) return { h: Math.min(maxH, (block.items || []).length * c.env.sizes.body * 3.4), fill: true };
-    return { h: Math.min(maxH, c.env.sizes.body * 13), fill: false };
+    if (vertical) return { h: Math.min(maxH, (block.items || []).length * c.env.sizes.body * 3.4), fill: true, max: (block.items || []).length * c.env.sizes.body * 5 };
+    return { h: Math.min(maxH, c.env.sizes.body * 13), fill: true, max: c.env.sizes.body * 18 };
   },
   build(block, c, rect) {
     const { env, p } = c;
@@ -187,11 +187,15 @@ const timeline = {
     }
     // vertical
     const rowH = rect.h / n;
-    const lx = rect.x + env.sizes.body * 4.6;
+    // tall rows (portrait, few items) get proportionally larger type
+    const kv = Math.max(1, Math.min(1.6, rowH / (env.sizes.body * 3.6)));
+    const B = env.sizes.body * kv;
+    dotR *= kv;
+    const lx = rect.x + B * 4.6;
     const models = items.map((it) => ({
-      D: lay(c, it.date ?? '', 'number', env.sizes.body, env.sizes.body * 4, { align: 'right' }),
-      Tt: lay(c, it.title ?? '', 'text', env.sizes.body, rect.w - (lx - rect.x) - env.sizes.body * 1.5, { role: { weight: 600 } }),
-      X: it.text ? lay(c, it.text, 'text', env.sizes.small, rect.w - (lx - rect.x) - env.sizes.body * 1.5) : null,
+      D: lay(c, it.date ?? '', 'number', B, B * 4, { align: 'right' }),
+      Tt: lay(c, it.title ?? '', 'text', B * 1.1, rect.w - (lx - rect.x) - B * 1.5, { role: { weight: 600 } }),
+      X: it.text ? lay(c, it.text, 'text', env.sizes.small * kv, rect.w - (lx - rect.x) - B * 1.5) : null,
     }));
     return {
       duration: 0.2 + lineDur + 0.6, hold: 1.5 + n * 0.5,
@@ -210,9 +214,9 @@ const timeline = {
           ctx.lineWidth = Math.max(2, env.unit * 3); ctx.strokeStyle = p.accent; ctx.stroke(); ctx.restore();
           const m = models[i];
           ctx.save(); ctx.globalAlpha *= clamp01((ti - 0.1) / 0.45);
-          drawText(ctx, m.D, lx - env.sizes.body * 4.3, y - m.D.lineHeight / 2, env.sizes.body * 3.8, paintFor(c, isH ? p.accentText : p.mutedText), null, 0);
-          drawText(ctx, m.Tt, lx + env.sizes.body * 1.2, y - m.Tt.lineHeight / 2, rect.w, paintFor(c, p.ink, { flat: true }), null, 0);
-          if (m.X) drawText(ctx, m.X, lx + env.sizes.body * 1.2, y - m.Tt.lineHeight / 2 + m.Tt.height + 4, rect.w, paintFor(c, p.mutedText, { flat: true }), null, 0);
+          drawText(ctx, m.D, lx - B * 4.3, y - m.D.lineHeight / 2, B * 3.8, paintFor(c, isH ? p.accentText : p.mutedText), null, 0);
+          drawText(ctx, m.Tt, lx + B * 1.2, y - m.Tt.lineHeight / 2, rect.w, paintFor(c, p.ink, { flat: true }), null, 0);
+          if (m.X) drawText(ctx, m.X, lx + B * 1.2, y - m.Tt.lineHeight / 2 + m.Tt.height + 4, rect.w, paintFor(c, p.mutedText, { flat: true }), null, 0);
           ctx.restore();
         });
       },
@@ -236,9 +240,9 @@ const steps = {
     const n = (block.items || []).length;
     const style = block.style && block.style !== 'auto' ? block.style : 'arrows';
     if (style === 'circle') return { h: Math.min(maxH, w * 0.7), fill: true };
-    if (c.env.portrait) return { h: Math.min(maxH, n * c.env.sizes.body * 3.6), fill: false };
+    if (c.env.portrait) return { h: Math.min(maxH, n * c.env.sizes.body * 3.6), fill: true, max: n * c.env.sizes.body * 5.2 };
     const anyText = (block.items || []).some((i) => i.text);
-    return { h: Math.min(maxH, c.env.sizes.body * (anyText ? 12 : 9)), fill: false };
+    return { h: Math.min(maxH, c.env.sizes.body * (anyText ? 12 : 9)), fill: true, max: c.env.sizes.body * (anyText ? 19 : 15) };
   },
   build(block, c, rect) {
     const { env, p } = c;
@@ -404,7 +408,7 @@ const features = {
     const cols = featureCols(block, c, w);
     const rows = Math.ceil(n / cols);
     const anyText = (block.items || []).some((i) => i.text);
-    return { h: Math.min(maxH * 0.9, rows * c.env.sizes.body * (anyText ? 13 : 9.5)), fill: false };
+    return { h: Math.min(maxH * 0.9, rows * c.env.sizes.body * (anyText ? 13 : 9.5)), fill: true, max: rows * c.env.sizes.body * (anyText ? 16.5 : 12) };
   },
   build(block, c, rect) {
     const { env, p } = c;
@@ -464,7 +468,7 @@ function featureCols(block, c, w) {
 // ───────────────────────────── compare ─────────────────────────────
 const compare = {
   type: 'compare',
-  measure(block, c, w, maxH) { return { h: Math.min(maxH, c.env.sizes.body * (8 + Math.max(0, ...(block.columns || []).map((col) => (col.items || []).length)) * 2.4)), fill: false }; },
+  measure(block, c, w, maxH) { const h = c.env.sizes.body * (8 + Math.max(0, ...(block.columns || []).map((col) => (col.items || []).length)) * 2.4); return { h: Math.min(maxH, h), fill: true, max: h * 1.3 }; },
   build(block, c, rect) {
     const { env, p } = c;
     const cols = block.columns || [];

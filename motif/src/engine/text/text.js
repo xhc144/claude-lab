@@ -83,8 +83,22 @@ export function tokenize(runs, opts = {}) {
       i = j;
     }
   }
+  // Keep a number with its unit/measure word: "18 个月", "3 小时", "26 亿" never split across lines.
+  for (let i = 1; i < units.length - 1; i++) {
+    const a = units[i - 1], u = units[i], b = units[i + 1];
+    if (u.k === 'sp' && a.k === 'w' && NUMERIC_END.test(a.t) && b.k === 'cjk') u.nb = true;
+  }
+  // …including two-character units split by the segmenter: 个|月, 小|时, 分|钟, 公|里, 百|万
+  for (let i = 1; i < units.length - 1; i++) {
+    const u = units[i], b = units[i + 1], a = units[i - 1];
+    const afterNum = (a.k === 'sp' && a.nb) || (a.k === 'w' && NUMERIC_END.test(a.t));
+    if (afterNum && u.k === 'cjk' && u.t.length === 1 && b.k === 'cjk' && UNIT_PAIRS.has(u.t + b.t[0])) u.glueNext = true;
+  }
   return units;
 }
+function endsAtPunct(l) { const last = l.units[l.units.length - 1]; return !!last && (last.k === 'cp' || /[,.;:!?，。；：！？、）)」”]$/.test(last.t)); }
+const NUMERIC_END = /(^|[^A-Za-z])[\d.,]+[%‰+]?$/;
+const UNIT_PAIRS = new Set(['个月', '小时', '分钟', '公里', '百万', '千万', '美元', '万元', '亿元', '个人', '周年', '年级', '平方', '立方', '公斤', '毫秒', '秒钟', '倍数', '百分']);
 
 // ───────────────────────────── fonts ─────────────────────────────
 export function familyList(fam) {
@@ -159,6 +173,17 @@ export class TextEngine {
         if (breakLines(units, mid).length > n) lo = mid; else hi = mid;
       }
       lines = breakLines(units, hi + 0.5);
+      // Prefer a slightly less even layout whose lines end at punctuation (。，、：) over one that
+      // splits a phrase: "确定的方程，/ 不可预测的运动" rather than "确定的 / 方程，不可 / …".
+      const endsWell = endsAtPunct;
+      if (!lines.slice(0, -1).every(endsWell)) {
+        for (let k = 1; k <= 10; k++) {
+          const alt = breakLines(units, hi + ((maxWidth - hi) * k) / 10 + 0.5);
+          if (alt.length > n) continue;
+          const widths = alt.map((l) => l.width);
+          if (alt.length > 1 && alt.slice(0, -1).every(endsWell) && Math.min(...widths) >= Math.max(...widths) * 0.34) { lines = alt; break; }
+        }
+      }
     } else if (o.orphans !== false && lines.length > 1 && Number.isFinite(maxWidth)) {
       // Orphan control: never leave 1–2 characters (or one short word) alone on the last line.
       const weight = (L) => L.units.reduce((n, u) => n + (u.k === 'cjk' ? [...u.t].length : u.k === 'w' ? 2 : 0), 0);
@@ -191,13 +216,23 @@ export class TextEngine {
       return { L, fits: L.height <= maxHeight && L.lines.length <= maxLines && L.width <= maxWidth + 0.5 };
     };
     const top = ok(hi);
-    if (top.fits) return top.L;
-    for (let k = 0; k < 9; k++) {
-      const mid = (lo + hi) / 2;
-      const r = ok(mid);
-      if (r.fits) { lo = mid; best = r.L; } else hi = mid;
+    if (top.fits) best = top.L;
+    else {
+      for (let k = 0; k < 9; k++) {
+        const mid = (lo + hi) / 2;
+        const r = ok(mid);
+        if (r.fits) { lo = mid; best = r.L; } else hi = mid;
+      }
+      if (!best) { best = ok(min).L; best.overflow = true; }
     }
-    if (!best) { best = ok(min).L; best.overflow = true; }
+    // A slightly smaller size is worth it if every line can then end at punctuation.
+    if (best.overflow) return best;
+    if (o.balance && best.lines.length > 1 && !best.lines.slice(0, -1).every(endsAtPunct) && /[，、：；。,]/.test(typeof input === 'string' ? input : '')) {
+      for (const f of [0.95, 0.9, 0.85]) {
+        const r = ok(best.size * f);
+        if (r.fits && r.L.lines.slice(0, -1).every(endsAtPunct)) return r.L;
+      }
+    }
     return best;
   }
 }
@@ -223,10 +258,11 @@ function breakLines(unitsIn, maxWidth) {
     if (u.k === 'nl') { pushLine(cur); cur = []; w = 0; lastBreak = -1; continue; }
     if (u.k === 'sp') {
       if (!cur.length) continue;
-      cur.push(u); w += u.w; lastBreak = cur.length; continue;
+      cur.push(u); w += u.w; if (!u.nb) lastBreak = cur.length; continue;
     }
     const prev = cur[cur.length - 1];
-    const canBreakHere = cur.length > 0 && !NO_START.has(u.t[0]) && !(prev && NO_END.has(prev.t[prev.t.length - 1])) && (prev.k === 'sp' || u.k === 'cjk' || u.k === 'cp' || prev.k === 'cjk' || prev.k === 'cp');
+    const glued = prev && ((prev.k === 'sp' && prev.nb) || prev.glueNext || (prev.k === 'w' && u.k === 'cjk' && NUMERIC_END.test(prev.t)));
+    const canBreakHere = cur.length > 0 && !glued && !NO_START.has(u.t[0]) && !(prev && NO_END.has(prev.t[prev.t.length - 1])) && (prev.k === 'sp' || u.k === 'cjk' || u.k === 'cp' || prev.k === 'cjk' || prev.k === 'cp');
     if (canBreakHere) lastBreak = cur.length;
     const add = u.w + (cur.length ? u.gap || 0 : 0);
     if (w + add > maxWidth && cur.length) {

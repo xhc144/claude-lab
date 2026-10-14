@@ -61,7 +61,7 @@ function drawDecor(ctx, C, S, d, lt) {
     ctx.save();
     ctx.textBaseline = 'alphabetic';
     if (style === 'giant-number') {
-      const size = env.H * 0.62;
+      const size = Math.min(env.H * 0.62, env.W * (env.portrait ? 0.95 : 2));
       ctx.font = fontString(nr, size);
       if ('fontStretch' in ctx) ctx.fontStretch = nr.stretch || 'normal';
       ctx.fillStyle = toCss(p.ink, 0.95);

@@ -316,7 +316,7 @@ const plot = {
           if (F.f.dashed) ctx.setLineDash([lw * 3, lw * 2.5]);
           if (env.theme.chart.glow) { ctx.shadowColor = col; ctx.shadowBlur = lw * 2.5; }
           ctx.beginPath();
-          let pen = false, last = null;
+          let pen = false, last = null, vis = null, visPrev = null;
           const N = Math.ceil(P.r.w / 2);
           const s2 = { ...sc };
           for (let q = 0; q <= N * e; q++) {
@@ -327,14 +327,21 @@ const plot = {
             if (pen && last && Math.abs(Y - last[1]) > P.r.h * 0.9) pen = false;
             if (pen) ctx.lineTo(X, Y); else ctx.moveTo(X, Y);
             pen = true; last = [X, Y];
+            if (Y >= P.r.y && Y <= P.r.y + P.r.h && X >= P.r.x && X <= P.r.x + P.r.w) { visPrev = vis; vis = [X, Y]; }
           }
           ctx.stroke();
           ctx.restore();
           if (last && pr < 1) { ctx.beginPath(); ctx.arc(last[0], last[1], lw * 1.4, 0, TAU); ctx.fillStyle = col; ctx.fill(); }
           if (labels[k] && pr >= 1 && last) {
             ctx.save(); ctx.globalAlpha *= clamp01((t - fnStart(k) - perFn) / 0.4);
-            const lx = Math.min(last[0] + env.sizes.small * 0.4, P.r.x + P.r.w - (labels[k].width * env.sizes.lead) / 1000);
-            const ly = Math.max(P.r.y, Math.min(P.r.y + P.r.h - env.sizes.lead, last[1] - env.sizes.lead * 1.2));
+            // anchor at the last visible point; near the right edge sit to its left, on the open side
+            const at = vis || last;
+            const lw2 = (labels[k].width * env.sizes.lead) / 1000;
+            const rising = visPrev ? at[1] < visPrev[1] : true;
+            const nearEdge = at[0] + env.sizes.small * 0.4 + lw2 > P.r.x + P.r.w;
+            const lx = nearEdge ? at[0] - lw2 - env.sizes.small * 0.8 : at[0] + env.sizes.small * 0.4;
+            const ly0 = nearEdge ? (rising ? at[1] - env.sizes.lead * 0.2 : at[1] - env.sizes.lead * 1.3) : at[1] - env.sizes.lead * 1.2;
+            const ly = Math.max(P.r.y, Math.min(P.r.y + P.r.h - env.sizes.lead, ly0));
             drawTex(ctx, labels[k], lx, ly, env.sizes.lead, col);
             ctx.restore();
           }

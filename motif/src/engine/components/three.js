@@ -109,7 +109,8 @@ const globe = {
       const arcObjs = arcs.map((a, i) => {
         const A = latLonVec(a.from[0], a.from[1]), B = latLonVec(a.to[0], a.to[1]);
         const ang = A.angleTo(B);
-        const h = 0.12 + 0.38 * (ang / Math.PI);
+        // keep long-haul arcs close to the surface so they read as routes, not orbits
+        const h = 0.05 + 0.2 * (ang / Math.PI);
         const N = 96;
         const ptsA = [];
         for (let k = 0; k <= N; k++) {
@@ -143,7 +144,8 @@ const globe = {
         const fit = Math.min(1, rect.w / rect.h);
         // As a cover backdrop the globe rises from the bottom like a planet horizon.
         const horizon = backdrop && rect.w > rect.h;
-        const dist = (horizon ? 2.55 : 4.0) / Math.max(0.55, fit) + (1 - e) * 1.2;
+        // leave room for the atmosphere halo (r = 1.16) inside the frame
+        const dist = (horizon ? 2.55 : 4.75) / Math.max(0.55, fit) + (1 - e) * 1.2;
         group.position.y = horizon ? -1.28 + (1 - e) * -0.4 : 0;
         camera.position.set(0, 0, dist);
         camera.lookAt(0, 0, 0);

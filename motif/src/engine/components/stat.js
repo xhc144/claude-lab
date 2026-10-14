@@ -157,7 +157,9 @@ function drawStat(ctx, c, it, S, x, y, w, t, o = {}) {
 
 function drawRing(ctx, c, it, cx, cy, R, t) {
   const { env, p } = c;
-  const pct = Math.max(0, Math.min(100, Number(it.ring))) / 100;
+  // ring: fraction (0.62), percentage (62) or true (use the value itself as a percentage)
+  const raw = it.ring === true ? Number(it.value) : Number(it.ring);
+  const pct = Math.max(0, Math.min(1, it.ring !== true && raw > 0 && raw <= 1 ? raw : raw / 100)) || 0;
   const e = env.motion.ease(clamp01((t - 0.1) / (1.6 * env.motion.tempo)));
   const lw = R * 0.09;
   ctx.save();
@@ -176,13 +178,14 @@ function drawRing(ctx, c, it, cx, cy, R, t) {
 const stat = {
   type: 'stat',
   measure(block, c, w, maxH) {
-    if (block.ring != null) return { h: Math.min(w, maxH), fill: true };
-    return { h: statLayout(block, c, w, Math.min(maxH, c.env.sizes.display * 2.6)).h, fill: false };
+    if (block.ring != null && block.ring !== false) return { h: Math.min(w, maxH), fill: true };
+    const hero = c.hint?.hero;
+    return { h: statLayout(block, c, w, Math.min(maxH, c.env.sizes.display * (hero ? 3.6 : 2.6)), hero ? { maxSize: c.env.sizes.display * 1.9, labelSize: c.env.sizes.lead * 1.1, align: 'center' } : {}).h, fill: false };
   },
   build(block, c, rect) {
     const { env } = c;
     const align = block.style?.align && block.style.align !== 'auto' ? block.style.align : c.hint?.align || (rect.w < env.W * 0.45 ? 'center' : 'left');
-    if (block.ring != null) {
+    if (block.ring != null && block.ring !== false) {
       const R = Math.min(rect.w, rect.h) * 0.42;
       const S = statLayout({ ...block, label: null, delta: null, trend: null, icon: null, context: null }, c, R * 1.35, R * 0.8, { align: 'center', maxSize: R * 0.6 });
       const L = block.label ? c.te.layout(block.label, role(env, 'text'), env.sizes.body, { maxWidth: R * 1.4, align: 'center', balance: true }) : null;
@@ -196,7 +199,7 @@ const stat = {
         },
       };
     }
-    const S = statLayout(block, c, rect.w, rect.h, { align, maxSize: c.hint?.statSize });
+    const S = statLayout(block, c, rect.w, rect.h, { align, maxSize: c.hint?.statSize || (c.hint?.hero ? env.sizes.display * 1.9 : undefined), ...(c.hint?.hero ? { labelSize: env.sizes.lead * 1.1 } : {}) });
     const yOff = c.hint?.valign === 'top' ? 0 : Math.max(0, (rect.h - S.h) / 2);
     return {
       duration: 1.6 * env.motion.tempo + (S.delta ? 0.3 : 0), hold: 1.2 + (S.label?.unitCount || 0) * 0.05,
@@ -225,7 +228,8 @@ const stats = {
     const style = statsStyle(block, c.env);
     const pad = style === 'cards' ? c.env.sizes.body * 1.1 : 0;
     const hs = (block.items || []).map((it) => statLayout(it, c, cw - pad * 2, Math.min(maxH / rows, c.env.sizes.display * 2.4), { maxSize: c.env.sizes.display }).h + pad * 2);
-    return { h: Math.max(...hs, 0) * rows + gap * (rows - 1) };
+    const h = Math.max(...hs, 0) * rows + gap * (rows - 1);
+    return { h, fill: true, max: h * 1.45 };
   },
   build(block, c, rect) {
     const { env, p } = c;
@@ -237,7 +241,7 @@ const stats = {
     const align = c.hint?.align === 'center' || cols >= 3 && style !== 'divided' ? 'left' : 'left';
     const rowH = Math.min(rect.h / rows - gap * (rows - 1) / rows, env.sizes.display * 3.2);
     // Use a common number size so the row reads as a set.
-    const Ss0 = items.map((it) => statLayout(it, c, cw - pad * 2, rowH - pad * 2, { align, maxSize: env.sizes.display * (cols >= 4 ? 0.8 : 1) }));
+    const Ss0 = items.map((it) => statLayout(it, c, cw - pad * 2, rowH - pad * 2, { align, maxSize: env.sizes.display * (cols >= 4 ? 0.95 : 1.15) }));
     const common = Math.min(...Ss0.map((s) => s.size));
     const Ss = items.map((it) => statLayout(it, c, cw - pad * 2, rowH - pad * 2, { align, maxSize: common }));
     const cellH = Math.max(...Ss.map((s) => s.h)) + pad * 2;
@@ -274,16 +278,20 @@ const pictogram = {
     const { env, p, te } = c;
     const total = Math.max(1, Math.min(100, Math.round(block.total ?? 10)));
     const value = Math.max(0, Math.min(total, Number(block.value) || 0));
-    const L = block.label ? te.layout(block.label, role(env, 'text', { weight: 500 }), env.sizes.lead, { maxWidth: rect.w, balance: true }) : null;
+    const L = block.label ? te.layout(block.label, role(env, 'text', { weight: 500 }), env.sizes.lead * (env.portrait ? 1.15 : 1), { maxWidth: rect.w, balance: true, align: env.portrait ? 'center' : 'left' }) : null;
     const labelH = L ? L.height + env.sizes.body : 0;
     const area = { x: rect.x, y: rect.y, w: rect.w, h: rect.h - labelH };
-    let cols = block.columns || (total <= 10 ? total : total <= 20 ? 10 : Math.ceil(Math.sqrt(total * (area.w / area.h))));
+    let cols = block.columns || (env.portrait && total <= 10 ? Math.ceil(total / 2) : total <= 10 ? total : total <= 20 ? 10 : Math.ceil(Math.sqrt(total * (area.w / area.h))));
     cols = Math.min(cols, total);
     const rowsN = Math.ceil(total / cols);
-    const cell = Math.min(area.w / cols, area.h / rowsN);
+    const cell = Math.min(area.w / cols, area.h / rowsN, env.sizes.display * 1.5);
     const gw = cell * cols, gh = cell * rowsN;
-    const gx = area.x + (block.style?.align === 'center' || c.hint?.align === 'center' ? (area.w - gw) / 2 : 0);
-    const gy = area.y + (area.h - gh) / 2;
+    const centered = env.portrait || block.style?.align === 'center' || c.hint?.align === 'center';
+    const gx = area.x + (centered ? (area.w - gw) / 2 : 0);
+    // icons and label read as one group, centred in the box
+    const gy = rect.y + Math.max(0, (rect.h - gh - labelH) / 2);
+    const ly = gy + gh + env.sizes.body;
+    const lx = centered && L ? rect.x + (rect.w - L.width) / 2 : rect.x;
     const icon = block.icon || 'user';
     const per = Math.min(0.08, 1.6 / total) * env.motion.tempo;
     const on = colorOf(p, block.style?.color, p.accent);
@@ -304,7 +312,7 @@ const pictogram = {
           drawIcon(ctx, icon, 0, 0, cell * 0.72, fill, { stroke: lit ? 2.4 : 1.8 });
           ctx.restore();
         }
-        if (L) drawText(ctx, L, rect.x, rect.y + rect.h - L.height, rect.w, paintFor(c, p.ink, { flat: true }), textAnimator(env, L, 'rise', { unit: 'line' }), t - per * total * 0.6);
+        if (L) drawText(ctx, L, lx, ly, L.width, paintFor(c, p.ink, { flat: true }), textAnimator(env, L, 'rise', { unit: 'line' }), t - per * total * 0.6);
       },
     };
   },

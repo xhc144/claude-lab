@@ -97,7 +97,7 @@ export function AIPanel() {
   return (
     <div className="ai-panel">
       <div className="row" style={{ padding: '8px 10px', borderBottom: '1px solid var(--line)' }}>
-        <span className="dim" style={{ fontSize: 11.5 }}>模型</span>
+        <span className="dim" style={{ fontSize: 11.5, whiteSpace: 'nowrap' }}>模型</span>
         <Select value={prov?.active || ''} style={{ height: 26 }} options={(prov?.providers || []).map((p) => ({ value: p.id, label: `${p.name} · ${p.model}` }))} onChange={async (v) => setProv(await call('ai.setActive', v))} />
         <button className="ibtn sm" title="模型设置" onClick={openSettings}><Icon name="settings" size={14} /></button>
         <button className="ibtn sm" title="清空对话" disabled={!msgs.length || !!busy} onClick={() => setMsgs([])}><Icon name="trash" size={14} /></button>

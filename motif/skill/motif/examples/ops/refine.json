@@ -1,0 +1,7 @@
+[
+  { "op": "update_block", "scene": 2, "block": 1, "set": { "text": "四个数字，看懂这一年" } },
+  { "op": "update_scene", "scene": 6, "set": { "tone": "inverse", "transition": { "type": "band", "direction": "left" } } },
+  { "op": "update_block", "scene": 5, "block": 3, "set": { "motion": { "enter": "pop", "emphasis": "pulse" } } },
+  { "op": "set_style", "energy": 0.5 },
+  { "op": "add_scene", "after": 1, "scene": { "layout": "quote", "quote": { "text": "规模和盈利，第一次站在了同一边。", "author": "年度复盘" } } }
+]

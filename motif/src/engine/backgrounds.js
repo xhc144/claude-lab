@@ -351,7 +351,9 @@ const GEN = {
         // squiggle
         ctx.save(); ctx.strokeStyle = p.line; ctx.lineWidth = 6 * unit; ctx.lineCap = 'round';
         ctx.beginPath();
-        for (let i = 0; i <= 40; i++) { const x = W * 0.06 + i * s * 0.006; const y = H * 0.12 + Math.sin(i * 0.6 + t * 2) * s * 0.012; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+        // lives in the top margin so it never collides with a headline
+        const sy = Math.min(H * 0.045, s * 0.055);
+        for (let i = 0; i <= 40; i++) { const x = W * 0.06 + i * s * 0.006; const y = sy + Math.sin(i * 0.6 + t * 2) * s * 0.01; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
         ctx.stroke(); ctx.restore();
       }
     },
