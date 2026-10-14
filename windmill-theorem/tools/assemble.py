@@ -91,11 +91,13 @@ def main():
 
     # 5. final encode with burned-in subtitles
     final = out / f"{name}.mp4"
+    tmp = work / f"{name}.encoding.mp4"     # encode outside output/, move when complete
     ass = str(work / "subs.ass").replace(":", r"\:")
     run(["ffmpeg", "-v", "error", "-y", "-i", vid, "-i", mixp,
          "-vf", f"ass={ass}", "-map", "0:v", "-map", "1:a",
          "-c:v", "libx264", "-preset", a.preset, "-crf", str(a.crf), "-tune", "animation", "-pix_fmt", "yuv420p",
-         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-shortest", final])
+         "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-shortest", tmp])
+    shutil.move(tmp, final)
     print(f"wrote {final}  ({total / 60:.1f} min, narration: {'yes' if has_voice else 'NO (music + subtitles only)'})")
 
 
