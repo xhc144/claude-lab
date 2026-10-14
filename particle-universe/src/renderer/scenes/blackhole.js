@@ -143,7 +143,7 @@ void shade(vec4 P, vec4 V, vec4 H, int id, out vec3 color, out float size) {
     size = 0.033 * (0.7 + 0.6 * fract(seed * 5.1));
   } else if (type < 1.5) {
     float s = H.x;
-    float gate = smoothstep(0.35, 0.9, A_BASS + A_KICK * 0.8 + A_DROP);
+    float gate = smoothstep(0.55, 1.15, A_BASS * 0.55 + A_KICK + A_DROP * 1.5);
     float knots = 0.55 + 0.45 * sin(s * 46.0 - uTime * 18.0 + H.y);
     float b = 0.016 * (1.0 - s) * (1.0 - s) * gate * knots * (0.3 + 1.2 * A_KICK + 2.0 * A_DROP) * uS0.z;
     color = mix(palette(0.95), vec3(0.45, 0.65, 1.0), 0.65) * b * 1.6;

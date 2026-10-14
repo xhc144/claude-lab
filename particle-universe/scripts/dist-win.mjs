@@ -17,7 +17,8 @@ const unpacked = path.join(release, 'win-unpacked');
 const exeName = 'ParticleUniverse.exe';
 const run = (cmd, args, opts = {}) => execFileSync(cmd, args, { stdio: 'inherit', cwd: root, ...opts });
 
-const has = (cmd) => { try { execFileSync(process.platform === 'win32' ? 'where' : 'which', [cmd], { stdio: 'ignore' }); return true; } catch { return false; } };
+const isWin = process.platform === 'win32';
+const has = (cmd) => { try { execFileSync(isWin ? 'where' : 'which', [isWin ? cmd + '.exe' : cmd], { stdio: 'ignore' }); return true; } catch { return false; } };
 
 // Electron for Windows: prefer a local copy (offline / proxy-friendly); otherwise electron-builder downloads it.
 const cacheZip = process.env.ELECTRON_WIN_ZIP || path.join(process.env.HOME || process.env.USERPROFILE || '', '.cache/electron', `electron-v${electronVersion}-win32-x64.zip`);
