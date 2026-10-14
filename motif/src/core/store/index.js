@@ -187,6 +187,8 @@ export function saveProject(dir, doc, { message = '保存', author = 'human', ex
 export function editProject(ref, ops, { author = 'ai', message, partial = false, dryRun = false } = {}) {
   const { dir, doc } = loadProject(ref);
   const res = applyOps(doc, ops, { partial, author });
+  // the core does not know the library: a user theme is valid here, not a typo
+  if (res.warnings?.length && res.doc?.theme?.id && listUserThemes()[res.doc.theme.id]) res.warnings = res.warnings.filter((w) => w.path !== 'theme.id');
   if (!res.ok && !partial) return { ...res, dir, saved: false };
   if (dryRun) return { ...res, dir, saved: false };
   const msg = message || summarizeOps(ops);
