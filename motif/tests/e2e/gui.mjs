@@ -129,6 +129,31 @@ try {
   const themed = await call('project.open', pid);
   check('theme switch persisted', themed.doc.theme.id !== 'aurora', themed.doc.theme.id);
 
+  // custom theme: derive a full design system from a few tokens, save it to the library, apply it
+  await page.locator('.titlebar .btn', { hasText: /瑞士|Swiss|主题/ }).first().click();
+  await page.waitForSelector('.theme-card');
+  await page.locator('.modal-foot .btn', { hasText: '新建自定义主题' }).click();
+  await page.waitForTimeout(2500);
+  const nameInput = page.locator('.modal').last().locator('.input').first();
+  await nameInput.fill('E2E 品牌主题');
+  await nameInput.blur();
+  await page.evaluate(() => {
+    const el = [...document.querySelectorAll('.modal')].pop().querySelectorAll('input[type=color]')[2];
+    const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+    set.call(el, '#ff3366'); el.dispatchEvent(new Event('input', { bubbles: true }));
+  });
+  await page.waitForTimeout(1500);
+  await shot('09c-theme-editor');
+  await page.locator('.modal-foot .btn.primary', { hasText: '保存并应用' }).click();
+  await page.waitForTimeout(1500);
+  const custom = await call('project.open', pid);
+  const lib = await call('themes.list');
+  const mine = lib.user.find((t) => t.name === 'E2E 品牌主题');
+  check('custom theme saved to library and applied', !!mine && custom.doc.theme.id === mine.id && mine.palette.accent.toLowerCase().startsWith('#ff3366'), mine?.id);
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(400);
+  if (await page.locator('.modal').count()) await page.locator('.modal-foot .btn.primary').last().click();
+
   // presentation mode: full screen, steps scene by scene
   await page.keyboard.press('Escape');
   await page.keyboard.press('F5');

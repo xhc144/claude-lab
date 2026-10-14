@@ -5,6 +5,8 @@ import path from 'node:path';
 import FONTS from '../../generated/fonts.json';
 import { resolveTheme } from '../../engine/env.js';
 import { listUserThemes } from '../../core/store/index.js';
+import { THEMES } from '../../core/themes/index.js';
+import { deepMerge } from '../../core/util/misc.js';
 
 function parseRanges(r) {
   if (!r) return null;
@@ -51,6 +53,9 @@ export async function exportHtml({ doc, projectDir, out, distDir, onProgress }) 
   }
   onProgress?.({ stage: 'fonts', bytes: fontBytes });
   const d = JSON.parse(JSON.stringify(doc));
+  // the offline player has no library: inline a user theme as overrides of its built-in base
+  const ut = !THEMES[d.theme?.id] ? safe(() => listUserThemes(), {})[d.theme?.id] : null;
+  if (ut) d.theme = { ...d.theme, id: THEMES[ut.extends] ? ut.extends : 'aurora', overrides: deepMerge(ut, d.theme.overrides || {}) };
   for (const a of Object.values(d.assets || {})) {
     const f = projectDir ? path.join(projectDir, a.file) : null;
     if (f && fs.existsSync(f) && fs.statSync(f).size < 80 * 1024 * 1024) a.file = `data:${MIME[path.extname(f).toLowerCase()] || 'application/octet-stream'};base64,${fs.readFileSync(f).toString('base64')}`;

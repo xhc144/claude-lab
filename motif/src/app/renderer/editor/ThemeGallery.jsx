@@ -1,6 +1,7 @@
 // Theme gallery: every design system rendered live with the person's own current scene.
 import { useEffect, useRef, useState } from 'react';
-import { Modal, Spinner } from '../ui.jsx';
+import { Modal, Spinner, openMenu, confirmDialog, toast } from '../ui.jsx';
+import { ThemeEditor } from './ThemeEditor.jsx';
 import { Icon } from '../icons.jsx';
 import { editor, useEditor } from './store.js';
 import { call } from '../api.js';
@@ -15,8 +16,10 @@ export function ThemeGallery({ onClose }) {
   const [cur, setCur] = useState(doc.theme.id);
   const canvases = useRef({});
   const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState(null); // null | 'new' | theme
 
-  useEffect(() => { call('themes.list').then((r) => setUser(r.user || [])).catch(() => {}); }, []);
+  const loadUser = () => call('themes.list').then((r) => setUser(r.user || [])).catch(() => {});
+  useEffect(() => { loadUser(); }, []);
 
   const scene = doc.scenes.find((s) => s.id === sel.scene) || doc.scenes[0];
   const ids = [...Object.keys(THEMES), ...user.map((t) => t.id)];
@@ -47,7 +50,7 @@ export function ThemeGallery({ onClose }) {
       if (alive) setLoading(false);
     })();
     return () => { alive = false; };
-  }, [user.length, scene?.id]);
+  }, [user, scene?.id]);
 
   const apply = (id) => {
     setCur(id);
@@ -57,13 +60,17 @@ export function ThemeGallery({ onClose }) {
   const portrait = doc.format.height > doc.format.width;
   return (
     <Modal title="设计系统" sub="每套主题都包含配色、字体、版式规则、动画语言、转场与镜头。预览为当前场景。" icon="palette" onClose={onClose} width={1040}
-      footer={<><span className="dim grow" style={{ fontSize: 12 }}>{loading ? <span className="row"><Spinner size={12} />正在渲染预览…</span> : '切换主题不会改动内容，可随时撤销'}</span><button className="btn primary" onClick={onClose}>完成</button></>}>
+      footer={<><span className="dim grow" style={{ fontSize: 12 }}>{loading ? <span className="row"><Spinner size={12} />正在渲染预览…</span> : '切换主题不会改动内容，可随时撤销'}</span><button className="btn" onClick={() => setEditing('new')}><Icon name="plus" size={14} />新建自定义主题</button><button className="btn primary" onClick={onClose}>完成</button></>}>
       <div className="theme-grid" style={portrait ? { gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))' } : null}>
         {ids.map((id) => {
           const t = THEMES[id] || user.find((u) => u.id === id);
           const base = THEMES[id] || THEMES[t?.extends] || {};
           return (
-            <button key={id} className={`theme-card ${cur === id ? 'on' : ''}`} onClick={() => apply(id)}>
+            <button key={id} className={`theme-card ${cur === id ? 'on' : ''}`} onClick={() => apply(id)}
+              onContextMenu={(e) => { if (THEMES[id]) return; openMenu(e, [
+                { label: '编辑主题…', icon: 'pen-line', onClick: () => setEditing(user.find((u) => u.id === id)) },
+                { label: '删除主题', icon: 'trash', danger: true, onClick: async () => { if (await confirmDialog({ title: `删除主题「${t?.name}」？`, message: '使用它的作品会回到基础主题的样式。', ok: '删除', danger: true })) { await call('themes.delete', id); toast.ok('已删除'); loadUser(); } } },
+              ]); }}>
               <div className="pv" style={{ aspectRatio: `${doc.format.width} / ${doc.format.height}` }}>
                 <canvas ref={(el) => { if (el) canvases.current[id] = el; }} />
                 {cur === id ? <span className="badge acc" style={{ position: 'absolute', right: 8, top: 8 }}><Icon name="check" size={11} />当前</span> : null}
@@ -77,6 +84,7 @@ export function ThemeGallery({ onClose }) {
           );
         })}
       </div>
+      {editing ? <ThemeEditor initial={editing === 'new' ? null : editing} onClose={() => setEditing(null)} onSaved={(t) => { setEditing(null); setCur(t.id); loadUser(); }} /> : null}
     </Modal>
   );
 }
