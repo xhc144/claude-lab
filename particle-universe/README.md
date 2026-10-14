@@ -111,7 +111,7 @@ npm run dist:win     # 生成 release/ParticleUniverse-<版本>-win-x64-portable
 
 已完成的验证：
 
-- **Windows（打包后的 exe）**：GitHub Actions `windows-latest`，显卡为 Microsoft Basic Render Driver（Direct3D 11 软件适配器，无独立 GPU）。自检全部通过：演示曲分析结果与 Linux 一致（123.9 BPM、高潮 38.72 s / 92.91 s），8 个场景依次运行，导出 1280×720 / 30 fps H.264 MP4（180 帧，3.75 MB）。该环境没有 Media Foundation 的 AAC 编码器，因此 MP4 音轨自动使用 Opus。
+- **Windows（打包后的 exe）**：GitHub Actions `windows-latest`，显卡为 Microsoft Basic Render Driver（Direct3D 11 软件适配器，无独立 GPU）。自检全部通过：演示曲分析结果与 Linux 一致（123.9 BPM、高潮 38.72 s / 92.91 s），8 个场景依次运行，导出 1280×720 / 30 fps H.264 MP4（180 帧，3.75 MB）。该环境的 WebCodecs 未提供 AAC 编码，因此 MP4 音轨自动改用 Opus。
 - **Linux**：Electron 44 + SwiftShader，源码运行与打包（asar）后运行两种方式的自检均通过；另用同一导出流程渲染了 21.5 秒、105 万粒子的 720p 片段。
 - 软件渲染只用来验证功能，帧率（约 11 fps / 13 万粒子）不代表真实显卡上的表现。
 
