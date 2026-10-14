@@ -20,7 +20,8 @@ export function findTool(name = 'ffmpeg', config = {}) {
   if (cfgPath) cands.push(cfgPath);
   if (process.resourcesPath) cands.push(path.join(process.resourcesPath, 'ffmpeg', name + EXE));
   const h = here();
-  for (const up of ['..', '../..', '../../..']) cands.push(path.join(h, up, 'vendor', 'ffmpeg', name + EXE), path.join(h, up, 'resources', 'ffmpeg', name + EXE));
+  // dev checkout (vendor/), packaged app (resources/ffmpeg next to app.asar.unpacked/dist/cli.mjs)
+  for (const up of ['..', '../..', '../../..']) cands.push(path.join(h, up, 'vendor', 'ffmpeg', name + EXE), path.join(h, up, 'resources', 'ffmpeg', name + EXE), path.join(h, up, 'ffmpeg', name + EXE));
   for (const c of cands) if (c && fs.existsSync(c)) return c;
   try {
     const out = execFileSync(process.platform === 'win32' ? 'where' : 'which', [name], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).split(/\r?\n/)[0].trim();
@@ -68,7 +69,7 @@ export async function probeMedia(file, kind) {
     if (kind === 'image') return imageSize(fs.readFileSync(file));
     if (kind === 'audio' || kind === 'video') {
       const probe = findTool('ffprobe');
-      if (!probe) return {};
+      if (!probe) return probeWithFfmpeg(file);
       const r = spawnSync(probe, ['-v', 'error', '-print_format', 'json', '-show_format', '-show_streams', file], { encoding: 'utf8' });
       const j = JSON.parse(r.stdout || '{}');
       const v = (j.streams || []).find((s) => s.codec_type === 'video');
@@ -78,4 +79,18 @@ export async function probeMedia(file, kind) {
     }
   } catch { /* best effort */ }
   return {};
+}
+
+/** Fallback when only ffmpeg is bundled: parse the header that `ffmpeg -i` prints. */
+function probeWithFfmpeg(file) {
+  const ff = findTool('ffmpeg');
+  if (!ff) return {};
+  const r = spawnSync(ff, ['-hide_banner', '-i', file], { encoding: 'utf8' });
+  const txt = String(r.stderr || '');
+  const out = {};
+  const d = /Duration:\s*(\d+):(\d+):([\d.]+)/.exec(txt);
+  if (d) out.duration = +(+d[1] * 3600 + +d[2] * 60 + +d[3]).toFixed(3);
+  const v = /Stream #[^\n]*Video:[^\n]*?\b(\d{2,5})x(\d{2,5})\b/.exec(txt);
+  if (v) { out.width = +v[1]; out.height = +v[2]; out.hasAudio = /Stream #[^\n]*Audio:/.test(txt); }
+  return out;
 }

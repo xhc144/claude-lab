@@ -18,6 +18,10 @@
 
 MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。Tensora 与 Emberstack 的在线字体来自 Google Fonts，离线时使用系统字体回退。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
 
+## 桌面软件
+
+[律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据。安装包由 GitHub Actions 的「Motif · Windows build」构建。
+
 ## 产品界面原型
 
 [星枢 Tensora](tensora/) 是 API 中转网关、模型训练平台与 GPU 算力控制台一体化的 AI 基础设施管理平台前端，共 10 个页面：总览仪表盘、模型广场、API 密钥、调用统计、Token 消耗、模型训练、训练任务、GPU 集群、费用分析与设置。数据每秒实时模拟，模型、厂商与账单均为虚构，不连接后端。[在线打开](https://xhc144.github.io/claude-lab/tensora/)；源码目录内 `npm start` 本地运行，`npm run build` 生成可离线打开的 `dist/tensora.html`，桌面与手机均可使用。

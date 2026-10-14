@@ -61,7 +61,7 @@ const port = server.address().port;
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? '✓' : '✗'} ${name}${detail ? ` — ${detail}` : ''}`); };
 
-const app = await electron.launch({ executablePath: require('electron'), args: [root, '--no-sandbox', '--use-angle=swiftshader'], env, timeout: 60000 });
+const app = await electron.launch({ executablePath: require('electron'), args: [root, ...(process.platform === 'linux' ? ['--no-sandbox', '--use-angle=swiftshader'] : [])], env, timeout: 60000 });
 const page = await app.firstWindow();
 const errors = [];
 page.on('pageerror', (e) => errors.push(e.message));

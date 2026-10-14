@@ -194,7 +194,8 @@ export const COMPONENTS = {
       if (b.kind == null && b.chart) { b.kind = b.chart; delete b.chart; }
       if (b.kind == null && b.chartType) { b.kind = b.chartType; delete b.chartType; }
       if (typeof b.kind === 'string') {
-        const k = b.kind.toLowerCase().replace(/[^a-z]/g, '');
+        // "pie3d" → pie, "bar_chart" → bar, "Line Graph" → line (3D bars have their own component)
+        const k = b.kind.toLowerCase().replace(/[\s_-]+/g, '').replace(/3d$/, '').replace(/(chart|graph)$/, '').replace(/[^a-z]/g, '') || 'bar';
         const map = { column: 'bar', columns: 'bar', vbar: 'bar', horizontalbar: 'hbar', barh: 'hbar', doughnut: 'donut', ring: 'donut', bubble: 'scatter', stackedbar: 'stacked', barrace: 'race', linechart: 'line', barchart: 'bar' };
         b.kind = map[k] || k;
       }

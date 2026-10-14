@@ -7,7 +7,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const require = createRequire(path.join(root, 'package.json'));
@@ -22,7 +22,7 @@ const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); c
 
 const app = await electron.launch({
   executablePath: require('electron'),
-  args: [root, '--no-sandbox', '--use-angle=swiftshader', ...(process.env.DISPLAY ? [] : ['--ozone-platform=headless'])],
+  args: [root, ...(process.platform === 'linux' ? ['--no-sandbox', '--use-angle=swiftshader', ...(process.env.DISPLAY ? [] : ['--ozone-platform=headless'])] : [])],
   env, timeout: 60000,
 });
 const page = await app.firstWindow();
@@ -92,7 +92,7 @@ try {
   const ext = await call('project.apply', pid, [{ op: 'update_scene', scene: 1, set: { name: '外部修改的场景' } }], { author: 'ai', message: 'e2e external' });
   void ext;
   // project.apply via IPC marks the revision as known; write through the store from Node instead
-  const store = await import(path.join(root, 'src/core/store/index.js'));
+  const store = await import(pathToFileURL(path.join(root, 'src/core/store/index.js')).href);
   process.env.MOTIF_HOME = env.MOTIF_HOME; process.env.MOTIF_USER_DATA = env.MOTIF_USER_DATA;
   store.editProject(pid, [{ op: 'update_scene', scene: 2, set: { name: 'AI 改的名字' } }], { author: 'ai', message: 'e2e external' });
   await page.waitForTimeout(1500);

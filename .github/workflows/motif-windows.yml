@@ -1,0 +1,82 @@
+name: Motif · Windows build
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths: ['motif/**', '.github/workflows/motif-windows.yml']
+  pull_request:
+    paths: ['motif/**', '.github/workflows/motif-windows.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: motif-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: motif
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: motif/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: |
+          node scripts/build.mjs
+          npm test
+
+      - name: Build installer + portable zip
+        run: node scripts/dist-win.mjs
+
+      - name: Smoke test the packaged app (CLI + render worker + import + export)
+        env:
+          MOTIF_HOME: ${{ runner.temp }}\motif-library
+          MOTIF_USER_DATA: ${{ runner.temp }}\motif-userdata
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $cli = Resolve-Path 'release\win-unpacked\motif.cmd'
+          $out = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\smoke"
+          & $cli doctor
+          & $cli new "CI 冒烟测试" --template launch --agent ci --json
+          & $cli lint "CI 冒烟测试"
+          & $cli still "CI 冒烟测试" --scene 1 --out "$out\cover.png"
+          & $cli preview "CI 冒烟测试" --out "$out\sheet.jpg" --scale 0.3
+          & $cli auto "examples\inputs\annual-review.pptx" --title "导入测试" --agent ci --json
+          & $cli export "导入测试" --format mp4 --quality small --width 960 --out "$out\import.mp4"
+          & $cli export "CI 冒烟测试" --format html --out "$out\launch.html"
+          & $cli new "Skill 示例" --from "skill\motif\examples\03-math-lesson.json" --json
+          & $cli export "Skill 示例" --format pdf --out "$out\math.pdf"
+          Get-ChildItem $out | Format-Table Name, Length
+
+      - name: Editor end-to-end (GUI + in-app AI assistant against a mock model)
+        run: node tests/e2e/gui.mjs; node tests/e2e/ai-mock.mjs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Motif-windows-x64
+          path: |
+            motif/release/*.exe
+            motif/release/*.zip
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-outputs
+          path: |
+            ${{ runner.temp }}/smoke
+            motif/out/e2e
+          if-no-files-found: ignore
