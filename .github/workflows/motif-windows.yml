@@ -61,6 +61,26 @@ jobs:
           & $cli export "Skill 示例" --format pdf --out "$out\math.pdf"
           Get-ChildItem $out | Format-Table Name, Length
 
+      - name: Install silently and run the installed CLI from PATH
+        env:
+          MOTIF_HOME: ${{ runner.temp }}\motif-library
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $setup = Get-ChildItem release\Motif-Setup-*.exe | Select-Object -First 1
+          Start-Process $setup.FullName -ArgumentList '/S' -Wait
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 2 -Filter Motif.exe | Select-Object -First 1
+          if (-not $exe) { throw 'Motif.exe was not installed' }
+          $dir = $exe.DirectoryName
+          Write-Host "installed to $dir"
+          $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+          if (($userPath -split ';') -notcontains $dir) { throw "install dir missing from user PATH: $userPath" }
+          if (-not (Test-Path "$dir\resources\ffmpeg\ffmpeg.exe")) { throw 'bundled ffmpeg missing' }
+          if (-not (Test-Path "$dir\resources\skill\motif\SKILL.md")) { throw 'bundled Skill missing' }
+          $env:Path = "$dir;$env:Path"
+          motif doctor
+          motif still "CI 冒烟测试" --scene 2 --out "$env:RUNNER_TEMP\smoke\installed-still.png"
+
       - name: Editor end-to-end (GUI + in-app AI assistant against a mock model)
         run: node tests/e2e/gui.mjs; node tests/e2e/ai-mock.mjs
 

@@ -71,6 +71,19 @@ export function atomicWrite(file, data) {
 
 const readJSON = (f) => JSON.parse(fs.readFileSync(f, 'utf8'));
 
+/**
+ * Recursive copy that merges into an existing destination. Deliberately not fs.cpSync: Node 22's
+ * native implementation aborts the process on Windows in some directory cases.
+ */
+export function copyDir(src, dest) {
+  fs.mkdirSync(dest, { recursive: true });
+  for (const e of fs.readdirSync(src, { withFileTypes: true })) {
+    const a = path.join(src, e.name), b = path.join(dest, e.name);
+    if (e.isDirectory()) copyDir(a, b);
+    else if (e.isFile()) fs.copyFileSync(a, b);
+  }
+}
+
 export class StoreError extends Error {
   constructor(message, hint, code) { super(message); this.hint = hint; this.code = code; }
 }
@@ -147,7 +160,7 @@ export function createProject({ title, theme, aspect, accent, template, document
   doc.meta.revision = 0;
   const dir = path.join(projectsDir(), `${slugify(doc.title)}--${doc.id.replace(/^prj_/, '')}`);
   fs.mkdirSync(path.join(dir, 'assets'), { recursive: true });
-  if (templateDir && fs.existsSync(path.join(templateDir, 'assets'))) fs.cpSync(path.join(templateDir, 'assets'), path.join(dir, 'assets'), { recursive: true });
+  if (templateDir && fs.existsSync(path.join(templateDir, 'assets'))) copyDir(path.join(templateDir, 'assets'), path.join(dir, 'assets'));
   return saveProject(dir, doc, { message: template ? `从模板 ${template} 创建` : '创建项目', author });
 }
 
@@ -204,7 +217,7 @@ export function duplicateProject(ref, title) {
   copy.title = title || `${doc.title}（副本）`;
   const ndir = path.join(projectsDir(), `${slugify(copy.title)}--${copy.id.replace(/^prj_/, '')}`);
   fs.mkdirSync(ndir, { recursive: true });
-  if (fs.existsSync(path.join(dir, 'assets'))) fs.cpSync(path.join(dir, 'assets'), path.join(ndir, 'assets'), { recursive: true });
+  if (fs.existsSync(path.join(dir, 'assets'))) copyDir(path.join(dir, 'assets'), path.join(ndir, 'assets'));
   return saveProject(ndir, copy, { message: `复制自 ${doc.id}` });
 }
 
@@ -351,7 +364,7 @@ export function saveAsTemplate(ref, { name, description = '', tags = [], id } = 
   const tid = id || slugify(name || doc.title) + '-' + uid('', 4);
   const tdir = path.join(libraryRoot(), 'templates', tid);
   fs.mkdirSync(tdir, { recursive: true });
-  if (fs.existsSync(path.join(dir, 'assets'))) fs.cpSync(path.join(dir, 'assets'), path.join(tdir, 'assets'), { recursive: true });
+  if (fs.existsSync(path.join(dir, 'assets'))) copyDir(path.join(dir, 'assets'), path.join(tdir, 'assets'));
   if (fs.existsSync(path.join(dir, 'thumb.jpg'))) fs.copyFileSync(path.join(dir, 'thumb.jpg'), path.join(tdir, 'thumb.jpg'));
   const tdoc = clone(doc);
   delete tdoc.meta?.revision;

@@ -249,7 +249,7 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
     if (!src) throw Object.assign(new Error('找不到随附的 Skill 包'), { hint: '开发模式下请先运行 npm run docs 生成 skill/motif' });
     const t = integrationInfo().skillTargets.find((x) => x.id === targetId) || { dir: targetId };
     fs.mkdirSync(t.dir, { recursive: true });
-    fs.cpSync(src, t.dir, { recursive: true });
+    store.copyDir(src, t.dir);
     // record the exact CLI invocation so the agent can call this installation
     const c = cliInfo();
     fs.writeFileSync(path.join(t.dir, 'motif-cli.json'), JSON.stringify({ command: c.command, args: c.args, env: c.env, library: store.libraryRoot() }, null, 2));

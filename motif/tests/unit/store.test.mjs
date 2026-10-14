@@ -54,12 +54,16 @@ test('assets are copied, hashed, probed and deduplicated', async () => {
   assert.equal(again.id, a.id);
 });
 
-test('user templates and components round-trip', () => {
+test('user templates (with assets) and components round-trip', async () => {
   const { id } = store.createProject({ title: '模板源', template: 'launch' });
+  const a = await store.importAsset(id, path.join(inputs, 'product.png'));
   const t = store.saveAsTemplate(id, { name: '我的发布会' });
   assert.ok(store.listTemplates().some((x) => x.id === t.id && !x.builtin));
+  // copies template assets into the new project's (already existing) assets folder
   const fromT = store.createProject({ title: '用模板', template: t.id });
   assert.equal(fromT.doc.scenes.length, store.loadProject(id).doc.scenes.length);
+  assert.ok(fs.existsSync(path.join(fromT.dir, a.file)));
+  assert.ok(fromT.doc.assets[a.id]);
   const block = store.loadProject(id).doc.scenes[1].blocks[0];
   const c = store.saveComponent({ name: '大数字', project: id, block: block.id });
   assert.equal(store.getComponent(c.id).kind, 'block');

@@ -129,6 +129,19 @@ try {
   const themed = await call('project.open', pid);
   check('theme switch persisted', themed.doc.theme.id !== 'aurora', themed.doc.theme.id);
 
+  // presentation mode: full screen, steps scene by scene
+  await page.keyboard.press('Escape');
+  await page.keyboard.press('F5');
+  await page.waitForSelector('.present canvas', { timeout: 10000 });
+  await page.waitForTimeout(2500);
+  await page.keyboard.press('ArrowRight');
+  await page.waitForTimeout(1500);
+  await shot('09b-present');
+  const presented = await page.evaluate(() => { const c = document.querySelector('.present canvas'); return c && c.width > 0; });
+  check('presentation mode renders full screen', presented);
+  await page.keyboard.press('Escape');
+  await page.waitForSelector('.present', { state: 'detached', timeout: 5000 });
+
   // AI panel (no provider yet → onboarding)
   await page.locator('.titlebar .btn.ai').click();
   await page.waitForTimeout(400);
