@@ -167,11 +167,12 @@ def main():
              "[1:a]asplit=2[nar][key];"
              "[2:a]volume=0.32[mus];"
              "[mus][key]sidechaincompress=threshold=0.015:ratio=5:attack=60:release=900[duck];"
-             "[nar][duck]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95[a]")
+             "[nar][duck]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.95,"
+             "loudnorm=I=-16:TP=-1.5:LRA=11,aresample=48000[a]")
     run(["ffmpeg", "-y", "-v", "error", "-stats", "-f", "concat", "-safe", "0", "-i", str(lst), "-i", str(narration),
          "-i", str(music), "-filter_complex", graph, "-map", "[v]", "-map", "[a]",
          "-c:v", "libx264", "-preset", "slow", "-crf", "21" if not preview else "28", "-pix_fmt", "yuv420p",
-         "-tune", "animation", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-shortest", str(out)])
+         "-tune", "animation", "-ac", "2", "-c:a", "aac", "-b:a", "160k", "-movflags", "+faststart", "-shortest", str(out)])
     run(["cp", str(BUILD / "subs.srt"), str(out.with_suffix(".srt"))])
     print(f"done: {out}  ({duration(out) / 60:.1f} min, {out.stat().st_size / 1e6:.0f} MB)")
 

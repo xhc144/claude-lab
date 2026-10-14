@@ -5,3 +5,5 @@
 | 专题 | 覆盖内容 | 稿件 | 数值核对 |
 | --- | --- | --- | --- |
 | 最优化 | 不等式与极值问题、凸优化、梯度下降法、线性规划 | [optimization.md](optimization.md)（6 集，约 2 小时 20 分钟） | `python3 optimization_check.py`（需要 numpy、scipy；cvxpy 可选） |
+
+根据这份讲稿精简、重写旁白后制作的动画视频见 [optimization-film/](../optimization-film/)。

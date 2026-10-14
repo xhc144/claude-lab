@@ -1,8 +1,8 @@
 # 《最优化的本质》—— 程序化数学讲解视频
 
-一支约 19 分钟、1080p / 60fps、带中文配音和字幕的讲解视频，主题是最优化的四块核心内容：不等式与极值、凸优化、梯度下降、线性规划。全部画面由 [Manim](https://www.manim.community/) 按代码生成，配音由离线中文语音模型合成，背景音乐由 numpy 合成，没有使用任何外部素材。
+一支 18 分 56 秒、1080p / 60fps、带中文配音和字幕的讲解视频，主题是最优化的四块核心内容：不等式与极值、凸优化、梯度下降、线性规划。全部画面由 [Manim](https://www.manim.community/) 按代码生成，配音由离线中文语音模型合成，背景音乐由 numpy 合成，没有使用任何外部素材。
 
-成片：`output/optimization_essence_1080p.mp4`，字幕另附 `output/optimization_essence_1080p.srt`（已烧录进画面）。
+成片：`output/optimization_essence_1080p.mp4`（64 MB，H.264 + AAC 立体声，响度 -16 LUFS），字幕另附 `output/optimization_essence_1080p.srt`（已烧录进画面）。
 
 ## 这支视频想讲清楚什么
 
