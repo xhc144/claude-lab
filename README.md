@@ -34,8 +34,9 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | --- | --- | --- | --- |
 | 《对称的语言》 | 约 3 分 40 秒的抽象代数主题影片 | [播放器](https://xhc144.github.io/claude-lab/films/symmetry-film/) | [symmetry-film/](symmetry-film/)；Python、Skia、Numba、FFmpeg；`bash build.sh preview` |
 | 《倒悬之海》The Sea Above | 约 71 秒的三维短片 | [播放器](https://xhc144.github.io/claude-lab/films/sea-above/) | [sea-above/](sea-above/)；Python、OpenGL/EGL、FFmpeg；`./make_film.sh` |
+| 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [仓库内成片](two-sample-test-video/output/two-sample-test.mp4) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
 
-站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。
+站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。双样本检验教学视频暂未接入站点播放器，成片直接放在仓库里。
 
 ## 桌面项目与隔离内容
 
