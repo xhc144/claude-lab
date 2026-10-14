@@ -209,6 +209,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--tx-2); padding: 3px 6px; border
 .avatar { width: 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; font-weight: 600; color: #04101a; background: linear-gradient(135deg, var(--acc-a), var(--acc-b)); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 6px 18px -8px rgba(var(--acc-rgb), 0.7); transition: transform 0.25s var(--spring); }
 .avatar:hover { transform: translateY(-1px) scale(1.04); }
 
+.demo-notice { margin: 12px 4px 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 8px; color: var(--ink-dim); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
 .view { position: relative; padding: 26px 4px 64px; min-width: 0; outline: none; transition: opacity 0.14s, transform 0.14s; }
 .view.leaving { opacity: 0; transform: translateY(-6px); }
 .view.entering .rv { animation: rise 0.65s var(--ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
@@ -608,12 +609,12 @@ input[type="range"]:active::-webkit-slider-thumb { transform: scale(1.18); }
 
 /* ---- layers: modal, drawer, menu, toast, palette ------------------------------------------------- */
 html.layer-open { overflow: hidden; }
-.layer { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px; }
+.layer { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-columns: minmax(0, 1fr); place-items: center; padding: 20px; }
 .scrim { position: absolute; inset: 0; background: rgba(2, 4, 9, 0.6); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); opacity: 0; transition: opacity 0.25s; }
 .layer.in .scrim { opacity: 1; }
 .layer.out .scrim { opacity: 0; }
 .modal, .drawer {
-  position: relative; display: flex; flex-direction: column; max-height: min(86vh, 860px); width: min(560px, 100%);
+  position: relative; display: flex; flex-direction: column; min-width: 0; max-height: min(86vh, 860px); width: min(560px, 100%);
   background: linear-gradient(180deg, rgba(26, 34, 56, 0.92), rgba(13, 18, 31, 0.95));
   border: 1px solid var(--line-2); border-radius: var(--r-xl);
   backdrop-filter: blur(30px) saturate(150%); -webkit-backdrop-filter: blur(30px) saturate(150%);
@@ -631,7 +632,7 @@ html.layer-open { overflow: hidden; }
 .lh { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 20px 14px; border-bottom: 1px solid var(--line); }
 .lh-t { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .lh h2 { font: 600 18px/1.3 var(--f-ui); letter-spacing: -0.01em; }
-.lb { padding: 20px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; }
+.lb { padding: 20px; overflow-y: auto; overscroll-behavior: contain; flex: 1; min-height: 0; min-width: 0; }
 .lf { display: flex; justify-content: flex-end; gap: 10px; padding: 14px 20px; border-top: 1px solid var(--line); flex-wrap: wrap; }
 .confirm .lb p { line-height: 1.6; }
 .confirm .lb .field-l { margin-top: 16px; display: block; }
@@ -2318,8 +2319,9 @@ const live = {
   },
 
   step() {
-    this.t = Date.now();
     const last = this.hist[this.hist.length - 1];
+    // Keep one-second samples ordered even when the wall clock repeats or moves backwards.
+    this.t = Math.max(Date.now(), last.t + 1000);
     const target = 240 * dailyFactor(this.t);
     let v = clamp(last.v + R.gauss() * 10 + (target - last.v) * 0.12, 60, 900);
     if (R() < 0.025) v *= R.range(1.18, 1.4); // short bursts make the live curve worth watching
@@ -2483,6 +2485,7 @@ function renderShell(app) {
           <button class="avatar" id="user-btn" type="button" aria-haspopup="menu" aria-label="账户菜单">${state.user.initials}</button>
         </div>
       </header>
+      <p class="demo-notice" role="note">演示环境 · 所有数据均为模拟；不会调用真实模型、执行训练、产生交易或发送邮件。</p>
       <main id="view" class="view" tabindex="-1"></main>
     </div>
 
@@ -3066,7 +3069,8 @@ function smoothPath(pts) {
   if (n === 1) return `M${pts[0][0]},${pts[0][1]}`;
   if (n === 2) return `M${pts[0][0]},${pts[0][1]}L${pts[1][0]},${pts[1][1]}`;
   const dx = [], dy = [], m = [];
-  for (let i = 0; i < n - 1; i++) { dx.push(pts[i + 1][0] - pts[i][0]); dy.push(pts[i + 1][1] - pts[i][1]); m.push(dy[i] / (dx[i] || 1)); }
+  // Repeated x coordinates form vertical segments; their control points stay on the endpoints.
+  for (let i = 0; i < n - 1; i++) { dx.push(pts[i + 1][0] - pts[i][0]); dy.push(pts[i + 1][1] - pts[i][1]); m.push(dx[i] === 0 ? 0 : dy[i] / dx[i]); }
   const t = [m[0]];
   for (let i = 1; i < n - 1; i++) t.push(m[i - 1] * m[i] <= 0 ? 0 : (3 * (dx[i - 1] + dx[i])) / ((2 * dx[i] + dx[i - 1]) / m[i - 1] + (dx[i] + 2 * dx[i - 1]) / m[i]));
   t.push(m[n - 2]);
@@ -5135,9 +5139,9 @@ const __default__ = {
         </section>
         <aside class="panel rv c-4 keep estimate" id="estimate"></aside>
         ${panel({
-          cls: 'c-12', id: 'ds-panel', title: '数据集', meta: `${DATASETS.length} 个 · 已校验`,
+          cls: 'c-12', id: 'ds-panel', title: '数据集', meta: `${DATASETS.length} 个 · 模拟数据`,
           tools: `<label class="btn sm" for="ds-file">${icon('upload')}上传数据集</label><input type="file" id="ds-file" accept=".jsonl,.json,.parquet,.csv" hidden>`,
-          body: `<div class="drop" id="drop">${icon('upload')}<div><b>拖拽文件到这里上传</b><span>支持 JSONL / JSON / Parquet / CSV，单文件最大 20 GB。上传后会自动做格式校验、去重与 PII 扫描。</span></div></div><div class="ds-grid" id="ds-grid"></div>`,
+          body: `<div class="drop" id="drop">${icon('upload')}<div><b>选择文件模拟数据集导入</b><span>仅使用文件名与大小，不上传、不读取内容；不进行实际去重或隐私扫描。</span></div></div><div class="ds-grid" id="ds-grid"></div>`,
         })}
       </div>`;
 
@@ -5326,7 +5330,7 @@ const __default__ = {
         <div class="ds-act"><span class="tag">${esc(d.tag)}</span><button type="button" class="btn xs ghost" data-preview="${d.id}">${icon('eye')}预览</button><button type="button" class="btn xs ghost" data-use="${d.id}">${icon('plus')}用于训练</button><button type="button" class="icon-btn xs" data-del="${d.id}" aria-label="删除数据集">${icon('trash')}</button></div>
       </article>`).join('');
       DATASETS.forEach((d) => { d._new = false; });
-      view.querySelector('#ds-panel .p-meta').textContent = `${DATASETS.length} 个 · 已校验`;
+      view.querySelector('#ds-panel .p-meta').textContent = `${DATASETS.length} 个 · 模拟数据`;
     };
     drawDatasets();
     dsGrid.addEventListener('click', async (e) => {
@@ -5360,7 +5364,7 @@ const __default__ = {
       }
       const drop = $('#drop', view);
       drop.classList.add('busy');
-      drop.innerHTML = `${icon('upload')}<div class="up"><b>${esc(file.name)}</b><span id="up-s">上传中 · ${fmt.bytes(file.size)}</span><div class="bar running"><i id="up-bar" style="width:0%"></i></div></div>`;
+      drop.innerHTML = `${icon('upload')}<div class="up"><b>${esc(file.name)}</b><span id="up-s">模拟导入 · ${fmt.bytes(file.size)}</span><div class="bar running"><i id="up-bar" style="width:0%"></i></div></div>`;
       let p = 0;
       const t = setInterval(() => {
         p = Math.min(100, p + 7 + Math.random() * 12);
@@ -5369,14 +5373,14 @@ const __default__ = {
         bar.style.width = `${p}%`;
         if (p >= 100) {
           clearInterval(t);
-          $('#up-s', view).textContent = '校验格式、去重与 PII 扫描…';
+          $('#up-s', view).textContent = '按文件大小生成演示统计…';
           setTimeout(() => {
             const rows = Math.max(120, Math.round(file.size / 900));
-            DATASETS.unshift({ id: `ds${Date.now()}`, name: file.name.replace(/\.[^.]+$/, ''), rows, tokens: rows * 480, format: file.name.split('.').pop().toUpperCase(), quality: 84 + Math.floor(Math.random() * 12), updated: Date.now(), tag: '新上传', _new: true });
+            DATASETS.unshift({ id: `ds${Date.now()}`, name: file.name.replace(/\.[^.]+$/, ''), rows, tokens: rows * 480, format: file.name.split('.').pop().toUpperCase(), quality: 84 + Math.floor(Math.random() * 12), updated: Date.now(), tag: '模拟导入', _new: true });
             drop.classList.remove('busy');
-            drop.innerHTML = `${icon('upload')}<div><b>拖拽文件到这里上传</b><span>支持 JSONL / JSON / Parquet / CSV，单文件最大 20 GB。</span></div>`;
+            drop.innerHTML = `${icon('upload')}<div><b>选择文件模拟数据集导入</b><span>仅使用文件名与大小，不上传、不读取内容；不进行实际去重或隐私扫描。</span></div>`;
             drawDatasets();
-            toast({ kind: 'good', title: '数据集已就绪', body: `${file.name} · ${fmt.compact(rows)} 条样本，发现并移除 ${Math.round(rows * 0.013)} 条重复` });
+            toast({ kind: 'good', title: '演示数据集已就绪', body: `${file.name} · 估算 ${fmt.compact(rows)} 条样本；未读取内容或执行实际校验` });
           }, 1200);
         }
       }, 160);
@@ -5405,7 +5409,7 @@ function preview(d) {
   openLayer({
     kind: 'drawer', title: esc(d.name), eyebrow: `数据集预览 · ${esc(d.format)}`,
     body: `<div class="kd-kpis"><div><span>样本</span><b>${fmt.compact(d.rows)}</b></div><div><span>Tokens</span><b>${d.tokens ? fmt.compact(d.tokens) : '—'}</b></div><div><span>质量分</span><b>${d.quality}</b></div></div>
-      <h3 class="md-h">质量检查</h3><ul class="caps">${['格式校验通过', '重复率 1.3%（已去重）', 'PII 检出 0 条', '语言：简体中文 94%'].map((c) => `<li>${icon('check')}${c}</li>`).join('')}</ul>
+      <h3 class="md-h">模拟质量指标（未检查文件内容）</h3><ul class="caps">${['示例格式状态：通过', '示例重复率：1.3%（未执行去重）', '示例 PII 数量：0（未执行扫描）', '示例语言比例：简体中文 94%'].map((c) => `<li>${icon('check')}${c}</li>`).join('')}</ul>
       <h3 class="md-h">样本</h3><div class="code"><div class="code-h"><span>${d.format.split(' ')[0].toLowerCase()}</span><button type="button" class="btn xs ghost" data-copy>${icon('copy')}复制</button></div><pre><code>${json}</code></pre></div>`,
   });
 }

@@ -77,7 +77,8 @@ export function smoothPath(pts) {
   if (n === 1) return `M${pts[0][0]},${pts[0][1]}`;
   if (n === 2) return `M${pts[0][0]},${pts[0][1]}L${pts[1][0]},${pts[1][1]}`;
   const dx = [], dy = [], m = [];
-  for (let i = 0; i < n - 1; i++) { dx.push(pts[i + 1][0] - pts[i][0]); dy.push(pts[i + 1][1] - pts[i][1]); m.push(dy[i] / (dx[i] || 1)); }
+  // Repeated x coordinates form vertical segments; their control points stay on the endpoints.
+  for (let i = 0; i < n - 1; i++) { dx.push(pts[i + 1][0] - pts[i][0]); dy.push(pts[i + 1][1] - pts[i][1]); m.push(dx[i] === 0 ? 0 : dy[i] / dx[i]); }
   const t = [m[0]];
   for (let i = 1; i < n - 1; i++) t.push(m[i - 1] * m[i] <= 0 ? 0 : (3 * (dx[i - 1] + dx[i])) / ((2 * dx[i] + dx[i - 1]) / m[i - 1] + (dx[i] + 2 * dx[i - 1]) / m[i]));
   t.push(m[n - 2]);

@@ -48,9 +48,9 @@ export default {
         </section>
         <aside class="panel rv c-4 keep estimate" id="estimate"></aside>
         ${panel({
-          cls: 'c-12', id: 'ds-panel', title: '数据集', meta: `${DATASETS.length} 个 · 已校验`,
+          cls: 'c-12', id: 'ds-panel', title: '数据集', meta: `${DATASETS.length} 个 · 模拟数据`,
           tools: `<label class="btn sm" for="ds-file">${icon('upload')}上传数据集</label><input type="file" id="ds-file" accept=".jsonl,.json,.parquet,.csv" hidden>`,
-          body: `<div class="drop" id="drop">${icon('upload')}<div><b>拖拽文件到这里上传</b><span>支持 JSONL / JSON / Parquet / CSV，单文件最大 20 GB。上传后会自动做格式校验、去重与 PII 扫描。</span></div></div><div class="ds-grid" id="ds-grid"></div>`,
+          body: `<div class="drop" id="drop">${icon('upload')}<div><b>选择文件模拟数据集导入</b><span>仅使用文件名与大小，不上传、不读取内容；不进行实际去重或隐私扫描。</span></div></div><div class="ds-grid" id="ds-grid"></div>`,
         })}
       </div>`;
 
@@ -239,7 +239,7 @@ export default {
         <div class="ds-act"><span class="tag">${esc(d.tag)}</span><button type="button" class="btn xs ghost" data-preview="${d.id}">${icon('eye')}预览</button><button type="button" class="btn xs ghost" data-use="${d.id}">${icon('plus')}用于训练</button><button type="button" class="icon-btn xs" data-del="${d.id}" aria-label="删除数据集">${icon('trash')}</button></div>
       </article>`).join('');
       DATASETS.forEach((d) => { d._new = false; });
-      view.querySelector('#ds-panel .p-meta').textContent = `${DATASETS.length} 个 · 已校验`;
+      view.querySelector('#ds-panel .p-meta').textContent = `${DATASETS.length} 个 · 模拟数据`;
     };
     drawDatasets();
     dsGrid.addEventListener('click', async (e) => {
@@ -273,7 +273,7 @@ export default {
       }
       const drop = $('#drop', view);
       drop.classList.add('busy');
-      drop.innerHTML = `${icon('upload')}<div class="up"><b>${esc(file.name)}</b><span id="up-s">上传中 · ${fmt.bytes(file.size)}</span><div class="bar running"><i id="up-bar" style="width:0%"></i></div></div>`;
+      drop.innerHTML = `${icon('upload')}<div class="up"><b>${esc(file.name)}</b><span id="up-s">模拟导入 · ${fmt.bytes(file.size)}</span><div class="bar running"><i id="up-bar" style="width:0%"></i></div></div>`;
       let p = 0;
       const t = setInterval(() => {
         p = Math.min(100, p + 7 + Math.random() * 12);
@@ -282,14 +282,14 @@ export default {
         bar.style.width = `${p}%`;
         if (p >= 100) {
           clearInterval(t);
-          $('#up-s', view).textContent = '校验格式、去重与 PII 扫描…';
+          $('#up-s', view).textContent = '按文件大小生成演示统计…';
           setTimeout(() => {
             const rows = Math.max(120, Math.round(file.size / 900));
-            DATASETS.unshift({ id: `ds${Date.now()}`, name: file.name.replace(/\.[^.]+$/, ''), rows, tokens: rows * 480, format: file.name.split('.').pop().toUpperCase(), quality: 84 + Math.floor(Math.random() * 12), updated: Date.now(), tag: '新上传', _new: true });
+            DATASETS.unshift({ id: `ds${Date.now()}`, name: file.name.replace(/\.[^.]+$/, ''), rows, tokens: rows * 480, format: file.name.split('.').pop().toUpperCase(), quality: 84 + Math.floor(Math.random() * 12), updated: Date.now(), tag: '模拟导入', _new: true });
             drop.classList.remove('busy');
-            drop.innerHTML = `${icon('upload')}<div><b>拖拽文件到这里上传</b><span>支持 JSONL / JSON / Parquet / CSV，单文件最大 20 GB。</span></div>`;
+            drop.innerHTML = `${icon('upload')}<div><b>选择文件模拟数据集导入</b><span>仅使用文件名与大小，不上传、不读取内容；不进行实际去重或隐私扫描。</span></div>`;
             drawDatasets();
-            toast({ kind: 'good', title: '数据集已就绪', body: `${file.name} · ${fmt.compact(rows)} 条样本，发现并移除 ${Math.round(rows * 0.013)} 条重复` });
+            toast({ kind: 'good', title: '演示数据集已就绪', body: `${file.name} · 估算 ${fmt.compact(rows)} 条样本；未读取内容或执行实际校验` });
           }, 1200);
         }
       }, 160);
@@ -318,7 +318,7 @@ function preview(d) {
   openLayer({
     kind: 'drawer', title: esc(d.name), eyebrow: `数据集预览 · ${esc(d.format)}`,
     body: `<div class="kd-kpis"><div><span>样本</span><b>${fmt.compact(d.rows)}</b></div><div><span>Tokens</span><b>${d.tokens ? fmt.compact(d.tokens) : '—'}</b></div><div><span>质量分</span><b>${d.quality}</b></div></div>
-      <h3 class="md-h">质量检查</h3><ul class="caps">${['格式校验通过', '重复率 1.3%（已去重）', 'PII 检出 0 条', '语言：简体中文 94%'].map((c) => `<li>${icon('check')}${c}</li>`).join('')}</ul>
+      <h3 class="md-h">模拟质量指标（未检查文件内容）</h3><ul class="caps">${['示例格式状态：通过', '示例重复率：1.3%（未执行去重）', '示例 PII 数量：0（未执行扫描）', '示例语言比例：简体中文 94%'].map((c) => `<li>${icon('check')}${c}</li>`).join('')}</ul>
       <h3 class="md-h">样本</h3><div class="code"><div class="code-h"><span>${d.format.split(' ')[0].toLowerCase()}</span><button type="button" class="btn xs ghost" data-copy>${icon('copy')}复制</button></div><pre><code>${json}</code></pre></div>`,
   });
 }

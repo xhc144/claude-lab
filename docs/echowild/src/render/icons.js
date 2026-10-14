@@ -285,6 +285,17 @@ function bowl(img, fill) { for (let y = 8; y <= 12; y++) { const w = 6 - (y - 8)
 function orbSprite(img, c) { disc(img, 8, 8, 5, hex(c)); px(img, 6, 6, [255, 255, 255]); }
 
 const SPRITES = {
+  weave_coin: (i) => {
+    disc(i, 8, 8, 5.4, hex('#d8954e'));
+    for (let a = 0; a < 12; a++) { const t = a / 12 * Math.PI * 2; px(i, Math.round(8 + Math.cos(t) * 4.2), Math.round(8 + Math.sin(t) * 4.2), hex('#9a5a2a')); }
+    lineP(i, 6, 6, 10, 10, hex('#fff0c0')); lineP(i, 6, 10, 10, 6, hex('#fff0c0')); px(i, 8, 8, hex('#5fe6ff'));
+  },
+  treasure_map: (i) => {
+    for (let y = 3; y <= 12; y++) for (let x = 2; x <= 13; x++) px(i, x, y, (x * 3 + y * 5) % 11 === 0 ? hex('#cdb07a') : hex('#ead6a2'));
+    lineP(i, 2, 3, 2, 12, hex('#9a7a48')); lineP(i, 13, 3, 13, 12, hex('#9a7a48'));
+    for (const [x, y] of [[4, 10], [5, 9], [7, 9], [8, 8], [9, 7]]) px(i, x, y, hex('#7a5a3a'));
+    lineP(i, 9, 4, 11, 6, hex('#d83a2a')); lineP(i, 11, 4, 9, 6, hex('#d83a2a'));
+  },
   stick: stickSprite,
   coal: (i) => lump(i, '#2a2a30'), charcoal: (i) => lump(i, '#3a2a22', 2),
   raw_copper: (i) => lump(i, '#c8744a'), raw_iron: (i) => lump(i, '#c29e86'), raw_gold: (i) => lump(i, '#e9c03e'), raw_meteor: (i) => { lump(i, '#5a3f40'); px(i, 8, 9, hex('#ff8a4a')); px(i, 10, 8, hex('#ff8a4a')); },

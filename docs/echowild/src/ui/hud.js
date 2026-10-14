@@ -186,6 +186,19 @@ export class HUD {
       this.clock.innerHTML = `<span class="sun">${sun}</span> 第 ${g.day} 天 · ${ck}${wtxt ? ` · ${wtxt}` : ''}`;
       this.place.textContent = placeName;
     }
+    // status effects
+    const e = p.effects || {};
+    const chips = [];
+    if (e.fed) chips.push(['fed', '饱足', `${Math.ceil(e.fed)}s`, '吃了一顿热饭：恢复更快，挖掘更快']);
+    if (e.warm) chips.push(['warm', '暖和', `${Math.ceil(e.warm)}s`, '身体暖洋洋的，不会受冻']);
+    if (p.chill >= 20) chips.push(['cold', p.chill >= 100 ? '冻僵' : '寒冷', `${Math.round(p.chill)}%`, '靠近火源、躲进屋里或穿上皮甲取暖']);
+    if (e.glow) chips.push(['glow', '发光', `${Math.ceil(e.glow)}s`, '']);
+    if (e.hunger) chips.push(['sick', '反胃', `${Math.ceil(e.hunger)}s`, '饥饿加快']);
+    const ekey = chips.map((c) => c[0] + c[2]).join('|');
+    if (ekey !== this.last.eff) {
+      this.last.eff = ekey;
+      this.effects.innerHTML = chips.map(([k, zh, v, tip]) => `<div class="eff eff-${k}" title="${tip}"><i></i><span>${zh}</span><b>${v}</b></div>`).join('');
+    }
     const goal = g.goalText ? g.goalText() : '';
     if (goal !== this.last.goal) { this.last.goal = goal; this.goal.innerHTML = goal; }
 

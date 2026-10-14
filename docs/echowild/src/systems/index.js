@@ -18,6 +18,8 @@ import { installTransport } from './transport.js';
 import { installAdventure } from './adventure.js';
 import { installWorldMap } from './worldmap.js';
 import { installCodex } from './codex.js';
+import { installJourney } from './journey.js';
+import { installVillage } from './village.js';
 import { ChatScreen } from '../ui/chat.js';
 import { TICK } from '../game.js';
 
@@ -32,6 +34,9 @@ export function installSystems(game, state) {
   sharedAudio.applyVolume();
   game.audio = sharedAudio;
   game.stateSavers = [];
+  // world rules (creative world controls / cheats)
+  game.rules = Object.assign({ daylightCycle: true, weatherCycle: true, mobSpawning: true, keepInventory: false }, state && state.rules);
+  game.stateSavers.push((s) => { s.rules = { ...game.rules }; });
   if (state) {
     if (state.dayTime !== undefined) game.dayTime = state.dayTime;
     if (state.day) game.day = state.day;
@@ -50,14 +55,17 @@ export function installSystems(game, state) {
   installMachines(game);
   installTransport(game);
   installAdventure(game, state);
+  installVillage(game, state);
   installWorldMap(game, state);
   installCodex(game, state);
+  installJourney(game, state);
 
   // entity ticking, particles, audio, rendering
   game.addSystem({
     tick(g) { g.entities.tick(TICK); },
     frame(g, dt) { g.particles.frame(dt); g.audio.update(g, dt); },
     renderOpaque(g, r) { g.entities.render(r, Math.min(1, g.acc / TICK)); },
+    renderShadow(g, r) { g.entities.render(r, Math.min(1, g.acc / TICK)); },
     renderTranslucent(g, r) { g.particles.render(r); },
   });
 

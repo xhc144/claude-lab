@@ -56,7 +56,7 @@ export class Weather {
 
   tick() {
     const g = this.game;
-    this.t -= 1;
+    if (!g.rules || g.rules.weatherCycle) this.t -= 1;
     if (this.t <= 0) {
       const r = Math.random();
       if (this.kind === 'clear') this.set(r < 0.75 ? 'rain' : 'storm');

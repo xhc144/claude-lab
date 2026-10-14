@@ -126,36 +126,49 @@ const P = {
 };
 
 // ---------------------------------------------------------------- building blocks
-function stoneTex(img, p = P.stone) {
-  noisy(img, p, { f1: 4, f2: 8, w3: 0.22 });
-  // soft cracks
-  const r = img.rng;
-  for (let k = 0; k < 3; k++) {
-    let x = r.int(S), y = r.int(S);
-    const len = 3 + r.int(4);
-    for (let i = 0; i < len; i++) {
-      img.blend(x, y, p[0], 0.55);
-      x += r.int(3) - 1; y += 1;
-    }
-  }
+// value 0..1 → palette entry, with a little ordered dither so gradients don't band
+const dither = [0, 0.5, 0.125, 0.625, 0.75, 0.25, 0.875, 0.375];
+const palAt = (p, v, x, y) => p[Math.max(0, Math.min(p.length - 1, Math.floor(v * p.length + (dither[(x & 3) + ((y & 1) << 2)] - 0.5) * 0.6)))];
+
+// natural rock: a few tilted facets lit from the upper left, fine grain, hairline crevices
+// along the facet borders and the odd mineral speck
+function stoneTex(img, p = P.stone, { facets = 5, crack = 0.5, specks = 3 } = {}) {
+  const f1 = field(img, 4, 1), f2 = field(img, 8, 2);
+  const v = voronoi(img, facets, 7);
+  const tilt = [];
+  for (let k = 0; k < 16; k++) tilt.push([(img.rng.next() - 0.5) * 2, (img.rng.next() - 0.5) * 2, (img.rng.next() - 0.5) * 0.16]);
+  const cm = field(img, 4, 9);
+  img.each((x, y) => {
+    const c = v(x, y);
+    const t = tilt[c.id % 16];
+    const dx = x + 0.5 - c.cx, dy = y + 0.5 - c.cy;
+    let val = 0.52 + (f1(x, y) - 0.5) * 0.42 + (f2(x, y) - 0.5) * 0.22 + (img.rng.next() - 0.5) * 0.1;
+    val += t[2] + (-(dx * t[0] + dy * t[1]) * 0.012) + (-(dx + dy) * 0.006);
+    if (c.edge < 0.75 && cm(x, y) > 1 - crack) val = 0.04;                 // crevice
+    else if (c.edge < 1.4 && cm(x, y) > 1 - crack) val -= 0.12 * (1.4 - c.edge); // its shadowed lip
+    img.set(x, y, palAt(p, val, x, y));
+  });
+  for (let k = 0; k < specks; k++) { const x = img.rng.int(S), y = img.rng.int(S); img.set(x, y, p[p.length - 1]); }
   return img;
 }
 
-function cobbleTex(img, p = P.stone, n = 9) {
+function cobbleTex(img, p = P.stone, n = 9, { warm = null, cool = null } = {}) {
   const v = voronoi(img, n);
+  const g = field(img, 8, 3);
   img.each((x, y) => {
     const c = v(x, y);
-    let idx = 1 + Math.floor(c.rnd * (p.length - 2));
-    if (c.edge < 1.1) idx = 0;
-    else {
-      // light from top-left on each cobble
-      const dx = x + 0.5 - c.cx, dy = y + 0.5 - c.cy;
-      if (dx + dy < -2.2 && idx < p.length - 1) idx++;
-      if (dx + dy > 2.6 && idx > 1) idx--;
-    }
-    img.set(x, y, p[idx]);
+    if (c.edge < 0.9) { img.set(x, y, mul(p[0], 0.72 + g(x, y) * 0.2)); return; }
+    const dx = x + 0.5 - c.cx, dy = y + 0.5 - c.cy;
+    const r = Math.max(1.5, c.d + c.edge * 0.5);
+    let val = 0.25 + c.rnd * 0.45;
+    val += (-(dx + dy) / r) * 0.16;                 // dome lit from the upper left
+    val -= Math.max(0, 1.8 - c.edge) * 0.12;        // occlusion toward the mortar
+    val += (g(x, y) - 0.5) * 0.16 + (img.rng.next() - 0.5) * 0.06;
+    let col = palAt(p, val, x, y);
+    if (warm && c.rnd > 0.7) col = mix(col, warm, 0.18);
+    if (cool && c.rnd < 0.25) col = mix(col, cool, 0.15);
+    img.set(x, y, col);
   });
-  speckle(img, p[p.length - 1], 4);
   return img;
 }
 
@@ -182,40 +195,49 @@ function bricksTex(img, brick, mortar, { bw = 8, bh = 4, offset = 4, bevel = tru
 function planksTex(img, p, { rows = 4 } = {}) {
   const r = img.rng;
   const h = S / rows;
-  const ends = [];
-  for (let k = 0; k < rows; k++) ends.push(r.int(S));
-  const grain = field(img, 8, 5);
+  const ends = [], tone = [];
+  for (let k = 0; k < rows; k++) { ends.push(r.int(S)); tone.push((r.next() - 0.5) * 0.22); }
+  const wob = field(img, 4, 5), fine = field(img, 16, 6);
   img.each((x, y) => {
-    const row = Math.floor(y / h);
-    const iy = y % h;
-    let idx = 1 + Math.floor(grain(x * 0.25, y * 2) * (p.length - 2));
-    if (iy === h - 1) idx = 0;
-    else if (iy === 0) idx = Math.min(p.length - 1, idx + 1);
-    if (x === ends[row] && iy !== h - 1) idx = 0;
-    img.set(x, y, p[idx]);
+    const row = Math.floor(y / h), iy = y % h;
+    const seg = x >= ends[row] ? 1 : 0;
+    const t = tone[row] + (seg ? 0.06 : 0);
+    // grain: wavy lines running along the board
+    const gl = Math.sin((iy + wob(x, y) * 3.2 + seg * 1.7) * 2.1 + x * 0.12);
+    let val = 0.55 + t + gl * 0.09 + (fine(x, y) - 0.5) * 0.14;
+    if (iy === h - 1) val = 0.02;                       // seam between boards
+    else if (iy === 0) val += 0.13;                     // bevelled top edge catches the light
+    else if (iy === h - 2) val -= 0.08;
+    if (x === ends[row] && iy !== h - 1) val = 0.08;    // butt joint
+    img.set(x, y, palAt(p, val, x, y));
   });
-  // knots
-  for (let k = 0; k < 2; k++) {
-    const x = r.int(S), y = r.int(rows) * h + 1 + r.int(h - 2);
-    img.set(x, y, p[0]);
+  // nails beside the joints
+  for (let k = 0; k < rows; k++) if (r.next() < 0.3) {
+    const y = k * h + (h >> 1);
+    for (const x of [ends[k] - 1, ends[k] + 1]) img.set(x, y, mix(p[0], p[1], 0.5));
   }
   return img;
 }
 
 function logSide(img, p, { streak = 0.6, spots = null } = {}) {
   const r = img.rng;
-  const cols = [];
-  for (let x = 0; x < S; x++) cols.push(r.next());
-  const f = field(img, 4, 9);
+  const wander = field(img, 2, 9), f = field(img, 4, 10), fine = field(img, 16, 11);
+  const phase = r.next() * 6.28;
   img.each((x, y) => {
-    let v = cols[x] * streak + f(x, y) * (1 - streak);
-    if ((x % 4 === 0) && r.next() < 0.6) v *= 0.6;
-    img.set(x, y, p[Math.min(p.length - 1, Math.floor(v * p.length))]);
+    const xx = x + (wander(x, y) - 0.5) * 3;
+    // ridge profile across the trunk: a furrow every ~4 texels
+    const prof = Math.sin(xx / S * Math.PI * 2 * 4 + phase + Math.sin(y * 0.4) * 0.3);
+    let val = 0.5 + prof * 0.28 * streak + (f(x, y) - 0.5) * 0.3 * (1.2 - streak) + (fine(x, y) - 0.5) * 0.18;
+    if (prof < -0.75 * streak - 0.1) val -= 0.18;            // furrow floor
+    if (Math.cos(xx / S * Math.PI * 8 + phase) > 0.85) val += 0.1; // ridge highlight
+    img.set(x, y, palAt(p, val, x, y));
   });
+  // a few horizontal cracks across the ridges
+  for (let k = 0; k < 2; k++) { const y = r.int(S), x0 = r.int(S), w = 2 + r.int(3); for (let i = 0; i < w; i++) img.blend(x0 + i, y, p[0], 0.7); }
   if (spots) {
     for (let k = 0; k < 7; k++) {
       const x = r.int(S), y = r.int(S), w = 1 + r.int(3);
-      for (let i = 0; i < w; i++) img.set(x + i, y, spots);
+      for (let i = 0; i < w; i++) { img.set(x + i, y, spots); if (r.next() < 0.4) img.blend(x + i, y + 1, spots, 0.4); }
     }
   }
   return img;
@@ -234,20 +256,26 @@ function logTop(img, bark, inner) {
 }
 
 function leavesTex(img, p, { holes = 0.2, berries = null, blossoms = null } = {}) {
-  const f = field(img, 4, 3), g = field(img, 8, 4);
+  const f = field(img, 4, 3);
+  // the gaps between leaves: deep shade, or see-through
   img.each((x, y) => {
-    const v = f(x, y) * 0.6 + g(x, y) * 0.4;
-    const r = img.rng.next();
-    if (r < holes * (1.2 - v)) { img.set(x, y, p[0], 0); return; }
-    let idx = Math.floor((v * 0.7 + img.rng.next() * 0.3) * p.length);
-    idx = Math.max(0, Math.min(p.length - 1, idx));
-    img.set(x, y, p[idx]);
+    if (img.rng.next() < holes * 1.6 * (1.1 - f(x, y))) img.set(x, y, p[0], 0);
+    else img.set(x, y, mul(p[0], 0.85 + img.rng.next() * 0.15));
   });
-  // leaf highlights in clusters (top-left lit)
-  for (let k = 0; k < 10; k++) {
-    const x = img.rng.int(S), y = img.rng.int(S);
-    if (img.alpha(x, y)) img.set(x, y, p[p.length - 1]);
-    if (img.alpha(x + 1, y + 1)) img.set(x + 1, y + 1, p[0]);
+  // leaves: small ellipses at random angles, lighter toward their upper side
+  const n = 30;
+  for (let k = 0; k < n; k++) {
+    const cx = img.rng.next() * S, cy = img.rng.next() * S;
+    const a = img.rng.next() * Math.PI, ca = Math.cos(a), sa = Math.sin(a);
+    const L = 1.6 + img.rng.next() * 1.2, W = 0.9 + img.rng.next() * 0.5;
+    const base = 0.35 + f(cx, cy) * 0.45 + img.rng.next() * 0.2;
+    for (let y = Math.floor(cy - 3); y <= cy + 3; y++) for (let x = Math.floor(cx - 3); x <= cx + 3; x++) {
+      const dx = x + 0.5 - cx, dy = y + 0.5 - cy;
+      const u = (dx * ca + dy * sa) / L, w = (-dx * sa + dy * ca) / W;
+      if (u * u + w * w > 1) continue;
+      const lit = base + (-dy) * 0.07 + (-dx) * 0.03 + (Math.abs(w) < 0.25 ? 0.06 : 0);
+      img.set(x, y, palAt(p, lit, ((x % S) + S) % S, ((y % S) + S) % S));
+    }
   }
   if (berries) for (let k = 0; k < 5; k++) { const x = img.rng.int(S), y = img.rng.int(S); img.set(x, y, berries); }
   if (blossoms) for (let k = 0; k < 12; k++) { const x = img.rng.int(S), y = img.rng.int(S); img.set(x, y, img.rng.pick(blossoms)); }
@@ -422,28 +450,70 @@ def('bedrock', (i) => {
   speckle(i, hex('#6b6375'), 6);
 });
 def('stone', (i) => stoneTex(i));
-def('cobblestone', (i) => cobbleTex(i, pal('#4a5059', '#5b626c', '#69717c', '#77808a', '#868e98', '#959ea8'), 10));
+def('cobblestone', (i) => cobbleTex(i, pal('#3e434b', '#4f555e', '#5f666f', '#6f7680', '#7f8791', '#90989f', '#a3aab2'), 10, { warm: hex('#8a7a66'), cool: hex('#5f6f86') }));
 def('deepstone', (i) => {
   noisy(i, P.deep, { f1: 4, f2: 16, w3: 0.3 });
   for (let y = 0; y < S; y += 4) for (let x = 0; x < S; x++) if (i.rng.next() < 0.5) i.blend(x, y + (x >> 3), P.deep[0], 0.5);
 });
 def('deep_cobble', (i) => cobbleTex(i, pal('#1f1d27', '#2a2733', '#34303f', '#3e394b', '#4a4458', '#575168'), 11));
-def('dirt', (i) => { noisy(i, P.dirt, { f1: 4, f2: 16, w3: 0.35 }); speckle(i, hex('#a07a58'), 5); speckle(i, hex('#4a3122'), 6); });
-def('grass_top', (i) => {
-  noisy(i, P.grass, { f1: 4, f2: 16, w3: 0.4 });
-  for (let k = 0; k < 18; k++) { const x = i.rng.int(S), y = i.rng.int(S); i.set(x, y, gray(222)); i.set(x, y + 1, gray(150)); }
-});
-def('grass_side', (i) => {
-  TEX.dirt(i);
-  const r = i.rng;
-  for (let x = 0; x < S; x++) {
-    const h = 3 + r.int(3) + (x % 5 === 0 ? 1 : 0);
-    for (let y = 0; y < h; y++) i.set(x, y, gray(y === h - 1 ? 128 : 150 + r.int(60)));
+// soil: clods lit from above, pebbles with a highlight, the odd root
+function dirtTex(i, p = P.dirt) {
+  const v = voronoi(i, 7, 5), f = field(i, 4, 6), g = field(i, 16, 7);
+  i.each((x, y) => {
+    const c = v(x, y);
+    const dy = y + 0.5 - c.cy, dx = x + 0.5 - c.cx;
+    let val = 0.45 + (f(x, y) - 0.5) * 0.4 + (g(x, y) - 0.5) * 0.25 + (c.rnd - 0.5) * 0.18 - (dx + dy) * 0.012;
+    if (c.edge < 0.8) val -= 0.16;
+    i.set(x, y, palAt(p, val, x, y));
+  });
+  for (let k = 0; k < 2; k++) {
+    const x = i.rng.int(S), y = i.rng.int(S), c = mix(p[p.length - 1], hex('#8a8070'), 0.45 + i.rng.next() * 0.3);
+    i.set(x, y, mix(c, [255, 255, 255], 0.12)); i.set(x + 1, y, c); i.set(x, y + 1, mul(c, 0.82));
   }
+  for (let k = 0; k < 2; k++) { let x = i.rng.int(S), y = i.rng.int(S); for (let n = 0; n < 4; n++) { i.blend(x, y, hex('#3a2618'), 0.55); x += i.rng.int(3) - 1; y++; } }
+  return i;
+}
+// grass seen from above (grey: tinted per biome): blades in clumps, tips lighter
+function grassTopTex(i) {
+  const f = field(i, 4, 1), g = field(i, 8, 2);
+  i.each((x, y) => i.set(x, y, gray(118 + (f(x, y) * 0.6 + g(x, y) * 0.4) * 46 + i.rng.next() * 10)));
+  for (let k = 0; k < 64; k++) {
+    const x = i.rng.int(S), y = i.rng.int(S), len = 2 + i.rng.int(2), lean = i.rng.next() < 0.5 ? -1 : 1;
+    const base = 150 + f(x, y) * 40;
+    for (let n = 0; n < len; n++) i.set(x + (n === len - 1 ? lean : 0), y - n, gray(Math.min(232, base + n * 22 + i.rng.next() * 10)));
+    i.set(x, y + 1, gray(base * 0.72));
+  }
+  return i;
+}
+def('dirt', (i) => dirtTex(i));
+def('grass_top', (i) => grassTopTex(i));
+def('grass_side', (i) => {
+  dirtTex(i);
+  const r = i.rng;
+  let h = 4;
+  for (let x = 0; x < S; x++) {
+    h = Math.max(3, Math.min(6, h + r.int(3) - 1));
+    const drip = r.next() < 0.18 ? 2 : 0;
+    for (let y = 0; y < h + drip; y++) {
+      const tip = y >= h - 1;
+      i.set(x, y, gray(tip ? 132 : 158 + r.int(46) - y * 4));
+    }
+    // the turf throws a shadow on the soil just below it
+    i.set(x, h + drip, mul(i.get(x, h + drip), 0.72));
+    i.set(x, h + drip + 1, mul(i.get(x, h + drip + 1), 0.86));
+  }
+  return i;
 });
-def('sand', (i) => { noisy(i, P.sand, { f1: 4, f2: 16, w3: 0.4 }); speckle(i, hex('#b89f6b'), 8); speckle(i, hex('#fff2c8'), 4); });
+def('sand', (i) => {
+  const f = field(i, 4, 1), g = field(i, 16, 2);
+  i.each((x, y) => {
+    const ripple = Math.sin((x * 0.55 + y * 1.25) + f(x, y) * 4) * 0.08;
+    i.set(x, y, palAt(P.sand, 0.5 + ripple + (g(x, y) - 0.5) * 0.3 + (i.rng.next() - 0.5) * 0.2, x, y));
+  });
+  speckle(i, hex('#b89f6b'), 7); speckle(i, hex('#fff6d8'), 5); speckle(i, hex('#9a8a70'), 3);
+});
 def('redsand', (i) => { noisy(i, P.redsand, { f1: 4, f2: 16, w3: 0.4 }); speckle(i, hex('#8c4225'), 8); });
-def('gravel', (i) => cobbleTex(i, P.gravel, 18));
+def('gravel', (i) => cobbleTex(i, P.gravel, 17, { warm: hex('#8a6a4a'), cool: hex('#5a6a80') }));
 def('clay', (i) => { noisy(i, pal('#8f98a8', '#99a2b2', '#a3acbc', '#adb6c5'), { f1: 2, f2: 8, w3: 0.2 }); for (let y = 3; y < S; y += 5) for (let x = 0; x < S; x++) i.blend(x, y, hex('#7f8898'), 0.3); });
 def('sandstone', (i) => {
   noisy(i, P.sand, { f1: 2, f2: 8, w3: 0.2 });
@@ -466,7 +536,11 @@ def('terra_orange', terra('#c27a3a'));
 def('terra_cream', terra('#d9bf9a'));
 def('terra_rust', terra('#8f3a2c'));
 def('terra_umber', terra('#5c4033'));
-def('snow', (i) => { noisy(i, P.snow, { f1: 4, f2: 8, w3: 0.3 }); speckle(i, hex('#cfdbe8'), 6); });
+def('snow', (i) => {
+  const f = field(i, 4, 1), g = field(i, 8, 2);
+  i.each((x, y) => i.set(x, y, mix(hex('#c8d6e6'), hex('#ffffff'), Math.min(1, 0.45 + (f(x, y) - 0.5) * 0.7 + (g(x, y) - 0.5) * 0.3 - (y % 7 === 0 ? 0.08 : 0)))));
+  for (let k = 0; k < 7; k++) { const x = i.rng.int(S), y = i.rng.int(S); i.set(x, y, hex('#ffffff')); i.set(x + 1, y + 1, hex('#b8c8dc')); }
+});
 def('snow_side', (i) => {
   TEX.dirt(i);
   for (let x = 0; x < S; x++) { const h = 4 + i.rng.int(3); for (let y = 0; y < h; y++) i.set(x, y, P.snow[1 + i.rng.int(4)]); i.set(x, h, hex('#c9d6e4')); }
@@ -1203,3 +1277,84 @@ export function registerTexture(name, painter, { glow = false } = {}) {
   return texLayer(name);
 }
 export { field, noisy, speckle, voronoi, blob, line, P as PALETTE };
+
+// ---------------------------------------------------------------- material maps
+// A second texture array, one RGBA layer per block texture: R,G = tangent-space normal (x, y),
+// B = roughness, A = metalness. Normals come from a height field (texel luminance, blurred a
+// touch: darker reads deeper — mortar, seams, bark grooves, gaps between cobbles), scaled by a
+// per-material relief strength. Roughness / metalness follow the material family.
+const MAT_RULES = [
+  // [regexp on texture name, relief strength, roughness, metalness]
+  [/^(water|lava)/, 0, 0.05, 0],
+  [/^(iron_block|iron_door|rail|power_rail|speed_rail|hopper|cauldron|piston_inner|lantern)/, 0.9, 0.32, 1],
+  [/^(gold_block|ancient_gold|stargem_block|star_core)/, 0.8, 0.22, 1],
+  [/^(copper_block|copper_tiles)/, 1.0, 0.38, 0.85],
+  [/^(meteor_block|meteor_ore|meteor_rock)/, 1.8, 0.45, 0.6],
+  [/^(ice|packed_ice|pale_crystal|crystal_cluster|crystal_bud|echo_block|budding_echo|glass|cloud$)/, 0.35, 0.08, 0],
+  [/^(obsidian)/, 1.2, 0.12, 0],
+  [/^(glaze_|polished_stone|chiseled_stone|smooth|cut_sandstone|ancient_pillar|lamp_stone)/, 1.2, 0.34, 0],
+  [/(_ore)$/, 2.3, 0.72, 0],
+  [/^(stone|deepstone|cobblestone|deep_cobble|stone_bricks|mossy_bricks|cracked_bricks|deep_bricks|deep_tiles|bricks|ancient_bricks|ancient_carved|bedrock|redrock|sandstone|terra|terracotta|furnace|dispenser|drill|observer|placer|forge|resonator|seal_door|pedestal|waystone|altar|urn)/, 2.6, 0.82, 0],
+  [/^(dirt|farmland|mud|clay|gravel|mycel|pale_soil|pale_side|redsand|sand)/, 1.4, 0.94, 0],
+  [/^(snow)/, 0.7, 0.62, 0],
+  [/(_log|_log_top|mush_stem)/, 2.2, 0.78, 0],
+  [/(_planks|bookshelf|chest|workbench|barrel|trapdoor|oak_door|ladder|note_block|thatch|daylight)/, 1.6, 0.68, 0],
+  [/(_leaves|grass|fern|vines|seagrass|reeds|moss|lily_pad|cactus)/, 1.1, 0.58, 0],
+  [/^(felt_|bed_)/, 0.9, 0.98, 0],
+];
+function matFor(name) {
+  for (const [re, k, r, m] of MAT_RULES) if (re.test(name)) return [k, r, m];
+  return [1.3, 0.75, 0];
+}
+
+export function buildMaterialMaps(tex = buildBlockTextures()) {
+  const n = tex.layers;
+  const out = new Uint8Array(n * S * S * 4);
+  const h = new Float32Array(S * S);
+  for (let l = 0; l < n; l++) {
+    const name = tex.names[l] || '';
+    const [k, rough, metal] = matFor(name);
+    const src = tex.data.subarray(l * S * S * 4, (l + 1) * S * S * 4);
+    for (let i = 0; i < S * S; i++) {
+      const a = src[i * 4 + 3];
+      h[i] = a < 80 ? 0 : (src[i * 4] * 0.299 + src[i * 4 + 1] * 0.587 + src[i * 4 + 2] * 0.114) / 255;
+    }
+    const H = (x, y) => h[(((y % S) + S) % S) * S + (((x % S) + S) % S)];
+    // a light blur keeps single noisy texels from turning into needles
+    const hb = (x, y) => H(x, y) * 0.5 + (H(x + 1, y) + H(x - 1, y) + H(x, y + 1) + H(x, y - 1)) * 0.125;
+    for (let y = 0; y < S; y++) for (let x = 0; x < S; x++) {
+      const dx = (hb(x + 1, y) - hb(x - 1, y)) * k;
+      const dy = (hb(x, y + 1) - hb(x, y - 1)) * k;
+      let nx = -dx, ny = -dy, nz = 1;
+      const len = Math.hypot(nx, ny, nz);
+      nx /= len; ny /= len;
+      // bright texels on rough materials are a little smoother (worn tops of cobbles, polish)
+      const r = Math.max(0.04, Math.min(1, rough - (H(x, y) - 0.5) * 0.12 * (1 - metal)));
+      const o = (l * S * S + y * S + x) * 4;
+      out[o] = Math.round((nx * 0.5 + 0.5) * 255);
+      out[o + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      out[o + 2] = Math.round(r * 255);
+      out[o + 3] = Math.round(metal * 255);
+    }
+  }
+  return { size: S, layers: n, data: out };
+}
+
+// plain box-filtered mips for the material array (normals are renormalised in the shader)
+export function buildMatMips(data, layers, size) {
+  const levels = [data];
+  let s = size, cur = data;
+  while (s > 1) {
+    const hh = s >> 1;
+    const o = new Uint8Array(layers * hh * hh * 4);
+    for (let l = 0; l < layers; l++) for (let y = 0; y < hh; y++) for (let x = 0; x < hh; x++) {
+      for (let c = 0; c < 4; c++) {
+        let v = 0;
+        for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 2; dx++) v += cur[(l * s * s + (y * 2 + dy) * s + x * 2 + dx) * 4 + c];
+        o[(l * hh * hh + y * hh + x) * 4 + c] = v / 4;
+      }
+    }
+    levels.push(o); cur = o; s = hh;
+  }
+  return levels;
+}

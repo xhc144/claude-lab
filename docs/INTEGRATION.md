@@ -108,3 +108,42 @@ git push origin recovered-project
 新增 `tensora/`：零依赖的 AI 基础设施控制台前端（API 网关、训练平台、GPU 集群与费用），数据全部为浏览器内模拟。发布只复制单文件构建 `tensora/dist/tensora.html` → `docs/tensora/index.html`，并在导航页新增「产品界面原型」入口；`scripts/build-pages.mjs` 已把 tensora 加入构建与白名单复制列表。
 
 验证：源码版与单文件版 Playwright 各 12/12（桌面 11 个流程含命令面板、创建密钥、模型 Playground、训练向导、任务控制、集群抽屉与排空、充值与通知、路由切换关闭浮层；手机 390px 宽度十个页面无横向滚动及底部导航）；`node scripts/check-pages.mjs` 通过。
+
+
+## 2026-10-14 后续成果整合
+
+刷新远端后的基线为 `35a5afc2524a4162e28a9cd9de3b9e1d32f61a0a`，共 6 个远端分支，无开放 PR。新分支有 24 个独有提交；两个旧分支此前已完整并入 main。仓库可见性、Pages 的 `main:/docs` 来源与安全设置保持不变。
+
+| 分支 | 合并或恢复 tip SHA | 本轮成果 |
+| --- | --- | --- |
+| `claude/awesome-meitner-yckpzc` | `c57d02c4404fe25d2ee9a88b8b12b27527dc537d` | Myriad，此前已合并 |
+| `claude/peaceful-gauss-vfsup7` | `ae2122a47767f46daf1f9a530b2a5e9bed50182f` | Mojing，此前已合并 |
+| `claude/cool-gauss-dhw8cz` | `9bd24a7cdddd4eb907823b760e4fa4d6dacc7ea9` | Tensora：10 页纯模拟控制台 |
+| `claude/gallant-ritchie-s846wt` | `cd770260b27c8b287f57b0947743e17d528897ec` | Emberstack：卡牌策略、本地自主 AI、28 关与额外模式 |
+| `claude/dreamy-dijkstra-8te314` | `8fe675d8b1813e3feeed09a5d3613310f1da6131` | Echowild：HDR 渲染、村落交易、旅程、生存与创造模式 |
+
+保留原历史的三个合并提交：
+
+- `1bc54788c652ee2b47644cce595921ae914c10ae` — Tensora。
+- `275e10b319e030b9851816edf9f723328b9dec19` — Emberstack，导航与构建配置采用项目并集。
+- `0d74c5d9c25928e06134f11f87b8e89bb1483506` — Echowild，保留新加载页与纯文本世界名称处理、小屏菜单适配。
+
+公开导航包含 5 个浏览器交互项目、1 个产品界面原型、6 套数学模板、2 部影片及 1 个仅本地运行的桌面源码项目。Tensora 的密钥、训练、GPU、充值、邀请与统计全部为模拟，不连接后台；页面常驻演示说明，文件导入仅使用名称与大小，不上传、不读取内容，也不做实际去重或隐私扫描。Emberstack 的 AI 在浏览器内执行规则、规划与战术，没有外部模型调用。两项目的在线字体来自 Google Fonts，离线使用系统字体回退。
+
+新分支新增内容经源码与历史启发扫描未发现真实凭据、意外私人文件或安装包；最终 662 个追踪文本文件的高置信 token/私钥形状扫描无命中。此检查不构成对所有历史和二进制的完整安全鉴定。Hongyan 的隔离边界保持不变，未运行历史安装包。没有访问或修改 MIT/GTM 工程。
+
+本轮修复：Tensora 的实时曲线在重复横坐标采样时可能产生 NaN SVG；采样时间现保持单调，平滑曲线支持垂直退化段，并增加重复横坐标和倒退时钟回归测试。手机数据集预览抽屉的网格最小宽度也已修复，关闭按钮保持在屏内，并加入可关闭与正文边界回归检查。CSS 相对链接检查改为完整消费带引号的 SVG data URI，仍检查普通相对路径，避免将 SVG 内部 `url(%23n)` 误识别为外部资源。
+
+删除候选仅限上表完整 tip 已可从发布后的 main 到达、部署验证通过、远端 tip 未变化且无开放 PR/新写入迹象的分支；若检查不通过即保留。恢复可使用本记录前述 `git branch recovered-project <tip SHA>` 方法。
+
+
+本轮最终发布前验证：
+
+- 单元测试共 158/158：MathScape 50、Myriad 26、交互实验室 14、Echowild 47、Emberstack 19、Tensora 2。
+- 新项目浏览器测试：Tensora 源码 13/13、单文件 13/13（含手机抽屉）；Emberstack 各 7/7；Echowild 各 9/9。使用系统 Chromium；Echowild 使用软件 WebGL，结果不代表真实显卡性能。
+- Emberstack 的 28 关 balanced 策略、单种子快速 AI 验证全部获胜，不代表所有策略与种子均已覆盖。
+- 发布目录独立浏览器检查 16/16：九个在线入口、390px 导航、Tensora 十路由/演示导入/抽屉边界、Emberstack 真实触摸拖牌与观战、Echowild 手机菜单、两影片媒体就绪。字体回退检查使用空 CSS 响应模拟 Google Fonts 不可用。
+- 整站构建成功；静态白名单 137 个文件、319 个相对引用通过。MathScape、Myriad、交互实验室、Mojing 与影片原发布文件没有内容变更。
+- Tensora 首次浏览器测试发现两个 NaN SVG 错误，修复并复测全部通过；手机抽屉溢出也在视觉审查发现后修复。没有忽略这些错误或降低原断言。初次依赖安装因默认 npm 缓存目录不可写失败，改用可写临时缓存后成功，没有修改系统目录权限。
+
+公共网址与提交对应的部署结果在推送后核验；仅在成功核验后进行分支清理。

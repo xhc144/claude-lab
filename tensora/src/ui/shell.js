@@ -72,6 +72,7 @@ export function renderShell(app) {
           <button class="avatar" id="user-btn" type="button" aria-haspopup="menu" aria-label="账户菜单">${state.user.initials}</button>
         </div>
       </header>
+      <p class="demo-notice" role="note">演示环境 · 所有数据均为模拟；不会调用真实模型、执行训练、产生交易或发送邮件。</p>
       <main id="view" class="view" tabindex="-1"></main>
     </div>
 

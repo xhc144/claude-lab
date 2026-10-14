@@ -17,10 +17,10 @@ export default defineConfig({
     viewport: { width: 1280, height: 720 },
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    launchOptions: { args: GL_ARGS },
+    launchOptions: { args: GL_ARGS, executablePath: process.env.PLAYWRIGHT_CHROMIUM || undefined },
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 720 }, launchOptions: { args: GL_ARGS } } },
+    { name: 'chromium', use: { ...devices['Desktop Chrome'], viewport: { width: 1280, height: 720 }, launchOptions: { args: GL_ARGS, executablePath: process.env.PLAYWRIGHT_CHROMIUM || undefined } } },
   ],
   webServer: {
     command: `node scripts/serve.mjs --port ${PORT}`,

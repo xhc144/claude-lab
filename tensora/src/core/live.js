@@ -79,8 +79,9 @@ export const live = {
   },
 
   step() {
-    this.t = Date.now();
     const last = this.hist[this.hist.length - 1];
+    // Keep one-second samples ordered even when the wall clock repeats or moves backwards.
+    this.t = Math.max(Date.now(), last.t + 1000);
     const target = 240 * dailyFactor(this.t);
     let v = clamp(last.v + R.gauss() * 10 + (target - last.v) * 0.12, 60, 900);
     if (R() < 0.025) v *= R.range(1.18, 1.4); // short bursts make the live curve worth watching

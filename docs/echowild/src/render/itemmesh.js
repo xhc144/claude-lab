@@ -12,8 +12,11 @@ export class MeshBuilder {
   constructor() { this.v = []; this.i = []; this.n = 0; }
   quad(p, nrm, col, uv, layer) {
     // p: 4 corners [x,y,z]; uv: 4 [u,v]
+    // col: one rgba for the quad, or four (one per corner)
+    const per = Array.isArray(col[0]);
     for (let k = 0; k < 4; k++) {
-      this.v.push(p[k][0], p[k][1], p[k][2], nrm[0], nrm[1], nrm[2], col[0], col[1], col[2], col[3], uv ? uv[k][0] : 0, uv ? uv[k][1] : 0, layer);
+      const c = per ? col[k] : col;
+      this.v.push(p[k][0], p[k][1], p[k][2], nrm[0], nrm[1], nrm[2], c[0], c[1], c[2], c[3], uv ? uv[k][0] : 0, uv ? uv[k][1] : 0, layer);
     }
     const b = this.n;
     this.i.push(b, b + 1, b + 2, b, b + 2, b + 3);
@@ -104,6 +107,7 @@ export function blockTextureSprite(layer) {
 // Cache of item meshes keyed by item id.
 export class ItemMeshes {
   constructor(renderer) { this.r = renderer; this.cache = new Map(); }
+  dispose() { for (const m of this.cache.values()) if (m && m.vao) this.r.deleteMesh(m); this.cache.clear(); }
   get(id) {
     let m = this.cache.get(id);
     if (m) return m;

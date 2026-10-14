@@ -19,9 +19,10 @@ for(const file of files){
  if(!['.html','.css','.js'].includes(ext))continue;
  const text=readFileSync(file,'utf8');
  if(/高二|清华大学求真|备考|mit-ocw-notes|ai-self-study|repository-index/.test(text))failures.push('Out-of-scope personal data: '+rel);
- const patterns=ext==='.html'?[/(?:src|href)=["']([^"']+)["']/g]:ext==='.css'?[/url\(["']?([^\)"']+)["']?\)/g]:[/from\s+["'](\.[^"']+)["']/g,/new URL\(["'](\.[^"']+)["']/g];
+ // Consume a complete quoted URL, including SVG data URIs that contain nested url(...).
+ const patterns=ext==='.html'?[/(?:src|href)=["']([^"']+)["']/g]:ext==='.css'?[/url\(\s*(?:"([^"]*)"|'([^']*)'|([^\)\s]*))\s*\)/g]:[/from\s+["'](\.[^"']+)["']/g,/new URL\(["'](\.[^"']+)["']/g];
  for(const pattern of patterns)for(const m of text.matchAll(pattern)){
-  const ref=m[1];if(/^(https?:|data:|blob:|mailto:|#)/.test(ref))continue;
+  const ref=m[1]??m[2]??m[3];if(/^(https?:|data:|blob:|mailto:|#)/.test(ref))continue;
   const clean=ref.split(/[?#]/)[0];if(!clean)continue;
   if(clean.startsWith('/')){failures.push('Root-absolute path: '+rel+' → '+clean);continue}
   let target=resolve(dirname(file),clean);refs++;
