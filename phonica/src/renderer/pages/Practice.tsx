@@ -52,6 +52,8 @@ export function Practice() {
   const [attempts, setAttempts] = useState<Record<string, Attempt[]>>({});
   const [shown, setShown] = useState<Attempt | null>(null);
   const [clip, setClip] = useState(false);
+  const [shadow, setShadow] = useState(false);
+  const resultRef = useRef<HTMLDivElement>(null);
   const rec = useRef<Recorder | null>(null);
   const timer = useRef<number>(0);
   const silentFor = useRef(0);
@@ -96,13 +98,18 @@ export function Practice() {
         (t as any).__voice = voice;
         setTts(t);
       }
-      await player.play(t.url, { tag: 'tts-ref', loop: loopRef });
+      await player.play(t.url, { tag: 'tts-ref', loop: loopRef && !shadow });
+      if (shadow) {
+        const el = player.el;
+        const onEnd = () => { el.removeEventListener('ended', onEnd); if (player.src === t!.url) void start(); };
+        el.addEventListener('ended', onEnd);
+      }
     } catch (e) {
       toast(`标准发音生成失败：${(e as Error).message}`, 'error');
     } finally {
       setTtsBusy(false);
     }
-  }, [tts, unit, voice, speed, loopRef]);
+  }, [tts, unit, voice, speed, loopRef, shadow]);
 
   const start = async () => {
     if (!unit) return toast('请先输入要朗读的英文', 'error');
@@ -169,6 +176,7 @@ export function Practice() {
       setAttempts((m) => ({ ...m, [unit]: [...(m[unit] ?? []), a] }));
       setShown(a);
       bumpHistory();
+      setTimeout(() => resultRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
     } catch (e) {
       toast(`评测失败：${(e as Error).message}`, 'error');
     } finally {
@@ -275,6 +283,7 @@ export function Practice() {
                 <input type="range" min={0.5} max={1.5} step={0.05} value={speed} onChange={(e) => setSpeed(Number(e.target.value))} style={{ width: 120 }} />
                 <span className="small" style={{ width: 40 }}>{speed.toFixed(2)}×</span>
                 <button className={`btn sm ${loopRef ? 'active' : ''}`} onClick={() => setLoopRef(!loopRef)}><IconLoop />循环</button>
+                <label className="row small" style={{ gap: 6 }} title="播放完标准发音后自动开始录音"><Switch on={shadow} onChange={setShadow} />跟读模式</label>
                 <span className="tiny muted right"><span className="kbd">空格</span> 开始/结束录音　<span className="kbd">P</span> 播放标准发音</span>
               </div>
             </>
@@ -337,6 +346,7 @@ export function Practice() {
           </div>
         )}
 
+        <div ref={resultRef} style={{ scrollMarginTop: 12 }} />
         {shown && shown.result.text === unit && (
           <ResultView key={shown.entry.id} recordId={shown.entry.id} result={shown.result} audioUrl={shown.audioUrl} ai={shown.ai} onRetry={() => void start()} />
         )}
