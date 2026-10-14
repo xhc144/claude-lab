@@ -1,0 +1,1150 @@
+{
+  "schema_version": "1.0",
+  "created_on": "2026-10-11",
+  "analysis_identity": "AI专家分析，含六例局部数学验证；不是官方命题说明或真人难度测量",
+  "scope": {
+    "exam_version": "2027首年新考纲",
+    "historical_sample_years": [
+      2021,
+      2022,
+      2023,
+      2024,
+      2025
+    ],
+    "read_question_count": 253,
+    "locally_verified_case_count": 6,
+    "sources": [
+      "questions.json",
+      "papers.json",
+      "syllabus-2027.json",
+      "teacher-guidance.md",
+      "evidence-policy.md",
+      "question-bank.md"
+    ]
+  },
+  "stats": {
+    "paper_count": 23,
+    "question_count": 253,
+    "count_unit": "每道大题一个ID，保留其全部小问",
+    "stage_stats": [
+      {
+        "stage": "零试",
+        "paper_count": 11,
+        "question_count": 160,
+        "question_share_percent": 63.24,
+        "syllabus_code_question_counts": {
+          "M0": 23,
+          "M1-A": 78,
+          "M1-L": 60,
+          "M1-G": 13,
+          "M1-T": 10,
+          "M2-P": 6,
+          "M2-C": 29,
+          "M2-S": 1,
+          "M2-N": 3,
+          "M2-L": 0,
+          "M2-O": 11,
+          "P": 0
+        }
+      },
+      {
+        "stage": "一试",
+        "paper_count": 6,
+        "question_count": 48,
+        "question_share_percent": 18.97,
+        "syllabus_code_question_counts": {
+          "M0": 3,
+          "M1-A": 27,
+          "M1-L": 20,
+          "M1-G": 10,
+          "M1-T": 5,
+          "M2-P": 2,
+          "M2-C": 8,
+          "M2-S": 0,
+          "M2-N": 1,
+          "M2-L": 0,
+          "M2-O": 6,
+          "P": 0
+        }
+      },
+      {
+        "stage": "女子",
+        "paper_count": 5,
+        "question_count": 30,
+        "question_share_percent": 11.86,
+        "syllabus_code_question_counts": {
+          "M0": 4,
+          "M1-A": 13,
+          "M1-L": 14,
+          "M1-G": 7,
+          "M1-T": 7,
+          "M2-P": 2,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 5,
+          "P": 0
+        }
+      },
+      {
+        "stage": "CACA",
+        "paper_count": 1,
+        "question_count": 15,
+        "question_share_percent": 5.93,
+        "syllabus_code_question_counts": {
+          "M0": 3,
+          "M1-A": 8,
+          "M1-L": 6,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      }
+    ],
+    "year_stats": [
+      {
+        "year": 2021,
+        "paper_count": 6,
+        "question_count": 62,
+        "paper_counts_by_stage": {
+          "一试": 2,
+          "零试": 3,
+          "女子": 1
+        },
+        "question_counts_by_stage": {
+          "一试": 16,
+          "零试": 40,
+          "女子": 6
+        },
+        "syllabus_code_question_counts": {
+          "M0": 12,
+          "M1-A": 29,
+          "M1-L": 23,
+          "M1-G": 7,
+          "M1-T": 2,
+          "M2-P": 0,
+          "M2-C": 7,
+          "M2-S": 0,
+          "M2-N": 2,
+          "M2-L": 0,
+          "M2-O": 6,
+          "P": 0
+        }
+      },
+      {
+        "year": 2022,
+        "paper_count": 4,
+        "question_count": 44,
+        "paper_counts_by_stage": {
+          "零试": 2,
+          "一试": 1,
+          "女子": 1
+        },
+        "question_counts_by_stage": {
+          "零试": 30,
+          "一试": 8,
+          "女子": 6
+        },
+        "syllabus_code_question_counts": {
+          "M0": 6,
+          "M1-A": 20,
+          "M1-L": 17,
+          "M1-G": 5,
+          "M1-T": 6,
+          "M2-P": 2,
+          "M2-C": 8,
+          "M2-S": 1,
+          "M2-N": 2,
+          "M2-L": 0,
+          "M2-O": 7,
+          "P": 0
+        }
+      },
+      {
+        "year": 2023,
+        "paper_count": 4,
+        "question_count": 44,
+        "paper_counts_by_stage": {
+          "零试": 2,
+          "一试": 1,
+          "女子": 1
+        },
+        "question_counts_by_stage": {
+          "零试": 30,
+          "一试": 8,
+          "女子": 6
+        },
+        "syllabus_code_question_counts": {
+          "M0": 4,
+          "M1-A": 24,
+          "M1-L": 18,
+          "M1-G": 5,
+          "M1-T": 4,
+          "M2-P": 3,
+          "M2-C": 12,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      },
+      {
+        "year": 2024,
+        "paper_count": 5,
+        "question_count": 59,
+        "paper_counts_by_stage": {
+          "零试": 2,
+          "女子": 1,
+          "一试": 1,
+          "CACA": 1
+        },
+        "question_counts_by_stage": {
+          "零试": 30,
+          "女子": 6,
+          "一试": 8,
+          "CACA": 15
+        },
+        "syllabus_code_question_counts": {
+          "M0": 6,
+          "M1-A": 30,
+          "M1-L": 27,
+          "M1-G": 7,
+          "M1-T": 6,
+          "M2-P": 3,
+          "M2-C": 10,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 5,
+          "P": 0
+        }
+      },
+      {
+        "year": 2025,
+        "paper_count": 4,
+        "question_count": 44,
+        "paper_counts_by_stage": {
+          "零试": 2,
+          "女子": 1,
+          "一试": 1
+        },
+        "question_counts_by_stage": {
+          "零试": 30,
+          "女子": 6,
+          "一试": 8
+        },
+        "syllabus_code_question_counts": {
+          "M0": 5,
+          "M1-A": 23,
+          "M1-L": 15,
+          "M1-G": 7,
+          "M1-T": 5,
+          "M2-P": 3,
+          "M2-C": 8,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 4,
+          "P": 0
+        }
+      }
+    ],
+    "paper_stats": [
+      {
+        "paper_id": "TACA-202103-YI",
+        "label": "2021年3月TACA一试",
+        "year": 2021,
+        "month": 3,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 5,
+          "M1-L": 3,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 0,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202103-ZERO",
+        "label": "2021年3月TACA零试",
+        "year": 2021,
+        "month": 3,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 4,
+          "M1-A": 7,
+          "M1-L": 5,
+          "M1-G": 1,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 1,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202104-ZERO",
+        "label": "2021年4月TACA零试",
+        "year": 2021,
+        "month": 4,
+        "stage": "零试",
+        "question_count": 10,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 4,
+          "M1-L": 4,
+          "M1-G": 1,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 0,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202109-ZERO",
+        "label": "2021年9月TACA零试",
+        "year": 2021,
+        "month": 9,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 4,
+          "M1-A": 6,
+          "M1-L": 6,
+          "M1-G": 2,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 1,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202110-YI",
+        "label": "2021年10月TACA一试",
+        "year": 2021,
+        "month": 10,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 4,
+          "M1-L": 3,
+          "M1-G": 1,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 1,
+          "M2-S": 0,
+          "M2-N": 1,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "GIRLS-202110",
+        "label": "2021年10月女子场",
+        "year": 2021,
+        "month": 10,
+        "stage": "女子",
+        "question_count": 6,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 3,
+          "M1-L": 2,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 0,
+          "M2-C": 1,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202205-ZERO",
+        "label": "2022年5月TACA零试",
+        "year": 2022,
+        "month": 5,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 6,
+          "M1-L": 5,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 0,
+          "M2-C": 5,
+          "M2-S": 1,
+          "M2-N": 1,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202208-ZERO",
+        "label": "2022年8月TACA零试",
+        "year": 2022,
+        "month": 8,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 9,
+          "M1-L": 6,
+          "M1-G": 1,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 1,
+          "M2-S": 0,
+          "M2-N": 1,
+          "M2-L": 0,
+          "M2-O": 3,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202209-YI",
+        "label": "2022年9月TACA一试",
+        "year": 2022,
+        "month": 9,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 4,
+          "M1-L": 4,
+          "M1-G": 2,
+          "M1-T": 2,
+          "M2-P": 1,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "GIRLS-202211",
+        "label": "2022年11月女子场",
+        "year": 2022,
+        "month": 11,
+        "stage": "女子",
+        "question_count": 6,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 1,
+          "M1-L": 2,
+          "M1-G": 1,
+          "M1-T": 3,
+          "M2-P": 1,
+          "M2-C": 2,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202304-ZERO",
+        "label": "2023年4月TACA零试",
+        "year": 2023,
+        "month": 4,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 9,
+          "M1-L": 5,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 5,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 0,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202308-ZERO",
+        "label": "2023年8月TACA零试",
+        "year": 2023,
+        "month": 8,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 8,
+          "M1-L": 6,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 2,
+          "M2-C": 3,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202310-YI",
+        "label": "2023年10月TACA一试",
+        "year": 2023,
+        "month": 10,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 4,
+          "M1-L": 4,
+          "M1-G": 1,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 3,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "GIRLS-202311",
+        "label": "2023年11月女子场",
+        "year": 2023,
+        "month": 11,
+        "stage": "女子",
+        "question_count": 6,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 3,
+          "M1-L": 3,
+          "M1-G": 2,
+          "M1-T": 2,
+          "M2-P": 0,
+          "M2-C": 1,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 0,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202405-ZERO",
+        "label": "2024年5月TACA零试",
+        "year": 2024,
+        "month": 5,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 7,
+          "M1-L": 7,
+          "M1-G": 1,
+          "M1-T": 3,
+          "M2-P": 0,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202408-ZERO",
+        "label": "2024年8月TACA零试",
+        "year": 2024,
+        "month": 8,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 7,
+          "M1-L": 6,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 2,
+          "M2-C": 2,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "GIRLS-202410",
+        "label": "2024年10月女子场",
+        "year": 2024,
+        "month": 10,
+        "stage": "女子",
+        "question_count": 6,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 3,
+          "M1-L": 4,
+          "M1-G": 2,
+          "M1-T": 0,
+          "M2-P": 0,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202411-YI",
+        "label": "2024年11月TACA一试",
+        "year": 2024,
+        "month": 11,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 5,
+          "M1-L": 4,
+          "M1-G": 2,
+          "M1-T": 1,
+          "M2-P": 0,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 0,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "CACA-202412",
+        "label": "2024年12月CACA数学2",
+        "year": 2024,
+        "month": 12,
+        "stage": "CACA",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 3,
+          "M1-A": 8,
+          "M1-L": 6,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202504-ZERO",
+        "label": "2025年4月TACA零试",
+        "year": 2025,
+        "month": 4,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 8,
+          "M1-L": 5,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 2,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "GIRLS-202510",
+        "label": "2025年10月女子场",
+        "year": 2025,
+        "month": 10,
+        "stage": "女子",
+        "question_count": 6,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 1,
+          "M1-A": 3,
+          "M1-L": 3,
+          "M1-G": 1,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 0,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 1,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202510-ZERO",
+        "label": "2025年10月TACA零试",
+        "year": 2025,
+        "month": 10,
+        "stage": "零试",
+        "question_count": 15,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 2,
+          "M1-A": 7,
+          "M1-L": 5,
+          "M1-G": 2,
+          "M1-T": 2,
+          "M2-P": 0,
+          "M2-C": 2,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 0,
+          "P": 0
+        }
+      },
+      {
+        "paper_id": "TACA-202511-YI",
+        "label": "2025年11月TACA一试",
+        "year": 2025,
+        "month": 11,
+        "stage": "一试",
+        "question_count": 8,
+        "source_kind": "用户提供整理卷，未独立核验官方原卷",
+        "syllabus_code_question_counts": {
+          "M0": 0,
+          "M1-A": 5,
+          "M1-L": 2,
+          "M1-G": 3,
+          "M1-T": 1,
+          "M2-P": 1,
+          "M2-C": 4,
+          "M2-S": 0,
+          "M2-N": 0,
+          "M2-L": 0,
+          "M2-O": 2,
+          "P": 0
+        }
+      }
+    ],
+    "syllabus_code_question_counts": {
+      "M0": 33,
+      "M1-A": 126,
+      "M1-L": 100,
+      "M1-G": 31,
+      "M1-T": 23,
+      "M2-P": 11,
+      "M2-C": 45,
+      "M2-S": 1,
+      "M2-N": 4,
+      "M2-L": 0,
+      "M2-O": 24,
+      "P": 0
+    },
+    "domain_question_counts": {
+      "分析": 128,
+      "线性代数": 99,
+      "群论": 29,
+      "几何与拓扑": 6,
+      "最优化": 23,
+      "中学数学": 15,
+      "组合": 46,
+      "数值分析": 3,
+      "代数": 7,
+      "数论": 18,
+      "图论": 3,
+      "统计": 1,
+      "概率": 11,
+      "几何": 17,
+      "拓扑": 3,
+      "复数": 1
+    },
+    "syllabus_relation_counts": {
+      "直接对应": 201,
+      "拓展迁移": 39,
+      "基础支撑": 11,
+      "需核对": 2
+    },
+    "transcription_status_counts": {
+      "已目视核对": 253
+    },
+    "multi_domain_question_count": 127,
+    "multi_syllabus_code_question_count": 121,
+    "analysis_or_linear_algebra_question_count": 205,
+    "math1_any_code_question_count": 229,
+    "math2_any_code_question_count": 78,
+    "frequency_interpretation": "按已分类历史整理题统计；各代码可重叠，不可换算2027考试概率。"
+  },
+  "repeat_or_near_repeat_examples": [
+    {
+      "ids": [
+        "TACA-202208-ZERO-Q05",
+        "TACA-202408-ZERO-Q01"
+      ],
+      "relation": "完整数学题面同一余割积分与100倍率取整，仅记号规范有差别"
+    },
+    {
+      "ids": [
+        "TACA-202304-ZERO-Q03",
+        "TACA-202504-ZERO-Q11"
+      ],
+      "relation": "同一个余弦平方积分，外部取整倍率从10改为100"
+    },
+    {
+      "ids": [
+        "TACA-202110-YI-Q01",
+        "TACA-202411-YI-Q01"
+      ],
+      "relation": "同一端点集中结构但权函数及指数不同；不能当原题复现"
+    },
+    {
+      "ids": [
+        "TACA-202408-ZERO-Q14",
+        "CACA-202412-Q10"
+      ],
+      "relation": "同类带偏移二项型单调问题，但参数与指数位置不同；不得硬认同题"
+    }
+  ],
+  "representative_cases": [
+    {
+      "id": "GIRLS-202211-Q06",
+      "label": "2022年11月女子场第6题",
+      "title": "随机符号对称矩阵行列式的平均",
+      "source_pages": [
+        1
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "已局部验证的真实融合",
+      "essential_fields": [
+        "线性代数",
+        "概率",
+        "组合"
+      ],
+      "structural_dependency": [
+        "行列式按置换展开",
+        "独立均匀上三角符号的奇次矩为0",
+        "仅无固定点的对合置换存活，转为完全配对计数"
+      ],
+      "knowledge_span": "行列式置换展开、期望线性性与独立性、排列的循环分解。",
+      "discovery_demand": "关键是看到同一个非对角元在对称位置重复出现；不能把n²个位置当独立变量。",
+      "calculation_burden": "转化后只需计算配对数；没有大阶行列式的逐项数值运算。",
+      "local_verification": {
+        "status": "解析验证结构并得到该题结论",
+        "result": "n为奇数时平均值0；n为偶数时平均值(-1)^(n/2)(n-1)!!。",
+        "argument": "上三角连同对角元独立均匀取±1。固定点给某对角元一次幂，长度至少3的循环给某无向边一次幂，期望均为0。只有由二循环构成的置换存活，每项乘积1，符号(-1)^(n/2)，个数(n-1)!!。"
+      },
+      "limits": "验证针对题面所有符号对称矩阵等权平均。不是随机矩阵课程整体难度评定；较大n的算法时间不是本题主要手算负担。",
+      "original_notes": []
+    },
+    {
+      "id": "TACA-202310-YI-Q07",
+      "label": "2023年10月TACA一试第7题",
+      "title": "对称群标准表示的特征标及平方和",
+      "source_pages": [
+        2
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "已局部验证的线性代数—组合桥接（群论背景）",
+      "essential_fields": [
+        "线性代数",
+        "组合计数"
+      ],
+      "structural_dependency": [
+        "全置换空间分解为常向量直线与和为0子空间",
+        "迹化为不动点数减1",
+        "平方和化为单点与有序点对的不动计数"
+      ],
+      "knowledge_span": "置换矩阵迹、稳定子空间与直和；基础计数。一般不可约表示理论并非这条路线的先决条件。",
+      "discovery_demand": "需要先从限制算子的迹还原到全空间，再把二阶矩拆为F和F(F-1)。",
+      "calculation_burden": "只计算(n-1)!、(n-2)!两种计数，无须枚举n!个置换。",
+      "local_verification": {
+        "status": "解析验证结构并得到该题结论",
+        "result": "令F(τ)为不动点数，则χ=F-1；χ取-1,0,…,n-3,n-1（n=2时为{-1,1}）；Σχ²=n!。",
+        "argument": "F可能为0,…,n-2,n，不能为n-1。ΣF=n(n-1)!=n!，ΣF(F-1)=n(n-1)(n-2)!=n!；故Σ(F-1)²=ΣF(F-1)-ΣF+n!=n!。"
+      },
+      "limits": "题面属于群论/表示背景，但本条主路线没有额外调用必需的群论定理，故不计为三板块融合。题面按x_{τ(i)}定义算子，复合约定可能是反表示；本处只用迹和计数，不依赖该约定。",
+      "original_notes": [
+        "原题ρ按x_{τ(i)}定义，复合约定可能对应反表示；迹和平方和不受这一约定影响，不改写索引。"
+      ]
+    },
+    {
+      "id": "TACA-202304-ZERO-Q09",
+      "label": "2023年4月TACA零试第9题",
+      "title": "对角矩阵秩一扰动的最大实根极限",
+      "source_pages": [
+        3
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "已局部验证的真实融合",
+      "essential_fields": [
+        "线性代数",
+        "分析"
+      ],
+      "structural_dependency": [
+        "识别D-λ11ᵀ为秩一扰动",
+        "用行列式引理消去大阶矩阵",
+        "有限有理和望远镜相消并取极限"
+      ],
+      "knowledge_span": "秩一行列式公式（可先用消元证明）、正数列与望远镜求和。",
+      "discovery_demand": "最难的观察在于把所有非对角-λ统一放进同一个秩一项，避免错误地把对角也重减λ。",
+      "calculation_burden": "一条有限和；矩阵阶数n-1不转化为n³运算。",
+      "local_verification": {
+        "status": "解析验证结构并得到该题结论",
+        "result": "λ_n=[Σ_{i=1}^{n-1}1/(i(i+2))]^{-1}，lim λ_n=4/3；题面取整值133。",
+        "argument": "D=diag(i(i+2))，det(D-λ11ᵀ)=det(D)(1-λΣ1/[i(i+2)])。该行列式关于λ实际为一次，唯一根为正；1/[i(i+2)]=(1/i-1/(i+2))/2，和趋3/4。"
+      },
+      "limits": "公式从n≥2开始；题目本来的limsup无需被当成存在多条谱分支的证据。此处已证明普通极限存在。",
+      "original_notes": [
+        "目视核对对角线为3−λ,8−λ,15−λ,…,(n²−1)−λ；原卷末行使用lim sup，已规范为limsup。"
+      ]
+    },
+    {
+      "id": "GIRLS-202510-Q06",
+      "label": "2025年10月女子场第6题",
+      "title": "高维球面上独立两点的平均弦长",
+      "source_pages": [
+        2
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "在明确分布解释后验证的真实融合",
+      "essential_fields": [
+        "球面几何/对称性",
+        "概率",
+        "分析"
+      ],
+      "structural_dependency": [
+        "利用球面对称性固定或旋转一点",
+        "把弦长化为内积的函数",
+        "二阶矩控制高维内积集中，转化为期望极限"
+      ],
+      "knowledge_span": "独立均匀球面分布、旋转对称性、均值方差与简单期望估计；无需完整高维积分公式。",
+      "discovery_demand": "应放弃直接计算任意n的球面面积积分，先找内积的均值与方差。",
+      "calculation_burden": "低维两次单变量积分；高维只用一个方差等式与一个连续性估计。",
+      "local_verification": {
+        "status": "在补明独立均匀面积分布的条件下，解析验证该题结论",
+        "result": "a_1=4/π，a_2=4/3，lim a_n=√2。",
+        "argument": "a1由均匀角差积分2|sin(θ/2)|得到；a2由固定北极后cosθ在[-1,1]均匀得到。令Z=X·Y，旋转对称性给EZ=0、EZ²=1/(n+1)。于是E|Z|≤1/√(n+1)，且|√(2-2Z)-√2|≤√2|Z|，故弦长期望趋√2。"
+      },
+      "limits": "原题未明确均匀分布，仅有独立不能决定期望。本题正式用作无条件诊断或考纲模拟前必须说明分布；不能默默把补充条件称为原题。",
+      "original_notes": [
+        "原卷只写“任取相互独立的两点”，未明写各点服从球面均匀面积分布；期望需分布才有定义，训练与解答应先说明采用自然的独立均匀分布。"
+      ]
+    },
+    {
+      "id": "TACA-202208-ZERO-Q06",
+      "label": "2022年8月TACA零试第6题",
+      "title": "三节点对三次多项式精确的求积权重",
+      "source_pages": [
+        2
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "已验证的基础桥接",
+      "essential_fields": [
+        "数值积分",
+        "线性代数"
+      ],
+      "structural_dependency": [
+        "对所有三次多项式成立转为四个基单项式约束",
+        "奇偶对称压缩约束",
+        "解矩条件得到唯一权重"
+      ],
+      "knowledge_span": "多项式空间基、积分的线性性、二次单项式积分。",
+      "discovery_demand": "“对任意f”应转成有限维检验，不是随机挑几个函数试算。",
+      "calculation_burden": "四个矩条件经对称只需三个独立方程，不需要一般求积算法。",
+      "local_verification": {
+        "status": "解析验证该题结论",
+        "result": "(c1,c2,c3)=(1/6,2/3,1/6)，比值(c2+c3)/c1=5。",
+        "argument": "f=1给权重和1；f=x给c1=c3；f=x²给c1+c3=1/3；f=x³自动满足。正权重条件均成立。"
+      },
+      "limits": "这是一个数值积分与线性空间的清晰桥接，知识和执行负担较小；不能据此说数值分析方向覆盖充分或所有融合题都难。",
+      "original_notes": []
+    },
+    {
+      "id": "TACA-202310-YI-Q02",
+      "label": "2023年10月TACA一试第2题",
+      "title": "光滑奇函数复合交换子的消失阶",
+      "source_pages": [
+        1
+      ],
+      "source_identity": "用户提供历史整理卷的完整题面转录，未独立核验官方原卷",
+      "case_role": "已验证的单板块计算校准",
+      "essential_fields": [
+        "分析"
+      ],
+      "structural_dependency": [
+        "光滑奇函数仅保留奇次有限Taylor jet",
+        "分别作两次复合并比较低阶系数",
+        "以显式多项式构造达到首个非零阶"
+      ],
+      "knowledge_span": "Peano型有限泰勒展开、复合展开、奇偶性；不要求函数解析或泰勒级数收敛。",
+      "discovery_demand": "必须识别三次、五次项自动交换抵消；知识少不等于观察容易。",
+      "calculation_burden": "两次复合到x^7；每个函数用x,x³,x⁵,x⁷四项，比较三个可能非平凡奇次系数。",
+      "local_verification": {
+        "status": "手工解析验证，并以截断多项式运算核对达到阶数的构造",
+        "result": "m=7；x^7系数=a3*b3*(b3-a3)/72+(a5*b3-a3*b5)/360。",
+        "argument": "写f=x+ax³+bx⁵+cx⁷+o(x⁷)，g=x+px³+qx⁵+rx⁷+o(x⁷)。交换差x³、x⁵系数均0，x⁷系数3ap(p-a)+2(bp-aq)。取f=x+x³、g=x+x⁵即系数-2，故最小阶7。a=a3/3!、b=a5/5!、p=b3/3!、q=b5/5!。"
+      },
+      "limits": "本题是单分析板块；代数化展开不是额外考纲板块。教师“1.3倍”只用于定性校准，不能由此给任何精确工时倍数。",
+      "original_notes": [
+        "原卷2023年10月数学一试第2题，PDF第1页。所有符号和“光滑奇函数”已目视；方法仅候选，未把m或系数作为已证明答案。"
+      ]
+    }
+  ],
+  "decision_rules": [
+    {
+      "id": "DR-01",
+      "name": "来源身份先行",
+      "trigger": "查询、选题或更新任何题目",
+      "action": "分别记录官方完整原卷、用户提供完整整理题面、考生回忆题、原创模拟；当前253题默认属于用户提供历史整理卷的完整转录，不能升级为独立核验官方原卷。",
+      "evidence": "papers.json的source_kind；questions.json的transcription_status与notes。",
+      "failure_guard": "完整转录是相对于所给整理卷的完整，不证明整理卷相对于真实考试没有遗漏或回忆误差。"
+    },
+    {
+      "id": "DR-02",
+      "name": "作答证据驱动诊断",
+      "trigger": "需要判断学生水平或定制训练",
+      "action": "收集原始作答、开始路线、被卡位置、实际用时、提示内容、最后证明；把缺口标为知识K、表示R、发现D、证明P或执行C。",
+      "evidence": "题库前置知识与本报告六例结构核验；teacher-guidance只提供阶段性教师意见。",
+      "failure_guard": "缺少作答时只列待诊断能力；不能因数分/高代曾被老师评价较好而省掉当前基础筛查。"
+    },
+    {
+      "id": "DR-03",
+      "name": "先按子目标选题",
+      "trigger": "已有缺口证据",
+      "action": "普通引导围绕当前主要子目标，按真实缺口选择基础锚点、近迁移或远迁移中的必要角色，不要求每轮凑齐三种或三题；内部明确必要前置、选题理由、2027列项关系与题面疑点，按请求呈现并保留待发现的结构。",
+      "evidence": "数学1旧题较充足，数学2统计/数值代数缺口显著。",
+      "failure_guard": "避免把标签同题、同一题变更取整倍率或做过的原题当作独立复测。"
+    },
+    {
+      "id": "DR-04",
+      "name": "根据失败类型补前置",
+      "trigger": "K/R/D/P/C已定位",
+      "action": "K补定义和最小例反例；R练等价表示；D给局部观察提示后撤去提示做平行题；P补量词边界和必要结论证明；C练有限阶/有限维执行并设误差检查。",
+      "evidence": "同一道题的知识跨度、发现难度、计算负担可以不同；2023泰勒题是明确校准案例。",
+      "failure_guard": "不要用整本教材重学代替局部补缺，也不要用答案讲解后的熟练复述证明结构发现已掌握。"
+    },
+    {
+      "id": "DR-05",
+      "name": "复测必须去提示且改变表面",
+      "trigger": "前置学习与练习完成",
+      "action": "延迟使用未做过的同结构题或明确标原创的平行题；改变矩阵阶数/图模型/函数包装，保持目标结构；记录无提示是否识别、证明是否闭合及手算是否稳定。",
+      "evidence": "本库已见余割积分完全重复、余弦平方积分仅取整倍率变化、端点积分同结构。",
+      "failure_guard": "评估迁移能力不以记住最终数值作为通过；不强制固定时间与过线分。"
+    },
+    {
+      "id": "DR-06",
+      "name": "新纲缺口单列训练",
+      "trigger": "新考纲列项在旧题样本不足",
+      "action": "为抽样、矩估计、极大似然、检验与p值、数值代数、迭代误差、梯度下降/线性规划、物理等设置2027考纲训练题；历史题保留历史身份。",
+      "evidence": "M2-S=1，M2-N=4，M2-L=0，P=0；M2-O标签多不代表算法充分覆盖。",
+      "failure_guard": "“本库无”不能推出“历届未考”；“考纲列明”不能推出某题一定出现。"
+    },
+    {
+      "id": "DR-07",
+      "name": "融合必须有推导依赖",
+      "trigger": "标注跨板块或设计较难原创模拟",
+      "action": "为每个拟计入板块写一项必需结论，做删除检验：去掉该项是否仍可原样完成主路线；区分必要融合、可选解释、情境包装。",
+      "evidence": "随机对称行列式、标准表示与固定点计数、球面距离的具体依赖；双标签不是证明。",
+      "failure_guard": "不把积分视为均匀期望的改名、有限单位根求和或高中二次函数极值自动算成大学概率/分析/优化融合。"
+    },
+    {
+      "id": "DR-08",
+      "name": "模拟命题先限制知识后设计结构",
+      "trigger": "原创2027考纲训练/模拟",
+      "action": "先确定官方列项和最低必要工具，再设主要能力；默认教师标准下的较难模拟题设计并核验2—3个彼此依赖且可解释的关键结构观察，基础题不强凑转化数，范围外模型提供必要定义。",
+      "evidence": "teacher-guidance.md的题面轻、思维量大、融合与计算量意见。",
+      "failure_guard": "这是教师偏好与AI设计规则，不是已知官方命题法；不强迫所有历史题满足该形式。"
+    },
+    {
+      "id": "DR-09",
+      "name": "命题验证五道门",
+      "trigger": "准备交付原创模拟题",
+      "action": "分别检查题意与量词/分布/边界、独立数学证明与反例、关键转化必要性、无计算器手算负担、独立读者可达性；最后比较已读历史题的完整条件并如实标记基础、改编或本次模拟，不声称已证明全网独创。",
+      "evidence": "球面分布缺失、二次型补零疑点、泰勒奇函数条件等说明仅有分类校验不足。",
+      "failure_guard": "小规模枚举和符号计算只能支持特例核对，不能替代任意参数证明；解答应先完成再把题称为可交付。"
+    },
+    {
+      "id": "DR-10",
+      "name": "计算校准记录可比较量",
+      "trigger": "用2023泰勒基准校准模拟题",
+      "action": "记录展开最高阶、有效项数、复合次数、匹配系数数、矩阵分解/消元步、必要分类、取整裕量；给出相近/明显较轻/较重及理由。",
+      "evidence": "TACA-202310-YI-Q02在本报告已验证m=7与首项。",
+      "failure_guard": "没有统一操作模型和真人样本时不生成1.3倍的精确数值，不把符号长度直接当难度。"
+    }
+  ],
+  "limits": [
+    "阅读覆盖全部253道statement及其notes，但仅解析验证本报告六个代表案例；其他方法和融合候选不构成完整标准解答。",
+    "23卷均来自用户提供整理卷，未独立核验官方原卷；已目视核对只说明整理卷到题库的转录状态。",
+    "这是资料包样本，不是随机样本、全体选拔场次或完整历届题库；没有成绩、考生作答与可靠逐题分值/用时数据。",
+    "代码与domain为既有AI分类：多标签计数重叠且标签粒度不均；例如分析domain为128而M1-A为126。",
+    "统计/数值/优化的标签不足以逐项确定2027考纲覆盖，需要完整题面中的目标概念核对。",
+    "2027为新考纲首年，目前库中无该版本已实施试题；不能推出新题比例、分值、题数、时长、通过线或命题概率。",
+    "2024的年度题数增加主要由于唯一CACA加入；CACA“数学2h”不是2027“数学2”的证据，须结合原材料识别2h为历史时长标签。",
+    "回忆题身份未在当前papers.json单独标记，不得凭文件名/完整转录擅自判断某卷是否为官方完整原卷或考生回忆。",
+    "疑点不仅限于syllabus_relation=需核对的2题；例如GIRLS-202510-Q06缺少分布，TACA-202104-ZERO-Q10填空可能不唯一。",
+    "教师建议是匿名截图中的判断，不是官方规则；所谓1.3倍不能被量化为可靠运算数或真人难度尺度。",
+    "本报告不给数值难度分，不将知识门槛、结构发现与计算量合成未经验证的单一等级。",
+    "没有系统求解所有题，因此不能给全库真实融合题总数或严格证明“融合占比逐年上升”。"
+  ]
+}

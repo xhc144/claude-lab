@@ -1,0 +1,79 @@
+%% mojing-tikz.sty
+%% 墨经 Mojing —— TikZ / pgfplots 统一风格
+%%
+%% 线宽、箭头、配色与正文协调：坐标轴 0.5pt，曲线 0.9pt，辅助线为灰色虚线，
+%% 箭头统一用 Stealth。样式名均以 mj 开头，例如
+%%   \draw[mj axis] (-2,0) -- (2,0);
+%%   \draw[mj curve] plot ...;
+%%   \begin{axis}[mojing] ... \end{axis}
+%%
+%% 本文件以 LPPL 1.3c 发布。
+\NeedsTeXFormat{LaTeX2e}[2022/06/01]
+\ProvidesPackage{mojing-tikz}[2026/10/13 1.0 Mojing: TikZ styles]
+
+\RequirePackage{tikz}
+\usetikzlibrary{arrows.meta,calc,positioning,intersections,through,
+  decorations.markings,decorations.pathreplacing,patterns,
+  angles,quotes,3d,shapes.geometric,shapes.misc,backgrounds,fit}
+\RequirePackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{fillbetween}
+
+\tikzset{
+  >={Stealth[length=2.1mm,width=1.5mm]},
+  every picture/.append style={line cap=round,line join=round},
+  mj axis/.style={->,draw=mjInk!75,line width=.5pt},
+  mj grid/.style={draw=mjRule!35,line width=.3pt},
+  mj curve/.style={draw=mjAccent,line width=.9pt},
+  mj curve2/.style={draw=mjSecond,line width=.9pt},
+  mj thin/.style={draw=mjInk,line width=.5pt},
+  mj aux/.style={draw=mjGray,line width=.4pt,dash pattern=on 2.2pt off 1.6pt},
+  mj fill/.style={fill=mjAccent!9},
+  mj fill2/.style={fill=mjSecond!10},
+  mj point/.style={circle,fill=mjInk,inner sep=0pt,minimum size=3.2pt},
+  mj apoint/.style={circle,fill=mjAccent,inner sep=0pt,minimum size=3.4pt},
+  mj hollow/.style={circle,draw=mjInk,fill=white,line width=.5pt,
+    inner sep=0pt,minimum size=3.4pt},
+  mj cross/.style={cross out,draw=mjSecond,line width=.7pt,
+    inner sep=0pt,minimum size=4pt},
+  mj label/.style={font=\small},
+  mj arrow mid/.style={postaction={decorate},decoration={markings,
+    mark=at position #1 with {\arrow{Stealth[length=2.3mm,width=1.7mm]}}}},
+  mj arrow mid/.default=.5,
+  mj arrows/.style={postaction={decorate},decoration={markings,
+    mark=between positions .25 and 1 step .5 with
+    {\arrow{Stealth[length=2.2mm,width=1.6mm]}}}},
+}
+
+\pgfplotsset{
+  mojing/.style={
+    axis lines=middle,
+    axis line style={mj axis},
+    every tick/.style={mjInk!75,line width=.4pt},
+    major tick length=3pt,
+    tick label style={font=\footnotesize},
+    label style={font=\small},
+    xlabel style={anchor=west},
+    ylabel style={anchor=south},
+    every axis plot/.append style={line width=.9pt},
+    cycle list={{mjAccent},{mjSecond},{mjOchre},{mjGray,dashed}},
+    legend style={draw=none,fill=none,font=\footnotesize},
+    legend cell align=left,
+    clip=false,
+  },
+  mojing box/.style={
+    axis lines=box,
+    axis line style={draw=mjInk!75,line width=.45pt},
+    every tick/.style={mjInk!75,line width=.4pt},
+    major tick length=2.5pt,
+    tick label style={font=\footnotesize},
+    label style={font=\small},
+    grid style={mj grid},
+    every axis plot/.append style={line width=.9pt},
+    cycle list={{mjAccent},{mjSecond},{mjOchre},{mjGray,dashed}},
+    legend style={draw=none,fill=white,fill opacity=.85,text opacity=1,
+      font=\footnotesize},
+    legend cell align=left,
+  },
+}
+\endinput

@@ -1,0 +1,2874 @@
+{
+  "snapshot": "2026-09-27",
+  "note": "自撰真题索引；解释字段不是官方难度标签；数字统计由lookup独立连接。",
+  "anchors": [
+    {
+      "id": "Putnam-2023-A1",
+      "contest": "Putnam",
+      "year": 2023,
+      "problem": "A1",
+      "summary": "余弦乘积在x=0处的二阶导数达到给定阈值。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "微积分",
+        "泰勒展开",
+        "有限求和"
+      ],
+      "knowledge": "乘积求导或二阶泰勒展开；平方和公式",
+      "bottleneck": "只提取二次项，交叉的一阶项均为零。",
+      "answer_for_verification": "n=18",
+      "solution_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        1
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "本科微积分例程可解；该判断为解法结构分析",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "verification_note": "本科微积分例程可解；该判断为解法结构分析",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2023·A场第1题（A1）",
+      "title": "余弦乘积的二阶导数",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2023-A1",
+          "title": "余弦乘积的二阶导数",
+          "score": 1,
+          "range": [
+            1,
+            2
+          ],
+          "confidence": "中高",
+          "display_reason": "核心课程工具可直接推进，识别任务短、手算规模小；和课程常规端接近。",
+          "content_comparisons": [
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-I3",
+              "anchor_reference_score": 1,
+              "relation": "接近课程常规端",
+              "basis": "两题都可直接调用课程核心微分工具；此题多一层乘积项组织与整数阈值检查，未因此出现独立隐蔽构造。不是说两场考生表现相同。"
+            },
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_reference_score": 2,
+              "relation": "方法发现较轻",
+              "basis": "P6需把目标式识别为适当辅助函数的导数；本题题面直接要求求导，展开或乘积求导均给自然入口。比较支撑其位于2分端以下，不把运算熟练度视为人人相同。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+            "pages_1_indexed": [
+              1
+            ],
+            "status": "官方两条路线复核；只需二次项/乘积求导及有限平方和，两个相邻整数阈值可手算核查。"
+          },
+          "uncertainty": "分数1是本尺下端参考，绝非题目毫无要求；微积分不熟者会更难。",
+          "grade": "I",
+          "historical_evidence": {
+            "cohort_n": 516,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 29,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+            "source_pdf_page": 6,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 0,
+            "full_score_count": 426,
+            "full_score_rate_in_cohort": 0.8255813953488372,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2023-A3",
+      "contest": "Putnam",
+      "year": 2023,
+      "problem": "A3",
+      "summary": "相互约束导数的两函数，求首次零点最早位置。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "分析",
+        "微分不等式",
+        "极角"
+      ],
+      "knowledge": "微分不等式；反正切求导；连续性",
+      "bottleneck": "先证两函数不同时为零，再控制向量转角速度。",
+      "answer_for_verification": "r=π/2",
+      "solution_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        4
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "关键模型转化与严密性要求高；不能因A3而归为中档",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "verification_note": "关键模型转化与严密性要求高；不能因A3而归为中档",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2023·A场第3题（A3）",
+      "title": "相互约束导数的最早零点",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2023-A3",
+          "title": "相互约束导数的最早零点",
+          "score": 9,
+          "range": [
+            8,
+            10
+          ],
+          "confidence": "中",
+          "display_reason": "在找到有效表示之外，还要同时控制退化情形、局部定义与最早零点；发现和证明闭合是连续的多项任务。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P2",
+              "anchor_reference_score": 8,
+              "relation": "辅助对象发现与锐性证明可比",
+              "basis": "两题都要设计能给精确界的量；本题另须证明两函数不同时为零、控制局部表达式直到首次零点，并给出达到界的实例。这些额外闭合环节使内容估计靠近8–10段。"
+            },
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_reference_score": 2,
+              "relation": "明显高于单次中值定理识别",
+              "basis": "P6选好商函数即可收尾，本题的有效表征还要连同非退化性及端点极限一起控制，不能因都用求导而压到同段。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_reference_score": 10,
+              "relation": "知识跨度较小，作为宽松上侧校核",
+              "basis": "P5跨有限映射、置换阶和渐近素数估计；本题只用基础分析但内部的连续发现与端点证明很重。不同困难性质不支持严格全序，因此保留10作为可能上沿。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+            "pages_1_indexed": [
+              4,
+              5
+            ],
+            "status": "官方两条路线均已重开。主核路线用正的平方和及局部角度；正性由微分不等式保证，再用连续性处理首次零点。无需默认熟知ODE比较定理。"
+          },
+          "uncertainty": "熟悉平面运动或微分不等式的人可能更快识别；不可把这种专项经历默认赋给全体。",
+          "review_revision": {
+            "initial_score": 8,
+            "initial_range": [
+              7,
+              9
+            ],
+            "reason": "低满分记录促使重审后见偏差；真正修正依据是自选有效表示后尚有非退化性、局部定义域和首次零点三个不可省略的完成环节。不是用满分率换分。"
+          },
+          "grade": "V",
+          "historical_evidence": {
+            "cohort_n": 516,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 29,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+            "source_pdf_page": 6,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 122,
+            "full_score_count": 7,
+            "full_score_rate_in_cohort": 0.013565891472868217,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2023-B6",
+      "contest": "Putnam",
+      "year": 2023,
+      "problem": "B6",
+      "summary": "以线性丢番图方程解数为元素的矩阵求行列式。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "线性代数",
+        "组合计数",
+        "整除"
+      ],
+      "knowledge": "矩阵乘法与行列式；Cauchy–Binet或等价消元",
+      "bottleneck": "把解数改写为整除关联矩阵的乘积，再化简余子式。",
+      "answer_for_verification": "(-1)^(m+1)*2m，m=ceil(n/2)",
+      "solution_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        29,
+        30,
+        31,
+        32,
+        33
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "多层结构识别和计算，适合作极难端锚点",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+      "verification_note": "多层结构识别和计算，适合作极难端锚点",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2023·B场第6题（B6）",
+      "title": "丢番图解数矩阵的行列式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2023-B6",
+          "title": "丢番图解数矩阵的行列式",
+          "score": 10,
+          "range": [
+            9,
+            10
+          ],
+          "confidence": "中",
+          "display_reason": "需要跨越计数与矩阵结构，关键转换后仍有一整段一般阶数的推导和核验；处于本尺很难端。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_reference_score": 4,
+              "relation": "同为结构矩阵题，但层次显著增加",
+              "basis": "P8把几何排列条件转成矩阵关系后可借谱性质结束；本题编码出矩阵乘积只完成第一层，还需一般阶数的余子式/消元论证及奇偶收尾。"
+            },
+            {
+              "anchor_id": "IMC-2025-P9",
+              "anchor_reference_score": 8,
+              "relation": "都要重写巨大状态，执行与证明协调更重",
+              "basis": "P9在找到路径权重关系后可用统一的期望增量收尾；此题还需保持整除编码、矩阵形状和行列式符号兼容。不同领域不支持精确两分差，但支撑其靠近上端。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_reference_score": 10,
+              "relation": "同属多层桥接的上端，困难性质不同",
+              "basis": "P5的负担是结构与渐近数论的桥接，本题是计数编码、线代重组和符号/奇偶完成。10分表明二者都用于上端定位，并非同一实测难度参数。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Problems-and-Solutions.pdf",
+            "pages_1_indexed": [
+              29,
+              30,
+              31,
+              32
+            ],
+            "status": "重开并核对Cauchy–Binet路线与等价初等消元路线的关键恒等式、配对项、奇偶分支及最终符号。",
+            "minor_source_errors": "官方把按列反转写作rows reversed，并有Rev(B)=M·J的明显维数/字母笔误；按定义应为B·J。另偶数分支中正交描述应直接核变换后的矩阵。均不改变可验证的两条证明。"
+          },
+          "knowledge_access_note": "Cauchy–Binet不默认为所有目标选手能随时调用；另有初等行列变换路线，仍有较高发现与手算组织成本。",
+          "uncertainty": "10为参考上端，并不证明它比所有8–9题都难或等于数学难度极限。",
+          "grade": "V",
+          "historical_evidence": {
+            "cohort_n": 516,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 29,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/02/2023-Putnam-Announcement-of-Winners-1.pdf",
+            "source_pdf_page": 6,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 487,
+            "full_score_count": 1,
+            "full_score_rate_in_cohort": 0.001937984496124031,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2024-A1",
+      "contest": "Putnam",
+      "year": 2024,
+      "problem": "A1",
+      "summary": "判断带系数的三项幂方程允许哪些正整数指数。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "数论",
+        "同余",
+        "无穷递降"
+      ],
+      "knowledge": "整除与模运算；互素化",
+      "bottleneck": "先消去公因子，再分指数2和至少3处理。",
+      "answer_for_verification": "n=1",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        1
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "初等知识，但要能完成互素化后的矛盾",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "verification_note": "初等知识，但要能完成互素化后的矛盾",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2024·A场第1题（A1）",
+      "title": "带系数三项幂方程的指数",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2024-A1",
+          "title": "带系数三项幂方程的指数",
+          "score": 3,
+          "range": [
+            2,
+            4
+          ],
+          "confidence": "中",
+          "display_reason": "初等整除是自然入口，但需要完成不同指数情形并证明没有遗漏；比直接课程计算多一层发现与分类。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_reference_score": 2,
+              "relation": "通常略高于单一转化",
+              "basis": "P6构造完成后只有一次定理应用；本题常见整除尝试可起步，但剩余特殊指数还需换一个同余视角，完整分类负担较大。"
+            },
+            {
+              "anchor_id": "IMC-2025-P3",
+              "anchor_reference_score": 4,
+              "relation": "总体结构负担较小",
+              "basis": "P3需兼顾矩阵参数化的唯一性、交换条件和概率样本空间；本题工具少且尝试方向被整系数强烈提示。该比较限于步骤协调及发现负担，不将数论熟练差异抹平。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+            "pages_1_indexed": [
+              1
+            ],
+            "status": "已核互素化后的2整除链，以及剩余指数2时的模3矛盾；无需费马大定理或一般丢番图理论。"
+          },
+          "uncertainty": "数论训练不足或经常练无穷递降的人可能分别落在范围上、下端。",
+          "grade": "II",
+          "historical_evidence": {
+            "cohort_n": 504,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 22,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 5,
+            "full_score_count": 449,
+            "full_score_rate_in_cohort": 0.8908730158730159,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2024-A4",
+      "contest": "Putnam",
+      "year": 2024,
+      "problem": "A4",
+      "summary": "模素数的几何序列能否重排成等差序列。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "数论",
+        "乘法阶",
+        "补集"
+      ],
+      "knowledge": "模素数运算；元素乘法阶",
+      "bottleneck": "改看四个缺失剩余类，将长序列缩成有限排法。",
+      "answer_for_verification": "p=7",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        6
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "核心是模素数取补集、限制乘法阶，再利用倒数对称缩减排列情形；小素数须单独检查。",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "verification_note": "核对满乘法阶与四个遗漏剩余类的关系，利用倒数对称减少到三类排列，再处理小素数；本题不涉及线性空间分类。",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2024·A场第4题（A4）",
+      "title": "模素数下几何序列的等差重排",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2024-A4",
+          "title": "模素数下几何序列的等差重排",
+          "score": 7,
+          "range": [
+            6,
+            8
+          ],
+          "confidence": "中",
+          "display_reason": "长条件背后的压缩方式隐蔽，压缩以后还要论证所有可能情形；知识门槛适中，方法发现和分类闭合较强。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_reference_score": 6,
+              "relation": "分类目标相近，额外表示转换更隐蔽",
+              "basis": "两题都要由局部规则/大量条件证明完整分类；本题取补和满乘法阶的衔接较隐蔽，但缩减后只有少量排列，P7自身的必要性证明也有数个相连步骤。内容差异只支持靠近6–8段，不能直接把本题推至8–9。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "anchor_reference_score": 8,
+              "relation": "关键辅助表示的选择可比",
+              "basis": "两题都要选取保留全部条件的中间对象；P2的权函数需兼容数项连续约束，本题取补后能用固定数量的同余检验结束。比较支持6与8之间的暂定7，非两个锚点的机械平均。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_reference_score": 10,
+              "relation": "知识与渐近桥接较少",
+              "basis": "本题全部在有限模运算中，可用初等乘法阶理论；P5还有独立渐近估计负担。用作宽松上侧内容校核，不能单靠有无高阶知识排全序。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+            "pages_1_indexed": [
+              6
+            ],
+            "status": "已核p≥11时互异性迫使满乘法阶、四个遗漏类形成余下连续段、0只能在端点，以及倒数对称减少到三类排列。小素数单独验证。"
+          },
+          "uncertainty": "熟悉有限域中取补与乘法阶的选手可能接近7；默认不把‘知道定义’当作会发现转换。",
+          "review_revision": {
+            "initial_score": 8,
+            "initial_range": [
+              7,
+              9
+            ],
+            "reason": "回查历史数据后重做内容比较，发现原稿低估了IMC2025 P7的分类闭合成本；本题转化后有限排法较短，改7[6–8]。这不是按112/504换分。"
+          },
+          "grade": "IV",
+          "historical_evidence": {
+            "cohort_n": 504,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 22,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 229,
+            "full_score_count": 112,
+            "full_score_rate_in_cohort": 0.2222222222222222,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2024-A6",
+      "contest": "Putnam",
+      "year": 2024,
+      "problem": "A6",
+      "summary": "代数生成函数系数构成的Hankel矩阵求行列式。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "线性代数",
+        "生成函数",
+        "递推"
+      ],
+      "knowledge": "生成函数系数比较；行列变换或LDL分解",
+      "bottleneck": "从二次方程提递推，并设计保持结构的消元。",
+      "answer_for_verification": "10^(n*(n-1)/2)",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        10,
+        11
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "需独立发现公式并完成结构性证明。",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+        "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+      "verification_note": "需独立发现公式并完成结构性证明。",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2024·A场第6题（A6）",
+      "title": "生成函数系数矩阵的行列式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2024-A6",
+          "title": "生成函数系数矩阵的行列式",
+          "score": 9,
+          "range": [
+            8,
+            10
+          ],
+          "confidence": "中",
+          "display_reason": "一般公式的发现与证明都要自行完成；读懂系数定义后，还需把多层代数关系组织成可重复的矩阵推导。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_reference_score": 4,
+              "relation": "显著高于一次矩阵重写",
+              "basis": "P8结构恒等式建立后，常规谱结论即可结束；本题要从生成函数得到递推，再设计一般n的消元并核递推常数，连续子目标更多。"
+            },
+            {
+              "anchor_id": "IMC-2025-P9",
+              "anchor_reference_score": 8,
+              "relation": "都依赖找到可闭合的递推，执行更繁",
+              "basis": "P9的核心是令复杂随机过程产生可累加的期望变化；此题的闭合机制是矩阵消元，找到后仍有卷积索引和行列处理的手算负担。此维度支持8–10区间，不声称全体人都觉得它更难。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_reference_score": 10,
+              "relation": "靠近上端但知识跨度较窄",
+              "basis": "本题可用幂级数系数比较和线代完成，P5还要连接数论渐近结论。本题在基础范围内连续发现与执行很重，因此留9而非以‘基础知识’压低。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2024-Putnam-Solutions.pdf",
+            "pages_1_indexed": [
+              10,
+              11
+            ],
+            "status": "官方第一条路线重核：二次生成方程给卷积递推；自底向上的行变换保留所需旧行；去首行列后按列消去，得到与较低阶原矩阵成比例的块并完成归纳。"
+          },
+          "knowledge_access_note": "不把Hankel行列式、连分数或正交多项式现成公式当默认工具；主评采用基础系数比较和消元路线。",
+          "uncertainty": "对生成函数/Hankel专项训练很敏感；跨领域与IMC上端比较的分辨率不足以排除8或10。",
+          "grade": "V",
+          "historical_evidence": {
+            "cohort_n": 504,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 22,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2025/03/2024-William-Lowell-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NA",
+            "raw_absence_count": 429,
+            "full_score_count": 0,
+            "full_score_rate_in_cohort": 0.0,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2025-A2",
+      "contest": "Putnam",
+      "year": 2025,
+      "problem": "A2",
+      "summary": "用二次函数对正弦作最优上下夹逼。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "微积分",
+        "不等式",
+        "最优常数"
+      ],
+      "knowledge": "求导、极限、单调性",
+      "bottleneck": "端点给候选常数，再证明全区间成立。",
+      "answer_for_verification": "a=1/π，b=4/π²",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        2
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "常规微积分工具，需要完成最优性与全域证明",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+        "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "verification_note": "常规微积分工具，需要完成最优性与全域证明",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2025·A场第2题（A2）",
+      "title": "二次函数夹逼正弦的最佳常数",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2025-A2",
+          "title": "二次函数夹逼正弦的最佳常数",
+          "score": 3,
+          "range": [
+            2,
+            4
+          ],
+          "confidence": "中",
+          "display_reason": "有自然的微积分入口，但找出候选常数还不算完成，必须证明全区间最优；主要负担是推导与检查。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_reference_score": 2,
+              "relation": "发现较自然，闭合更长",
+              "basis": "二者使用基本微积分；P6一次合适的定理应用即可完成，本题需协调端点/对称点候选与全区间符号，不能只验几个点。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "anchor_reference_score": 8,
+              "relation": "同为最优不等式，关键对象提示明显得多",
+              "basis": "本题把需要比较的两函数直接给出，求比值或作差是自然起点；P2需无提示设计与多项约束相容的权函数。此比较给出明显上界，但不能据同属不等式定等难。"
+            },
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_reference_score": 4,
+              "relation": "可作附近难度参照，困难维度不同",
+              "basis": "P8表示转换更隐蔽而算式短；本题入口明显、求导与符号追踪较多。整体靠近2–4段，主分3是内容估计。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+            "pages_1_indexed": [
+              2
+            ],
+            "status": "重核官方两条方法；主按商函数的导数分子及其导数的符号变化控制全区间，并核端点极限与中点取值的最优性。"
+          },
+          "uncertainty": "基本求导熟练但不擅长全域符号论证者可能落在4分端；不能只按候选常数猜出得快评1。",
+          "grade": "II",
+          "historical_evidence": {
+            "cohort_n": 507,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 30,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NS",
+            "raw_absence_count": 30,
+            "full_score_count": 258,
+            "full_score_rate_in_cohort": 0.5088757396449705,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2025-A3",
+      "contest": "Putnam",
+      "year": 2025,
+      "problem": "A3",
+      "summary": "三值字符串不许重访的轮流改位游戏。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "组合",
+        "博弈",
+        "配对策略"
+      ],
+      "knowledge": "有限策略博弈；不变量",
+      "bottleneck": "把非零串按首个非零位配对，保证后手总可回应。",
+      "answer_for_verification": "后手Bob必胜",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        3
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "知识门槛低，发现配对是主要难点；短解不代表易发现",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+        "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "verification_note": "知识门槛低，发现配对是主要难点；短解不代表易发现",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2025·A场第3题（A3）",
+      "title": "不许重访的三值字符串游戏",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2025-A3",
+          "title": "不许重访的三值字符串游戏",
+          "score": 6,
+          "range": [
+            5,
+            7
+          ],
+          "confidence": "中",
+          "display_reason": "题意和计算都轻，困难集中在首次发现统一策略并解释它为何始终合法；短解不等于容易想到。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P3",
+              "anchor_reference_score": 4,
+              "relation": "证明执行较短，但决定性发现更无提示",
+              "basis": "P3题面给出矩阵秩和对称等强结构，规范化与交换条件需完成数步；本题没有提示如何把所有历史状态统一控制，猜出几个小n不能提供全局策略。支持高于4端而非按解答长度降级。"
+            },
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_reference_score": 6,
+              "relation": "同在结构发现中段，负担分配不同",
+              "basis": "两题都从局部规则提取对全部状态有效的结构；P7分类后仍有较长必要性论证，本题策略出现后闭合较轻。因此6表示发现负担的近邻参考，而不声称证明长度相同。"
+            },
+            {
+              "anchor_id": "IMC-2025-P9",
+              "anchor_reference_score": 8,
+              "relation": "状态结构相似，概率及执行层更少",
+              "basis": "P9需对非独立路径作权重比较并算期望；本题只有有限合法性和终止性。可作宽松上侧校核，不能把知道配对套路的熟悉感当原题入口。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+            "pages_1_indexed": [
+              3
+            ],
+            "status": "已核策略改变单个数字的合法性、非初始状态配对、对局历史不重访不变量和有限终止；无需博弈论专门定理。"
+          },
+          "uncertainty": "先前见过相近配对游戏会显著降难；目标是未见同构策略的初见选手。",
+          "grade": "III",
+          "historical_evidence": {
+            "cohort_n": 507,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 30,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NS",
+            "raw_absence_count": 177,
+            "full_score_count": 140,
+            "full_score_rate_in_cohort": 0.27613412228796846,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "Putnam-2025-A4",
+      "contest": "Putnam",
+      "year": 2025,
+      "problem": "A4",
+      "summary": "构造交换关系恰为一个长环的实矩阵组并求最小维数。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "线性代数",
+        "构造",
+        "交换性"
+      ],
+      "knowledge": "二维矩阵的交换子结构；特征空间；三维构造",
+      "bottleneck": "排除二维并构造三维，两个方向缺一不可。",
+      "answer_for_verification": "k=3",
+      "solution_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "solution_pdf_pages_1_indexed": [
+        4,
+        5
+      ],
+      "solution_verified_against": "MAA official solutions",
+      "analysis_note": "本科线代门槛加构造；验证采用官方Solution #2",
+      "source_urls": [
+        "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+        "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+        "https://maa.org/maa-putnam-archive/"
+      ],
+      "cautions": [
+        "题号不作为难度真值",
+        "样本仅当年总分最高一组，不能外推全体",
+        "不同年份样本能力与分数门槛不同，不能直接据比例跨年定级"
+      ],
+      "retrieved": "2026-09-27",
+      "problem_url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+      "verification_note": "本科线代门槛加构造；验证采用官方Solution #2",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "Putnam 2025·A场第4题（A4）",
+      "title": "交换关系组成长环的矩阵组",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "anchor_id": "Putnam-2025-A4",
+          "title": "交换关系组成长环的矩阵组",
+          "score": 9,
+          "range": [
+            8,
+            10
+          ],
+          "confidence": "中",
+          "display_reason": "既要证明小维数做不到，又要设计大维数例子并排除多余关系；构造发现和两个方向的完整证明都是主要要求。",
+          "content_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P3",
+              "anchor_reference_score": 4,
+              "relation": "交换条件可比，构造和最小性明显增加",
+              "basis": "P3面对已给定秩一对称矩阵族，重写后计数；本题必须自己设计矩阵族，让指定关系成立而其余关系全部不成立，并另证维数下界。"
+            },
+            {
+              "anchor_id": "IMC-2024-P3",
+              "relation": "必要性加充分构造可比，构造约束更细",
+              "basis": "该IMC题也要从矩阵条件提取整数限制并实现构造；本题额外控制环中每对矩阵的精确交换关系，小维排除与构造利用不同结构。此项是内容比较，不能把年内档位机械映射到8。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_reference_score": 10,
+              "relation": "靠近困难端，知识跨度较少",
+              "basis": "P5跨置换结构与渐近数论；本题虽可基础线代重建，但小维排除、精确构造、排除所有额外关系是三个独立子目标。二者没有可靠严格次序证据，因此给9并保留8–10。"
+            }
+          ],
+          "verification": {
+            "url": "https://maa.org/wp-content/uploads/2026/02/2025OfficialSolutions.pdf",
+            "pages_1_indexed": [
+              4,
+              5
+            ],
+            "status": "采用官方Solution #2的投影构造，核三向量线性无关、相邻共同特征方向、非相邻交换导致矛盾；不依赖Solution #1中未细证的闭环一般位置选择。",
+            "independent_accessibility_check": "二维下界可不用完整Jordan理论：非标量2×2矩阵A存在v使(v,Av)为基，任何与A交换的矩阵由其在v上的值确定，故均为αI+βA；非标量邻居的交换子代数相同，从而不可能形成指定长环。"
+          },
+          "uncertainty": "构造熟练度影响大；存在性例子可写短，但未见题者自行设计不应按验证难度计算。",
+          "review_revision": {
+            "initial_score": 8,
+            "initial_range": [
+              7,
+              9
+            ],
+            "reason": "重审标准解的泛性选择是否被当免费后，提高主分并开放10上沿；没有将6/507直接换算为分数。"
+          },
+          "grade": "V",
+          "historical_evidence": {
+            "cohort_n": 507,
+            "cohort": "top_total_score",
+            "cohort_minimum_total_score": 30,
+            "cohort_definition_note": "仅当年总分最高一组；包含门槛处并列者；满分频数排序不是内在难度真值",
+            "source_url": "https://maa.org/wp-content/uploads/2026/03/2025-Putnam-Competition-Announcement-of-Winners.pdf",
+            "source_pdf_page": 7,
+            "raw_absence_label": "NS",
+            "raw_absence_count": 399,
+            "full_score_count": 6,
+            "full_score_rate_in_cohort": 0.011834319526627219,
+            "verification_status": "本轮重开官方年度频数表，核对相应满分人数、样本总数与总分门槛。",
+            "not_a_direct_scale_conversion": true,
+            "interpretation": "满分比例是该年指定前列样本在原赛条件的实际记录；包含官方NA/NS标签记录；本库未核实其含义，不能当成尝试后的成功率，不能外推全体或跨赛人群。"
+          },
+          "anchor_admission": "可纳入扩充参照库；主分为自定义内容估计、必须和范围及条件一起展示。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2023-P1",
+      "contest": "IMC",
+      "year": 2023,
+      "problem": "P1",
+      "summary": "用二阶光滑性分类满足仿射缩放方程的实函数。",
+      "tags": [
+        "分析",
+        "函数方程",
+        "入口"
+      ],
+      "knowledge": [
+        "二阶导数",
+        "连续性",
+        "压缩迭代"
+      ],
+      "bottleneck": "转向仿射映射的不动点迭代，用二阶导数连续性产生刚性。",
+      "verification_note": "二次求导后沿逆映射迭代，证明二阶导数为常数；代回确认全部解为c(6x+1)^2。",
+      "problem_url": "https://www.imc-math.org.uk/imc2023/imc2023-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob1s&section=problems&year=2023",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2023·第1天第1题（总P1）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 1,
+        "total_problem_number": 1,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "仿射缩放下的光滑函数分类",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2023-P1",
+          "title": "仿射缩放下的光滑函数分类",
+          "score": 3,
+          "range": [
+            2,
+            4
+          ],
+          "confidence": "中",
+          "grade": "II",
+          "display_reason": "知识仍是基础分析，但从局部光滑条件到所有函数的分类，比单次中值定理题多一层发现与证明。",
+          "main_human_bottlenecks": [
+            "选择如何利用二阶光滑性",
+            "由局部信息完成全局分类"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_score": 2,
+              "relation": "略难",
+              "reason": "P6找到一个辅助函数后可直接收尾；本题还需让光滑性产生全局刚性，并完成所有解的回代检验。"
+            },
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_score": 4,
+              "relation": "略易",
+              "reason": "本题的微分次数在条件中明确提示，运算短；P8需先把几何排列条件转换成矩阵关系，再连接复特征值，跨表征负担更大。"
+            }
+          ],
+          "verification_note": "重读官网题面和完整解答，核对逆仿射迭代收敛、二阶导数连续性、积分后代回；没有把只猜到二次函数当成完成分类。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob1s&section=problems&year=2023",
+          "historical_statistics": {
+            "full_count": 206,
+            "n_listed": 393,
+            "full_rate": 0.5241730279898219,
+            "mean_score_out_of_10": 7.470737913486005,
+            "n_blank": 2,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Final Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2023",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2023-P3",
+      "contest": "IMC",
+      "year": 2023,
+      "problem": "P3",
+      "summary": "分类与二维复乘法相容的实系数二元多项式。",
+      "tags": [
+        "代数",
+        "多项式",
+        "复数结构"
+      ],
+      "knowledge": [
+        "多项式恒等式",
+        "复线性换元",
+        "系数比较"
+      ],
+      "bottleneck": "识别复乘法之后，仍须排除一般多项式并完成实系数约束。",
+      "verification_note": "可令u=x+iy、v=x−iy；比较乘法恒等式的系数，得到零多项式或单项式，再由实系数性得(x²+y²)^a。",
+      "problem_url": "https://www.imc-math.org.uk/imc2023/imc2023-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob3s&section=problems&year=2023",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2023·第1天第3题（总P3）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 3,
+        "total_problem_number": 3,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "二元多项式的乘法恒等式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2023-P3",
+          "title": "二元多项式的乘法恒等式",
+          "score": 5,
+          "range": [
+            4,
+            6
+          ],
+          "confidence": "中",
+          "grade": "III",
+          "display_reason": "识别结构后仍要排除全部其他多项式；不能把看出熟悉乘法形式当作已完成。",
+          "main_human_bottlenecks": [
+            "从实变量恒等式选择合适表示",
+            "穷尽分类与系数限制"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_score": 4,
+              "relation": "略难",
+              "reason": "两题都依赖把表面操作改写成代数关系；本题还须分类任意次数多项式及处理实系数约束，而P8导出关键矩阵性质后较直接。"
+            },
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_score": 6,
+              "relation": "略易",
+              "reason": "两题都不能只举一族解；本题有多项式系数可作有限组织，P7须从无限集合的局部闭合规则推出全局结构，子目标更多。"
+            }
+          ],
+          "verification_note": "重读官网因式分解路线；另检查复线性换元后的多项式恒等式及系数比较可完成穷尽性。须说明实变量多项式恒等式可作形式恒等式，不假定一般函数也能如此延拓。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob3s&section=problems&year=2023",
+          "historical_statistics": {
+            "full_count": 92,
+            "n_listed": 393,
+            "full_rate": 0.2340966921119593,
+            "mean_score_out_of_10": 3.926208651399491,
+            "n_blank": 56,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Final Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2023",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2023-P5",
+      "contest": "IMC",
+      "year": 2023,
+      "problem": "P5",
+      "summary": "排列族中每个成员允许沿某条所选位置链换位，证明族的规模下界。",
+      "tags": [
+        "组合",
+        "极值",
+        "辅助对象",
+        "高阶"
+      ],
+      "knowledge": [
+        "排列计数",
+        "极值原理",
+        "覆盖计数"
+      ],
+      "bottleneck": "构造辅助排列上的最大化覆盖，把每个成员不同的局部换位条件转成全局顺序限制。",
+      "verification_note": "对每个辅助排列最大化位置内积；局部换位迫使k个指定元素保持顺序，每个最大化区域至多n!/k!，覆盖全部排列得结论。",
+      "problem_url": "https://www.imc-math.org.uk/imc2023/imc2023-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob5s&section=problems&year=2023",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2023·第1天第5题（总P5）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 5,
+        "total_problem_number": 5,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "局部换位封闭排列族的规模",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2023-P5",
+          "title": "局部换位封闭排列族的规模",
+          "score": 10,
+          "range": [
+            9,
+            10
+          ],
+          "confidence": "中偏低",
+          "grade": "V",
+          "display_reason": "背景知识不高，主要难在无提示地构造全局比较对象；局部允许换位不自动产生所需的大族。",
+          "main_human_bottlenecks": [
+            "设计题面没有给出的辅助对象",
+            "将逐成员局部条件统一成全局计数"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P9",
+              "anchor_score": 8,
+              "relation": "相近至较难",
+              "reason": "两题都需把局部过程换成全局比较；P9至少给出了目标期望公式及自然的增量对象，本题有效的比较量更少受到题面引导。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_score": 10,
+              "relation": "接近固定尺上端；不判严格等难",
+              "reason": "本题额外知识较少，但有效辅助对象不受题面引导；发现门槛可抵消较短执行的优势。不能只因另一题需要更多数论知识，就把本题整体判低。"
+            }
+          ],
+          "verification_note": "重读并核对官网最大化覆盖证明：覆盖无需不交；每个覆盖块的计数上界由指定元素相对次序限制得到。逐成员可用换位不同，不能假定统一固定链。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob5s&section=problems&year=2023",
+          "historical_statistics": {
+            "full_count": 4,
+            "n_listed": 393,
+            "full_rate": 0.010178117048346057,
+            "mean_score_out_of_10": 0.1272264631043257,
+            "n_blank": 235,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Final Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2023",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "4/393满分与初读官解后9分的宽范围一致，但促使检查是否低估纯发现。局部换位链随成员变化，常规反复换位不能保证产生k!；需要独立创造覆盖对象，初稿对“无额外知识”的减难过重。复查后主分10、范围9–10；不是把1%满分率映射为10分。",
+          "content_first_score": 9
+        }
+      }
+    },
+    {
+      "id": "IMC-2023-P8",
+      "contest": "IMC",
+      "year": 2023,
+      "problem": "P8",
+      "summary": "给树上顶点对距离和与距离倒数和的乘积建立锐下界。",
+      "tags": [
+        "组合",
+        "图论",
+        "不等式"
+      ],
+      "knowledge": [
+        "树的边数",
+        "Cauchy–Schwarz不等式",
+        "单调性"
+      ],
+      "bottleneck": "必须先保留恰有n−1个距离等于1的结构，直接整体用柯西会丢失必要信息。",
+      "verification_note": "把距离1与距离至少2分组，展开乘积后分别使用y+1/y≥5/2及柯西；核对星形树等号，n=1、2另行直接验证。",
+      "problem_url": "https://www.imc-math.org.uk/imc2023/imc2023-day2-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2023",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2023·第2天第3题（总P8）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 3,
+        "total_problem_number": 8,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "树距离和与倒数和的不等式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2023-P8",
+          "title": "树距离和与倒数和的不等式",
+          "score": 6,
+          "range": [
+            5,
+            8
+          ],
+          "confidence": "中偏低",
+          "grade": "III",
+          "display_reason": "运算不重，主要困难是识别哪些结构信息必须保留，才能把一个看似适用却不够强的估计提升到目标强度；短解不代表发现容易。",
+          "main_human_bottlenecks": [
+            "从图结构提取对不等式有用的信息",
+            "组织锐下界与等号检查"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_score": 4,
+              "relation": "倾向较难",
+              "reason": "两题都要换表征，但本题目标看似已匹配通用不等式，直接路线却不够强，选手还需定位损失在哪并决定保留何种图结构；不应只看后段执行同样短。"
+            },
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_score": 6,
+              "relation": "总体相近，瓶颈不同",
+              "reason": "P7需要更长的分类闭合，本题则集中于一个更隐蔽的结构选择；关键选择发生后较短的手算并不能消除首次发现负担。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "anchor_score": 8,
+              "relation": "倾向较易，范围保留到8",
+              "reason": "P2需反向设计辅助权函数，同时协调积分、边值和等号；本题的可用结构直接来自树的基础性质，知识与辅助对象设计负担较小。"
+            }
+          ],
+          "verification_note": "重读官网按距离分组的解答；核计数、单调估计和柯西；小n可单独验证。一般图不保证同样的距离1数量，不能丢掉树条件。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2023",
+          "historical_statistics": {
+            "full_count": 51,
+            "n_listed": 393,
+            "full_rate": 0.1297709923664122,
+            "mean_score_out_of_10": 1.9898218829516539,
+            "n_blank": 124,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Final Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2023",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "51/393满分、均分约1.99提示初稿4分可能过度使用看过解答后的执行印象。重新检查：整体柯西虽自然却达不到目标，必须识别并保留额外结构，不能由树与柯西两项熟知识推断易发现。改为6、范围5–8并降低把握；没有把该届百分比机械等同2025题。",
+          "content_first_score": 4
+        },
+        "selection_status": "deferred_due_to_material_rating_disagreement",
+        "independent_review": {
+          "score": 4,
+          "range": [
+            3,
+            6
+          ],
+          "confidence": "低",
+          "reason": "独立复评认为转换后持续证明负担低于固定6分集合分类题；保留低历史满分率作为反证压力，未把比例跨年换算。",
+          "source_urls": [
+            "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2023",
+            "https://www.imc-math.org.uk/?act=results&by=sum&year=2023"
+          ],
+          "review_conditions": "读取官方题解与公开固定点，未见首评评级或scratch研究记录；不是解法盲评。"
+        }
+      },
+      "calibration_status": "verified_content_but_rating_deferred",
+      "calibration_note": "可用作已核验内容比较和历史数据说明，但不得当已定分的固定标尺。评级分歧未解决。"
+    },
+    {
+      "id": "IMC-2024-P3",
+      "contest": "IMC",
+      "year": 2024,
+      "problem": "P3",
+      "summary": "确定存在平方为全1矩阵的0–1方阵时允许的阶数。",
+      "tags": [
+        "线性代数",
+        "组合构造"
+      ],
+      "knowledge": [
+        "矩阵乘法",
+        "行列和",
+        "必要性与充分性"
+      ],
+      "bottleneck": "从交换关系提取共同整数行列和，再把平方数这一必要条件实现为明确构造。",
+      "verification_note": "由AJ=JA得共同和k，继而n=k²；以有序对标号并按相邻坐标相等定义矩阵，每对端点恰有一个两步中间点。",
+      "problem_url": "https://www.imc-math.org.uk/imc2024/imc2024-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob3s&section=problems&year=2024",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2024·第1天第3题（总P3）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 3,
+        "total_problem_number": 3,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "平方为全1矩阵的0–1矩阵",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2024-P3",
+          "title": "平方为全1矩阵的0–1矩阵",
+          "score": 5,
+          "range": [
+            4,
+            6
+          ],
+          "confidence": "中",
+          "grade": "III",
+          "display_reason": "必要条件和可实现构造是两个不同任务；发现一种限制以后，还要独立设计满足全部乘法条件的例子。",
+          "main_human_bottlenecks": [
+            "识别矩阵条件中的整数结构",
+            "完成充分性构造"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "anchor_score": 4,
+              "relation": "略难",
+              "reason": "两题都以基础矩阵恒等式为入口；本题证明必要条件后仍有一个构造关口，P8不需要再设计满足条件的矩阵。"
+            },
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_score": 6,
+              "relation": "相近偏易",
+              "reason": "两题皆含必要性与充分性；本题对象有限、条件能直接验算，P7对任意无限集合的结构传播和完整分类更费组织。"
+            }
+          ],
+          "verification_note": "重读官网共同整数行列和与分块构造；另核已存有序对标号构造：每对端点恰有一个两步中间点。构造不能省略。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob3s&section=problems&year=2024",
+          "historical_statistics": {
+            "full_count": 127,
+            "n_listed": 401,
+            "full_rate": 0.3167082294264339,
+            "mean_score_out_of_10": 5.234413965087282,
+            "n_blank": 11,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Preliminary Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2024",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2024-P4",
+      "contest": "IMC",
+      "year": 2024,
+      "problem": "P4",
+      "summary": "证明非最终周期二字母群序列的定长窗口乘积生成子群与序列无关。",
+      "tags": [
+        "代数",
+        "群论",
+        "离散结构",
+        "进阶"
+      ],
+      "knowledge": [
+        "子群",
+        "陪集",
+        "有限状态与周期性",
+        "归纳法"
+      ],
+      "bottleneck": "把非周期性变成同块的两种后继，再在非交换群中用陪集关系传播生成能力。",
+      "verification_note": "证明任意长度j≤n的两字母乘积a、b均满足a⁻¹b∈H，最终得到H由全部长度n的词生成；不得假设交换性或H正规。",
+      "problem_url": "https://www.imc-math.org.uk/imc2024/imc2024-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob4s&section=problems&year=2024",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2024·第1天第4题（总P4）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 4,
+        "total_problem_number": 4,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "非周期群序列的窗口生成子群",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2024-P4",
+          "title": "非周期群序列的窗口生成子群",
+          "score": 9,
+          "range": [
+            8,
+            10
+          ],
+          "confidence": "中偏低",
+          "grade": "V",
+          "display_reason": "除群与子群的基本可达性外，还要跨越无限序列到代数生成的转化，并在非交换条件下完成多层论证。",
+          "main_human_bottlenecks": [
+            "非周期条件如何产生可用代数关系",
+            "保持乘法次序的归纳与证明闭合",
+            "默认背景中群和子群的额外知识"
+          ],
+          "knowledge_note": "主分保留默认画像不自动熟练群论；若已熟练基本群、子群和陪集，可另报条件分8/10、范围7–9。高级名词本身不是9分理由。",
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_score": 6,
+              "relation": "较难",
+              "reason": "都从局部规则推出整体结构；本题还需把非周期性转为生成信息，处理非交换次序，归纳不变量与逻辑层数更多。"
+            },
+            {
+              "anchor_id": "IMC-2025-P5",
+              "anchor_score": 10,
+              "relation": "相近偏易",
+              "reason": "本题须同时掌握无限序列和群乘法的证明组织，但不需进一步引入渐近素数数量估计，知识与估计跨度小于上端参照。"
+            }
+          ],
+          "verification_note": "重读官网引理及归纳。重复块须取首次分歧才能保证前缀一致；比值所属子群是等价关系，无需也不得假定子群正规或群交换。n=1可直接核。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob4s&section=problems&year=2024",
+          "historical_statistics": {
+            "full_count": 36,
+            "n_listed": 401,
+            "full_rate": 0.08977556109725686,
+            "mean_score_out_of_10": 1.401496259351621,
+            "n_blank": 190,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Preliminary Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2024",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2024-P6",
+      "contest": "IMC",
+      "year": 2024,
+      "problem": "P6",
+      "summary": "对任意有理数到整数的映射，找出三点构成非严格中间峰。",
+      "tags": [
+        "组合",
+        "抽屉原理",
+        "逻辑",
+        "入口"
+      ],
+      "knowledge": [
+        "有理数区间无限性",
+        "整数有界集有限性",
+        "分类讨论"
+      ],
+      "bottleneck": "把未能立即找到三点的情形转换成一个区间上的有界性；题目没有连续性可用。",
+      "verification_note": "适当反射后比较三个整数自变量的值；剩余情形迫使(1,2)内值域有限，取三个同值点。官网解答末段区间笔误已按上下文修正。",
+      "problem_url": "https://www.imc-math.org.uk/imc2024/imc2024-day2-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob6s&section=problems&year=2024",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2024·第2天第1题（总P6）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 1,
+        "total_problem_number": 6,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "有理数到整数映射的三点峰",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2024-P6",
+          "title": "有理数到整数映射的三点峰",
+          "score": 3,
+          "range": [
+            2,
+            4
+          ],
+          "confidence": "中",
+          "grade": "II",
+          "display_reason": "题意短、计算很少，但函数没有连续性；须围绕有理数域和整数值的差别自行组织完整论证。",
+          "main_human_bottlenecks": [
+            "放弃不适用的连续函数直觉",
+            "组织覆盖所有情形的存在性证明"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_score": 2,
+              "relation": "略难",
+              "reason": "P6(2025)可利用明确的可微性和端点条件调用课程工具；本题没有该脚手架，分类与存在性逻辑需自己组织。"
+            },
+            {
+              "anchor_id": "IMC-2025-P7",
+              "anchor_score": 6,
+              "relation": "较易",
+              "reason": "都利用离散取值性质，但这里只需找出一组三点，不需给出全部闭合集合并排除其他结构，证明目标更局部。"
+            }
+          ],
+          "verification_note": "重读官网两解；首解最后无限有理数的区间写成[0,1]为笔误，应为已控制值域的[1,2]；按此修正后三同值点成立。未假定函数连续。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob6s&section=problems&year=2024",
+          "historical_statistics": {
+            "full_count": 274,
+            "n_listed": 401,
+            "full_rate": 0.683291770573566,
+            "mean_score_out_of_10": 8.089775561097257,
+            "n_blank": 8,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Preliminary Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2024",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2024-P8",
+      "contest": "IMC",
+      "year": 2024,
+      "problem": "P8",
+      "summary": "证明含倒数项的非线性递推经指数归一化后收敛，并夹定极限。",
+      "tags": [
+        "分析",
+        "数列",
+        "递推",
+        "估计"
+      ],
+      "knowledge": [
+        "归纳法",
+        "单调有界收敛",
+        "可求和增量",
+        "望远镜求和"
+      ],
+      "bottleneck": "收敛性与精确夹逼需要两段论证；精确下界须保留非线性项形成含极限自身的不等式。",
+      "verification_note": "先估计x[n+1]−2x[n]，证明y[n]=x[n]/2^n递增且有界；求和得2c=2+Σ2⁻ⁿ/y[n]，再用1≤y[n]≤c夹逼。",
+      "problem_url": "https://www.imc-math.org.uk/imc2024/imc2024-day2-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2024",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2024·第2天第3题（总P8）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 3,
+        "total_problem_number": 8,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "非线性递推的归一化极限",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "IMC-2024-P8",
+          "title": "非线性递推的归一化极限",
+          "score": 5,
+          "range": [
+            4,
+            6
+          ],
+          "confidence": "中",
+          "grade": "III",
+          "display_reason": "证明收敛和达到指定精度的上下界是两关；工具基础，但需持续保留足够信息完成末段。",
+          "main_human_bottlenecks": [
+            "安排彼此依赖的估计",
+            "从收敛推进到指定强度的界"
+          ],
+          "comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "anchor_score": 2,
+              "relation": "明显较难",
+              "reason": "本题不是一次辅助函数或定理调用即可结束；要处理增长、归一化后收敛及极限的精确约束，协调多个子目标。"
+            },
+            {
+              "anchor_id": "IMC-2025-P4",
+              "anchor_score": 6,
+              "relation": "相近偏易",
+              "reason": "两题均要对全体整数参数控制误差并完成充分性；本题已给出归一化形式及目标界，分支较少，P4另须识别全部参数区间和特殊指数。"
+            }
+          ],
+          "verification_note": "重读官网解答，核正性及增长归纳、归一化递推、有限和恒等式后再取极限；最终下界不能只用粗有界性替代。",
+          "source_url": "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2024",
+          "historical_statistics": {
+            "full_count": 103,
+            "n_listed": 401,
+            "full_rate": 0.256857855361596,
+            "mean_score_out_of_10": 4.708229426433915,
+            "n_blank": 43,
+            "cohort": "该届全部官方列名选手；空白保留在分母中，不推断缺考原因",
+            "source_status": "Preliminary Results",
+            "source_url": "https://www.imc-math.org.uk/?act=results&by=sum&year=2024",
+            "statistics_type": "本skill依据官方逐人成绩汇总；非主办方现成逐题分析表"
+          },
+          "statistics_check_note": "原题统计用于检查内容判断是否漏掉人类发现/完成困难；未将跨年比例直接换算成分数。"
+        }
+      }
+    },
+    {
+      "id": "IMC-2025-P1",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P1",
+      "summary": "对次数至少为2的实多项式，比较奇偶次数时全部切线是否覆盖平面。",
+      "tags": [
+        "分析",
+        "多项式",
+        "几何转化",
+        "入口"
+      ],
+      "knowledge": [
+        "导数与切线",
+        "实多项式值域",
+        "最高项"
+      ],
+      "bottleneck": "把平面点是否落在某条切线上，转化为关于切点参数的一元多项式满射性。",
+      "verification_note": "原题要求deg P≥2。固定(a,b)，研究P(r)+(a−r)P′(r)=b；最高项系数为(1−n)c，n≥2保证不抵消。奇数次有全实值域，偶数次固定a后存在未覆盖的b。不能把结论扩展到一次多项式。",
+      "problem_url": "https://www.imc-math.org.uk/imc2025/imc2025-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob1s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第1天第1题（总P1）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 1,
+        "total_problem_number": 1,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "多项式切线的平面覆盖"
+    },
+    {
+      "id": "IMC-2025-P2",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P2",
+      "summary": "在积分与边值约束下，求二阶导数平方积分的锐下界及等号。",
+      "tags": [
+        "分析",
+        "积分不等式",
+        "辅助函数"
+      ],
+      "knowledge": [
+        "分部积分",
+        "积分Cauchy–Schwarz",
+        "等号条件"
+      ],
+      "bottleneck": "反向设计权函数1−x²，同时消掉未知的一阶导数边界项与零均值积分项。",
+      "verification_note": "两次分部积分得∫f″(1−x²)=4，结合权函数平方积分得界；还须由连续性和约束确定区间内等号函数，不能宣称区间外唯一。",
+      "problem_url": "https://www.imc-math.org.uk/imc2025/imc2025-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob2s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第1天第2题（总P2）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 2,
+        "total_problem_number": 2,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "二阶导数平方积分的最优下界"
+    },
+    {
+      "id": "IMC-2025-P3",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P3",
+      "summary": "求两枚随机秩一对称符号矩阵彼此交换的概率。",
+      "tags": [
+        "线性代数",
+        "概率",
+        "计数"
+      ],
+      "knowledge": [
+        "秩一矩阵",
+        "二阶子式",
+        "内积",
+        "有限均匀概率"
+      ],
+      "bottleneck": "规范化矩阵参数避免重复计数，并识别奇数维排除两个符号向量正交。",
+      "verification_note": "唯一写成±uuᵀ且u首分量为1；交换等价于B=±A，因此概率为2⁻²⁰²⁴。证明中须同时交代样本空间大小。",
+      "problem_url": "https://www.imc-math.org.uk/imc2025/imc2025-day1-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob3s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第1天第3题（总P3）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 3,
+        "total_problem_number": 3,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "随机秩一矩阵的交换概率"
+    },
+    {
+      "id": "IMC-2025-P9",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P9",
+      "summary": "按剩余正整数的排名作几何抽样，求若干轮后最大值的期望。",
+      "tags": [
+        "概率",
+        "组合",
+        "加权对称性",
+        "难题"
+      ],
+      "knowledge": [
+        "条件期望",
+        "几何分布",
+        "路径概率",
+        "期望增量"
+      ],
+      "bottleneck": "在非独立且非交换的抽样过程中，比较最大元素处于不同抽取位置的路径概率。",
+      "verification_note": "移动同一最大元素的位置使路径概率逐次加倍，得到刷新概率；刷新后超越量均值为2，累加最大值期望增量。不能套独立同分布次序统计。",
+      "problem_url": "https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob9s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第2天第4题（总P9）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 4,
+        "total_problem_number": 9,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "非独立抽样的最大值期望"
+    },
+    {
+      "id": "IMC-2025-P6",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P6",
+      "summary": "由函数两端同值，推出内点处函数与导数的特定线性组合等于该值。",
+      "tags": [
+        "分析",
+        "中值定理",
+        "入口"
+      ],
+      "knowledge": [
+        "Rolle定理",
+        "商的导数"
+      ],
+      "bottleneck": "辨认目标表达式来自商函数的导数，并利用端点同值。",
+      "verification_note": "令h(x)=(f(x)−k)/x后直接用Rolle；a>0保证分母非零。官方另用f/x与1/x的Cauchy中值定理。",
+      "problem_url": "https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob6s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第2天第1题（总P6）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 1,
+        "total_problem_number": 6,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      },
+      "title": "函数与导数的内点关系"
+    },
+    {
+      "id": "CMC-16-2025-final-nonmathA-I3",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "非数学A类",
+      "problem": "一(3)",
+      "summary": "给定三元函数与一点，求所有方向导数中的最大值。",
+      "tags": [
+        "多元微分",
+        "梯度",
+        "方向导数"
+      ],
+      "knowledge": "偏导数、方向导数等于梯度与单位方向的内积、欧氏范数。",
+      "bottleneck": "认出最大方向导数就是梯度的模；此后只有直接求导与代值，说明决赛也含常规小题。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf",
+      "source_page": 1,
+      "points": 6,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过大学教学档案中的原卷参考答案后所作解法结构分析；非实测难度",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·非数学A类·一(3)",
+      "title": "三元函数的最大方向导数",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-nonmathA-I3",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／非数学A类／第一(3)题",
+          "display_title": "三元函数的最大方向导数",
+          "score": 1,
+          "range": [
+            1,
+            1
+          ],
+          "confidence": "高（固定基准的识别，不代表实测校准）",
+          "grade": "I",
+          "scale_version": "1.1",
+          "rating_kind": "fixed_baseline",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "课程核心公式直接对应题目，求导与数值代入短；作为1分下端内容基准，不因“决赛”抬高。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "CMC-16-2025-final-mathLow-I1",
+              "relation": "同为1分基准",
+              "content_basis": "两题都直接调用课程核心工具，几乎不需另找表示；本题只有三个简单偏导。"
+            },
+            {
+              "anchor_id": "IMC-2025-P6",
+              "relation": "较易",
+              "content_basis": "P6还需从目标等式自行选出合适函数再完成存在性论证；本题任务词直接指向已有公式。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 1,
+            "note": "图上函数为2−x²−y²+2 arctan z，点为(1,2,−1)。核验三个偏导为−2、−4、1，梯度模sqrt(21)。不展示该答案于默认无剧透卡片。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "填空小题",
+        "paper_total_marks": 100,
+        "whole_question_marks": 30,
+        "assessed_unit_marks": 6,
+        "subpart_marks": {
+          "一(3)": 6
+        },
+        "subpart_marks_basis": "卷面一标题明确五小题各6分；不从评分参考反推。",
+        "cumulative_editorial_scoring_markers": null,
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          1
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "单个填空小题"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-nonmathA-V",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "非数学A类",
+      "problem": "五(1)-(2)",
+      "summary": "先证明正定与对称矩阵可同时合同化简，再证明正定矩阵凸组合的对数行列式不等式。",
+      "tags": [
+        "正定矩阵",
+        "合同变换",
+        "谱定理",
+        "凹性",
+        "不等式"
+      ],
+      "knowledge": "实对称矩阵正交对角化、正定二次型、合同变换、行列式以及对数凹性。",
+      "bottleneck": "组合两个基变换将矩阵命题降为对角元上的标量不等式，并在变换中正确保留行列式因子；不能假设两矩阵原本可同时正交对角化。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf",
+      "source_page": 7,
+      "points": 12,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·非数学A类·五",
+      "title": "正定矩阵与对数行列式不等式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-nonmathA-V",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／非数学A类／第五(1)-(2)题",
+          "display_title": "正定矩阵与对数行列式不等式",
+          "score": 4,
+          "range": [
+            3,
+            5
+          ],
+          "confidence": "中（内容比较，无逐题人类数据）",
+          "grade": "II",
+          "scale_version": "1.1",
+          "rating_kind": "content_extension",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "两问有明确递进提示，但仍需协调矩阵变换、标量不等式和行列式因子，证明与记账量高于直接公式题。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "relation": "相近、方向不同",
+              "content_basis": "P8的表示发现更隐蔽；本题第一问明示要做的变换，之后却要完成两问并正确消去变换因子。两者均可用基础实对称矩阵理论。"
+            },
+            {
+              "anchor_id": "IMC-2025-P3",
+              "relation": "相近、方向不同",
+              "content_basis": "P3还需无重复地编码样本空间并处理交换条件；本题没有计数，但要组织连续的合同变换及不等式闭合。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "relation": "较易",
+              "content_basis": "P2关键辅助对象需反向设计；本题题面第一问直接给出第二问的主要方向，不需要同程度的无提示寻找。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 7,
+            "note": "原卷第(1)问A正定、B对称，求P使P^TAP=I、P^TBP对角；第(2)问A、B均正定，证明log det凹性。核读H^TAH=I、再以正交Q对角化H^TBH，P=HQ；以P^{-1}回写并用log凹性，行列式因子系数合计为1。合同可同时化简不等于同时正交对角化；不以现成logdet定理直接消掉发现与证明。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "含两问的证明大题",
+        "paper_total_marks": 100,
+        "whole_question_marks": 12,
+        "assessed_unit_marks": 12,
+        "subpart_marks": {
+          "五(1)": 4,
+          "五(2)": 8
+        },
+        "subpart_marks_basis": "题面只写大题12分；参考答案第(1)问末累计4分，第(2)问末累计12分，因此按该参考评分两问分别4和8分。",
+        "cumulative_editorial_scoring_markers": [
+          4,
+          8,
+          12
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1930",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723090001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          7
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-nonmathB-III",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "非数学B类",
+      "problem": "三",
+      "summary": "证明两个含正切与余切分母的三角积分相等，并求它们的值。",
+      "tags": [
+        "定积分",
+        "对称换元",
+        "三角恒等式"
+      ],
+      "knowledge": "定积分换元、余角关系、倍角与降幂公式。",
+      "bottleneck": "先用余角换元建立相等，再将两积分相加消去复杂分母；关键是成对处理，而非强行分别求原函数。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf",
+      "source_page": 3,
+      "points": 12,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·非数学B类·三",
+      "title": "一对三角定积分的相等性与数值",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-nonmathB-III",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／非数学B类／第三题",
+          "display_title": "一对三角定积分的相等性与数值",
+          "score": 2,
+          "range": [
+            1,
+            3
+          ],
+          "confidence": "中（内容比较，无逐题人类数据）",
+          "grade": "I",
+          "scale_version": "1.1",
+          "rating_kind": "content_extension",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "题面把两个互相关联的积分并列，并要求先证相等，已经提供探索方向；发现后只有短程三角代数和积分。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P6",
+              "relation": "相近、提示更强",
+              "content_basis": "P6须自行识别一个合适的辅助函数；本题先证明两积分相等的要求已缩小方法搜索。后续多一点代数，但无需隐藏公式。"
+            },
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-I3",
+              "relation": "略难",
+              "content_basis": "最大方向导数题直接调用公式；此题尚须把两个给定对象的关系转为可用计算，不能仅凭分别写出原函数。"
+            },
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-V",
+              "relation": "较易",
+              "content_basis": "本题关联已显在题面，运算与证明链很短；矩阵题还要协调两次变换及不等式中的所有因子。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 3,
+            "note": "原卷I=∫_0^(π/2)sin²x cos²x/(1+tan³x)dx，J将tan³改为cot³。核读余角换元证明相等，再按同分母相加得到普通三角积分。端点为可积的有界极限；结果π/32。计算不存在大规模手算，答案不入默认展示。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "证明相等并求值的综合解答题（未编号分问）",
+        "paper_total_marks": 100,
+        "whole_question_marks": 12,
+        "assessed_unit_marks": 12,
+        "subpart_marks": null,
+        "subpart_marks_basis": "题面只有本题12分，未为“证明相等”和“求值”单列小问分值。参考答案证明相等处累计5、最终累计12，可以记录两阶段5和7，但不能包装为两个题面独立小题。",
+        "cumulative_editorial_scoring_markers": [
+          5,
+          12
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          3
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-nonmathB-VI",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "非数学B类",
+      "problem": "六(1)-(2)",
+      "summary": "对两个实正定矩阵，证明其和的平方与立方的迹分别不小于各自幂的迹之和。",
+      "tags": [
+        "矩阵的迹",
+        "正定矩阵",
+        "非交换乘法",
+        "分解证明"
+      ],
+      "knowledge": "迹的线性与循环性质、正定矩阵分解、矩阵乘法次序。",
+      "bottleneck": "正确展开不交换的立方项，靠迹的循环性合并，再将混合乘积的迹化为非负量；不能直接把正定矩阵当实数。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf",
+      "source_page": 7,
+      "points": 12,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·非数学B类·六",
+      "title": "两个正定矩阵的平方、立方迹不等式",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-nonmathB-VI",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／非数学B类／第六(1)-(2)题",
+          "display_title": "两个正定矩阵的平方、立方迹不等式",
+          "score": 3,
+          "range": [
+            2,
+            4
+          ],
+          "confidence": "中（内容比较，无逐题人类数据）",
+          "grade": "II",
+          "scale_version": "1.1",
+          "rating_kind": "content_extension",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "第一问引导第二问；主要负担是保留矩阵乘法次序并把展开后的每类项论证完整，运算规模有限。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "CMC-16-2025-final-mathLow-I1",
+              "relation": "更难",
+              "content_basis": "幂等二次型小题只把已有矩阵关系转成谱约束；本题必须额外建立混合项非负性，并应用到两次展开。"
+            },
+            {
+              "anchor_id": "IMC-2025-P8",
+              "relation": "发现略低、执行不轻",
+              "content_basis": "P8要把几何旋转转成矩阵关系；本题目标直接提示展开，但不能把矩阵当标量，立方项合并与正定性检查有实际手算负担。"
+            },
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-V",
+              "relation": "一般略易",
+              "content_basis": "本题两问共用一个非负性结论，第二问路线受第一问提示；对数行列式题还需选择、组合两次基变换并控制变换因子。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 7,
+            "note": "原卷在题面定义tr，要求tr((A+B)^2)≥tr(A²)+tr(B²)及立方版本。核验八项非交换展开和迹循环合并；正定分解A=P^TP、B=Q^TQ使tr(AB)成为平方范数，A²/B²同样正定。不能由AB并非对称而误称AB正定；只需迹为正。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "含两问的证明大题",
+        "paper_total_marks": 100,
+        "whole_question_marks": 12,
+        "assessed_unit_marks": 12,
+        "subpart_marks": {
+          "六(1)": 6,
+          "六(2)": 6
+        },
+        "subpart_marks_basis": "题面只写大题12分；参考答案第(1)问末累计6分，第(2)问末累计12分，按参考评分分为6和6；已放大原扫描页复核。",
+        "cumulative_editorial_scoring_markers": [
+          3,
+          6,
+          9,
+          12
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1931",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723180001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          7
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-mathLow-I1",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "数学类低年级组",
+      "problem": "一(1)",
+      "summary": "从实对称幂等矩阵的秩，写出其对应二次型的规范形。",
+      "tags": [
+        "二次型",
+        "幂等矩阵",
+        "特征值",
+        "谱定理"
+      ],
+      "knowledge": "实对称矩阵谱定理，幂等矩阵特征值只可能为零或一，秩与非零特征值数。",
+      "bottleneck": "把矩阵多项式关系转为特征值约束，再用秩计数；大阶数仅是外观，不增加运算量。此题也出现在同届高年级必答卷一(1)。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf",
+      "source_page": 1,
+      "points": 5,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·数学低年级·一(1)",
+      "title": "对称幂等矩阵的二次型规范形",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-mathLow-I1",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／数学类低年级组／第一(1)题",
+          "display_title": "对称幂等矩阵的二次型规范形",
+          "score": 1,
+          "range": [
+            1,
+            2
+          ],
+          "confidence": "高（固定基准的识别，不代表实测校准）",
+          "grade": "I",
+          "scale_version": "1.1",
+          "rating_kind": "fixed_baseline",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "题面矩阵关系直接提供约束，大阶数不要求逐项运算；作为课程核心工具直接应用的1分基准。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-I3",
+              "relation": "同为1分基准",
+              "content_basis": "都能由题面直接匹配核心课程工具；本题有一个特征值约束检查，梯度题有少量求导代入。"
+            },
+            {
+              "anchor_id": "IMC-2025-P8",
+              "relation": "较易",
+              "content_basis": "P8需自行把旋转排布编码并找出合适矩阵性质；本题对称、幂等和秩已用标准矩阵语言给出。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 1,
+            "note": "原卷2025阶实对称矩阵A，rank(A)=1012，A²=A，要求填二次型规范形。核验实对称谱定理与λ²=λ，秩给1012个非零特征值。无需展开2025阶矩阵，也不需Jordan理论。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "填空小题",
+        "paper_total_marks": 100,
+        "whole_question_marks": 20,
+        "assessed_unit_marks": 5,
+        "subpart_marks": {
+          "一(1)": 5
+        },
+        "subpart_marks_basis": "卷面一标题明确四小题各5分。",
+        "cumulative_editorial_scoring_markers": null,
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          1
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "单个填空小题"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-mathLow-III",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "数学类低年级组",
+      "problem": "三",
+      "summary": "已知首一多项式存在一个系数很大的首一因子，证明原多项式也必有足够大的系数。",
+      "tags": [
+        "多项式",
+        "复根",
+        "韦达定理",
+        "根的界",
+        "反证"
+      ],
+      "knowledge": "代数基本定理、韦达公式、整除与根的包含、复数模不等式和等比求和。",
+      "bottleneck": "两次反证跨越系数与根：因子的大系数迫使一个大模根，再由整除传给原多项式；原多项式若系数都小，则首项无法被其他项抵消。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf",
+      "source_page": 4,
+      "points": 14,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·数学低年级·三",
+      "title": "首一因子的大系数与原多项式系数",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-mathLow-III",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／数学类低年级组／第三题",
+          "display_title": "首一因子的大系数与原多项式系数",
+          "score": 5,
+          "range": [
+            4,
+            6
+          ],
+          "confidence": "中（内容比较，无逐题人类数据）",
+          "grade": "III",
+          "scale_version": "1.1",
+          "rating_kind": "content_extension",
+          "default_profile_eligible": true,
+          "display_reason_no_spoiler": "要把因子的局部条件传递到原多项式，包含两个相连的估计环节；数字较大但不需要大数计算，关键在联系的发现与严格不等式闭合。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P3",
+              "relation": "略难或接近上沿",
+              "content_basis": "两题都需选择有效表示并由局部结构推整体结论；本题必须跨越两组系数及整除关系串联两个估计，不是套一个现成系数界即可。"
+            },
+            {
+              "anchor_id": "IMC-2025-P4",
+              "relation": "通常略易",
+              "content_basis": "P4要判定全体参数并处理无穷条件、边界及特殊指数；本题目标仅为存在一个大系数，路线成立后无需同样复杂的分类与端点工作。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "relation": "较易",
+              "content_basis": "本题条件中的组合数与幂提供了可辨认结构线索，所需界可以基础工具重建；P2的辅助对象反向设计更缺少题面引导。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 4,
+            "note": "原题p、q均首一实系数，q|p，存在k使|b_k|>2025^k C(m,k)，证某|a_j|>2024。核读Vieta上界迫使q有模大于2025的复根；传给p后若系数全≤2024，几何级数给首项严格压倒余项。需承认默认基础代数的复根和Vieta可达，不能把现成Cauchy根界作为免费冷门引用；已核验可在题内短程重建。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          }
+        }
+      },
+      "original_marks": {
+        "question_type": "单一证明大题",
+        "paper_total_marks": 100,
+        "whole_question_marks": 14,
+        "assessed_unit_marks": 14,
+        "subpart_marks": null,
+        "subpart_marks_basis": "原题没有独立编号子问，不能把参考解答的累计10分和最终14分误作独立两问的满分。",
+        "cumulative_editorial_scoring_markers": [
+          10,
+          14
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1932",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723410001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          4
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-mathHigh-VI",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "数学类高年级组",
+      "problem": "六(1)-(3)，选做题",
+      "summary": "证明圆盘解析映射的导数界，再借单叶映射建立从属表示及原点导数的比较与等号条件。",
+      "tags": [
+        "复分析",
+        "Schwarz引理",
+        "圆盘自同构",
+        "单叶函数",
+        "等号条件"
+      ],
+      "knowledge": "解析函数、单位圆盘的Möbius自同构、Schwarz引理、单叶解析函数逆映射。",
+      "bottleneck": "先用圆盘自同构把任意基点搬到原点，再对复合映射应用Schwarz引理并还原；后两问要求构造逆映射复合和追踪等号。熟悉标准定理证明者与未见过者的难度差异很大。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf",
+      "source_page": "8-9",
+      "points": 12,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·数学高年级选做·六",
+      "title": "圆盘解析映射的导数比较（复分析选做）",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-mathHigh-VI",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／数学类高年级组／第六(1)-(3)，选做题",
+          "display_title": "圆盘解析映射的导数比较（复分析选做）",
+          "score": 4,
+          "range": [
+            3,
+            5
+          ],
+          "confidence": "中（条件内容比较）",
+          "grade": "II",
+          "scale_version": "1.1",
+          "rating_kind": "conditional_content_extension",
+          "default_profile_eligible": false,
+          "display_reason_no_spoiler": "在已具备明确复分析基础、但未见本题等价结果时，三问要求选择复合映射并追踪定义域、原点条件和等号；前问对后问有支撑。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "relation": "条件背景下结构发现接近",
+              "content_basis": "两题均需把给定结构转成已有核心定理可用的形式；本题三问的域和等号检查更长，但数学任务自身也给出递进引导。此比较不抹去额外复分析课程。"
+            },
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-V",
+              "relation": "条件背景下链长接近",
+              "content_basis": "都要构造并复合合适的变换，把复杂命题化为标准核心结论，再把条件完整还原；复分析题须多追踪等号及逆映射定义域。"
+            },
+            {
+              "anchor_id": "IMC-2025-P2",
+              "relation": "不能据默认画像宣称更易；仅条件发现负担一般较低",
+              "content_basis": "补齐复分析后，圆盘及原点结构引导可用变换，所需构造比P2无提示反向找权函数更有课程内入口；没有这些前置知识时此比较不成立。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": "8-9",
+            "note": "核读原卷8–9页三问。第一问Schwarz–Pick导数不等式，需圆盘自同构归一化；第二问F单叶及像包含使F^{-1}∘f在圆盘内解析且固定0，Schwarz给模界；第三问链式法则及单叶F′(0)≠0，等号回到Schwarz等号。资料的9页延续句“即结论1成立”是第二小题文字编号笔误，不影响论证。禁止将已记住Schwarz–Pick整段证明者当“首次见题”的默认受试者。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          },
+          "conditional_profile": "默认本科竞赛画像加一门扎实的本科复分析：解析函数、最大模原理、Schwarz引理及等号、圆盘Möbius自同构、单叶逆函数为解析；没有见过Schwarz–Pick定理的完整标准证明或本题等价题。",
+          "default_profile_score": null,
+          "curation_note": "本次扩充先不选为默认背景固定参照；保留明确课程背景下的条件评分。这是筛选锚题，不是未来评估完整新题时仅以超纲拒绝给分。"
+        }
+      },
+      "original_marks": {
+        "question_type": "三问证明选做大题（复分析）",
+        "paper_total_marks": 100,
+        "whole_question_marks": 12,
+        "assessed_unit_marks": 12,
+        "subpart_marks": {
+          "六(1)": 4,
+          "六(2)": 4,
+          "六(3)": 4
+        },
+        "subpart_marks_basis": "题面只列本题12分；三问解答结尾累计4、8、12，按参考评分各4分。",
+        "cumulative_editorial_scoring_markers": [
+          4,
+          8,
+          12
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          8,
+          9
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "CMC-16-2025-final-mathHigh-VIII",
+      "contest": "CMC",
+      "year": 2025,
+      "edition": 16,
+      "stage": "全国决赛",
+      "category": "数学类高年级组",
+      "problem": "八，选做题",
+      "summary": "对曲面上一条曲率非零的渐近线，建立其挠率与曲面高斯曲率的关系。",
+      "tags": [
+        "微分几何",
+        "渐近线",
+        "Frenet标架",
+        "基本形式",
+        "高斯曲率"
+      ],
+      "knowledge": "空间曲线Frenet公式、曲面法曲率、第一至第三基本形式及其关系。",
+      "bottleneck": "由零法曲率识别曲线副法向与曲面法向平行，联系两者微分，再用基本形式恒等式得到曲率关系。概念门槛高；若已学过渐近线定理，构思负担会显著下降。",
+      "problem_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+      "solution_url": "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+      "source_asset_url": "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf",
+      "source_page": 12,
+      "points": 12,
+      "observed_item_solve_rate": null,
+      "assessment_basis": "读过原卷参考答案后的解法结构分析",
+      "evidence_type": "verified_university_archive_with_editorial_profile",
+      "verification_note": "依据所列大学档案参考答案核读；无逐题实测数据。",
+      "display_label": "第16届CMC决赛（2025）·数学高年级选做·八",
+      "title": "渐近线挠率与曲面曲率（微分几何选做）",
+      "rating_review": {
+        "scale_version": "1.1",
+        "checked_on": "2026-09-27",
+        "basis": "官方/大学档案题面解答核验后的内容比较；非统计等值、非真人预测校准。",
+        "evaluator_exposure": "已看原题解答与参考尺度；不声称盲评，搜索所得线索不属于考生条件。",
+        "record": {
+          "id": "CMC-16-2025-final-mathHigh-VIII",
+          "contest": "CMC",
+          "year": 2025,
+          "edition": 16,
+          "exact_group": "第16届全国大学生数学竞赛／2025年全国决赛／数学类高年级组／第八，选做题",
+          "display_title": "渐近线挠率与曲面曲率（微分几何选做）",
+          "score": 4,
+          "range": [
+            3,
+            5
+          ],
+          "confidence": "中（条件内容比较）",
+          "grade": "II",
+          "scale_version": "1.1",
+          "rating_kind": "conditional_content_extension",
+          "default_profile_eligible": false,
+          "display_reason_no_spoiler": "在已具备明确微分几何基础、但未见本题等价结果时，要把曲线与曲面的两个标架联系起来并完成符号、非退化条件检查；执行量较短。",
+          "anchor_comparisons": [
+            {
+              "anchor_id": "IMC-2025-P8",
+              "relation": "条件背景下结构发现接近",
+              "content_basis": "两题都需从一个几何对称/正交条件识别代数上可操作的对象，再应用课程内性质；此题课程更专门，不能在默认背景直接等难。"
+            },
+            {
+              "anchor_id": "CMC-16-2025-final-nonmathA-V",
+              "relation": "条件背景下总体相近",
+              "content_basis": "都依赖选择能同时处理两个结构的表示并保持条件；本题展开量更少，但必须自己找到曲线与曲面法向间的联系。"
+            },
+            {
+              "anchor_id": "IMC-2025-P4",
+              "relation": "条件背景下完成负担通常较低",
+              "content_basis": "已有微分几何基础时本题不需穷尽参数分类与诸多边界，证明链较集中；这个比较不把整门课程成本隐去。"
+            }
+          ],
+          "original_item_data": null,
+          "statistical_status": "未找到逐题实测作答数据；分数是内容比较，不由奖项率、题号或考试分值换算。",
+          "source_urls": [
+            "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+            "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf"
+          ],
+          "verification": {
+            "date": "2026-09-27",
+            "status": "statement_and_solution_rechecked",
+            "archive_owner": "厦门大学数学教学档案（非声称组委会首次发布）",
+            "source_pages": 12,
+            "note": "原卷题设曲率非零的渐近线，证|τ|=sqrt(−K)。核读法曲率零且κ≠0令主法向与曲面法向正交，副法向B=±n；局部连通上符号固定，所以dn=±dB。Frenet加III−2HII+KI=0且沿渐近方向II=0给K=−τ²。形算子在切向与主法向基中的矩阵亦可验证，避免把III恒等式当陌生免费公式。无需假设τ非零；τ=0时K=0仍包括。",
+            "evaluator_tools_used": [
+              "原卷扫描图视觉阅读",
+              "大学档案网页来源核对"
+            ],
+            "solver_tools_allowed": [
+              "纸笔"
+            ],
+            "external_hint_exposure": "已读原卷参考解答；不声称盲评。"
+          },
+          "conditional_profile": "默认本科竞赛画像加一门扎实的本科曲线曲面微分几何：弧长参数、Frenet公式、法曲率、形算子/基本形式及高斯曲率；没有见过渐近线挠率与高斯曲率关系的定理或等价证明。",
+          "default_profile_score": null,
+          "curation_note": "本次扩充先不选为默认背景固定参照；保留明确课程背景下的条件评分。这是筛选锚题，不是未来评估完整新题时仅以超纲拒绝给分。"
+        }
+      },
+      "original_marks": {
+        "question_type": "单一证明选做大题（微分几何）",
+        "paper_total_marks": 100,
+        "whole_question_marks": 12,
+        "assessed_unit_marks": 12,
+        "subpart_marks": null,
+        "subpart_marks_basis": "原题没有编号子问，参考解答累计3、9、12为证明阶段标记，不能当成三道独立小题的分值。",
+        "cumulative_editorial_scoring_markers": [
+          3,
+          9,
+          12
+        ],
+        "source_urls": [
+          "https://gdjpkc.xmu.edu.cn/FlashShow.aspx?cID=22&dID=383&lID=1933",
+          "https://gdjpkc.xmu.edu.cn/Document/202509161723580001.swf"
+        ],
+        "note": "原卷分值是该作答单元在考试中的权重，不是skill的1–10难度分。原题号保持不变。",
+        "source_pages_1_indexed": [
+          12
+        ],
+        "verified_date": "2026-09-27",
+        "assessed_unit": "整道大题（含题面全部分问）"
+      }
+    },
+    {
+      "id": "IMC-2025-P7",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P7",
+      "title": "倍增与整数中点闭合的集合",
+      "summary": "分类满足倍增闭合、且任意两个同奇偶元素的平均值仍在集合内的非空正整数集合。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "数论",
+        "集合分类",
+        "整除",
+        "奇偶性"
+      ],
+      "knowledge": [
+        "最大公因数",
+        "Bézout等式",
+        "良序性",
+        "奇偶性"
+      ],
+      "bottleneck": "从两个局部闭合规则猜出并证明全体集合的结构；找到若干例子远不足以完成必要性分类。",
+      "answer_for_verification": "M={nd:n≥m}，其中m为正整数、d为正奇数。",
+      "verification_note": "官方先推加法闭合、集合公因数为奇数，再由Bézout找到差为公因数的两元素，利用最近邻与中点规则双向延伸。已检查该分类满足两个原条件；此笔记含解法，默认不对用户展示。",
+      "problem_url": "https://www.imc-math.org.uk/?item=prob7q&section=problems&year=2025",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob7s&section=problems&year=2025",
+      "source_urls": [
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf",
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-solutions.pdf"
+      ],
+      "solution_pdf_pages_1_indexed": [
+        2
+      ],
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第2天第2题（总P7）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 2,
+        "total_problem_number": 7,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      }
+    },
+    {
+      "id": "IMC-2025-P8",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P8",
+      "title": "旋转不变矩阵的特征值",
+      "summary": "一个实方阵的元素排布逆时针旋转90°后保持不变，证明其全部复特征值落在实轴或虚轴。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "线性代数",
+        "矩阵对称性",
+        "特征值"
+      ],
+      "knowledge": [
+        "转置",
+        "置换矩阵",
+        "实对称矩阵的谱",
+        "复特征值"
+      ],
+      "bottleneck": "将元素排布的旋转条件转成可操作的矩阵恒等式，再把该条件连接到复特征值限制；不能按原矩阵看起来对称就直接套实谱定理。",
+      "verification_note": "官方编码A=JA^T，J为反序矩阵，再用复内积推出λ²为实数。另可独立检查A^T=JA=AJ，从而(A²)^T=A²，利用A²实对称收尾；该基础路线不要求Jordan理论。此笔记含解法，默认不展示。",
+      "problem_url": "https://www.imc-math.org.uk/?item=prob8q&section=problems&year=2025",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob8s&section=problems&year=2025",
+      "source_urls": [
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf",
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-solutions.pdf"
+      ],
+      "solution_pdf_pages_1_indexed": [
+        3
+      ],
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第2天第3题（总P8）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 3,
+        "total_problem_number": 8,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      }
+    },
+    {
+      "id": "IMC-2025-P10",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P10",
+      "title": "相邻整数乘积的平方配对计数",
+      "summary": "统计1至N中的有序整数对(a,b)，要求(a²+a)(b²+b)为完全平方，并求计数除以N后的极限。",
+      "summary_type": "自撰概述，非完整题面",
+      "tags": [
+        "数论",
+        "渐近计数",
+        "完全平方",
+        "Pell方程"
+      ],
+      "knowledge": [
+        "无平方因子部分",
+        "Pell方程解的增长",
+        "同余解计数",
+        "渐近误差控制"
+      ],
+      "bottleneck": "从平方条件组织整数解族，并给非主项解族的一致总量估计；判断主项容易，排除大量额外配对才是证明负担。",
+      "answer_for_verification": "官方结论为极限1。",
+      "verification_note": "题面及官方结论已核。官方路线按平方自由部分分组，化为Pell方程，再分范围估计误差。网页与PDF均有疑点：从x²−dy²=1转写成y²整除x²+1，且出现不符原范围的y≤N/2；本次未修复整段计数证明，不能标注为独立验证完备。",
+      "problem_url": "https://www.imc-math.org.uk/?item=prob10q&section=problems&year=2025",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob10s&section=problems&year=2025",
+      "source_urls": [
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-questions.pdf",
+        "https://www.imc-math.org.uk/imc2025/imc2025-day2-solutions.pdf"
+      ],
+      "solution_pdf_pages_1_indexed": [
+        6,
+        7
+      ],
+      "evidence_type": "verified_statement_with_solution_caveat",
+      "cautions": [
+        "官方解答含待修正细节；题面和历史成绩可用作参照，但不得据此声称已认证完整证明。"
+      ],
+      "display_label": "IMC 2025·第2天第5题（总P10）",
+      "session": {
+        "day": 2,
+        "problem_in_day": 5,
+        "total_problem_number": 10,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      }
+    },
+    {
+      "id": "IMC-2025-P4",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P4",
+      "title": "偶次根式的取整恒等式",
+      "summary": "分类使一个偶次根式取整恒等式对全部正整数参数成立的实参数。",
+      "tags": [
+        "代数",
+        "取整",
+        "不等式",
+        "分类"
+      ],
+      "knowledge": [
+        "整数部分",
+        "初等不等式",
+        "幂函数单调性"
+      ],
+      "bottleneck": "把无穷多个条件缩减，再完成端点与特殊指数的充分性验证。",
+      "verification_note": "已核对官方题面与解答；根号只覆盖b^a+x。以floor(x/a)分类，a=2时参数范围[-1,2)∪[3,4)，a>2时[-1,a)，需用幂不等式核全部b。",
+      "problem_url": "https://www.imc-math.org.uk/?item=prob4q&section=problems&year=2025",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob4s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "display_label": "IMC 2025·第1天第4题（总P4）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 4,
+        "total_problem_number": 4,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      }
+    },
+    {
+      "id": "IMC-2025-P5",
+      "contest": "IMC",
+      "year": 2025,
+      "problem": "P5",
+      "title": "自映射与置换的最大迭代阶",
+      "summary": "比较n元集合上任意自映射与置换的最大迭代阶，证明充分大n时两者的差小于n的0.501次方。",
+      "tags": [
+        "组合",
+        "函数迭代",
+        "置换",
+        "数论",
+        "渐近"
+      ],
+      "knowledge": [
+        "最终周期",
+        "循环分解",
+        "最小公倍数",
+        "素数计数弱下界"
+      ],
+      "bottleneck": "需协调映射结构、置换阶与渐近数论估计；官方所用素数数量下界超出默认初等背景，不得当现成免费工具。",
+      "verification_note": "已核题面和官方路线：周期阶N与最大非周期链长R给ord≤N+R；R大时用未覆盖素数造更大阶置换。将官方N≤g(n)在该处补为N≤f(n)（补固定点）；全周期映射另行处理。末尾f(n)>2n可由两个相邻循环长度给出。素数计数Chebyshev级下界足够，非必须完整素数定理。",
+      "problem_url": "https://www.imc-math.org.uk/?item=prob5q&section=problems&year=2025",
+      "solution_url": "https://www.imc-math.org.uk/?item=prob5s&section=problems&year=2025",
+      "evidence_type": "verified_source_with_editorial_profile",
+      "cautions": [
+        "官方路线存在额外数论知识门槛；高级知识本身不自动判10分。"
+      ],
+      "display_label": "IMC 2025·第1天第5题（总P5）",
+      "session": {
+        "day": 1,
+        "problem_in_day": 5,
+        "total_problem_number": 5,
+        "basis": "已核验2023–2025官方题库的五题/天安排；不得外推其他年份"
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+interface:
+  display_name: 知识点本质讲解
+  short_description: 讲清概念的本质和来龙去脉，辨明对象与表示，解释定义动机及关键公式的原理
+  default_prompt: 用 $explain-concepts-clearly 讲清这个概念到底是什么、为什么这样定义，以及它的来龙去脉。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

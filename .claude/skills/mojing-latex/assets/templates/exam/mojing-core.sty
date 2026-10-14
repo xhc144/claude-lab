@@ -1,0 +1,458 @@
+%% mojing-core.sty
+%% 墨经 Mojing —— 数学排版模板集的公共核心
+%%
+%% 负责：中西文与数学字体（自动检测 + 回退）、配色、页面通用元素、
+%% 列表 / 图表标题 / 脚注 / 超链接的统一风格。
+%% 各文档类通过 \PassOptionsToPackage 传入选项后载入本包。
+%%
+%% 选项（均可写在 \documentclass[...] 中）：
+%%   latin  = stix | termes | pagella | libertinus | newcm | lm   西文与数学字体
+%%   cjk    = auto | source | noto | mac | windows | fandol         中文字体方案
+%%   zihao  = 5 | -4 | ...                                          正文字号（ctex 字号）
+%%   accent = <颜色名>                                              主题色
+%%   print                                                          超链接改为黑色（印刷版）
+%%   linespread = <数>                                              行距因子
+%%
+%% 本文件以 LPPL 1.3c 发布。
+\NeedsTeXFormat{LaTeX2e}[2022/06/01]
+\ProvidesExplPackage{mojing-core}{2026/10/13}{1.0}
+  {Mojing: shared fonts, colours and utilities}
+
+%% ---------------------------------------------------------------------------
+%% 1. 选项
+%% ---------------------------------------------------------------------------
+\tl_new:N   \l_mojing_latin_tl
+\tl_new:N   \l_mojing_cjk_tl
+\tl_new:N   \l_mojing_zihao_tl
+\tl_new:N   \l_mojing_accent_tl
+\tl_new:N   \l_mojing_linespread_tl
+\bool_new:N \l_mojing_print_bool
+
+\msg_new:nnn { mojing } { unknown-option }
+  { Unknown~option~`#1'~ignored. }
+\msg_new:nnn { mojing } { cjk-scheme }
+  { CJK~font~scheme:~#1. }
+\msg_new:nnn { mojing } { cjk-missing }
+  { Requested~CJK~scheme~`#1'~is~not~available;~falling~back~to~Fandol. }
+
+\keys_define:nn { mojing }
+  {
+    latin .choices:nn =
+      { stix , termes , pagella , libertinus , newcm , lm }
+      { \tl_set_eq:NN \l_mojing_latin_tl \l_keys_choice_tl } ,
+    latin .initial:n = stix ,
+    cjk .choices:nn =
+      { auto , source , noto , mac , windows , fandol }
+      { \tl_set_eq:NN \l_mojing_cjk_tl \l_keys_choice_tl } ,
+    cjk .initial:n = auto ,
+    zihao      .tl_set:N   = \l_mojing_zihao_tl ,
+    zihao      .initial:n  = 5 ,
+    accent     .tl_set:N   = \l_mojing_accent_tl ,
+    accent     .initial:n  = mjIndigo ,
+    linespread .tl_set:N   = \l_mojing_linespread_tl ,
+    linespread .initial:n  = 1.3 ,
+    print      .bool_set:N = \l_mojing_print_bool ,
+    print      .default:n  = true ,
+    unknown .code:n =
+      { \msg_warning:nnV { mojing } { unknown-option } \l_keys_key_str } ,
+  }
+\ProcessKeyOptions [ mojing ]
+
+%% ---------------------------------------------------------------------------
+%% 2. ctex：中文支持（字体自行设置，故 fontset = none）
+%% ---------------------------------------------------------------------------
+\use:e
+  {
+    \exp_not:N \RequirePackage
+      [
+        fontset = none , heading = true , scheme = chinese ,
+        zihao = \l_mojing_zihao_tl ,
+        linespread = \l_mojing_linespread_tl
+      ]
+      { ctex }
+  }
+
+%% ---------------------------------------------------------------------------
+%% 3. 中文字体
+%% ---------------------------------------------------------------------------
+%% 依次尝试：思源宋体（Source Han / Noto CJK）→ macOS 系统字体 → Windows
+%% 系统字体 → TeX Live 自带的 Fandol。楷体、仿宋单独检测。
+\tl_new:N \l__mojing_kai_tl
+\tl_new:N \l__mojing_fang_tl
+\tl_new:N \l__mojing_kai_scale_tl
+\tl_set:Nn \l__mojing_kai_scale_tl { 1 }
+\tl_new:N \l__mojing_cjk_used_tl
+
+\cs_new_protected:Npn \__mojing_if_font:nTF #1#2#3
+  { \IfFontExistsTF {#1} {#2} {#3} }
+
+%% 楷体：系统楷体优先，否则 FandolKai
+\cs_new_protected:Npn \__mojing_detect_kai:
+  {
+    \__mojing_if_font:nTF { Kaiti~SC }
+      { \tl_set:Nn \l__mojing_kai_tl { Kaiti~SC } }
+      {
+        \__mojing_if_font:nTF { STKaiti }
+          { \tl_set:Nn \l__mojing_kai_tl { STKaiti } }
+          {
+            \__mojing_if_font:nTF { KaiTi }
+              { \tl_set:Nn \l__mojing_kai_tl { KaiTi } }
+              {
+                \tl_set:Nn \l__mojing_kai_tl { FandolKai-Regular.otf }
+                %% FandolKai 的字面明显小于宋体，放大到视觉上等大
+                \tl_set:Nn \l__mojing_kai_scale_tl { 1.07 }
+              }
+          }
+      }
+    \__mojing_if_font:nTF { STFangsong }
+      { \tl_set:Nn \l__mojing_fang_tl { STFangsong } }
+      {
+        \__mojing_if_font:nTF { FangSong }
+          { \tl_set:Nn \l__mojing_fang_tl { FangSong } }
+          { \tl_set:Nn \l__mojing_fang_tl { FandolFang-Regular.otf } }
+      }
+  }
+
+%% #1 宋体族名  #2 宋体粗体  #3 黑体族名  #4 黑体中粗  #5 黑体粗体
+\cs_new_protected:Npn \__mojing_cjk_family:nnnnn #1#2#3#4#5
+  {
+    \use:e
+      {
+        \exp_not:N \setCJKmainfont { \exp_not:n {#1} }
+          [ BoldFont = { \exp_not:n {#2} } ]
+        \exp_not:N \setCJKfamilyfont { zhkai } { \l__mojing_kai_tl }
+          [ AutoFakeBold = 2.5 , Scale = \l__mojing_kai_scale_tl ,
+            ItalicFont = \l__mojing_kai_tl ]
+        \exp_not:N \setCJKfamilyfont { zhfs } { \l__mojing_fang_tl }
+      }
+    \setCJKsansfont {#3} [ BoldFont = {#5} ]
+    \setCJKmonofont {#3}
+    \setCJKfamilyfont { zhsong  } {#1} [ BoldFont = {#2} ]
+    \setCJKfamilyfont { zhhei   } {#3} [ BoldFont = {#5} ]
+    \setCJKfamilyfont { zhheimd } {#4} [ BoldFont = {#5} ]
+  }
+
+\cs_new_protected:Npn \__mojing_cjk_source:
+  {
+    \__mojing_cjk_family:nnnnn
+      { Source~Han~Serif~SC } { Source~Han~Serif~SC~SemiBold }
+      { Source~Han~Sans~SC }  { Source~Han~Sans~SC~Medium }
+      { Source~Han~Sans~SC~Bold }
+  }
+\cs_new_protected:Npn \__mojing_cjk_noto:
+  {
+    \__mojing_cjk_family:nnnnn
+      { Noto~Serif~CJK~SC } { Noto~Serif~CJK~SC~SemiBold }
+      { Noto~Sans~CJK~SC }  { Noto~Sans~CJK~SC~Medium }
+      { Noto~Sans~CJK~SC~Bold }
+  }
+\cs_new_protected:Npn \__mojing_cjk_mac:
+  {
+    \__mojing_if_font:nTF { PingFang~SC }
+      {
+        \__mojing_cjk_family:nnnnn
+          { Songti~SC~Light } { Songti~SC~Bold }
+          { PingFang~SC } { PingFang~SC~Medium } { PingFang~SC~Semibold }
+      }
+      {
+        \__mojing_cjk_family:nnnnn
+          { Songti~SC~Light } { Songti~SC~Bold }
+          { Heiti~SC~Light } { Heiti~SC~Medium } { Heiti~SC~Medium }
+      }
+  }
+\cs_new_protected:Npn \__mojing_cjk_windows:
+  {
+    \__mojing_cjk_family:nnnnn
+      { SimSun } { SimHei }
+      { Microsoft~YaHei } { Microsoft~YaHei } { Microsoft~YaHei~Bold }
+  }
+\cs_new_protected:Npn \__mojing_cjk_fandol:
+  {
+    \__mojing_cjk_family:nnnnn
+      { FandolSong-Regular.otf } { FandolSong-Bold.otf }
+      { FandolHei-Regular.otf }  { FandolHei-Regular.otf }
+      { FandolHei-Bold.otf }
+  }
+
+%% 自动检测
+\cs_new_protected:Npn \__mojing_cjk_auto:
+  {
+    \__mojing_if_font:nTF { Source~Han~Serif~SC }
+      { \tl_set:Nn \l__mojing_cjk_used_tl { source } }
+      {
+        \__mojing_if_font:nTF { Noto~Serif~CJK~SC }
+          { \tl_set:Nn \l__mojing_cjk_used_tl { noto } }
+          {
+            \__mojing_if_font:nTF { Songti~SC }
+              { \tl_set:Nn \l__mojing_cjk_used_tl { mac } }
+              {
+                \__mojing_if_font:nTF { SimSun }
+                  { \tl_set:Nn \l__mojing_cjk_used_tl { windows } }
+                  { \tl_set:Nn \l__mojing_cjk_used_tl { fandol } }
+              }
+          }
+      }
+  }
+
+\__mojing_detect_kai:
+\str_if_eq:VnTF \l_mojing_cjk_tl { auto }
+  { \__mojing_cjk_auto: }
+  { \tl_set_eq:NN \l__mojing_cjk_used_tl \l_mojing_cjk_tl }
+\msg_info:nnV { mojing } { cjk-scheme } \l__mojing_cjk_used_tl
+\use:c { __mojing_cjk_ \l__mojing_cjk_used_tl : }
+
+%% 罗马数字（Ⅲ）、带圈数字（①）等按中文字符处理，避免西文字体缺字
+\xeCJKDeclareCharClass { CJK } { "2160 -> "217F , "2460 -> "24FF , "2605 , "2606 }
+
+\ProvideDocumentCommand \songti   { } { \CJKfamily { zhsong } }
+\ProvideDocumentCommand \heiti    { } { \CJKfamily { zhhei } }
+\ProvideDocumentCommand \kaishu   { } { \CJKfamily { zhkai } }
+\ProvideDocumentCommand \fangsong { } { \CJKfamily { zhfs } }
+%% 强调：西文用意大利体，中文用楷体
+\RenewDocumentCommand \emph { m } { { \itshape \kaishu #1 } }
+%% 中粗黑体：标题、定理名等小字号醒目处使用
+\NewDocumentCommand \heitimd { } { \CJKfamily { zhheimd } }
+
+%% ---------------------------------------------------------------------------
+%% 4. 西文与数学字体（按文件名加载，保证 TeX Live 下无需安装系统字体）
+%% ---------------------------------------------------------------------------
+\RequirePackage { amsmath , amssymb }
+\RequirePackage { mathtools }
+\RequirePackage { amsthm }
+\RequirePackage [ warnings-off = { mathtools-colon , mathtools-overbracket } ]
+  { unicode-math }
+\unimathsetup { math-style = TeX , bold-style = TeX }
+
+\tl_new:N \l__mojing_mathfont_tl
+\tl_new:N \l__mojing_mathfont_opts_tl
+
+\cs_new_protected:Npn \__mojing_latin_stix:
+  {
+    \setmainfont { STIXTwoText }
+      [ Extension = .otf , UprightFont = *-Regular , BoldFont = *-SemiBold ,
+        ItalicFont = *-Italic , BoldItalicFont = *-SemiBoldItalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { STIXTwoMath-Regular.otf }
+  }
+\cs_new_protected:Npn \__mojing_latin_termes:
+  {
+    \setmainfont { texgyretermes }
+      [ Extension = .otf , UprightFont = *-regular , BoldFont = *-bold ,
+        ItalicFont = *-italic , BoldItalicFont = *-bolditalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { texgyretermes-math.otf }
+  }
+\cs_new_protected:Npn \__mojing_latin_pagella:
+  {
+    \setmainfont { texgyrepagella }
+      [ Extension = .otf , UprightFont = *-regular , BoldFont = *-bold ,
+        ItalicFont = *-italic , BoldItalicFont = *-bolditalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { texgyrepagella-math.otf }
+  }
+\cs_new_protected:Npn \__mojing_latin_libertinus:
+  {
+    \setmainfont { LibertinusSerif }
+      [ Extension = .otf , UprightFont = *-Regular , BoldFont = *-Semibold ,
+        ItalicFont = *-Italic , BoldItalicFont = *-SemiboldItalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { LibertinusMath-Regular.otf }
+  }
+\cs_new_protected:Npn \__mojing_latin_newcm:
+  {
+    \setmainfont { NewCM10 }
+      [ Extension = .otf , UprightFont = *-Book , BoldFont = *-Bold ,
+        ItalicFont = *-BookItalic , BoldItalicFont = *-BoldItalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { NewCMMath-Book.otf }
+  }
+\cs_new_protected:Npn \__mojing_latin_lm:
+  {
+    \setmainfont { lmroman10 }
+      [ Extension = .otf , UprightFont = *-regular , BoldFont = *-bold ,
+        ItalicFont = *-italic , BoldItalicFont = *-bolditalic ]
+    \tl_set:Nn \l__mojing_mathfont_tl { latinmodern-math.otf }
+  }
+
+\use:c { __mojing_latin_ \l_mojing_latin_tl : }
+
+%% 无衬线：思源黑体的西文部分即源自 Source Sans，二者搭配最为协调
+\setsansfont { SourceSansPro }
+  [ Extension = .otf , UprightFont = *-Regular , BoldFont = *-Semibold ,
+    ItalicFont = *-RegularIt , BoldItalicFont = *-SemiboldIt ,
+    Scale = MatchUppercase ]
+\setmonofont { SourceCodePro }
+  [ Extension = .otf , UprightFont = *-Regular , BoldFont = *-Semibold ,
+    ItalicFont = *-RegularIt , BoldItalicFont = *-SemiboldIt ,
+    Scale = MatchLowercase ]
+%% 标题用的中粗无衬线
+\newfontfamily \mojingsansmedium { SourceSansPro }
+  [ Extension = .otf , UprightFont = *-Semibold , BoldFont = *-Bold ,
+    Scale = MatchUppercase ]
+
+\exp_args:NV \setmathfont \l__mojing_mathfont_tl
+%% 花体字母统一用 STIX Two Math 的手写体（各数学字体的 \mathcal 风格差异较大）
+\setmathfont { STIXTwoMath-Regular.otf }
+  [ range = { cal , bfcal } , StylisticSet = 1 ]
+
+%% 标题字体：西文 Source Sans 中粗 + 中文思源黑体中粗
+\NewDocumentCommand \mojingheadfont { }
+  { \normalfont \mojingsansmedium \heitimd }
+
+%% 公开接口：在导言区更换西文字体方案
+\NewDocumentCommand \mojinglatin { m }
+  {
+    \use:c { __mojing_latin_ #1 : }
+    \exp_args:NV \setmathfont \l__mojing_mathfont_tl
+  }
+
+%% ---------------------------------------------------------------------------
+%% 5. 配色：低饱和、可印刷的一组主题色
+%% ---------------------------------------------------------------------------
+\RequirePackage { xcolor }
+\definecolor { mjIndigo    } { HTML } { 1F3B5C }  % 黛蓝
+\definecolor { mjVermilion } { HTML } { 9B2D20 }  % 朱砂
+\definecolor { mjPine      } { HTML } { 2C5F4F }  % 松绿
+\definecolor { mjOchre     } { HTML } { 8B5E34 }  % 赭石
+\definecolor { mjPlum      } { HTML } { 5B3F63 }  % 紫檀
+\definecolor { mjInk       } { HTML } { 1A1A1A }  % 墨
+\definecolor { mjGray      } { HTML } { 6B6B6B }
+\definecolor { mjRule      } { HTML } { 8E8E8E }
+\definecolor { mjLight     } { HTML } { F3F1EC }  % 宣纸灰，用于极浅的底色
+
+%% \mojingaccent[辅助色]{主题色}
+\NewDocumentCommand \mojingaccent { o m }
+  {
+    \IfValueTF {#1}
+      { \colorlet { mjSecond } {#1} }
+      {
+        \str_if_eq:nnTF {#2} { mjVermilion }
+          { \colorlet { mjSecond } { mjIndigo } }
+          { \colorlet { mjSecond } { mjVermilion } }
+      }
+    \colorlet { mjAccent }      {#2}
+    \colorlet { mjAccentLight } { #2 !6 !white }
+    \colorlet { mjAccentPale }  { #2 !14 !white }
+    \colorlet { mjAccentMid }   { #2 !45 !white }
+  }
+\exp_args:NV \mojingaccent \l_mojing_accent_tl
+
+%% ---------------------------------------------------------------------------
+%% 6. 常用宏包与统一风格
+%% ---------------------------------------------------------------------------
+\RequirePackage { graphicx , booktabs , array , multirow , tabularx }
+\RequirePackage { etoolbox }
+\RequirePackage { siunitx }
+\sisetup { group-digits = false , detect-all }
+\RequirePackage [ protrusion = true , expansion = false ] { microtype }
+
+%% 断行：中文字间的弹性很小，遇到较长的行内公式时容易出现溢出行。
+%% 适当放宽容忍度并启用第三遍的 emergency stretch，宁可行稍松，也不让文字出界。
+\tolerance = 600
+\emergencystretch = 1.5em
+
+%% 列表：编号用西文括号，悬挂对齐
+\RequirePackage { enumitem }
+\setlist { itemsep = .15\baselineskip , topsep = .35\baselineskip ,
+           parsep = 0pt , partopsep = 0pt }
+\setlist [ enumerate , 1 ] { label = (\arabic*) , leftmargin = * ,
+                             widest = 9 , labelsep = .5em }
+\setlist [ enumerate , 2 ] { label = (\alph*) , leftmargin = * ,
+                             labelsep = .5em }
+\setlist [ enumerate , 3 ] { label = (\roman*) , leftmargin = * }
+\setlist [ itemize , 1 ] { label = \textcolor{mjAccent}{\raisebox{.1ex}{\tiny$\blacksquare$}} ,
+                           leftmargin = 1.5em }
+\setlist [ itemize , 2 ] { label = \textcolor{mjGray}{--} , leftmargin = 1.5em }
+\setlist [ description ] { font = \normalfont\heiti , leftmargin = 2em ,
+                           labelindent = 0pt }
+%% 行内列举：(1)…；(2)…
+\newlist { inlinelist } { enumerate* } { 1 }
+\setlist [ inlinelist ] { label = (\arabic*) , itemjoin = {\quad} }
+
+%% 图表标题
+\RequirePackage { caption }
+\RequirePackage [ labelformat = simple ] { subcaption }
+\renewcommand \thesubfigure { (\alph{subfigure}) }
+\DeclareCaptionLabelSeparator { mjquad } { \hspace{1em} }
+\captionsetup
+  {
+    font = small , labelfont = { sf , bf } , labelsep = mjquad ,
+    justification = centerlast , skip = .6\baselineskip ,
+    format = hang
+  }
+\captionsetup [ table ] { position = top }
+\captionsetup [ sub ] { labelfont = { normalfont } , font = small }
+
+%% 带圈数字（①—⑳），用于脚注等
+\NewExpandableDocumentCommand \mojingcircled { m }
+  {
+    \int_compare:nNnTF {#1} > { 20 }
+      { (#1) }
+      { \char \int_eval:n { "245F + #1 } }
+  }
+
+%% 细线与装饰
+\NewDocumentCommand \mojingrule { O{.4pt} O{\linewidth} }
+  { \par \noindent \textcolor { mjRule } { \rule { #2 } { #1 } } \par }
+
+%% 日期：中文格式
+\NewDocumentCommand \mojingdate { m } { \zhdate {#1} }
+
+%% ---------------------------------------------------------------------------
+%% 7. 超链接（由各文档类在末尾调用 \mojingloadhyperref）
+%% ---------------------------------------------------------------------------
+\NewDocumentCommand \mojingloadhyperref { }
+  {
+    \RequirePackage { hyperref }
+    \bool_if:NTF \l_mojing_print_bool
+      {
+        \hypersetup
+          { colorlinks = true , linkcolor = black , citecolor = black ,
+            urlcolor = black , filecolor = black }
+      }
+      {
+        \hypersetup
+          { colorlinks = true , linkcolor = mjAccent , citecolor = mjAccent ,
+            urlcolor = mjAccent , filecolor = mjAccent }
+      }
+    \hypersetup
+      { bookmarksnumbered = true , bookmarksopen = true , linktoc = page ,
+        pdfdisplaydoctitle = true , unicode = true }
+    \RequirePackage [ nameinlink , noabbrev ] { cleveref }
+    \mojing_cref_names:
+  }
+
+\cs_new_protected:Npn \mojing_cref_names:
+  {
+    \crefname { equation }   { 式 } { 式 }
+    \creflabelformat { equation } { (##2##1##3) }
+    \crefname { figure }     { 图 } { 图 }
+    \crefname { table }      { 表 } { 表 }
+    \crefname { section }    { 第 } { 第 }
+    \creflabelformat { section } { ##2##1##3~节 }
+    \crefname { subsection } { 第 } { 第 }
+    \creflabelformat { subsection } { ##2##1##3~节 }
+    \crefname { chapter }    { 第 } { 第 }
+    \creflabelformat { chapter } { ##2##1##3~章 }
+    \crefname { enumi }      { } { }
+    \crefname { footnote }   { 脚注 } { 脚注 }
+    \crefname { page }       { 第 } { 第 }
+    \cs_set:Npn \crefrangeconjunction        { 至 }
+    \cs_set:Npn \crefpairconjunction         { 与 }
+    \cs_set:Npn \crefmiddleconjunction       { 、 }
+    \cs_set:Npn \creflastconjunction         { 与 }
+    \cs_set:Npn \crefpairgroupconjunction    { 与 }
+    \cs_set:Npn \crefmiddlegroupconjunction  { 、 }
+    \cs_set:Npn \creflastgroupconjunction    { 与 }
+  }
+
+%% 双面排版中为使下一章从奇数页开始而插入的空白页，不排书眉页码
+\cs_set_protected:Npn \cleardoublepage
+  {
+    \clearpage
+    \legacy_if:nT { @twoside }
+      {
+        \int_if_odd:nF { \value { page } }
+          { \hbox { } \thispagestyle { empty } \newpage }
+      }
+  }
+
+%% 其他文件可用的布尔量
+\bool_new:N \g_mojing_answers_bool
+
+\endinput
