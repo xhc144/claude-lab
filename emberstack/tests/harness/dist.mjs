@@ -1,0 +1,21 @@
+// Open the single-file build from file:// and let the AI play for a while.
+import { chromium } from '@playwright/test';
+import path from 'node:path';
+const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../..');
+const b = await chromium.launch();
+const pg = await b.newPage({ viewport: { width: 1280, height: 800 } });
+const errors = [];
+pg.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('ERR_FAILED') && !m.text().includes('ERR_NAME')) errors.push(m.text()); });
+pg.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
+await pg.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
+await pg.goto('file://' + path.join(root, 'dist/emberstack.html'));
+await pg.waitForTimeout(2000);
+await pg.getByText('观看 AI 从零建设文明').click();
+await pg.waitForTimeout(1000);
+await pg.keyboard.press('5');
+await pg.waitForTimeout(20000);
+const info = await pg.evaluate(() => { const a = window.__emberstack; return { day: a.g.s.day, actions: a.brain.stats.actions, level: a.level.id, result: a.g.s.result }; });
+console.log(JSON.stringify(info));
+await pg.screenshot({ path: path.join(root, 'shots/dist.png') });
+console.log('errors:', errors.length ? errors.join('\n') : 'none');
+await b.close();

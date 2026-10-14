@@ -1,10 +1,10 @@
 # claude-lab · Claude 实验仓库
 
-这是多个独立实验的合集：交互数学、创世沙盒、三维游戏、AI 基础设施控制台原型与程序化影片。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
+这是多个独立实验的合集：交互数学、创世沙盒、卡牌策略游戏、三维游戏、AI 基础设施控制台原型与程序化影片。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供四个交互项目、一个产品界面原型、墨经模板目录与两个影片播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供五个交互项目、一个产品界面原型、墨经模板目录与两个影片播放器。
 
 ## 浏览器交互项目
 
@@ -12,10 +12,11 @@
 | --- | --- | --- | --- |
 | 数境 MathScape | 矩阵、复映射、常微分方程与三体运动可视化 | [打开](https://xhc144.github.io/claude-lab/mathscape/) | [mathscape/](mathscape/)；`npm start`；`npm run build` 生成单文件 |
 | 万象 Myriad | 地形、气候、生态和文明演化的创世沙盒 | [打开](https://xhc144.github.io/claude-lab/myriad/) | [myriad/](myriad/)；`npm start`；`npm run build` 生成单文件；桌面操作最佳 |
+| 薪火纪 Emberstack | 卡牌堆叠文明策略游戏：采集、合成、科技、探索、战斗，7 章 28 关与远征/无尽/挑战模式，可完全托管给自主 AI 玩家 | [打开](https://xhc144.github.io/claude-lab/emberstack/) | [emberstack/](emberstack/)；`npm start`；`npm run build` 生成单文件；支持桌面与触屏 |
 | 回响荒野 Echowild | 程序化体素世界、建造与生存冒险 | [打开](https://xhc144.github.io/claude-lab/echowild/) | [echowild/](echowild/)；`node scripts/serve.mjs`；需要桌面键鼠与 WebGL2，暂不支持触屏游玩 |
 | 0 → ∞ 交互实验室 | 从复平面到纽结、双摆、量子波包与神经网络的 13 台仪器 | [打开](https://xhc144.github.io/claude-lab/personal-site/) | [personal-site/](personal-site/)；`npm ci && npm run build && npm start`；发布一般作品展示版本 |
 
-MathScape 与 Myriad 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
+MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
 
 ## 产品界面原型
 
@@ -50,7 +51,7 @@ node scripts/build-pages.mjs
 python3 -m http.server 8080 --directory docs
 ```
 
-`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室与星枢 Tensora 的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
+`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack 与星枢 Tensora 的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 
