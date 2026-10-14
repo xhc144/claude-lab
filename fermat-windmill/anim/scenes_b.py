@@ -283,19 +283,19 @@ class S07_Zagier(FScene):
             self.play(Create(same), Flash(c.centre(), color=RECUT, flash_radius=0.5), run_time=0.8)
             xy = M("x = y", 54, RECUT).next_to(lab, DOWN, buff=0.45)
             self.play(Write(xy), run_time=0.7)
-        self.play(FadeOut(VGroup(tl, te, same, lab)), xy.animate.move_to(RIGHT * 3.4 + UP * 0.95), run_time=0.6)
+        self.play(FadeOut(VGroup(tl, te, same, lab)), xy.animate.move_to(UP * 0.95).set_x(0.1, LEFT), run_time=0.6)
 
         # ---- zg_7: primality -> the cross
         with self.seg("zg_7"):
             self.at(1)
-            e1 = M(r"p = x^2 + 4xz = x\,(x + 4z)", 46).next_to(xy, DOWN, buff=0.5).align_to(xy, RIGHT)
+            e1 = M(r"p = x^2 + 4xz = x\,(x + 4z)", 46).next_to(xy, DOWN, buff=0.5).align_to(xy, LEFT)
             self.play(Write(e1), run_time=1.3)
             atl(self, 2, 2)
             e2 = VGroup(TL("p 是素数", "p prime", 34, color=SQ), M(r"\Rightarrow\ x = 1", 46, SQ)).arrange(RIGHT, buff=0.25)
-            e2.next_to(e1, DOWN, buff=0.45).align_to(e1, RIGHT)
+            e2.next_to(e1, DOWN, buff=0.45).align_to(e1, LEFT)
             self.play(FadeIn(e2, shift=UP * 0.2), run_time=0.9)
             atl(self, 3, 3)
-            e3 = M(r"(1,\,1,\,\tfrac{p-1}{4})", 46, RECUT).next_to(e2, DOWN, buff=0.45).align_to(e1, RIGHT)
+            e3 = M(r"(1,\,1,\,\tfrac{p-1}{4})", 46, RECUT).next_to(e2, DOWN, buff=0.45).align_to(e1, LEFT)
             self.play(Write(e3), run_time=0.8)
             c.add_updater(lambda m, dt: m.rotate(-0.6 * dt, about_point=m.centre()))
             cl = TL("唯一的不动点：十字", "the unique fixed point: a cross", 30, color=RECUT)

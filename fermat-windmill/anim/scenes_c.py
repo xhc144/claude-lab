@@ -255,6 +255,8 @@ class S11_Apps(FScene):
             self.play(LaggedStart(*[FadeIn(m, shift=RIGHT * 0.2) for m in more], lag_ratio=0.25), run_time=1.4)
             hyp = TL("斜边为素数 ⇔ 素数除以 4 余 1", "prime hypotenuse ⇔ prime ≡ 1 (mod 4)", 30, color=GOOD)
             hyp.next_to(more, DOWN, buff=0.35).align_to(more, LEFT)
+            if hyp.get_right()[0] > 6.8:
+                hyp.scale_to_fit_width(6.8 - hyp.get_left()[0]).align_to(more, LEFT)
             self.play(FadeIn(hyp), run_time=0.7)
         self.play(FadeOut(VGroup(ax, f1, f2, t5, t13, e5, e13, more, hyp)), run_time=0.6)
 
@@ -285,6 +287,8 @@ class S11_Apps(FScene):
             r2 = M(r"r_2(n) = 4\,\big(d_1(n) - d_3(n)\big)", 36, ARM).next_to(approx, DOWN, buff=0.45)
             r2c = TL("（数 n 的 4k+1 型与 4k+3 型因数）", "(count divisors of n of type 4k+1 and 4k+3)", 22,
                      color=MUTED).next_to(r2, DOWN, buff=0.15)
+            if r2c.width > 6.4:
+                r2c.scale_to_fit_width(6.4)
             self.play(Write(r2), FadeIn(r2c), run_time=1.2)
             atl(self, 3, 5)
             lz = M(r"\frac{\pi}{4} = 1 - \frac13 + \frac15 - \frac17 + \cdots", 44, GOOD).next_to(r2c, DOWN, buff=0.45)
@@ -393,7 +397,7 @@ class S12_Interview(FScene):
             with self.seg(f"q{k}"):
                 self.play(FadeOut(prev), bar[k - 1].animate.set_fill(SQ, 1), run_time=0.4)
                 head = VGroup(T(f"Q{k}", 28, SQ, weight=BOLD, font=LAT_FONT), tag(lv, FLIP, 20)).arrange(RIGHT, buff=0.25)
-                head.move_to([-1.6, 3.55, 0])
+                head.move_to([-0.9, 3.55, 0])
                 qt = fit_lines(q["en"], 30, W - 0.7)
                 if ZH:
                     qt.add(T(q["zh_tr"], 25, MUTED))

@@ -679,7 +679,7 @@ class S05_Set(FScene):
 
         # ---- set_7: the created symmetry, seen in the (y, z) plane for p = 41
         with self.seg("set_7"):
-            self.play(Sdef.animate.set_opacity(0.0), run_time=0.3)
+            self.play(Sdef.animate.set_opacity(0.0), FadeOut(plan), run_time=0.3)
             u = 0.47
             o = LEFT * 5.0 + DOWN * 2.45
             axes = VGroup(Arrow(o, o + RIGHT * 11 * u, buff=0, stroke_width=3, color=MUTED, tip_length=0.18),
@@ -712,4 +712,4 @@ class S05_Set(FScene):
             room = TL("问题变大了，反而有了对称", "a bigger problem, with a symmetry", 30, color=FLIP)
             room.next_to(ann, DOWN, buff=0.5).align_to(legend, LEFT)
             self.play(FadeIn(room, shift=UP * 0.2), run_time=0.8)
-        self.play(FadeOut(VGroup(axes, ly, lz, diag, pts, legend, ttl, ann, room, plan, Sdef)), run_time=0.8)
+        self.play(FadeOut(VGroup(axes, ly, lz, diag, pts, legend, ttl, ann, room, Sdef)), run_time=0.8)

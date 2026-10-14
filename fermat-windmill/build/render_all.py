@@ -21,9 +21,14 @@ def render(lang, mod, scene, quality):
     env = dict(os.environ, FW_LANG=lang, FW_FPS="30", OMP_NUM_THREADS="1")
     log = ROOT / "render" / lang / "logs"
     log.mkdir(parents=True, exist_ok=True)
+    # each scene gets its own LaTeX directory: parallel renders sharing one would delete each other's files
+    tex = ROOT / "render" / "tex" / lang / scene
+    tex.mkdir(parents=True, exist_ok=True)
+    cfg = tex / "manim.cfg"
+    cfg.write_text(f"[CLI]\ntex_dir = {tex}\n")
     t = time.time()
     with open(log / f"{scene}.log", "w") as f:
-        r = subprocess.run([sys.executable, "-m", "manim", f"-q{quality}", "--disable_caching",
+        r = subprocess.run([sys.executable, "-m", "manim", f"-q{quality}", "--disable_caching", "-c", str(cfg),
                             "--media_dir", str(ROOT / "render" / f"media_{lang}"), str(ROOT / "anim" / f"{mod}.py"),
                             scene], env=env, cwd=ROOT / "anim", stdout=f, stderr=subprocess.STDOUT)
     status = "ok" if r.returncode == 0 else f"FAILED ({log / (scene + '.log')})"

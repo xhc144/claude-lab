@@ -315,8 +315,9 @@ def main():
     work.mkdir(parents=True, exist_ok=True)
 
     offset = 0.0
-    placements, seg_starts, chimes, lst = [], [], [], []
+    placements, seg_starts, chimes, lst, chapter_marks = [], [], [], [], []
     for mod, scene in SCENES:
+        chapter_marks.append((scene, offset))
         vid = scene_video(lang, mod, scene, args.quality)
         tl = json.loads((work / "timeline" / f"{scene}.json").read_text())
         d = probe_duration(vid)
@@ -348,8 +349,22 @@ def main():
             f.write(f"{i}\n{srt_time(a)} --> {srt_time(b)}\n{t}\n\n")
     (out / f"{NAME}_{lang}.ass").write_text(ass, encoding="utf-8")
 
+    # chapter markers (shown by most players) + a plain-text chapter list
+    chapters = {c["id"]: c for c in data["chapters"]}
+    scene_ch = {sc["id"]: chapters[sc["chapter"]] for sc in data["scenes"]}
+    meta = [";FFMETADATA1", f"title={data['meta']['title_' + lang]}"]
+    lines = []
+    for i, (scene, t0) in enumerate(chapter_marks):
+        t1 = chapter_marks[i + 1][1] if i + 1 < len(chapter_marks) else total
+        name = f"{i + 1:02d} {scene_ch[scene][lang]}"
+        meta += ["[CHAPTER]", "TIMEBASE=1/1000", f"START={int(t0 * 1000)}", f"END={int(t1 * 1000)}", f"title={name}"]
+        lines.append(f"{int(t0 // 60):02d}:{int(t0 % 60):02d}  {name}")
+    (work / "chapters.ffmeta").write_text("\n".join(meta) + "\n", encoding="utf-8")
+    (out / f"{NAME}_{lang}_chapters.txt").write_text("\n".join(lines) + "\n", encoding="utf-8")
+
     ass_path = str(work / "subs.ass").replace(":", r"\:")
     subprocess.run(["ffmpeg", "-v", "error", "-stats", "-y", "-i", str(work / "video.mp4"), "-i", str(work / "mix.wav"),
+                    "-i", str(work / "chapters.ffmeta"), "-map_metadata", "2", "-map_chapters", "2",
                     "-vf", f"ass={ass_path}", "-map", "0:v", "-map", "1:a",
                     "-c:v", "libx264", "-preset", args.preset, "-crf", str(args.crf), "-tune", "animation",
                     "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-shortest", "-movflags", "+faststart",
