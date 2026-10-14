@@ -59,6 +59,14 @@ jobs:
           & $cli export "CI 冒烟测试" --format html --out "$out\launch.html"
           & $cli new "Skill 示例" --from "skill\motif\examples\03-math-lesson.json" --json
           & $cli export "Skill 示例" --format pdf --out "$out\math.pdf"
+          # MCP handshake exactly as MCP clients launch it: Motif.exe + cli.mjs, no .cmd involved
+          $env:ELECTRON_RUN_AS_NODE = '1'
+          $mcpIn = @('{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","capabilities":{},"clientInfo":{"name":"ci","version":"1"}}}', '{"jsonrpc":"2.0","id":2,"method":"tools/list"}')
+          $mcpOut = $mcpIn | & 'release\win-unpacked\Motif.exe' 'release\win-unpacked\resources\app.asar.unpacked\dist\cli.mjs' mcp
+          Remove-Item Env:ELECTRON_RUN_AS_NODE
+          $tools = ([regex]::Matches(($mcpOut -join "`n"), '"name":"motif_[a-z_]+"')).Count
+          Write-Host "MCP tools: $tools"
+          if ($tools -lt 20) { throw "MCP tools/list returned $tools tools: $mcpOut" }
           Get-ChildItem $out | Format-Table Name, Length
 
       - name: Install silently and run the installed CLI from PATH

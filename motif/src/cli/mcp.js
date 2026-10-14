@@ -17,6 +17,11 @@ export function startMcp(version = '0.0.0') {
   const fail = (id, code, message) => send({ jsonrpc: '2.0', id, error: { code, message } });
   // Keep stdout clean for the protocol.
   console.log = (...a) => process.stderr.write(a.join(' ') + '\n');
+  // The client going away (closed pipe) ends the session quietly; pending work finishes first.
+  let pending = 0, ended = false;
+  const maybeExit = () => { if (ended && pending === 0) process.exit(0); };
+  process.stdout.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); });
+  process.stdin.on('end', () => { ended = true; maybeExit(); });
   process.stdin.setEncoding('utf8');
   process.stdin.on('data', async (d) => {
     buf += d;
@@ -26,7 +31,8 @@ export function startMcp(version = '0.0.0') {
       if (!line) continue;
       let msg;
       try { msg = JSON.parse(line); } catch { fail(null, -32700, 'Parse error'); continue; }
-      handle(msg).catch((e) => fail(msg.id, -32603, e.message));
+      pending++;
+      handle(msg).catch((e) => fail(msg.id, -32603, e.message)).finally(() => { pending--; maybeExit(); });
     }
   });
   async function handle(msg) {
