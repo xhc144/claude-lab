@@ -18,6 +18,10 @@ const env = { ...process.env, MOTIF_HOME: path.join(tmp, 'library'), MOTIF_USER_
 delete env.ELECTRON_RUN_AS_NODE;
 
 const results = [];
+// Watchdog: a hung step must fail fast with readable output, not sit until the CI job limit.
+const watchdog = setTimeout(() => { console.log(`✗ watchdog: no finish after 9 min (last check: ${results.at(-1)?.name || 'none'})`); process.exit(2); }, 9 * 60 * 1000);
+watchdog.unref();
+
 const check = (name, ok, detail = '') => { results.push({ name, ok, detail }); console.log(`${ok ? '✓' : '✗'} ${name}${detail ? ` — ${detail}` : ''}`); };
 
 const app = await electron.launch({

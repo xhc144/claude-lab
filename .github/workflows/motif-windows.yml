@@ -90,7 +90,11 @@ jobs:
           motif still "CI 冒烟测试" --scene 2 --out "$env:RUNNER_TEMP\smoke\installed-still.png"
 
       - name: Editor end-to-end (GUI + in-app AI assistant against a mock model)
-        run: node tests/e2e/gui.mjs; node tests/e2e/ai-mock.mjs
+        timeout-minutes: 20
+        run: |
+          node tests/e2e/gui.mjs
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node tests/e2e/ai-mock.mjs
 
       - uses: actions/upload-artifact@v4
         with:

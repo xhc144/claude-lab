@@ -59,6 +59,10 @@ await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const port = server.address().port;
 
 const results = [];
+// Watchdog: a hung step must fail fast with readable output, not sit until the CI job limit.
+const watchdog = setTimeout(() => { console.log(`✗ watchdog: no finish after 7 min (last check: ${results.at(-1)?.name || 'none'})`); process.exit(2); }, 7 * 60 * 1000);
+watchdog.unref();
+
 const check = (name, ok, detail = '') => { results.push({ name, ok }); console.log(`${ok ? '✓' : '✗'} ${name}${detail ? ` — ${detail}` : ''}`); };
 
 const app = await electron.launch({ executablePath: require('electron'), args: [root, ...(process.platform === 'linux' ? ['--no-sandbox', '--use-angle=swiftshader'] : [])], env, timeout: 60000 });
