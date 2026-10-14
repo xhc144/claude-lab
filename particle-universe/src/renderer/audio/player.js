@@ -25,7 +25,11 @@ export class AudioEngine extends EventTarget {
   get sampleRate() { return this.ctx.sampleRate; }
   get duration() { return this.buffer ? this.buffer.duration : 0; }
 
-  async resume() { if (this.ctx.state !== 'running') { try { await this.ctx.resume(); } catch { /* ignore */ } } }
+  // resume() can stay pending forever on machines without an audio endpoint; never block on it.
+  async resume() {
+    if (this.ctx.state === 'running') return;
+    try { await Promise.race([this.ctx.resume(), new Promise((r) => setTimeout(r, 1500))]); } catch { /* ignore */ }
+  }
 
   async decode(arrayBuffer) {
     return await this.ctx.decodeAudioData(arrayBuffer);

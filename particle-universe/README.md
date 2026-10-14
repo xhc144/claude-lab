@@ -109,7 +109,11 @@ npm run dist:win     # 生成 release/ParticleUniverse-<版本>-win-x64-portable
 | `node tests/web-smoke.mjs` | 用 Playwright 驱动真实界面并截图 |
 | `node tests/engine-shots.mjs` / `hq-shots.mjs` | 逐场景离屏渲染，用于画面调校 |
 
-开发环境中的验证结果：Linux 版 Electron 44（SwiftShader 软件渲染）自检通过——8 个场景全部运行，导出的 1280×720 H.264 视频 180 帧、6.0 秒、立体声音轨完整。Windows 版的同一自检由上面的 GitHub Actions 工作流在 `windows-latest` 上执行。
+已完成的验证：
+
+- **Windows（打包后的 exe）**：GitHub Actions `windows-latest`，显卡为 Microsoft Basic Render Driver（Direct3D 11 软件适配器，无独立 GPU）。自检全部通过：演示曲分析结果与 Linux 一致（123.9 BPM、高潮 38.72 s / 92.91 s），8 个场景依次运行，导出 1280×720 / 30 fps H.264 MP4（180 帧，3.75 MB）。该环境没有 Media Foundation 的 AAC 编码器，因此 MP4 音轨自动使用 Opus。
+- **Linux**：Electron 44 + SwiftShader，源码运行与打包（asar）后运行两种方式的自检均通过；另用同一导出流程渲染了 21.5 秒、105 万粒子的 720p 片段。
+- 软件渲染只用来验证功能，帧率（约 11 fps / 13 万粒子）不代表真实显卡上的表现。
 
 ## 目录
 
@@ -131,6 +135,6 @@ tests/               分析、界面与渲染测试
 
 - 本程序需要 WebGL2 与浮点渲染目标；极老的显卡或远程桌面中的基础显示适配器会退回软件渲染，帧率很低。
 - 单首曲目最长 90 分钟（整首解码进内存后再分析）。
-- 视频编码依赖系统提供的 WebCodecs 编码器；若某个分辨率下没有可用的 H.264 编码器，导出对话框会自动提供 WebM (VP9)。
+- 视频编码依赖系统提供的 WebCodecs 编码器；若某个分辨率下没有可用的 H.264 编码器，导出对话框会自动提供 WebM (VP9)。系统缺少 AAC 编码器时（如 Windows N 版、Windows Server），MP4 的音轨改用 Opus，个别老旧播放器可能无法播放其声音。
 - 「捕获系统声音」使用 Windows 的回环录音；在 macOS / Linux 上只能使用麦克风输入。
 - 未签名的 Electron 程序可能被个别杀毒软件的机器学习规则误报；源码与构建脚本均在本目录，可自行构建核对。

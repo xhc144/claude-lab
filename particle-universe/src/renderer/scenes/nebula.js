@@ -13,7 +13,7 @@ export default {
     { key: 'breath', label: '呼吸幅度', min: 0, max: 3, step: 0.01, def: 1 },
     { key: 'sparkle', label: '星光闪烁', min: 0, max: 3, step: 0.01, def: 1 }
   ],
-  post: { exposure: 1.05, bloom: 1.0, bloomRadius: 1.0, threshold: 0.0, trails: 0.55, flare: 0.25, flareTint: [0.6, 0.75, 1.0], ca: 0.6, vignette: 0.55, grain: 0.35, streak: 0.02, size: 1.0, intensity: 1.0, dof: 0.35, sat: 1.08, contrast: 1.05 },
+  post: { exposure: 1.05, bloom: 1.0, bloomRadius: 1.0, threshold: 0.0, trails: 0.55, flare: 0.25, flareTint: [0.6, 0.75, 1.0], ca: 0.6, vignette: 0.55, grain: 0.35, streak: 0.007, size: 1.0, intensity: 1.0, dof: 0.35, sat: 1.08, contrast: 1.05 },
   background: { stars: 1.0, haze: 0.5, hazeScale: 1.6, hazeA: [0.006, 0.0096, 0.03], hazeB: [0.024, 0.0072, 0.03], top: [0.0009, 0.0012, 0.0036], bottom: [0.0003, 0.0003, 0.0012] },
   camera: {
     target: [0, 0, 0], distance: 26, minDist: 4, maxDist: 90,
