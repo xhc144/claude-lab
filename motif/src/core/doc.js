@@ -11,7 +11,7 @@ import { isColor } from './util/color.js';
 
 export const DOC_VERSION = 1;
 
-const SCENE_KEYS = new Set(['id', 'name', 'layout', 'variant', 'duration', 'hold', 'transition', 'background', 'camera', 'tone', 'blocks', 'notes', 'narration', 'section', 'hidden']);
+const SCENE_KEYS = new Set(['id', 'name', 'layout', 'variant', 'duration', 'hold', 'transition', 'background', 'camera', 'tone', 'blocks', 'notes', 'narration', 'section', 'sectionNumber', 'hidden']);
 const MAIN_PARAM = { title: 'text', text: 'text', quote: 'text', callout: 'text', equation: 'latex', code: 'code', icon: 'name', image: 'asset', stat: 'value', model: 'asset', video: 'asset', particles: 'text' };
 const LIST_PARAM = { bullets: 'items', stats: 'items', timeline: 'items', steps: 'items', features: 'items', gallery: 'images', pyramid: 'items', chart: 'data', compare: 'columns', table: 'rows', plot: 'functions' };
 

@@ -122,28 +122,59 @@ function noiseField(w, h, seed = 3) {
 }
 export { noiseField, makeCanvas };
 
+/** Grain is pre-baked once per size/amount into a light+dark noise layer and drawn with a
+ *  per-frame random offset — far cheaper than a full-frame 'overlay' composite every frame. */
+function grainLayer(W, H, amount, dark) {
+  const key = `g${W}x${H}:${amount}:${dark}`;
+  if (tex[key]) return tex[key];
+  const pad = 128;
+  const c = makeCanvas(Math.ceil(W / 2) + pad, Math.ceil(H / 2) + pad);
+  const g = c.getContext('2d');
+  const img = g.createImageData(c.width, c.height);
+  const r = rng(13);
+  const k = Math.min(1, amount * (dark ? 2.2 : 1.6));
+  for (let i = 0; i < c.width * c.height; i++) {
+    const v = r() - 0.5;
+    const light = v > 0;
+    img.data[i * 4] = light ? 255 : 0; img.data[i * 4 + 1] = light ? 255 : 0; img.data[i * 4 + 2] = light ? 255 : 0;
+    img.data[i * 4 + 3] = Math.abs(v) * 2 * 255 * k * (light ? (dark ? 0.6 : 0.5) : (dark ? 0.9 : 0.7));
+  }
+  g.putImageData(img, 0, 0);
+  tex[key] = c;
+  for (const k2 of Object.keys(tex)) if (k2.startsWith('g') && k2 !== key && k2.split(':')[0] !== key.split(':')[0]) delete tex[k2];
+  return c;
+}
+
 function drawGrain(ctx, W, H, amount, t, fps = 30, dark = true) {
   if (!amount) return;
-  const tile = grainTile();
+  const layer = grainLayer(W, H, amount, dark);
   const frame = Math.floor(t * fps) % 64;
   const r = rng(frame + 1);
   ctx.save();
-  ctx.globalAlpha = amount;
-  ctx.globalCompositeOperation = dark ? 'overlay' : 'multiply';
-  const pat = ctx.createPattern(tile, 'repeat');
-  ctx.translate(-r() * 256, -r() * 256);
-  ctx.fillStyle = pat;
-  ctx.fillRect(0, 0, W + 256, H + 256);
+  ctx.imageSmoothingEnabled = false;
+  const ox = Math.floor(r() * 128), oy = Math.floor(r() * 128);
+  ctx.drawImage(layer, ox, oy, Math.ceil(W / 2), Math.ceil(H / 2), 0, 0, W, H);
   ctx.restore();
 }
 
 function vignette(ctx, W, H, amount, color = '#000') {
   if (!amount) return;
-  const g = ctx.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.hypot(W, H) * 0.62);
-  g.addColorStop(0, toCss(color, 0));
-  g.addColorStop(1, toCss(color, amount));
-  ctx.fillStyle = g;
-  ctx.fillRect(0, 0, W, H);
+  const key = `v${W}x${H}:${amount}:${color}`;
+  let c = tex[key];
+  if (!c) {
+    c = makeCanvas(Math.ceil(W / 4), Math.ceil(H / 4));
+    const g = c.getContext('2d');
+    const w = c.width, h = c.height;
+    const grd = g.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.35, w / 2, h / 2, Math.hypot(w, h) * 0.62);
+    grd.addColorStop(0, toCss(color, 0));
+    grd.addColorStop(1, toCss(color, amount));
+    g.fillStyle = grd; g.fillRect(0, 0, w, h);
+    tex[key] = c;
+  }
+  ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.drawImage(c, 0, 0, W, H);
+  ctx.restore();
 }
 
 // ───────────────────────────── generators ─────────────────────────────
@@ -162,7 +193,7 @@ const GEN = {
   },
 
   aurora: {
-    under(ctx, e) {
+    smooth(ctx, e) {
       const { W, H, p, spec, t } = e;
       const g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, p.bg); g.addColorStop(1, p.bg2 || p.bg);
@@ -183,23 +214,24 @@ const GEN = {
         ctx.fillStyle = rg; ctx.fillRect(0, 0, W, H);
       });
       ctx.restore();
-      if (spec.stars && p.dark) {
-        const r = rng(42);
-        ctx.save();
-        for (let i = 0; i < 140; i++) {
-          const x = r() * W, y = r() * H, s = r() * 1.6 + 0.3, ph = r() * TAU;
-          ctx.globalAlpha = spec.stars * (0.15 + 0.35 * (0.5 + 0.5 * Math.sin(t * (0.6 + r()) + ph)));
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(x, y, s * e.unit * 1.4, s * e.unit * 1.4);
-        }
-        ctx.restore();
-      }
-      // horizon line glow
       const hg = ctx.createLinearGradient(0, H * 0.78, 0, H);
       hg.addColorStop(0, toCss(p.bg, 0)); hg.addColorStop(1, toCss(p.bg, 0.65));
       ctx.fillStyle = hg; ctx.fillRect(0, H * 0.78, W, H * 0.22);
     },
-    over(ctx, e) { drawGrain(ctx, e.W, e.H, e.spec.grain ?? 0.03, e.t, e.fps, true); },
+    detail(ctx, e) {
+      const { W, H, p, spec, t } = e;
+      if (!spec.stars || !p.dark) return;
+      const r = rng(42);
+      ctx.save();
+      ctx.fillStyle = '#ffffff';
+      for (let i = 0; i < 140; i++) {
+        const x = r() * W, y = r() * H, s = r() * 1.6 + 0.3, ph = r() * TAU;
+        ctx.globalAlpha = spec.stars * (0.15 + 0.35 * (0.5 + 0.5 * Math.sin(t * (0.6 + r()) + ph)));
+        ctx.fillRect(x, y, s * e.unit * 1.4, s * e.unit * 1.4);
+      }
+      ctx.restore();
+    },
+    over(ctx, e) { drawGrain(ctx, e.W, e.H, e.spec.grain ?? 0.03, 0, e.fps, true); },
   },
 
   paper: {
@@ -263,7 +295,7 @@ const GEN = {
 
   vignette: {
     under(ctx, e) { ctx.fillStyle = e.p.bg; ctx.fillRect(0, 0, e.W, e.H); },
-    over(ctx, e) { vignette(ctx, e.W, e.H, e.spec.vignette ?? 0.4, '#000'); drawGrain(ctx, e.W, e.H, e.spec.grain ?? 0.03, e.t, e.fps, e.p.dark); },
+    over(ctx, e) { vignette(ctx, e.W, e.H, e.spec.vignette ?? 0.4, '#000'); drawGrain(ctx, e.W, e.H, e.spec.grain ?? 0.03, 0, e.fps, e.p.dark); },
   },
 
   ink: {
@@ -326,8 +358,8 @@ const GEN = {
   },
 
   soft: {
-    under(ctx, e) {
-      const { W, H, p, spec, unit } = e;
+    smooth(ctx, e) {
+      const { W, H, p, spec } = e;
       ctx.fillStyle = p.bg; ctx.fillRect(0, 0, W, H);
       const rg = ctx.createRadialGradient(W * 0.92, -H * 0.1, 0, W * 0.92, -H * 0.1, Math.max(W, H) * 0.75);
       rg.addColorStop(0, toCss(p.accent, (spec.tint ?? 0.07) * (p.tone === 'base' ? 1 : 0.5)));
@@ -336,20 +368,22 @@ const GEN = {
       const rg2 = ctx.createRadialGradient(0, H * 1.1, 0, 0, H * 1.1, Math.max(W, H) * 0.6);
       rg2.addColorStop(0, toCss(p.accent2 || p.accent, (spec.tint ?? 0.07) * 0.7)); rg2.addColorStop(1, toCss(p.accent2 || p.accent, 0));
       ctx.fillStyle = rg2; ctx.fillRect(0, 0, W, H);
-      if (spec.dots) {
-        ctx.fillStyle = toCss(p.ink, 0.1 * spec.dots);
-        const step = 26 * unit;
-        for (let y = step; y < H * 0.36; y += step) for (let x = W * 0.72; x < W; x += step) {
-          const fade = (1 - y / (H * 0.36)) * ((x - W * 0.72) / (W * 0.28));
-          ctx.globalAlpha = fade; ctx.fillRect(x, y, 2.4 * unit, 2.4 * unit);
-        }
-        ctx.globalAlpha = 1;
+    },
+    detail(ctx, e) {
+      const { W, H, p, spec, unit } = e;
+      if (!spec.dots) return;
+      ctx.fillStyle = toCss(p.ink, 0.1 * spec.dots);
+      const step = 26 * unit;
+      for (let y = step; y < H * 0.36; y += step) for (let x = W * 0.72; x < W; x += step) {
+        const fade = (1 - y / (H * 0.36)) * ((x - W * 0.72) / (W * 0.28));
+        ctx.globalAlpha = fade; ctx.fillRect(x, y, 2.4 * unit, 2.4 * unit);
       }
+      ctx.globalAlpha = 1;
     },
   },
 
   noir: {
-    under(ctx, e) {
+    smooth(ctx, e) {
       const { W, H, p, spec, t } = e;
       ctx.fillStyle = p.bg; ctx.fillRect(0, 0, W, H);
       if (spec.leak) {
@@ -363,7 +397,7 @@ const GEN = {
     over(ctx, e) {
       const { W, H, spec } = e;
       vignette(ctx, W, H, spec.vignette ?? 0.6, '#000');
-      drawGrain(ctx, W, H, spec.grain ?? 0.07, e.t, e.fps, true);
+      drawGrain(ctx, W, H, spec.grain ?? 0.07, Math.floor(e.t * 12) / 12, e.fps, true);
       if (spec.letterbox && !e.env.portrait) {
         const h = H * spec.letterbox;
         ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, h); ctx.fillRect(0, H - h, W, h);
@@ -404,13 +438,22 @@ const GEN = {
     under(ctx, e) {
       const { W, H, p, spec, t } = e;
       ctx.fillStyle = p.bg; ctx.fillRect(0, 0, W, H);
-      const img = e.assets?.image(spec.asset || spec.src);
+      let img = e.assets?.image(spec.asset || spec.src);
+      if (img && spec.blur) {
+        // blur once into a cached copy instead of filtering every frame
+        const key = `ib:${img.src}:${spec.blur}`;
+        if (!tex[key]) {
+          const c = makeCanvas(Math.round(img.width / 2), Math.round(img.height / 2));
+          const g = c.getContext('2d');
+          g.filter = `blur(${spec.blur / 2}px)`;
+          g.drawImage(img, 0, 0, c.width, c.height);
+          tex[key] = c;
+        }
+        img = tex[key];
+      }
       if (img) {
         const s = Math.max(W / img.width, H / img.height) * (1.04 + 0.04 * Math.min(1, t / 12));
-        ctx.save();
-        if (spec.blur) ctx.filter = `blur(${spec.blur}px)`;
         ctx.drawImage(img, (W - img.width * s) / 2, (H - img.height * s) / 2, img.width * s, img.height * s);
-        ctx.restore();
       }
       ctx.fillStyle = toCss(p.bg, spec.overlay ?? 0.55);
       ctx.fillRect(0, 0, W, H);
@@ -434,12 +477,33 @@ export function backgroundSpec(env, scene) {
   return { ...th };
 }
 
+let smoothCanvas = null;
+/** Smooth gradient fields are rendered at 1/4 resolution and upscaled (visually identical,
+ *  ~16× cheaper); crisp details are drawn at full resolution on top. */
+function drawSmooth(ctx, gen, e) {
+  const sw = Math.max(64, Math.round(e.W / 4)), sh = Math.max(36, Math.round(e.H / 4));
+  if (!smoothCanvas || smoothCanvas.width !== sw || smoothCanvas.height !== sh) smoothCanvas = makeCanvas(sw, sh);
+  const g = smoothCanvas.getContext('2d');
+  g.setTransform(sw / e.W, 0, 0, sh / e.H, 0, 0);
+  g.globalCompositeOperation = 'source-over';
+  g.globalAlpha = 1;
+  gen.smooth(g, e);
+  ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'low';
+  ctx.drawImage(smoothCanvas, 0, 0, e.W, e.H);
+  ctx.restore();
+}
+
 export function drawBackground(ctx, env, spec, p, t, pass = 'under', assets) {
   const gen = GEN[spec.type] || GEN.solid;
-  const fn = gen[pass];
-  if (!fn) return;
+  const e = { W: env.W, H: env.H, p, spec, t, env, unit: env.unit, fps: env.doc.format.fps, assets };
   ctx.save();
-  fn(ctx, { W: env.W, H: env.H, p, spec, t, env, unit: env.unit, fps: env.doc.format.fps, assets });
+  if (pass === 'under') {
+    if (gen.smooth) drawSmooth(ctx, gen, e);
+    if (gen.under) gen.under(ctx, e);
+    if (gen.detail) gen.detail(ctx, e);
+  } else if (gen[pass]) gen[pass](ctx, e);
   ctx.restore();
 }
 

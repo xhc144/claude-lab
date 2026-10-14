@@ -76,7 +76,15 @@ export function applyState(ctx, s, box, pivot) {
     ctx.scale(s.scale * s.sx, s.scale * s.sy);
     ctx.translate(-px, -py);
   }
-  if (s.blur > 0.3) ctx.filter = `blur(${s.blur.toFixed(1)}px)`;
+  if (s.blur > 0.3 && box) {
+    // Bound the filter layer: an unclipped canvas filter blurs a full-frame layer per draw call.
+    const m = s.blur * 3 + (box.pad || 0) * 4;
+    const sc = Math.max(1, s.scale || 1);
+    ctx.beginPath();
+    ctx.rect(box.x - m - box.w * (sc - 1), box.y - m - box.h * (sc - 1), box.w * sc + m * 2 + box.w * (sc - 1), box.h * sc + m * 2 + box.h * (sc - 1));
+    ctx.clip();
+    ctx.filter = `blur(${s.blur.toFixed(1)}px)`;
+  }
   return true;
 }
 

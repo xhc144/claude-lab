@@ -1,7 +1,7 @@
 // 3D components (Three.js): globe, bars3d, surface, particles, shape3d, model, molecule.
 // Each instance builds its scene lazily on first draw, updates it as a pure function of t,
 // renders through the shared WebGL stage and overlays 2D labels with the theme typography.
-import { THREE, renderInto, project, environment, dotTexture } from '../three/stage.js';
+import { THREE, renderInto, project, environment, dotTexture, isSoftwareGL } from '../three/stage.js';
 import { landDots, toLatLon } from '../three/geo.js';
 import { moleculePreset, ELEMENTS } from '../three/molecules.js';
 import { role, toCss, EASE, clamp01, colorOf, mix, drawIcon, roundRect } from './kit.js';
@@ -431,7 +431,10 @@ const shape3d = {
         case 'matte': mat = new THREE.MeshStandardMaterial({ color: C3(col), metalness: 0, roughness: 0.75, envMap: envT, envMapIntensity: 0.5 }); break;
         case 'wire': mat = new THREE.MeshBasicMaterial({ color: C3(col), wireframe: true, transparent: true, opacity: 0.85 }); break;
         case 'glow': mat = new THREE.MeshStandardMaterial({ color: C3(col), emissive: C3(col), emissiveIntensity: 0.9, roughness: 0.4 }); break;
-        default: mat = new THREE.MeshPhysicalMaterial({ color: C3(mix(col, '#ffffff', 0.35)), metalness: 0.05, roughness: 0.08, transmission: 0.9, thickness: 1.4, ior: 1.45, iridescence: 0.8, iridescenceIOR: 1.3, clearcoat: 1, envMap: envT, envMapIntensity: 1.4 });
+        default: mat = isSoftwareGL()
+          // no GPU: a clearcoat "glass-like" look without the transmission pass
+          ? new THREE.MeshPhysicalMaterial({ color: C3(mix(col, '#ffffff', 0.45)), metalness: 0.1, roughness: 0.12, clearcoat: 1, clearcoatRoughness: 0.05, iridescence: 0.6, transparent: true, opacity: 0.92, envMap: envT, envMapIntensity: 1.6 })
+          : new THREE.MeshPhysicalMaterial({ color: C3(mix(col, '#ffffff', 0.35)), metalness: 0.05, roughness: 0.08, transmission: 0.9, thickness: 1.4, ior: 1.45, iridescence: 0.8, iridescenceIOR: 1.3, clearcoat: 1, envMap: envT, envMapIntensity: 1.4 });
       }
       const group = new THREE.Group(); scene.add(group);
       let mesh = null;

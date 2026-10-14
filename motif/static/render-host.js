@@ -35,6 +35,7 @@
     jpeg(t, q = 0.9) { this.render(t); return canvas.toDataURL('image/jpeg', q); },
     rgba(t) { this.render(t); const ctx = canvas.getContext('2d'); return ctx.getImageData(0, 0, canvas.width, canvas.height).data; },
     layout(t) { return engine.layoutAt(t); },
+    lint() { return Motif.lintCompiled(engine.C, engine.assets); },
     get engine() { return engine; },
   };
 })();

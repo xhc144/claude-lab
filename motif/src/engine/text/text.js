@@ -160,13 +160,15 @@ export class TextEngine {
       }
       lines = breakLines(units, hi + 0.5);
     } else if (o.orphans !== false && lines.length > 1 && Number.isFinite(maxWidth)) {
-      const lastLine = lines[lines.length - 1];
-      const visible = lastLine.units.filter((u) => u.k !== 'sp');
-      if (visible.length === 1 && visible[0].k !== 'w' || (visible.length === 1 && visible[0].t.length <= 3)) {
-        const prev = lines[lines.length - 2];
-        const tryW = prev.width - (prev.units[prev.units.length - 1]?.w || 0) * 1.5 - 1;
-        const alt = breakLines(units, tryW);
-        if (alt.length === lines.length) lines = alt;
+      // Orphan control: never leave 1–2 characters (or one short word) alone on the last line.
+      const weight = (L) => L.units.reduce((n, u) => n + (u.k === 'cjk' ? [...u.t].length : u.k === 'w' ? 2 : 0), 0);
+      if (weight(lines[lines.length - 1]) <= 2) {
+        const n = lines.length;
+        for (let k = 1; k <= 10; k++) {
+          const alt = breakLines(units, maxWidth - size * k);
+          if (alt.length > n + (n >= 3 ? 0 : 1)) break;
+          if (weight(alt[alt.length - 1]) >= 3) { lines = alt; break; }
+        }
       }
     }
     const lh = size * (o.lineHeight ?? role.lineHeight ?? 1.3);

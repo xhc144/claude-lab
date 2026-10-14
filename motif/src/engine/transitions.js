@@ -16,6 +16,31 @@ function getScratch(w, h) {
   return scratch;
 }
 
+let blurScratch = null;
+/** Draw a layer blurred: blur a 1/3-resolution copy and upscale (cheap and visually identical for large blurs). */
+function drawBlurred(ctx, layer, W, H, blurPx, alpha = 1, s = 1) {
+  if (alpha <= 0) return;
+  if (blurPx < 0.6) {
+    ctx.save(); ctx.globalAlpha *= alpha;
+    if (s !== 1) { ctx.translate(W / 2, H / 2); ctx.scale(s, s); ctx.translate(-W / 2, -H / 2); }
+    ctx.drawImage(layer, 0, 0, W, H); ctx.restore(); return;
+  }
+  const k = 3;
+  const w = Math.max(16, Math.round(layer.width / k)), h = Math.max(9, Math.round(layer.height / k));
+  if (!blurScratch || blurScratch.width !== w || blurScratch.height !== h) blurScratch = makeCanvas(w, h);
+  const g = blurScratch.getContext('2d');
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, w, h);
+  g.filter = `blur(${((blurPx * w) / W).toFixed(2)}px)`;
+  g.drawImage(layer, 0, 0, w, h);
+  g.filter = 'none';
+  ctx.save(); ctx.globalAlpha *= alpha;
+  if (s !== 1) { ctx.translate(W / 2, H / 2); ctx.scale(s, s); ctx.translate(-W / 2, -H / 2); }
+  ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
+  ctx.drawImage(blurScratch, 0, 0, W, H);
+  ctx.restore();
+}
+
 let inkMask = null;
 function inkMaskCanvas(p, soft) {
   const w = 384, h = 216;
@@ -152,18 +177,14 @@ export function composite(ctx, tr, p, out, inn, e) {
     }
     case 'zoom': {
       const k = inOut(p);
-      ctx.save(); ctx.filter = k > 0.05 ? `blur(${(k * 14 * e.unit).toFixed(1)}px)` : 'none';
-      draw(out, 1 - EASE.inQuad(clamp01(p * 1.4)), 0, 0, 1 + 0.35 * k);
-      ctx.restore();
-      ctx.save(); ctx.filter = k < 0.95 ? `blur(${((1 - k) * 10 * e.unit).toFixed(1)}px)` : 'none';
-      draw(inn, EASE.outQuad(clamp01((p - 0.15) / 0.75)), 0, 0, 0.86 + 0.14 * outFast(p));
-      ctx.restore();
+      drawBlurred(ctx, out, W, H, k * 14 * e.unit, 1 - EASE.inQuad(clamp01(p * 1.4)), 1 + 0.35 * k);
+      drawBlurred(ctx, inn, W, H, (1 - k) * 10 * e.unit, EASE.outQuad(clamp01((p - 0.15) / 0.75)), 0.86 + 0.14 * outFast(p));
       break;
     }
     case 'blur': {
       const a = clamp01(p / 0.6), b = clamp01((p - 0.35) / 0.65);
-      ctx.save(); ctx.filter = `blur(${(EASE.inQuad(a) * 24 * e.unit).toFixed(1)}px)`; draw(out, 1 - EASE.inOutSine(a)); ctx.restore();
-      ctx.save(); ctx.filter = b < 1 ? `blur(${((1 - EASE.outQuad(b)) * 24 * e.unit).toFixed(1)}px)` : 'none'; draw(inn, EASE.inOutSine(b)); ctx.restore();
+      drawBlurred(ctx, out, W, H, EASE.inQuad(a) * 24 * e.unit, 1 - EASE.inOutSine(a));
+      drawBlurred(ctx, inn, W, H, b < 1 ? (1 - EASE.outQuad(b)) * 24 * e.unit : 0, EASE.inOutSine(b));
       break;
     }
     case 'scan': {
@@ -203,7 +224,7 @@ export function composite(ctx, tr, p, out, inn, e) {
       g.clearRect(0, 0, sc.width, sc.height);
       g.drawImage(inn, 0, 0);
       g.globalCompositeOperation = 'destination-in';
-      g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'high';
+      g.imageSmoothingEnabled = true; g.imageSmoothingQuality = 'low';
       g.drawImage(mask, 0, 0, sc.width, sc.height);
       g.globalCompositeOperation = 'source-over';
       ctx.drawImage(sc, 0, 0, W, H);

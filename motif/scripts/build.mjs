@@ -24,6 +24,13 @@ if (!fs.existsSync(path.join(root, 'src/generated/icons.json')) || !fs.existsSyn
 fs.mkdirSync(dist, { recursive: true });
 for (const f of fs.readdirSync(path.join(root, 'static'))) fs.cpSync(path.join(root, 'static', f), path.join(dist, f), { recursive: true });
 
+// pdf.js runs in Node for PDF import; ship its two module files next to the CLI.
+const pdfSrc = path.join(root, 'node_modules/pdfjs-dist/legacy/build');
+if (fs.existsSync(pdfSrc)) {
+  fs.mkdirSync(path.join(dist, 'vendor/pdfjs'), { recursive: true });
+  for (const f of ['pdf.mjs', 'pdf.worker.mjs']) fs.copyFileSync(path.join(pdfSrc, f), path.join(dist, 'vendor/pdfjs', f));
+}
+
 const define = { __VERSION__: JSON.stringify(pkg.version), 'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development') };
 const common = { bundle: true, sourcemap: prod ? false : 'inline', minify: prod, legalComments: 'none', logLevel: 'warning', define, loader: { '.json': 'json' } };
 
@@ -32,6 +39,7 @@ const targets = {
   editor: { ...common, entryPoints: [path.join(root, 'src/app/renderer/main.jsx')], outfile: path.join(dist, 'editor.js'), format: 'iife', platform: 'browser', target: 'chrome120', jsx: 'automatic', loader: { ...common.loader, '.css': 'css', '.woff2': 'file' } },
   main: { ...common, entryPoints: [path.join(root, 'src/app/main/index.js')], outfile: path.join(dist, 'main.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   preload: { ...common, entryPoints: [path.join(root, 'src/app/preload/index.js')], outfile: path.join(dist, 'preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
+  workerPreload: { ...common, entryPoints: [path.join(root, 'src/app/worker/preload.js')], outfile: path.join(dist, 'worker-preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   cli: { ...common, minify: false, entryPoints: [path.join(root, 'src/cli/index.js')], outfile: path.join(dist, 'cli.mjs'), format: 'esm', platform: 'node', target: 'node22', banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" }, external: ['electron'] },
 };
 

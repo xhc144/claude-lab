@@ -954,7 +954,7 @@ const simulation = {
                 img.data[i] = bg[0] + (col[0] - bg[0]) * k; img.data[i + 1] = bg[1] + (col[1] - bg[1]) * k; img.data[i + 2] = bg[2] + (col[2] - bg[2]) * k; img.data[i + 3] = 255;
               }
               g2.putImageData(img, 0, 0);
-              ctx.save(); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'high';
+              ctx.save(); ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = 'low';
               roundRect(ctx, rect.x, rect.y, rect.w, rect.h, env.theme.shape.radius * env.unit); ctx.clip();
               ctx.drawImage(cnv, rect.x, rect.y, rect.w, rect.h);
               ctx.restore();

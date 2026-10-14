@@ -176,6 +176,7 @@ const image = {
         clipInner(ctx, inner);
         if (img) {
           if (filter && !ctx.filter?.includes('blur')) ctx.filter = filter;
+          ctx.imageSmoothingQuality = 'high';
           drawImageFit(ctx, img, inner, { fit: block.fit || 'cover', focus, zoom });
           ctx.filter = 'none';
         } else placeholderArt(ctx, c, inner, ref ? (c.assets?.failed(ref) ? '图片缺失' : '') : '未设置图片');

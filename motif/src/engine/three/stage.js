@@ -24,6 +24,21 @@ export function getRenderer() {
   return renderer;
 }
 
+let softGL = null;
+/** True when WebGL runs on a CPU rasterizer (SwiftShader/llvmpipe): use cheaper materials. */
+export function isSoftwareGL() {
+  if (softGL != null) return softGL;
+  const r = getRenderer();
+  if (!r) return (softGL = true);
+  try {
+    const gl = r.getContext();
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+    softGL = /swiftshader|llvmpipe|software|basic render/i.test(name);
+  } catch { softGL = false; }
+  return softGL;
+}
+
 export function environment() {
   const r = getRenderer();
   if (!r) return null;

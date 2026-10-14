@@ -188,7 +188,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
   ctx.save();
   ctx.setTransform(scale, 0, 0, scale, 0, 0);
   ctx.imageSmoothingEnabled = true;
-  ctx.imageSmoothingQuality = 'high';
+  ctx.imageSmoothingQuality = 'medium';
   if (!C.scenes.length) {
     drawBackground(ctx, env, { ...env.theme.background }, env.palette('base'), t, 'under');
     ctx.restore();

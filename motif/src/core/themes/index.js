@@ -413,7 +413,7 @@ export const THEMES = {
     },
     tones: {
       inverse: { bg: '#1f3a2d', bg2: '#244435', surface: 'rgba(255,255,255,0.07)', ink: '#f1f4ec', muted: '#b8cbbd', faint: '#7d9586', line: 'rgba(241,244,236,0.2)', accent: '#7fd6a8' },
-      accent: { bg: '#2e9e6a', bg2: '#278c5d', surface: 'rgba(255,255,255,0.14)', ink: '#ffffff', muted: '#d7f2e3', faint: '#9fd9bb', line: 'rgba(255,255,255,0.35)', accent: '#ffe08a' },
+      accent: { bg: '#1f7a50', bg2: '#1a6c46', surface: 'rgba(255,255,255,0.14)', ink: '#ffffff', muted: '#d7f2e3', faint: '#9fd9bb', line: 'rgba(255,255,255,0.35)', accent: '#ffe08a' },
     },
     fonts: {
       display: { family: ['Motif Outfit', SANS_SC], weight: 700, tracking: -0.022, lineHeight: 1.05 },
