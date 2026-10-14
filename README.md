@@ -17,6 +17,12 @@
 
 MathScape 与 Myriad 的 `dist/*.html` 可下载后离线打开。Echowild 的 ES modules 与 Worker 需要 HTTP(S) 服务。Echowild 新增 [离线单文件版](https://xhc144.github.io/claude-lab/echowild/echowild.html)，可保存为 HTML 后打开。沙盒存档保存在访客自己的浏览器中；浏览器清理数据前请导出存档。
 
+## 多智能体研究实验室
+
+[论衡 Lunheng](lunheng/) 是一个学术研究实验室。5–10 个来自不同厂商的 AI 模型组成研究团队，围绕数学、物理、计算机科学命题独立推导、交叉质询、寻找反例并独立核验。断言是否成立由证明、核验和反例按固定规则判定，不看多数票；报告分开列出已证明结论、猜想和未解决问题。
+
+它接入 OpenAI、Claude、Gemini、DeepSeek、通义千问、Kimi、智谱、豆包、Grok、Ollama，以及 OpenAI / Anthropic / Gemini 兼容的中转。模型由 Node.js 服务端调用，API Key 加密保存在服务器上，所以论衡需要本地或自托管运行，不会发布到 Pages：在 `lunheng/` 目录运行 `npm ci && npm start`，然后打开 `http://127.0.0.1:8848`。详见[项目 README](lunheng/README.md)。
+
 ## 数学排版模板
 
 [墨经 Mojing：PDF 预览与 ZIP 下载](https://xhc144.github.io/claude-lab/mojing/) 提供讲义、习题与解答、竞赛试卷、数学论文、数学书籍、翻译对照六套 LaTeX 模板。十份示例 PDF 包含学生版、答案版与双栏对照等变体；六个 ZIP 各自包含完整源码和 ASCII 文件名的 `README.txt`。

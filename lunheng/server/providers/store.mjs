@@ -5,6 +5,7 @@ import { readJson, writeJson } from '../util/json-store.mjs';
 import { newId } from '../util/ids.mjs';
 import { keyHint } from '../security/vault.mjs';
 import { getPreset } from './presets.mjs';
+import { ProviderError } from './errors.mjs';
 
 const KINDS = ['openai', 'anthropic', 'gemini', 'ollama'];
 const AUTH_STYLES = ['bearer', 'x-api-key', 'api-key', 'x-goog-api-key', 'zhipu-jwt', 'none'];
@@ -134,8 +135,14 @@ export class ProviderStore {
     const data = await this.#load(userId);
     const p = data.providers.find((x) => x.id === id);
     if (!p) return null;
-    const apiKey = p.keyBox ? this.vault.decrypt(userId, `provider:${p.id}:key`, p.keyBox) : '';
-    const extraHeaders = p.headersBox ? JSON.parse(this.vault.decrypt(userId, `provider:${p.id}:headers`, p.headersBox)) : {};
+    let apiKey = '';
+    let extraHeaders = {};
+    try {
+      apiKey = p.keyBox ? this.vault.decrypt(userId, `provider:${p.id}:key`, p.keyBox) : '';
+      extraHeaders = p.headersBox ? JSON.parse(this.vault.decrypt(userId, `provider:${p.id}:headers`, p.headersBox)) : {};
+    } catch {
+      throw new ProviderError({ kind: 'config', retryable: false, message: `无法解密「${p.name}」的 API Key：服务器主密钥可能已更换，请在接入中心重新填写密钥` });
+    }
     const preset = getPreset(p.presetId);
     return {
       provider: { ...p, extraHeaders, temperatureRange: p.temperatureRange || preset?.temperatureRange || [0, 2] },

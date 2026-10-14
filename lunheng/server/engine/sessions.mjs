@@ -47,8 +47,19 @@ export class SessionManager {
     this.gateway = gateway;
     this.providers = providers;
     this.accounts = accounts;
-    this.runs = new Map(); // sessionId -> { userId, run, bus }
+    this.runs = new Map(); // sessionId -> { userId, run, bus, touched }
     this.indexCache = new Map();
+    // Idle studies (not running, nobody watching) are dropped from memory; they reload from disk on demand.
+    this.sweeper = setInterval(() => this.sweep(), 10 * 60_000);
+    this.sweeper.unref?.();
+  }
+
+  sweep(maxIdleMs = 30 * 60_000) {
+    const now = Date.now();
+    for (const [id, e] of this.runs) {
+      if (e.run.running || e.bus.listenerCount('event') > 0) { e.touched = now; continue; }
+      if (now - e.touched > maxIdleMs) this.runs.delete(id);
+    }
   }
 
   #dir(userId) { return join(this.config.dataDir, 'users', userId, 'sessions'); }
@@ -137,7 +148,11 @@ export class SessionManager {
   async open(userId, id) {
     if (!isSafeId(id)) return null;
     const live = this.runs.get(id);
-    if (live) return live.userId === userId ? live : null;
+    if (live) {
+      if (live.userId !== userId) return null;
+      live.touched = Date.now();
+      return live;
+    }
     const session = await readJson(this.#file(userId, id), null);
     if (!session || session.userId !== userId) return null;
     if (['running', 'pausing'].includes(session.status)) {
@@ -155,7 +170,7 @@ export class SessionManager {
       persist: (s) => this.#persist(userId, s),
       emit: (type, data) => bus.emit('event', { type, data }),
     });
-    const entry = { userId, run, bus };
+    const entry = { userId, run, bus, touched: Date.now() };
     this.runs.set(id, entry);
     return entry;
   }
@@ -245,6 +260,7 @@ export class SessionManager {
 
   /** Pause everything and flush to disk (SIGINT/SIGTERM). */
   async shutdown() {
+    clearInterval(this.sweeper);
     const all = [...this.runs.values()];
     for (const { run } of all) if (run.running) run.abort('服务器关闭');
     await Promise.all(all.map(({ run }) => run.waitIdle(8000)));

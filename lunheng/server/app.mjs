@@ -149,7 +149,7 @@ export async function createApp(overrides = {}, { fetchImpl } = {}) {
     return { ok: true };
   });
 
-  route('GET', '/api/auth/me', async ({ ctx }) => ({ user: users.publicUser(ctx.user), csrf: ctx.rec.csrf }));
+  route('GET', '/api/auth/me', async ({ ctx }) => (ctx ? { user: users.publicUser(ctx.user), csrf: ctx.rec.csrf } : { user: null }), { auth: false });
 
   route('PUT', '/api/account/settings', async ({ ctx, body }) => ({ user: await users.updateSettings(ctx.user.id, body) }));
   route('POST', '/api/account/password', async ({ ctx, body }) => {

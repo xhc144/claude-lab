@@ -130,6 +130,8 @@ export class ResearchRun {
     if (this.s.status === 'completed' && this.s.cursor.phase === 'done') return false;
     this.stopRequested = false;
     this.stepOnce = step;
+    // Work that was in flight when the process stopped (crash, restart, abort) is redone.
+    if (this.s.plan?.progress) for (const [rid, v] of Object.entries(this.s.plan.progress)) if (v === 'running') this.s.plan.progress[rid] = 'pending';
     this.running = true;
     this.abortCtl = new AbortController();
     this.s.status = 'running';
@@ -411,13 +413,19 @@ export class ResearchRun {
       }
       this.emitLedger();
       messages = [...messages, { role: 'assistant', content: first.text }, { role: 'user', content: computeFollowup(results) }];
-      const second = await this.call(r, task, system, messages, { round, phase, kind: 'compute-followup' });
-      contribution.callIds.push(second.callId);
-      contribution.followups.push({ type: 'compute', text: second.text });
-      const p2 = parseContribution(second.text);
-      p2.computes = [];
-      this.apply(r, p2, contribution, { round, phase, task });
-      parsed = p2;
+      // The first answer is already in the ledger, so a failed follow-up must not re-queue the task
+      // (that would apply the same claims twice); it is recorded and the task still counts as done.
+      try {
+        const second = await this.call(r, task, system, messages, { round, phase, kind: 'compute-followup' });
+        contribution.callIds.push(second.callId);
+        contribution.followups.push({ type: 'compute', text: second.text });
+        const p2 = parseContribution(second.text);
+        p2.computes = [];
+        this.apply(r, p2, contribution, { round, phase, task });
+      } catch (err) {
+        contribution.parseNote = `计算后的追问未完成（${err.summary || err.message}），保留首次回答`;
+        this.noteFollowupFailure(err);
+      }
     } else if (s.settings.formatRepair && wantsStructure && countItems(parsed) === 0 && !parsed.summary && !parsed.computes.length) {
       messages = [...messages, { role: 'assistant', content: first.text }, { role: 'user', content: FORMAT_REPAIR }];
       try {
@@ -428,14 +436,25 @@ export class ResearchRun {
         this.apply(r, p3, contribution, { round, phase, task });
         if (!countItems(p3) && !p3.summary) contribution.parseNote = '未能解析出结构化内容';
       } catch (err) {
-        if (err.kind === 'aborted' || err.kind === 'budget') throw err;
-        contribution.parseNote = '格式修复调用失败';
+        contribution.parseNote = '格式修复调用未完成';
+        this.noteFollowupFailure(err);
       }
     }
     s.contributions.push(contribution);
     this.emit('contribution', contribution);
     this.recompute();
     return contribution;
+  }
+
+  /** A follow-up call failed after the main answer was applied: pause on budget, otherwise just log. */
+  noteFollowupFailure(err) {
+    if (err?.kind === 'budget' && !this.stopRequested) {
+      this.stopRequested = true;
+      this.s.pauseReason = `预算限制：${err.message}`;
+      this.feed('budget', `预算不足，研究自动暂停：${err.message}`);
+    } else if (err?.kind !== 'aborted') {
+      this.feed('error', `追问调用失败：${err?.summary || err?.message}`);
+    }
   }
 
   async call(r, task, system, messages, { round, phase, kind }) {
