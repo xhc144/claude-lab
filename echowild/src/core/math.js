@@ -88,9 +88,10 @@ export function scale(out, a, x, y, z) {
   return out;
 }
 
+const RT = new Float32Array(16);
 function rotAxis(out, a, rad, ax) {
   const s = Math.sin(rad), c = Math.cos(rad);
-  const t = new Float32Array(16);
+  const t = RT;
   t.set(a);
   // columns i and j get mixed
   const [i, j, sign] = ax === 0 ? [1, 2, 1] : ax === 1 ? [2, 0, 1] : [0, 1, 1];

@@ -167,7 +167,10 @@ function markerList(g) {
   const heart = locateStructures(g.gen, 'heart', 0, 0)[0];
   if (heart) out.push({ x: heart.x, z: heart.z, icon: '◎', color: '#d9b8ff', label: g.quest && g.quest.done ? '织心祭坛（已重织）' : `织心祭坛 · 出生点（碎片 ${g.quest ? g.quest.count() : 0}/5）`, big: true });
   if (g.structures) for (const s of g.structures.values()) if (s.kind !== 'heart') out.push({ x: s.x, z: s.z, icon: STRUCTURE_INFO[s.kind].icon, color: STRUCTURE_INFO[s.kind].shard ? '#ffd76a' : '#e8e0c8', label: STRUCTURE_INFO[s.kind].zh, big: !!STRUCTURE_INFO[s.kind].shard });
-  if (g.chartMarks) for (const m of g.chartMarks) if (!g.structures || ![...g.structures.values()].some((s) => s.x === m.x && s.z === m.z)) out.push({ x: m.x, z: m.z, icon: '✕', color: '#ff7a6a', label: `残图标记：${STRUCTURE_INFO[m.kind].zh}`, big: true });
+  if (g.chartMarks) for (const m of g.chartMarks) {
+    if (m.kind === 'treasure') { const t = g.treasures && g.treasures.find((q) => q.x === m.x && q.z === m.z); if (!t || !t.found) out.push({ x: m.x, z: m.z, icon: '✕', color: '#ff4a3a', label: '藏宝图：宝藏埋在这里', big: true }); continue; }
+    if (!g.structures || ![...g.structures.values()].some((s) => s.x === m.x && s.z === m.z)) out.push({ x: m.x, z: m.z, icon: '✕', color: '#ff7a6a', label: `残图标记：${STRUCTURE_INFO[m.kind].zh}`, big: true });
+  }
   if (g.waystones) for (const s of g.waystones) out.push({ x: s.x, z: s.z, icon: '◆', color: '#6fe8ff', label: `回响石碑「${s.name}」` });
   if (g.map) for (const m of g.map.meteors) out.push({ x: m.x, z: m.z, icon: '☄', color: '#ffa060', label: `流星坠落点（第 ${m.day} 天）` });
   if (g.map) g.map.pins.forEach((m, i) => out.push({ x: m.x, z: m.z, icon: '⚑', color: m.color || '#9cff8a', label: m.name || `标记 ${i + 1}`, pin: i }));

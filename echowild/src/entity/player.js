@@ -191,16 +191,24 @@ export class Player {
     const ox = this.x, oy = this.y, oz = this.z;
     const vyBefore = this.vy;
     moveAndCollide(world, this, dx, dy, dz);
-    // step up onto slabs, stairs and single blocks while walking
-    if ((this.hitX || this.hitZ) && (wasGround || this.onGround || fluid) && !this.flying) {
-      const sx = this.x, sy = this.y, sz = this.z, sg = this.onGround;
+    // Step up onto slabs, stairs and low ledges while walking. Not while rising: a jump clears
+    // the obstacle by itself, and the probe below would otherwise interfere with it.
+    if ((this.hitX || this.hitZ) && (wasGround || this.onGround || fluid) && !this.flying && dy <= 0) {
+      // keep the plain move's full collision result so a failed probe can be undone exactly
+      const sx = this.x, sy = this.y, sz = this.z, sg = this.onGround, shx = this.hitX, shy = this.hitY, shz = this.hitZ, sgid = this.groundId;
       this.x = ox; this.y = oy; this.z = oz;
       const up = moveAndCollide(world, this, 0, STEP + (fluid ? 0.1 : 0), 0)[1];
       moveAndCollide(world, this, dx, 0, dz);
       moveAndCollide(world, this, 0, -up - 0.01, 0);
       const moved = Math.hypot(this.x - ox, this.z - oz), movedA = Math.hypot(sx - ox, sz - oz);
-      if (moved <= movedA + 1e-4 || !this.onGround) { this.x = sx; this.y = sy; this.z = sz; this.onGround = sg; this.hitX = this.hitZ = true; }
-      else { this.stepSmooth = (this.stepSmooth || 0) + (this.y - oy); }
+      if (moved <= movedA + 1e-4 || !this.onGround) {
+        // the step did not help: restore everything, including hitY — the probe's landing sets
+        // it, and a stale hitY zeroes vy below (that killed every jump made against a wall)
+        this.x = sx; this.y = sy; this.z = sz;
+        this.onGround = sg; this.hitX = shx; this.hitY = shy; this.hitZ = shz; this.groundId = sgid;
+      } else {
+        this.stepSmooth = (this.stepSmooth || 0) + (this.y - oy);
+      }
     }
     if (this.hitX) this.vx = 0;
     if (this.hitZ) this.vz = 0;
@@ -329,7 +337,8 @@ export class Player {
     if (this.creative) { this.health = this.maxHealth; this.hunger = 20; return; }
     const peaceful = this.game.settings && this.game.settings.difficulty === 0;
     this.regenTimer += dt;
-    if (this.hunger >= 18 && this.health < this.maxHealth && this.regenTimer > (this.saturation > 0 ? 0.6 : 4)) {
+    const fed = !!this.effects.fed;
+    if (this.hunger >= (fed ? 14 : 18) && this.health < this.maxHealth && this.regenTimer > (this.saturation > 0 ? 0.6 : fed ? 2 : 4)) {
       this.regenTimer = 0;
       this.health = Math.min(this.maxHealth, this.health + 1);
       this.exhaust(3);

@@ -3,8 +3,8 @@
 
 import { Entity, ENTITY_TYPES, Projectile } from './entities.js';
 import { moveAndCollide, sampleMedium, boxBlocked } from './physics.js';
-import { drawModel, MODELS } from './models.js';
-import { BLOCKS, B, ID_MASK, SOLID, LIQUID, OPAQUE } from '../world/blocks.js';
+import { drawModel, MODELS, modelVariant } from './models.js';
+import { BLOCKS, B, ID_MASK, ID_BITS, SOLID, LIQUID, OPAQUE, pack } from '../world/blocks.js';
 import { I, ITEMS } from '../world/items.js';
 import { BIOMES, BI, biomeOf } from '../world/biomes.js';
 import { angleLerp } from '../core/math.js';
@@ -27,6 +27,7 @@ export const MOBS = {
   gloop: D('gloop', '泥沼胶团', { hw: 0.4, h: 0.6, health: 8, speed: 2.2, hostile: true, damage: 2, hops: true, voice: 'boing', drops: [['gel', 1, 2]] }),
   warden: D('warden', '遗迹守卫', { hw: 0.85, h: 2.8, health: 120, speed: 2.4, hostile: true, damage: 8, boss: true, voice: 'warden', fireproof: true, drops: [['star_shard', 3, 5], ['echo_crystal', 2, 4]] }),
   trader: D('trader', '游商·鸦羽', { hw: 0.32, h: 1.95, health: 30, speed: 2.2, trader: true, voice: 'chirp', drops: [] }),
+  villager: D('villager', '村民', { hw: 0.3, h: 1.9, health: 20, speed: 2.6, trader: true, villager: true, voice: 'hum', drops: [] }),
 };
 export const MOB_KINDS = Object.keys(MOBS);
 
@@ -152,6 +153,7 @@ export class Mob extends Entity {
     const dp = Math.hypot(p.x - this.x, p.y - this.y, p.z - this.z);
     const peaceful = game.settings.difficulty === 0;
     if (d.hostile && peaceful && !d.boss) { this.dead = true; return; }
+    if (d.villager) { this.thinkVillager(game, dt, dp); return; }
     // hostiles notice the player
     if (d.hostile && !p.dead && !p.creative && this.state !== 'chase' && dp < (d.boss ? 18 : 16) && this.canSee(game, p)) { this.aggro = p; this.setState('chase', 30); }
     if (this.aggro && (this.aggro.dead || (this.aggro === p && (p.dead || p.creative)) || (this.aggro.alive === false))) { this.aggro = null; this.setState('idle', 2); }
@@ -259,6 +261,49 @@ export class Mob extends Entity {
           this.target = { x: tx, y: this.y, z: tz };
         }
         if (d.lays && !this.baby) { this.eggT -= dt; if (this.eggT <= 0) { this.eggT = rnd(300, 600); game.entities.spawnItem(this.x, this.y + 0.3, this.z, { id: I.egg, n: 1 }); game.audio && game.audio.play('pop', { x: this.x, y: this.y, z: this.z }); } }
+    }
+  }
+
+  // villagers: out and about by day, home at night, in the rain or when shadows come close
+  thinkVillager(game, dt, dp) {
+    const p = game.player, home = this.home;
+    this.passDoors = true;
+    const tod = game.dayTime % 24000;
+    const night = tod > 12600 && tod < 23300;
+    const rain = game.weather && game.weather.rainAt && game.weather.rainAt(this.x, this.z) > 0.4;
+    if ((this._foeT = (this._foeT || 0) - dt) <= 0) { this._foeT = 0.6; this._foe = game.entities.near(this.x, this.y, this.z, 9, (e) => e.def && e.def.hostile && e.alive)[0] || null; }
+    // doors swing open as a villager passes and close behind them
+    const fx = Math.floor(this.x), fy = Math.floor(this.y + 0.1), fz = Math.floor(this.z);
+    const v = game.world.getBlock(fx, fy, fz);
+    if ((v & ID_MASK) === B.oak_door && !((v >>> ID_BITS) & 4)) {
+      const m = v >>> ID_BITS, up = m & 8 ? -1 : 1;
+      game.world.setBlock(fx, fy, fz, pack(B.oak_door, m | 4));
+      const v2 = game.world.getBlock(fx, fy + up, fz);
+      if ((v2 & ID_MASK) === B.oak_door) game.world.setBlock(fx, fy + up, fz, pack(B.oak_door, (v2 >>> ID_BITS) | 4));
+      (this._doors ||= []).push([fx, fy, fz, up, 1.6]);
+      game.audio && game.audio.play('door_open', { x: fx, y: fy, z: fz });
+    }
+    if (this._doors) for (const dd of this._doors) {
+      dd[4] -= dt;
+      if (dd[4] > 0 || (Math.floor(this.x) === dd[0] && Math.floor(this.z) === dd[2])) continue;
+      for (const yy of [dd[1], dd[1] + dd[3]]) { const w2 = game.world.getBlock(dd[0], yy, dd[2]); if ((w2 & ID_MASK) === B.oak_door) game.world.setBlock(dd[0], yy, dd[2], pack(B.oak_door, (w2 >>> ID_BITS) & ~4)); }
+      dd[4] = -99;
+    }
+    if (this._doors) this._doors = this._doors.filter((dd) => dd[4] > -99);
+    if ((night || rain || this._foe) && home) {
+      const dh = Math.hypot(home.x - this.x, home.z - this.z);
+      if (dh > 0.7) { this.target = { x: home.x, y: home.y, z: home.z }; this.state = this._foe ? 'flee' : 'wander'; this.stateT = 1; }
+      else { this.target = null; this.state = 'idle'; this.stateT = 1; if (dp < 5) this.lookAt(p); }
+      return;
+    }
+    if (dp < 4.5 && !p.dead) { this.target = null; this.state = 'idle'; this.stateT = 0.5; this.lookAt(p); return; }
+    if (this.state === 'wander') { if (this.stateT <= 0 || !this.target || Math.hypot(this.target.x - this.x, this.target.z - this.z) < 0.8) this.setState('idle', rnd(2, 7)); return; }
+    this.target = null;
+    if (this.stateT <= 0) {
+      const ax = home ? home.x : this.x, az = home ? home.z : this.z;
+      const a = Math.random() * Math.PI * 2, r = rnd(3, 15);
+      this.setState('wander', rnd(5, 10));
+      this.target = { x: ax + Math.cos(a) * r, y: this.y, z: az + Math.sin(a) * r };
     }
   }
 
@@ -427,6 +472,8 @@ export class Mob extends Entity {
       noAntlers: this.baby || (this.id % 3 === 0), tailSpeed: this.state === 'flee' ? 12 : this.tamed ? 9 : 4,
       bob: this.def.flies ? Math.sin(t * 2) * 0.08 : 0, squash: this.def.hops && this.kind === 'gloop' ? 1 + Math.max(-0.3, Math.min(0.3, -this.vy * 0.05)) : 1,
       spin: this.kind === 'emberling' ? t * 1.5 : 0,
+      variant: this.variant ?? (this.variant = modelVariant(this.kind, this.id)), seed: this.id % 97,
+      flee: this.state === 'flee', air: !this.onGround && !this.def.swims && !this.def.flies, baby: this.baby, swim: !!this.def.swims,
     };
     const overlay = this.hurtT > 0.25 ? [1, 0.15, 0.1, 0.45] : this.fuse > 0 && Math.floor(this.fuse * 8) % 2 ? [1, 1, 1, 0.5] : this.love > 0 ? [1, 0.6, 0.7, 0.12] : null;
     drawModel(r, this.def.model, x, y, z, yaw, pose, light, overlay, this.def.glow || 0);
@@ -467,7 +514,9 @@ export class Mob extends Entity {
 
   serialize() {
     if (!this.persist || !this.alive) return null;
-    return { type: 'mob', kind: this.kind, x: this.x, y: this.y, z: this.z, yaw: this.yaw, health: this.health, tamed: this.tamed, sitting: this.sitting, sheared: this.sheared, baby: this.baby, growT: this.growT };
+    const o = { type: 'mob', kind: this.kind, x: this.x, y: this.y, z: this.z, yaw: this.yaw, health: this.health, tamed: this.tamed, sitting: this.sitting, sheared: this.sheared, baby: this.baby, growT: this.growT };
+    if (this.def.villager) Object.assign(o, { prof: this.prof, home: this.home, variant: this.variant, offers: this.offers, restockDay: this.restockDay });
+    return o;
   }
 }
 ENTITY_TYPES.mob = (o) => {
@@ -476,6 +525,7 @@ ENTITY_TYPES.mob = (o) => {
   m.setPos(o.x, o.y, o.z);
   Object.assign(m, { yaw: o.yaw || 0, health: o.health || m.health, tamed: !!o.tamed, sitting: !!o.sitting, sheared: !!o.sheared, baby: !!o.baby, growT: o.growT || 0 });
   if (m.tamed) m.persist = true;
+  if (m.def.villager) Object.assign(m, { prof: o.prof || 'farmer', home: o.home || null, variant: o.variant ?? 0, offers: o.offers || null, restockDay: o.restockDay, persist: true });
   return m;
 };
 
@@ -605,6 +655,7 @@ export function installMobs(game) {
         else if (e.kind === 'jelly') jelly++;
         else if (d < 96) passive++;
       }
+      if (g.rules && !g.rules.mobSpawning) return;
       const diff = g.settings.difficulty;
       const hostileCap = [0, 10, 18, 28][diff] || 18;
       for (let attempt = 0; attempt < 3; attempt++) {

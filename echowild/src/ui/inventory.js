@@ -5,6 +5,7 @@ import { ITEMS, I, maxStack, ARMOR_SLOTS } from '../world/items.js';
 import { RECIPES, STATIONS, STATION_RANK, CATS, TAG_ZH, tagItems, countHave, canCraft, maxCraft, consumeIngredients, recipeKnown, SMELT_BY_IN, fuelValue } from '../world/recipes.js';
 import { iconURL } from '../render/icons.js';
 import { B } from '../world/blocks.js';
+import { creativePalette, worldControls } from './creative.js';
 
 const ARMOR_PH = ['⛑', '🛡', '👖', '👢'];
 
@@ -141,6 +142,15 @@ export class InventoryScreen extends Screen {
   buildBook() {
     const b = this.book;
     b.innerHTML = '';
+    if (this.game.player.creative) {
+      // creative: every item at hand, the recipe book (free crafting) and the world controls
+      this.mode = this.mode || 'items';
+      const modes = h('div', { class: 'mode-tabs' }, ...[['items', '物品'], ['book', '合成书'], ['world', '世界']].map(([k, zh]) =>
+        h('button', { class: `mode-tab ${this.mode === k ? 'on' : ''}`, onclick: () => { this.mode = k; this.buildBook(); } }, zh)));
+      b.appendChild(modes);
+      if (this.mode === 'items') { this.grid = null; b.appendChild(creativePalette(this)); return; }
+      if (this.mode === 'world') { this.grid = null; b.appendChild(worldControls(this.game)); return; }
+    }
     const tabs = h('div', { class: 'station-tabs' });
     for (const s of this.stations) {
       tabs.appendChild(h('button', { class: `tab ${s === this.station ? 'on' : ''}`, onclick: () => { this.station = s; this.selected = null; this.buildBook(); } },
@@ -174,7 +184,7 @@ export class InventoryScreen extends Screen {
       if (this.cat !== 'all' && r.cat !== this.cat) continue;
       if (!g.player.creative && !recipeKnown(r, known)) continue;
       if (q && !ITEMS[r.out].zh.includes(q) && !ITEMS[r.out].name.includes(q)) continue;
-      const ok = canCraft(inv, r);
+      const ok = g.player.creative || canCraft(inv, r);
       if (this.onlyCraftable && !ok) continue;
       out.push({ r, ok });
     }
@@ -192,7 +202,7 @@ export class InventoryScreen extends Screen {
       t.addEventListener('mousedown', (e) => {
         e.preventDefault();
         this.selected = r;
-        if (e.shiftKey && ok) this.craft(r, maxCraft(this.game.inventory, r));
+        if (e.shiftKey && ok) this.craft(r, this.game.player.creative ? 64 : maxCraft(this.game.inventory, r));
         else if (e.button === 0 && ok && this.lastClick === r && performance.now() - this.lastClickT < 350) this.craft(r, 1);
         this.lastClick = r; this.lastClickT = performance.now();
         this.renderRecipes();
@@ -213,7 +223,8 @@ export class InventoryScreen extends Screen {
     d.innerHTML = '';
     if (!r) { d.appendChild(h('div', { class: 'dim' }, '选择一个配方查看材料。双击合成一次，Shift+点击合成尽可能多。')); return; }
     const def = ITEMS[r.out];
-    const ok = canCraft(inv, r);
+    const creative = this.game.player.creative;
+    const ok = creative || canCraft(inv, r);
     const head = h('div', { class: 'rd-head' }, h('img', { src: iconURL(r.out) }), h('div', {}, h('div', { class: 'rd-name' }, `${def.zh}${r.n > 1 ? ` ×${r.n}` : ''}`), h('div', { class: 'dim' }, `${STATIONS[r.station].zh} · ${CATS[r.cat] || ''}`)));
     const ings = h('div', { class: 'rd-ings' });
     for (const ing of r.ins) {
@@ -221,7 +232,7 @@ export class InventoryScreen extends Screen {
       const icon = ing.tag ? tagItems(ing.tag)[Math.floor(performance.now() / 1000) % tagItems(ing.tag).length] : ing.id;
       ings.appendChild(h('div', { class: `ing ${have >= ing.n ? 'have' : 'miss'}` }, h('img', { src: iconURL(icon) }), h('span', {}, ing.tag ? TAG_ZH[ing.tag] : ITEMS[ing.id].zh), h('b', {}, `${Math.min(have, 999)}/${ing.n}`)));
     }
-    const max = ok ? maxCraft(inv, r) : 0;
+    const max = creative ? 64 : ok ? maxCraft(inv, r) : 0;
     const btns = h('div', { class: 'rd-btns' },
       h('button', { class: 'btn primary small', ...(ok ? {} : { disabled: true }), onclick: () => this.craft(r, 1) }, '合成'),
       h('button', { class: 'btn small', ...(max > 1 ? {} : { disabled: true }), onclick: () => this.craft(r, max) }, `全部 (${max})`));
@@ -230,9 +241,12 @@ export class InventoryScreen extends Screen {
 
   craft(r, times) {
     const g = this.game, inv = g.inventory;
-    times = Math.max(1, Math.min(times, maxCraft(inv, r)));
-    if (!canCraft(inv, r, times)) return;
-    consumeIngredients(inv, r, times);
+    if (g.player.creative) times = Math.max(1, Math.min(times, 64)); // creative crafting is free
+    else {
+      times = Math.max(1, Math.min(times, maxCraft(inv, r)));
+      if (!canCraft(inv, r, times)) return;
+      consumeIngredients(inv, r, times);
+    }
     const total = r.n * times;
     const left = inv.add(r.out, total);
     if (left) g.dropStack({ id: r.out, n: left });

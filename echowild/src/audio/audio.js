@@ -305,6 +305,7 @@ export class Audio {
       case 'warden': this.tone(dest, t, 55, 1.8, { type: 'sawtooth', vol: 0.12, slide: 0.8 }); this.tone(dest, t, 82, 1.6, { type: 'triangle', vol: 0.1 }); dest.connect(this.revSend); break;
       case 'boing': this.tone(dest, t, 220 * p, 0.3, { vol: 0.2, slide: 2 }); break;
       case 'buzz': this.tone(dest, t, 180 * p, 0.4, { type: 'sawtooth', vol: 0.03, slide: 1.05 }); break;
+      case 'hum': this.tone(dest, t, 170 * p, 0.16, { type: 'triangle', vol: 0.09, slide: 1.12 }); this.tone(dest, t + 0.17, 150 * p, 0.24, { type: 'triangle', vol: 0.08, slide: 0.86 }); this.tone(dest, t, 510 * p, 0.3, { vol: 0.015 }); break;
       default: this.tone(dest, t, 440 * p, 0.2, { vol: 0.08 });
     }
   }

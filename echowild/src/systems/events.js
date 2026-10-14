@@ -171,7 +171,7 @@ export function installEvents(game, state) {
         buf.set([hx, hy, hz, 1, 0.97, 0.9, a], n * 7); n++;
         buf.set([tx, ty, tz, 0.6, 0.7, 1, 0], n * 7); n++;
       }
-      r.drawLines(buf, n, { depth: false });
+      r.drawLines(buf, n, { depth: true, scale: 3 });
     },
   });
 

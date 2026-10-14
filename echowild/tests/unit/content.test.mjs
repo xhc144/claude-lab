@@ -59,3 +59,13 @@ test('ores drop their materials with the right tool', () => {
   assert.deepEqual(blockDrops(B.iron_ore, null), [], 'iron ore needs a pickaxe');
   assert.deepEqual(blockDrops(B.crystal_ore, ironPick, () => 0).map((s) => ITEMS[s.id].name), ['crystal_dust']);
 });
+
+test('logs, planks and other self-dropping blocks give a full stack', () => {
+  const axe = { id: I.wood_axe, n: 1 };
+  for (const n of ['oak_log', 'birch_log', 'pine_log', 'blossom_log', 'willow_log', 'cloud_log', 'oak_planks', 'crystal_lamp']) {
+    const d = blockDrops(B[n], axe, () => 0.5);
+    assert.deepEqual(d, [{ id: B[n], n: 1 }], `${n} drops itself`);
+  }
+  // nothing anywhere returns a stack without a count (the entity system would discard it)
+  for (const b of BLOCKS) if (b && b.id) for (const s of blockDrops(b.id, { id: I.meteor_pickaxe, n: 1 }, () => 0.01)) assert.ok(s.n >= 1 && ITEMS[s.id], `${b.name} drop`);
+});

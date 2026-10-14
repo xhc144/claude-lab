@@ -10,6 +10,7 @@ import { Projectile, PrimedBarrel } from '../entity/entities.js';
 import { lookDir } from '../core/math.js';
 import { FACE_N } from '../world/placement.js';
 import { DAY_TICKS } from '../render/sky.js';
+import { BIOMES } from '../world/biomes.js';
 
 const CONTAINER_SIZES = { chest: 27, dispenser: 9, placer: 9, hopper: 5 };
 const CONTAINER_ZH = { chest: '木箱', dispenser: '投掷器', placer: '放置机', hopper: '漏斗' };
@@ -39,7 +40,7 @@ export function installSurvival(game, state) {
   game.inventory.listeners.push(scan);
   scan();
 
-  game.keepInventory = () => game.player.creative || game.settings.difficulty === 0;
+  game.keepInventory = () => game.player.creative || game.settings.difficulty === 0 || !!(game.rules && game.rules.keepInventory);
   game.itemGlows = (id) => ['star_shard', 'echo_crystal', 'glow_spore', 'shard_sky', 'shard_abyss', 'shard_sand', 'shard_frost', 'shard_tide', 'star_wings', 'loom_thread'].includes(ITEMS[id] && ITEMS[id].name);
 
   game.dropStack = (st) => {
@@ -320,6 +321,12 @@ export function installSurvival(game, state) {
           g.player.eat(def.food);
           if (def.poison && Math.random() < def.poison) { g.player.effects.hunger = 15; g.hud.message('吃了生禽肉，肚子有点不舒服……', '#c9a'); }
           if (def.effect === 'glow') g.player.effects.glow = 120;
+          // a cooked meal leaves you well fed (faster healing and work); hot food chases the cold
+          const meal = MEALS[def.name];
+          if (meal) {
+            g.player.effects.fed = Math.max(g.player.effects.fed || 0, meal[0]);
+            if (meal[1]) { g.player.chill = Math.max(0, (g.player.chill || 0) - meal[1]); if (meal[1] >= 60) g.player.effects.warm = Math.max(g.player.effects.warm || 0, 120); }
+          }
           if (!g.player.creative) {
             g.inventory.consumeHeld(1);
             if (def.returns) { if (g.inventory.add(I[def.returns], 1)) g.dropStack({ id: I[def.returns], n: 1 }); }
@@ -446,7 +453,7 @@ export function installSurvival(game, state) {
   };
 
   // ---- death & respawn
-  const CAUSES = { fall: '从高处摔落', drown: '溺水了', lava: '跌进了岩浆', fire: '被火焰吞没', starve: '饿倒了', contact: '被刺扎伤', explosion: '被炸飞了', void: '坠入了虚空', projectile: '被远程击中', falling: '被落下的方块砸中', mob: '被怪物击倒', generic: '倒下了' };
+  const CAUSES = { freeze: '冻僵了', fall: '从高处摔落', drown: '溺水了', lava: '跌进了岩浆', fire: '被火焰吞没', starve: '饿倒了', contact: '被刺扎伤', explosion: '被炸飞了', void: '坠入了虚空', projectile: '被远程击中', falling: '被落下的方块砸中', mob: '被怪物击倒', generic: '倒下了' };
   game.onPlayerDeath = (cause, src) => {
     const p = game.player;
     let text = CAUSES[cause] || CAUSES.generic;
@@ -478,14 +485,45 @@ export function installSurvival(game, state) {
     game.hud.showSubtitle(`第 ${game.day} 天`, 2000);
   };
 
-  // status effects tick (hunger poisoning, glow)
+  // status effects tick (hunger poisoning, glow, well fed, warmth) and the cold
+  let coldT = 0;
   game.addSystem({
     tick(g) {
-      const e = g.player.effects;
+      const p = g.player, e = p.effects;
       for (const k of Object.keys(e)) { e[k] -= 0.05; if (e[k] <= 0) delete e[k]; }
-      if (e.hunger) g.player.exhaust(0.025);
+      if (e.hunger) p.exhaust(0.025);
+      if (++coldT < 10) return; // every half second
+      coldT = 0;
+      const dt = 0.5;
+      p.chill = p.chill || 0;
+      if (p.creative || p.dead) { p.chill = 0; return; }
+      const w = g.world, x = Math.floor(p.x), y = Math.floor(p.y + 1), z = Math.floor(p.z);
+      if (!w.isLoaded(x, z)) return;
+      const biome = BIOMES[w.biomeAt(x, z, p.y)];
+      const L = w.getLight(x, y, z);
+      const sky = L & 15, blk = Math.max((L >> 4) & 15, (L >> 8) & 15, (L >> 12) & 15);
+      const tod = g.dayTime % 24000, night = tod > 12800 && tod < 23200;
+      const snowing = biome.snow && g.weather && g.weather.rain > 0.3;
+      let cold = 0;
+      if (biome.temp <= 0.2) cold = (night ? 1 : 0.25) + (snowing ? 0.6 : 0);
+      if (p.y > 118 && biome.key !== 'sky') cold += 0.5;                       // thin, icy air on the peaks
+      if (p.medium && p.medium.water > 0.3 && biome.temp <= 0.2) cold += 1.2;   // icy water
+      const sheltered = sky < 10, byFire = blk >= 9 || (p.medium && p.medium.lava), warm = !!e.warm;
+      // clothing keeps some of it out: leather best, then any other armour
+      let insul = 0;
+      for (let s = 36; s < 40; s++) { const st = g.inventory.slots[s]; if (st) insul += ITEMS[st.id].name.startsWith('leather') ? 0.22 : 0.1; }
+      if (cold > 0 && !sheltered && !byFire && !warm) p.chill = Math.min(100, p.chill + dt * 2.4 * cold * (1 - Math.min(0.8, insul)));
+      else p.chill = Math.max(0, p.chill - dt * (byFire || warm ? 9 : sheltered ? 4 : 2));
+      if (p.chill >= 45) { e.cold = 1; p.exhaust(0.06); } else delete e.cold;
+      if (p.chill >= 40 && g.journey && g.journey.tip) g.journey.tip('cold', '好冷……', '在雪原的夜里会慢慢冻僵。靠近<b>营火或火把</b>取暖、躲进屋里、穿上<b>皮甲</b>，或者喝一碗热腾腾的<b>菌菇汤</b>。', 9000);
+      if (p.chill >= 100) { p.freezeT = (p.freezeT || 0) + dt; if (p.freezeT >= 4) { p.freezeT = 0; p.damage(1, 'freeze'); } } else p.freezeT = 0;
     },
   });
+  // cooked meals: [well-fed seconds, chill removed]
+  const MEALS = {
+    bread: [120, 0], baked_sunroot: [120, 25], fried_egg: [120, 15], honey_bread: [300, 0], star_candy: [180, 0],
+    venison: [240, 35], boar: [240, 35], fowl: [180, 30], fish: [180, 25], mushroom_stew: [300, 70],
+  };
 
   // time-of-day helpers for commands/UI
   game.setTime = (t) => { game.dayTime = ((t % DAY_TICKS) + DAY_TICKS) % DAY_TICKS; };

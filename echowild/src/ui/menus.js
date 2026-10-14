@@ -2,25 +2,50 @@
 
 import { h, Screen } from './ui.js';
 import { listWorlds, deleteWorld, exportWorld, importWorld, isPersistent } from '../save/storage.js';
+import { WorldControlScreen } from './creative.js';
 import { hashString } from '../core/noise.js';
 
 const fmtDate = (t) => { if (!t) return '—'; const d = new Date(t); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
 const MODE_ZH = { survival: '生存', creative: '创造' };
 const DIFF_ZH = ['和平', '简单', '普通', '困难'];
 
+// the emblem: an echo spreading in rings around a woven peak
+const EMBLEM = `<svg viewBox="0 0 120 120" aria-hidden="true">
+<defs><linearGradient id="emg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e9fbff"/><stop offset="0.55" stop-color="#7fe7ff"/><stop offset="1" stop-color="#a98bff"/></linearGradient></defs>
+<circle class="em-ring r1" cx="60" cy="60" r="34"/><circle class="em-ring r2" cx="60" cy="60" r="34"/><circle class="em-ring r3" cx="60" cy="60" r="34"/>
+<path d="M60 26 L88 78 H32 Z" fill="none" stroke="url(#emg)" stroke-width="3" stroke-linejoin="round"/>
+<path d="M60 46 L76 76 H44 Z" fill="url(#emg)" opacity="0.85"/>
+<circle cx="60" cy="88" r="4" fill="#ffd77a"/></svg>`;
+
 export class TitleScreen extends Screen {
   constructor(app) { super(); this.app = app; this.capturesGame = false; }
   build() {
+    const letters = (t, d0) => [...t].map((c, i) => h('span', { style: { animationDelay: `${d0 + i * 0.13}s` } }, c));
+    this.cont = h('div', { class: 'title-continue' });
+    const btn = (label, sub, fn, cls = '') => h('button', { class: `tbtn ${cls}`, onclick: fn }, h('span', { class: 'tb-label' }, label), sub ? h('span', { class: 'tb-sub' }, sub) : null);
     const el = h('div', { class: 'screen title-screen' },
-      h('div', { class: 'logo' },
-        h('div', { class: 'logo-main' }, '回响荒野'),
-        h('div', { class: 'logo-sub' }, 'E C H O W I L D'),
-        h('div', { class: 'logo-tag' }, '在破碎的织界中拾起回响，重织这个世界')),
-      h('div', { class: 'title-btns' },
-        h('button', { class: 'btn primary big', onclick: () => this.ui.push(new WorldsScreen(this.app)) }, '开始冒险'),
-        h('button', { class: 'btn big', onclick: () => this.ui.push(new HelpScreen(this.app)) }, '玩法指南'),
-        h('button', { class: 'btn big', onclick: () => this.ui.push(new SettingsScreen(this.app)) }, '设置')),
-      h('div', { class: 'title-foot' }, `v${this.app.version} · 全部画面、音效与世界均由代码实时生成`));
+      h('div', { class: 'title-shade' }),
+      h('div', { class: 'title-grain' }),
+      h('div', { class: 'letterbox top' }), h('div', { class: 'letterbox bottom' }),
+      h('div', { class: 'title-left' },
+        h('div', { class: 'logo' },
+          h('div', { class: 'logo-mark', html: EMBLEM }),
+          h('div', { class: 'logo-main' }, ...letters('回响荒野', 0.35)),
+          h('div', { class: 'logo-sub' }, h('i'), h('span', {}, 'ECHOWILD'), h('i')),
+          h('div', { class: 'logo-tag' }, '在破碎的织界中拾起回响，重织这个世界')),
+        h('div', { class: 'title-btns' },
+          this.cont,
+          btn('开始冒险', '新建或载入一个世界', () => this.ui.push(new WorldsScreen(this.app)), 'primary'),
+          btn('玩法指南', '操作、生存与探索', () => this.ui.push(new HelpScreen(this.app))),
+          btn('设置', '画质、操作与声音', () => this.ui.push(new SettingsScreen(this.app))))),
+      h('div', { class: 'title-foot' }, h('span', {}, `v${this.app.version}`), h('span', { class: 'dot' }, '·'), h('span', {}, '全部画面、音效与世界均由代码实时生成')));
+    // quick continue: the most recently played world
+    listWorlds().then((ws) => {
+      const w = ws && ws.filter((x) => !String(x.id).startsWith('dev-')).sort((a, b) => (b.lastPlayed || 0) - (a.lastPlayed || 0))[0];
+      if (!w) return;
+      this.cont.appendChild(btn(`继续：${w.name}`, `${MODE_ZH[w.mode] || ''} · 第 ${w.day || 1} 天${w.shards ? ` · 碎片 ${w.shards}/5` : ''}`, () => this.app.playWorld(w), 'primary cont'));
+      el.querySelector('.tbtn.primary:not(.cont)').classList.remove('primary');
+    }).catch(() => {});
     return el;
   }
   onKey() { return true; }
@@ -131,6 +156,14 @@ export class SettingsScreen extends Screen {
       b.addEventListener('click', () => { s[key] = !s[key]; b.textContent = s[key] ? '开' : '关'; b.classList.toggle('on', s[key]); this.app.applySettings(); });
       rows.push(h('div', { class: 'setting' }, h('span', {}, zh), b));
     };
+    {
+      // graphics quality preset (auto picks low on software rendering, high otherwise)
+      const seg = h('div', { class: 'seg' });
+      const opts = [['auto', '自动'], ['low', '低'], ['medium', '中'], ['high', '高'], ['ultra', '极致']];
+      const render = () => { seg.innerHTML = ''; for (const [k, zh] of opts) seg.appendChild(h('button', { class: `seg-b ${(s.graphics || 'auto') === k ? 'on' : ''}`, onclick: () => { s.graphics = k; this.app.applySettings(); render(); } }, zh)); };
+      render();
+      rows.push(h('div', { class: 'setting' }, h('span', {}, '画质'), seg));
+    }
     slider('renderDist', '视距（区块）', 3, 16, 1);
     slider('fov', '视野', 55, 110, 1, (v) => `${v}°`);
     slider('sensitivity', '鼠标灵敏度', 0.2, 3, 0.05, (v) => Number(v).toFixed(2));
@@ -166,6 +199,7 @@ export class PauseScreen extends Screen {
         h('div', { class: 'menu-col' },
           h('button', { class: 'btn primary', onclick: () => this.app.resume() }, '继续游戏'),
           h('button', { class: 'btn', onclick: () => this.ui.push(new SettingsScreen(this.app)) }, '设置'),
+          (g.player.creative || g.meta.cheats !== false) ? h('button', { class: 'btn', onclick: () => this.ui.push(new WorldControlScreen(this.app)) }, '世界控制') : null,
           h('button', { class: 'btn', onclick: () => this.ui.push(new HelpScreen(this.app)) }, '玩法指南'),
           h('button', { class: 'btn', onclick: async () => { await this.app.saveGame(); this.app.game.hud.toast('已保存', '世界进度已写入本地存档。'); } }, '立即保存'),
           h('button', { class: 'btn danger', onclick: () => this.app.quitToTitle() }, '保存并返回标题'))));
@@ -200,6 +234,7 @@ const HELP = [
 <tr><td>E</td><td>背包与合成</td><td>Q</td><td>丢弃（Ctrl+Q 整组）</td></tr>
 <tr><td>F</td><td>回响脉冲（需要回响罗盘）</td><td>X</td><td>与副手交换</td></tr>
 <tr><td>M</td><td>世界地图</td><td>J</td><td>探索图鉴</td></tr>
+<tr><td>L</td><td>旅程手册（主线与支线任务）</td><td></td><td></td></tr>
 <tr><td>T 或 /</td><td>聊天与指令</td><td>C</td><td>望远</td></tr>
 <tr><td>V / F5</td><td>切换视角</td><td>F3</td><td>调试信息</td></tr>
 <tr><td>F1</td><td>隐藏界面</td><td>Esc</td><td>暂停</td></tr>

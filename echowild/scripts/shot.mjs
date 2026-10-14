@@ -53,7 +53,7 @@ for (const v of views) {
   }, null, { timeout: 120000, polling: 250 }).catch(() => logs.push('[shot] timeout waiting for meshes'));
   await page.waitForTimeout(v.wait || 400);
   if (v.after) await page.evaluate((s) => (0, eval)(s), v.after);
-  await page.screenshot({ path: join(out, `${v.name}.png`) });
+  await page.screenshot({ path: join(out, `${v.name}.png`), timeout: 300000 });
   const st = await page.evaluate(() => { const g = window.__game; return { fps: g.fps.toFixed(1), chunks: g.world.chunks.size, secs: g.renderer.stats.sections, tris: g.renderer.stats.tris, x: g.player.x.toFixed(1), y: g.player.y.toFixed(1), z: g.player.z.toFixed(1) }; });
   console.log(v.name, JSON.stringify(st));
 }
