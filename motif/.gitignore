@@ -1,0 +1,8 @@
+node_modules/
+dist/
+release/
+out/
+.cache/
+vendor/ffmpeg/
+*.log
+src/generated/
