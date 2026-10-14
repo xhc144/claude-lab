@@ -37,6 +37,10 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。
 
+## 视频讲解稿
+
+[video-scripts/](video-scripts/) 收录数学专题的视频讲解稿。目前有《最优化》一份：6 集，覆盖不等式与极值问题、凸优化、梯度下降法和线性规划，附带核对全部数值例子的 Python 脚本。稿件只在仓库中维护，不发布到 Pages。
+
 ## 桌面项目与隔离内容
 
 [鸿雁邮箱 Hongyan Mail](hongyan-mail/) 是 Electron / Node.js 的本地多账户邮件客户端，需要本地程序、SQLite 与 IMAP / SMTP，无法在 Pages 上运行。
