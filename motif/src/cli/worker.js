@@ -22,9 +22,10 @@ function appRoot() {
 
 export function electronCommand() {
   if (process.env.MOTIF_ELECTRON) return { exe: process.env.MOTIF_ELECTRON, args: [] };
-  // Packaged: the CLI runs inside Motif.exe with ELECTRON_RUN_AS_NODE; relaunch the same binary.
-  if (process.versions.electron) return { exe: process.execPath, args: [] };
   const root = appRoot();
+  // Under ELECTRON_RUN_AS_NODE relaunch the same binary: packaged, Motif.exe finds its own app;
+  // from a checkout, the stock Electron binary needs the app folder.
+  if (process.versions.electron) return { exe: process.execPath, args: root && fs.existsSync(path.join(root, 'dist/main.cjs')) ? [root] : [] };
   if (!root) throw new Error('找不到 Motif 应用目录（开发模式需在 motif/ 下构建）');
   const req = createRequire(path.join(root, 'package.json'));
   let exe;

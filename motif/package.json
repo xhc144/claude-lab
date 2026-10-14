@@ -18,7 +18,7 @@
     "dev": "node scripts/dev.mjs",
     "motif": "node bin/motif.mjs",
     "test": "node --test \"tests/unit/*.test.mjs\"",
-    "test:e2e": "node tests/e2e/gui.mjs && node tests/e2e/ai-mock.mjs",
+    "test:e2e": "node tests/e2e/mcp-stdio.mjs && node tests/e2e/gui.mjs && node tests/e2e/ai-mock.mjs",
     "docs": "node scripts/gen-skill-docs.mjs",
     "showcase": "node scripts/render-showcase.mjs",
     "dist:win": "node scripts/dist-win.mjs",
