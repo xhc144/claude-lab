@@ -18,8 +18,10 @@ export function startMcp(version = '0.0.0') {
   // Keep stdout clean for the protocol.
   console.log = (...a) => process.stderr.write(a.join(' ') + '\n');
   // The client going away (closed pipe) ends the session quietly; pending work finishes first.
+  // Exit only once stdout has flushed: pipe writes are asynchronous on Windows, and exiting
+  // straight away would drop the replies still queued.
   let pending = 0, ended = false;
-  const maybeExit = () => { if (ended && pending === 0) process.exit(0); };
+  const maybeExit = () => { if (ended && pending === 0) process.stdout.write('', () => process.exit(0)); };
   process.stdout.on('error', (e) => { if (e.code === 'EPIPE') process.exit(0); });
   process.stdin.on('end', () => { ended = true; maybeExit(); });
   process.stdin.setEncoding('utf8');
