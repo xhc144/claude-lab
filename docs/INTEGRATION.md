@@ -102,3 +102,9 @@ git push origin recovered-project
 - 在临时副本重新编译模板时，本执行环境缺少 `ctex.sty`；这项源编译未通过。已有完整性与视觉核验的原 PDF 用于网页预览，下载包仍按 README 要求使用完整 TeX Live/XeLaTeX 环境。
 
 提交对应的 Pages Actions 与公开资源核验作为部署证据；直接公共 Chromium 曾受执行环境证书信任限制，正常证书校验保持开启。
+
+## 星枢 Tensora 加入站点
+
+新增 `tensora/`：零依赖的 AI 基础设施控制台前端（API 网关、训练平台、GPU 集群与费用），数据全部为浏览器内模拟。发布只复制单文件构建 `tensora/dist/tensora.html` → `docs/tensora/index.html`，并在导航页新增「产品界面原型」入口；`scripts/build-pages.mjs` 已把 tensora 加入构建与白名单复制列表。
+
+验证：源码版与单文件版 Playwright 各 12/12（桌面 11 个流程含命令面板、创建密钥、模型 Playground、训练向导、任务控制、集群抽屉与排空、充值与通知、路由切换关闭浮层；手机 390px 宽度十个页面无横向滚动及底部导航）；`node scripts/check-pages.mjs` 通过。
