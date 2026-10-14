@@ -1,0 +1,4616 @@
+{
+  "schema_version": 1,
+  "researched_on": "2026-10-11",
+  "policy": "仅结构化摘要、证据身份、原URL和判断链；不保存网络文章全文或PDF。旧经验不能定义2027首年试题；事实、个人体验、专家推断和未找到资料分别表示。",
+  "counts": {
+    "distinct_source_urls": 88,
+    "source_records_before_url_deduplication": 92,
+    "claims_and_decision_rules": 55,
+    "independence_families": 73,
+    "source_kinds": {
+      "official_primary": 39,
+      "user_supplied_official_copy": 1,
+      "media_republication": 3,
+      "media_or_interview": 15,
+      "personal_or_forum": 10,
+      "commercial_or_training": 8,
+      "third_party_commentary": 8,
+      "media_official_response": 1,
+      "video_discovery": 2,
+      "assessment_primary_limited": 1
+    }
+  },
+  "sources": [
+    {
+      "id": "WEB001",
+      "title": "清华大学2021年丘成桐数学科学领军人才培养计划招生办法",
+      "url": "https://www.join-tsinghua.edu.cn/info/1179/1387.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2020-12-31"
+      ],
+      "admission_years": [
+        2021
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2021-ADMISSIONS"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "综合测试列中英文阅读、数学、物理；专业测试含数学一试、二试、心理测试、面试。一试给出中学数学全部、微积分、线性代数、群与群作用基本概念的粗范围。无逐知识点细纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2021年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB002",
+      "title": "清华大学丘成桐数学科学领军人才培养计划和丘成桐数学英才班综合测试结果查询通知",
+      "url": "https://join-tsinghua.edu.cn/info/1033/1418.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-03-08"
+      ],
+      "admission_years": [
+        2021
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2021-RESULT"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "证明2021年综合测试已实施；结果需在报名系统内查询，公开页面没有试题、分数线或考纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB002"
+    },
+    {
+      "id": "WEB003",
+      "title": "2021年清华大学丘成桐数学领军计划高考综合选拔方案",
+      "url": "https://join-tsinghua.edu.cn/info/1005/1486.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-06-24"
+      ],
+      "admission_years": [
+        2021
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2021-GAOKAO"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "高考渠道有材料初审及学校测试；7月3—10日申请。公开方案没有把主批次数学一试粗范围明定为高考渠道考纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB003"
+    },
+    {
+      "id": "WEB004",
+      "title": "丘成桐数学科学领军人才计划首届数学“0试”试题回顾（官网目录条目）",
+      "url": "https://qzc.tsinghua.edu.cn/syzs/ktzy/1.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-08-09"
+      ],
+      "admission_years": [
+        2021
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "official_index_read_linked_body_unavailable",
+          "details": "official_index_opened_linked_article_failed"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2021-ZERO-INDEX"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "官网目录注明2021-08-09并写明公布2021首届数学0试及粗范围：中学全部、微积分、线代、群与群作用基本概念。原文链接至微信，未成功打开原文；不把目录摘要当完整试题或细纲。"
+      ],
+      "limitations": [],
+      "related_urls": [
+        "https://mp.weixin.qq.com/s/lwA19vmtCvJ9YHn2EEWuWA"
+      ],
+      "independence_family": "WEB004"
+    },
+    {
+      "id": "WEB005",
+      "title": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1517.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-08-04"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-ADMISSIONS"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "建议提供TACA序列20210828综合测试等成绩；程序直接列专业测试（数学一、二试、心理、面试），无2021那样独立的综合测试条目。一试粗范围与2021实质相同，二试仍开放。初评优秀资格提及数学及物理集训队。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB006",
+      "title": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法（第二批次）",
+      "url": "https://www.join-tsinghua.edu.cn/info/1179/1545.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-11-10"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-BATCH2"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "第二批面向特定竞赛人群，公开程序为专家综合评价、择优认定，未列统一数学一试/二试细纲；不能默认套用第一批程序。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB007",
+      "title": "清华大学2022年丘成桐数学科学领军人才培养计划第一批次测试结果查询通知",
+      "url": "https://www.admissions.tsinghua.edu.cn/info/1033/1548.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-11-10"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-BATCH1-RESULT"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "公开通知只有结果查询入口，不能据此重建考试题型、分值或过线分；查询通知发布日期为2021-11-10；通知称结果已公布，不能确定系统首次开放查询日。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB007"
+    },
+    {
+      "id": "WEB008",
+      "title": "清华大学2022年丘成桐数学科学领军人才培养计划第二批次测试结果查询通知",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1571.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-12-01"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-BATCH2-RESULT"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "通知证明第二批有测试结果，但没有披露测试科目、试题和分值；不能把招生办法的资料综合评价解释成保证无任何测试。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB008"
+    },
+    {
+      "id": "WEB009",
+      "title": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法（第三批次）",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1575.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2021-12-15"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-BATCH3"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "初评分通过/不通过；测试含学科能力测试和专业面试，线上进行；具体安排在报名系统中。公开文本无数学一、二试细目考纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2022年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB010",
+      "title": "2022年清华大学丘成桐数学领军计划高考综合选拔方案",
+      "url": "https://join-tsinghua.edu.cn/info/1005/1663.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-06-29"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2022-GAOKAO"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "高考渠道仍为材料初审、学校测试与认定；7月6—12日申请；该方案没有列具体科目和考纲。初审日期2021年7月20日与标题/其他日期冲突，疑为笔误，未见勘误。"
+      ],
+      "limitations": [
+        "五、初审日期原文2021年，不能静默改称官方2022年日期"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB010"
+    },
+    {
+      "id": "WEB011",
+      "title": "报名丨8月TACA暨丘成桐数学科学领军人才培养计划“0试”报名通知",
+      "url": "https://qzc.tsinghua.edu.cn/info/1018/2163.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-07-05"
+      ],
+      "admission_years": [
+        2023,
+        "采信项目为当时领军计划；具体申请年度需各年简章"
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        },
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-202208-TACA"
+        },
+        {
+          "research_group": "experience",
+          "original_id": "EXP-16"
+        }
+      ],
+      "authors_or_publishers": [
+        "求真书院刊载THUSSAT项目通知"
+      ],
+      "identity_notes": [
+        "官方公开网页",
+        "清华求真书院官方历史通知"
+      ],
+      "findings": [
+        "通知把TACA与0试联系；考试提前到8月7日。官方图片：中英文阅读09:00—12:00、物理13:30—15:00、数学（丘成桐数学0试）15:15—17:15。考生在指定考点机房使用专用软件。",
+        "通知将2022年8月TACA明确称领军零试，统一组考并可申请认证成绩单，供领军等采信项目提交。"
+      ],
+      "limitations": [
+        "不能将旧TACA关系自动套至CACA或2027基础测试。",
+        "高：历史考试名称、日期与成绩用途"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB011"
+    },
+    {
+      "id": "WEB012",
+      "title": "重要提醒丨8月TACA测试报名截止时间调整至7月27日24时！",
+      "url": "https://qzc.tsinghua.edu.cn/info/1018/2191.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-07-25"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-202208-TACA-CHANGE"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "报名截止从7月5通知图片的7月24日24:00延至7月27日24:00；这是报名期限变化，不是考纲变化。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB012"
+    },
+    {
+      "id": "WEB013",
+      "title": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1686.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-07-23"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2023-ADMISSIONS"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "建议提交TACA20210828、20220521、20220807等成绩，供初评。专业测试仍含数学一、二试、心理、面试；一试粗范围与2021/2022实质相同。8月11—18日报名，8月底至9月初测试。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB014",
+      "title": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法（求真转载）",
+      "url": "https://qzc.tsinghua.edu.cn/info/1017/2188.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-07-25"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2023-ADMISSIONS-QZC"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "求真转载可交叉核对专业测试范围，但第四批写已录取2022级本科新生；招生办原页面写2023级。引用适用年度应优先招生办正文，保留转载笔误记录。"
+      ],
+      "limitations": [
+        "第四批已录取2022级与招生办2023级冲突"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB015",
+      "title": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法（第二批次）",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1708.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-11-30"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2023-BATCH2"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "特定竞赛渠道继续单列；公开办法无统一数学一、二试或逐知识点考纲。允许因国家队选拔等原因、经学校同意调整预科安排。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB016",
+      "title": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法（第三批次）",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1707.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-11-30"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2023-BATCH3"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "较2022境外批次，初评增加优秀档且优秀可直接入围；学科能力测试与专业面试主要线上，具体安排看系统。12月1—15日报名。未公开科目细纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2023年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB017",
+      "title": "清华大学2023年丘成桐数学领军计划高考综合选拔方案",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1803.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2023-06-28"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-2023-GAOKAO"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "与2021/2022高考渠道结构类似：材料初审、测试与认定，面向可被清华录取者；7月6—12日申请；公开方案未写具体测试科目或细目考纲。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB017"
+    },
+    {
+      "id": "WEB018",
+      "title": "丘成桐数学科学领军人才计划2023年4月数学“0试”试题回顾",
+      "url": "https://qzc.tsinghua.edu.cn/info/1072/5682.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-04-11"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        },
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-202304-ZERO-REVIEW"
+        },
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-ZERO-REVIEW"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院"
+      ],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "官方于2024公开2023年4月0试；回顾写明中学全部、微积分、线代、群与群作用粗范围。2024数学水平考试被称为往年0试、供2025第一批初评。不可将日历2023年4月试卷直接命名为2023招生第一批一试。"
+      ],
+      "limitations": [
+        "官方解释2024数学水平考试承接0试名称，成绩用于2025主批次初评；回顾页给的是范围说明而非详纲。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB018"
+    },
+    {
+      "id": "WEB019",
+      "title": "2023年4月TACA数学测试（官方回顾附件）",
+      "url": "https://qzc.tsinghua.edu.cn/__local/5/9B/33/3BA1E726C2D8943CCC4E0983EA7_CA360556_1137C.pdf",
+      "kind": "official_primary",
+      "publication_dates": [],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-202304-ZERO-PAPER"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方网页附件在线文本"
+      ],
+      "findings": [
+        "附件在线解析2页、题首为2023年4月TACA数学测试，共15题。它是官方公开历史试题，属于已考事实证据，不能作为完整考纲或将15题推为固定题量。没有下载或保存PDF。"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "WEB019"
+    },
+    {
+      "id": "WEB020",
+      "title": "清华大学本科招生网数学人才培养计划目录（两页）",
+      "url": "https://join-tsinghua.edu.cn/gnxs/sxrcpyjh.htm",
+      "kind": "official_primary",
+      "publication_dates": [],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2021-2023",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened_full_relevant_sections"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2021-2023",
+          "original_id": "OFF-ADMISSIONS-INDEX"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [
+        "官方公开网页"
+      ],
+      "findings": [
+        "当前官方分类目录逐条检视2021—2023相关招生办法、结果公告、高考选拔页面，并进入关键条目。目录未见该三年的独立考试大纲条目。目录只是本次负面检索范围，不能证明从未发布其他材料。"
+      ],
+      "limitations": [],
+      "related_urls": [
+        "https://join-tsinghua.edu.cn/gnxs/sxrcpyjh/1.htm"
+      ],
+      "independence_family": "清华大学本科招生网数学人才培养计划目录"
+    },
+    {
+      "id": "WEB021",
+      "title": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1825.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2023-09-12"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "官方同文镜像 https://www.admissions.tsinghua.edu.cn/info/1033/1826.htm 已打开；不将招生范围简句称为独立详纲。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB022",
+      "title": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法（第二批次）",
+      "url": "https://join-tsinghua.edu.cn/info/1179/1837.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2023-12-06"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-B2"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "另面向丘成桐女子中学生数学竞赛获奖者；按材料综合评价择优认定。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB023",
+      "title": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法（第三批次）",
+      "url": "https://www.admissions.tsinghua.edu.cn/info/1033/1844.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2023-12-06"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-B3"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "境外及港澳台等群体，含学科能力测试和专业面试。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB024",
+      "title": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法（第三批次-第二轮）",
+      "url": "https://join-tsinghua.edu.cn/info/1033/1867.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-01-10"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-B3-R2"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "第三批次又分轮次；不可据试卷俗称直接推断政策批次。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2024年丘成桐数学科学领军人才培养计划招生办法"
+    },
+    {
+      "id": "WEB025",
+      "title": "清华大学2025年丘成桐数学科学领军人才培养计划招生简章",
+      "url": "https://join-tsinghua.edu.cn/info/1033/1966.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-10-23"
+      ],
+      "admission_years": [
+        2025
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S25"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "同文移动版 https://m.join-tsinghua.edu.cn/info/1179/1965.htm 也已打开；未发现单独详纲。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2025年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB026",
+      "title": "清华大学2025年丘成桐数学科学领军人才培养计划招生简章（第二批次）",
+      "url": "https://www.admissions.tsinghua.edu.cn/info/1033/1980.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-12-05"
+      ],
+      "admission_years": [
+        2025
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S25-B2"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "国际/港澳台就读，另含境内国际课程的外籍、港澳台学生；不用第一批次的日程替代。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2025年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB027",
+      "title": "清华大学2026年丘成桐数学科学领军人才培养计划招生简章",
+      "url": "https://join-tsinghua.edu.cn/info/1179/2095.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-09-22"
+      ],
+      "admission_years": [
+        2026
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S26"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "2026年度已有基础测试；官方同文镜像 https://www.admissions.tsinghua.edu.cn/info/1033/2096.htm 已打开。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2026年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB028",
+      "title": "清华大学2026年丘成桐数学科学领军人才培养计划（第一批次）入围认定结果查询通知",
+      "url": "https://www.join-tsinghua.edu.cn/info/1179/2108.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-11-07"
+      ],
+      "admission_years": [
+        2026
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S26-RESULT"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "提供实际结果发布证据；不只是计划日程。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB028"
+    },
+    {
+      "id": "WEB029",
+      "title": "清华大学2026年丘成桐数学科学领军人才培养计划（境外批次）招生简章",
+      "url": "https://www.admissions.tsinghua.edu.cn/info/1179/2105.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-11-01"
+      ],
+      "admission_years": [
+        2026
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S26-OVERSEAS"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "境外实际就读；主要线上测试；正文未展开一二试科目，不能自动套用内地主批次细节。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2026年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB030",
+      "title": "清华大学2027年丘成桐数学科学领军人才培养计划招生简章",
+      "url": "https://www.join-tsinghua.edu.cn/info/1179/2239.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2026-09-28"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S27"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学招生办公室、求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "用户上传的《领军招生简章(1).pdf》正文逐项比对一致；报名仍进行，首批测试未举行。"
+      ],
+      "related_urls": [],
+      "independence_family": "清华大学2027年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB031",
+      "title": "通知公告：数学领军计划之数学与物理科目考纲发布！",
+      "url": "https://qzc.tsinghua.edu.cn/xwdt/tzgg.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2026-08-21"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "official_index_read_linked_body_unavailable",
+          "details": "web open返回不可重试抓取错误"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S27-SYLLABUS-INDEX"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "日期是官网目录日期；此目录不能单独证明详纲全部内容。"
+      ],
+      "related_urls": [
+        "https://mp.weixin.qq.com/s/c0b0-a56T1PBfKszszz40w"
+      ],
+      "independence_family": "WEB031"
+    },
+    {
+      "id": "WEB032",
+      "title": "数学领军计划之数学与物理科目考纲发布！",
+      "url": "https://mp.weixin.qq.com/s/c0b0-a56T1PBfKszszz40w",
+      "kind": "user_supplied_official_copy",
+      "publication_dates": [
+        "2026-08-20"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "user_attachment_read_online_body_unavailable",
+          "details": "local_original_attachment_text_read"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S27-SYLLABUS-USER"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院公众号"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "原附件首行标原创、清华大学求真书院、2026年8月20日。联网证据确认官方目录指向此链接，但在线正文未成功读取。仅保存这条来源记录，不复制PDF。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB032"
+    },
+    {
+      "id": "WEB033",
+      "title": "清华大学2027年“数学领军计划”招生出现三大新变化",
+      "url": "https://www.tsinghua.edu.cn/info/1182/128523.htm",
+      "kind": "media_republication",
+      "publication_dates": [
+        "2026-09-30"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S27-NEWS-XH"
+        }
+      ],
+      "authors_or_publishers": [
+        "新华社客户端；清华新闻网转载"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "涉及求真书院负责人解释，属政策解读辅证，不是正式招生规则或考试详纲。"
+      ],
+      "related_urls": [],
+      "independence_family": "2027-official-public-response"
+    },
+    {
+      "id": "WEB034",
+      "title": "2027年丘成桐数学科学领军人才培养计划，有哪些新变化？",
+      "url": "https://www.tsinghua.edu.cn/info/1182/128559.htm",
+      "kind": "media_republication",
+      "publication_dates": [
+        "2026-10-02"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S27-NEWS-CY"
+        }
+      ],
+      "authors_or_publishers": [
+        "中青报客户端；清华新闻网转载"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "佐证8月已有考纲及扩展数学方向；语文英语与综合选科用来观察阅读表达、兴趣积累。"
+      ],
+      "related_urls": [],
+      "independence_family": "2027-official-public-response"
+    },
+    {
+      "id": "WEB035",
+      "title": "清华大学2024年“丘成桐领军计划数学水平考试”报名通知",
+      "url": "https://qzc.tsinghua.edu.cn/info/1070/5731.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-04-17"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-LEVEL-SPRING"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "通知是计划日程；后来的试卷附件名标2024年5月，实际执行日期仍待更正通知。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB035"
+    },
+    {
+      "id": "WEB036",
+      "title": "清华大学2024年8月“丘成桐领军计划数学水平考试”报名通知",
+      "url": "https://qzc.tsinghua.edu.cn/info/1070/6203.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-07-12"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S24-LEVEL-SUMMER"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "数学机考，成绩为2025首批初评依据之一；原页链接附件2024年5月试卷，不下载。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB036"
+    },
+    {
+      "id": "WEB037",
+      "title": "清华大学2025年“丘成桐数学水平考试”报名通知",
+      "url": "https://qzc.tsinghua.edu.cn/info/1070/7084.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-03-28"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "history-2024-2027",
+          "status": "body_or_relevant_sections_read",
+          "details": "opened"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "history-2024-2027",
+          "original_id": "S25-LEVEL"
+        }
+      ],
+      "authors_or_publishers": [
+        "清华大学求真书院"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "计划2025-04-20数学机考；正文未声明成绩对应哪个招生年度，不能据惯例代填。"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB037"
+    },
+    {
+      "id": "WEB038",
+      "title": "苏州中学两位学子入选“清华领军计划”！听听他们的成长心得",
+      "url": "https://m.yzwb.net/wap/news/4153287.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2024-11-20"
+      ],
+      "admission_years": [
+        2025
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP01"
+        }
+      ],
+      "authors_or_publishers": [
+        "扬子晚报/紫牛新闻；极目新闻转载",
+        "正文有周正、黄天瑞、主教练沈浩实名叙述；可读转载未显示记者姓名"
+      ],
+      "identity_notes": [
+        "本人学习叙述和教练指导经验；媒体编辑后的学校成功报道",
+        "中学品牌与成功案例宣传；未见该篇培训课程销售"
+      ],
+      "findings": [
+        "周正先补基础，再学习常用方法；练习后复盘，并做限时模拟。",
+        "黄天瑞强调教练诊断未学透处、练习熟练度和面试心态。",
+        "沈浩称两人有较强自学能力，学校建设先修课程与笔试训练。"
+      ],
+      "limitations": [
+        "成功者偏差；不能由两个案例推断普通学生几个月可达标。",
+        "导语把入围称为提前锁定录取，不能据此省略预科条件。",
+        "个人经历中高；普遍备考时长、录取机制低"
+      ],
+      "related_urls": [
+        "https://www.ctdsb.net/c1673_202411/2309111.html"
+      ],
+      "independence_family": "suzhou-2025-success"
+    },
+    {
+      "id": "WEB039",
+      "title": "省镇江一中学子赵苏瑜提前保送清华大学",
+      "url": "https://www.jsw.com.cn/2023/1108/1821994.shtml",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2023-11-08"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP02"
+        }
+      ],
+      "authors_or_publishers": [
+        "中国镇江金山网",
+        "记者张翼；通讯员李浩、孟璇璇，校方提供照片"
+      ],
+      "identity_notes": [
+        "本人回忆及其数学老师评价",
+        "地方与学校成功宣传；未見课程销售"
+      ],
+      "findings": [
+        "赵苏瑜称2022年笔试过关而面试因学习深度不足未入围；随后扩大和深化大学数学学习。",
+        "他在2022—2023年三次参加TACA，属于旧制的重复尝试经历。"
+      ],
+      "limitations": [
+        "学习深度不足是受访者自评，未见面试评分单。",
+        "重复报考路径不能作为2027报名规划；通读高数两月也不等于达到新版全考纲。",
+        "个人学习史中高；一般选拔效果中低"
+      ],
+      "related_urls": [],
+      "independence_family": "zhaosuyu-2023"
+    },
+    {
+      "id": "WEB040",
+      "title": "因为热爱，终将抵达！苏中学子再登丘成桐女子中学生数学竞赛20强榜单",
+      "url": "https://m.yzwb.net/wap/news/4109238.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "页面动态日期未解析；正文第四届女子赛于10月27日结束，文章上下文为2024年"
+      ],
+      "admission_years": [
+        "非领军录取报道；2024女子赛与TACA学习经验"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP03"
+        }
+      ],
+      "authors_or_publishers": [
+        "扬子晚报/紫牛新闻",
+        "记者王颖；校对陶善工"
+      ],
+      "identity_notes": [
+        "潘奕晨本人回忆学习节奏",
+        "学校成功案例宣传"
+      ],
+      "findings": [
+        "潘奕晨回忆为TACA赶进度后遗忘较多，之后选择稳步掌握当前内容。"
+      ],
+      "limitations": [
+        "女子赛成绩与领军录取不是同一事实；不合并为新考纲成功者样本。",
+        "原页面日期不可读，年份需进一步用原媒体元数据校验。",
+        "个人感受中高；领军考情低"
+      ],
+      "related_urls": [],
+      "independence_family": "panyichen-2024"
+    },
+    {
+      "id": "WEB041",
+      "title": "“有学生只考了28分”，清华求真书院预科班清退风波背后",
+      "url": "https://view.inews.qq.com/a/20260731A06PTN00",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-07-31"
+      ],
+      "admission_years": [
+        2026
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP04"
+        }
+      ],
+      "authors_or_publishers": [
+        "中国新闻周刊腾讯官方账号；其他站转载同篇",
+        "赵绛；编辑杜玮；文中陈辰、王鑫、赵睿、吴杰、胡玥、姜欣均为化名"
+      ],
+      "identity_notes": [
+        "记者采访师生、咨询课程商家；受访学生和教练身份由媒体担保、读者无法独立核验",
+        "媒体报道与争议流量；不是培训课程销售"
+      ],
+      "findings": [
+        "受访师生讨论预科标准的公开程度、波动与长期学习适应，不能把清退全归因于刷题。",
+        "受访者认为旧一试风格有年度变化，旧二试要求快速学习陌生数学、物理专题。",
+        "教练支持适度重复训练；学员描述部分练习需要多角度探索。",
+        "受访数学家汤涛强调成长环境，认为高水平选拔中培训或刷题难起决定作用；这是专家意见。"
+      ],
+      "limitations": [
+        "近20%是受访者估计，且指2026级面临清退风险；不作官方精确比例或2027固定率。",
+        "报道说向书院与院长邮件询问考核详情及人数，截至发稿未获回复。",
+        "女生比例、补考均分是转述或网传，不当成核验统计。",
+        "该调查发生于2027新考纲发布前；不能用于新版出题结构预测。",
+        "争议存在与观点中高；清退比例、个案评分中；因果归因低"
+      ],
+      "related_urls": [
+        "https://news.ifeng.com/c/8vCv9VtxK7y",
+        "https://info.51.ca/articles/1564675?wyacs=info-article-item-bt-related",
+        "https://www.wenxuecity.com/news/2026/07/31/126726889.html",
+        "https://news.qq.com/rain/a/20260731A06PTN00?id=20260731A06PTN00&path=a&app=news&suid=&redirect_pc=1"
+      ],
+      "independence_family": "cn-newsweek-20260731"
+    },
+    {
+      "id": "WEB042",
+      "title": "“数学领军计划”不是进清华捷径",
+      "url": "https://news.sciencenet.cn/htmlnews/2025/8/550605.shtm",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2025-08-31"
+      ],
+      "admission_years": [
+        "2021—2025项目总体讨论"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP05"
+        }
+      ],
+      "authors_or_publishers": [
+        "文汇报；科学网转载",
+        "姜澎"
+      ],
+      "identity_notes": [
+        "院长自己的培养目标和培训态度陈述；机构利益相关者",
+        "项目形象与培养理念；无课程销售"
+      ],
+      "findings": [
+        "丘成桐强调长期数学研究志向、勤奋和兴趣；反对把项目视为名校捷径。",
+        "书院从未授权培训或与培训机构合作，是其公开声明及采访立场。"
+      ],
+      "limitations": [
+        "培养成效数字由书院提供，不是第三方独立成绩审计。",
+        "培养目标不是证明所有受训练者无潜力，也不是证明培训一定无效。",
+        "受访者公开立场高；培养成效比較非独立评估"
+      ],
+      "related_urls": [],
+      "independence_family": "wenhui-20250831-yau"
+    },
+    {
+      "id": "WEB043",
+      "title": "2025年新领军TACA(0试)试题的讨论帖",
+      "url": "https://forum.eduzhixin.com/discuss-detail/62252?subjectType=2",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "主帖显示更新于2026-02-10；回帖含2025-11-09及2026-02"
+      ],
+      "admission_years": [
+        "标题指2025年考试，须与招生年度分开"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP06"
+        }
+      ],
+      "authors_or_publishers": [
+        "质心论坛",
+        "主帖赤子之心；回帖为匿名网名"
+      ],
+      "identity_notes": [
+        "一名回帖者自称考场做八题后对答案三题有误；身份未验证",
+        "论坛属培训品牌生态；帖子未直接售课"
+      ],
+      "findings": [
+        "回帖认为竞赛数学与大学数学知识板块重合有限；也有人指出零试仍有竞赛题。",
+        "参试自述显示会做与算对有差距，但只是一例。"
+      ],
+      "limitations": [
+        "标题、更新日与考试年度混杂；不能直接作为某招生年官方卷。",
+        "匿名评论不能支持稳定两三道竞赛题的频率结论。",
+        "存在这些讨论高；一般考情低"
+      ],
+      "related_urls": [],
+      "independence_family": "zhixin-taca-2025-thread"
+    },
+    {
+      "id": "WEB044",
+      "title": "清华丘成桐数学零试",
+      "url": "https://qianfanedu.cn/thread-333828-1-1.html",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "相关回帖2023-08-18"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP07"
+        }
+      ],
+      "authors_or_publishers": [
+        "千帆网",
+        "家长及匿名论坛用户"
+      ],
+      "identity_notes": [
+        "未证明作者本人参试；有旧现学现考内容记忆",
+        "家长教育论坛；正文未见直接售课"
+      ],
+      "findings": [
+        "有用户把竞赛与TACA的差别概括为难度与进度的差别；另有用户区分TACA高中物理和入校开放考核大学物理。"
+      ],
+      "limitations": [
+        "描述简化且未经试卷对照。",
+        "帖子自己说后续未关注，不能把越来越难的猜测当事实。",
+        "观察性观点低；确切考情需核验"
+      ],
+      "related_urls": [],
+      "independence_family": "qianfan-zero-2023"
+    },
+    {
+      "id": "WEB045",
+      "title": "清华新领军到底要怎么搞？几年级开始搞比较合适？",
+      "url": "https://qianfanedu.cn/forum.php?mod=viewthread&page=1&tid=326853",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2023-02-25起"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP08"
+        }
+      ],
+      "authors_or_publishers": [
+        "千帆网",
+        "家长/匿名用户"
+      ],
+      "identity_notes": [
+        "有转述亲友案例；多数为一般建议",
+        "未见直接售课"
+      ],
+      "findings": [
+        "讨论强调对数学兴趣、大学内容自学，并提醒八年路径适合性。"
+      ],
+      "limitations": [
+        "大段复制旧简章，不算独立印证；亲友案例无文件。",
+        "项目名称最初有混淆，帖内后来纠正。",
+        "家庭顾虑与舆论低中；政策仅可追原简章"
+      ],
+      "related_urls": [],
+      "independence_family": "qianfan-plan-2023"
+    },
+    {
+      "id": "WEB046",
+      "title": "新领军选拔过程分扣分是否合理？",
+      "url": "https://wap.zol.com.cn/ask/x_35313271.html",
+      "kind": "personal_or_forum",
+      "publication_dates": [],
+      "admission_years": [
+        "自述2025年参加测试，但文内月份与年度叙述需核实"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        },
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP09"
+        },
+        {
+          "research_group": "experience",
+          "original_id": "EXP-24"
+        }
+      ],
+      "authors_or_publishers": [
+        "中关村在线问答",
+        "天华文漪等网名；未给原始发表日期",
+        "天华文漪等ZOL网名"
+      ],
+      "identity_notes": [
+        "自称参试，不可验证；无答卷、评分标准、复核记录附件",
+        "数码问答站；错误归入机箱/先马新领军标签，提示自动聚合或语义错配",
+        "自称考生；页面无参试身份、日期或原发出处核验"
+      ],
+      "findings": [
+        "有匿名用户质疑过程分与复核解释，也反思证明表达、考研风格练习与领军要求不匹配。",
+        "匿名作者提出过程分扣减争议，但未展示答卷、成绩原件或评阅意见。"
+      ],
+      "limitations": [
+        "不据此断定恶意压分、阅卷批次尺度变化或一年训练足以达标。",
+        "文章细节无独立佐证；措辞整齐不能证明真实性或AI生成。",
+        "低；仅作待核验舆情线索",
+        "不采纳压分、具体给分、CMO金牌者比较、一年可达标或门槛结论；只能登记为未证实线索。",
+        "低：身份与评分证据不可核查"
+      ],
+      "related_urls": [],
+      "independence_family": "zol-process-score-anonymous"
+    },
+    {
+      "id": "WEB047",
+      "title": "清华丘成桐数学科学领军人才培养计划（新领军计划）备考指南",
+      "url": "https://www.jingsailian.com/news/1231245.html",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2024-11-15"
+      ],
+      "admission_years": [
+        2025
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP10"
+        }
+      ],
+      "authors_or_publishers": [
+        "国际教育联盟",
+        "Molly转载"
+      ],
+      "identity_notes": [
+        "未见作者亲试或教师经历证明；来源标网络转载",
+        "竞赛/项目咨询微信与辅导服务导流"
+      ],
+      "findings": [
+        "文中宣称大学数学和物理、自学能力重要；其可验证部分应回到简章和试卷。"
+      ],
+      "limitations": [
+        "同段将8道解答题又称为不定项选择。",
+        "按89/40000计算是0.2225%，文章写2.225%，差十倍。",
+        "报名4次、44.5面试线、4万人等无可核验统计，不适用2027。",
+        "把开放考核的高级专题说成主要量子力学，可能过度外推。",
+        "低，已发现算术与形式冲突"
+      ],
+      "related_urls": [],
+      "independence_family": "jingsailian-molly-guide"
+    },
+    {
+      "id": "WEB048",
+      "title": "初三保送清华！2025清华新领军第一批入围结果出炉",
+      "url": "https://www.jingsailian.com/news/1239023.html",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2024-11-19"
+      ],
+      "admission_years": [
+        2025
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP11"
+        }
+      ],
+      "authors_or_publishers": [
+        "国际教育联盟",
+        "Molly转载"
+      ],
+      "identity_notes": [
+        "称接触到学生，但未给身份或样本量",
+        "微信咨询导流"
+      ],
+      "findings": [
+        "将大学数学基础与高联内容区分，并称开放考核会遇到陌生知识。"
+      ],
+      "limitations": [
+        "与高考直通车、自主选拔在线、省份名单等网页出现同句大学数学与竞赛区别，应视为同文传播。",
+        "作者称接触学生但无样本量；二试听不懂等描述不能概括全体。",
+        "导语把入围称保送，须保留预科合格条件。",
+        "营销转述低；体验仅待核验样本"
+      ],
+      "related_urls": [],
+      "independence_family": "2025-first-batch-list-template"
+    },
+    {
+      "id": "WEB049",
+      "title": "2021年清华丘成桐数学领军分数线是多少？之后该如何备考？",
+      "url": "https://js.qinxue100.com/jiangsu-gaoxiaozizhao/details_316134.html",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2021年初；可读区未给精确日"
+      ],
+      "admission_years": [
+        2021
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP12"
+        }
+      ],
+      "authors_or_publishers": [
+        "秦学教育",
+        "网络内容整理；文中称青桐老师"
+      ],
+      "identity_notes": [
+        "以旧英才班经验推测首届新领军，不是实际考试经历",
+        "在线留言、试听课、手机号收集"
+      ],
+      "findings": [
+        "文章明确称首届形式预测仅供参考，并强调快速学习和讲清观点。"
+      ],
+      "limitations": [
+        "两段面试形式预测不一致：先说现学现考，再说面对面三至五教授。",
+        "首届预测不能复用为2027事实。",
+        "预测身份明确；历史政策中，预判低"
+      ],
+      "related_urls": [],
+      "independence_family": "qinxue-2021-forecast"
+    },
+    {
+      "id": "WEB050",
+      "title": "2023年领军计划集训营",
+      "url": "https://www.yuanfudao.com/lessons/12539666.html",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2023-07-11—19课程安排"
+      ],
+      "admission_years": [
+        "2023课程季，属于旧考核准备"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP13"
+        }
+      ],
+      "authors_or_publishers": [
+        "猿辅导",
+        "授课毛子豪（平台显示8年教学经验；未独立核验）"
+      ],
+      "identity_notes": [
+        "课程供应商对自己提供内容的一级说明；不是考卷证据",
+        "直接售课"
+      ],
+      "findings": [
+        "公开大纲含微积分与微分方程、高等代数与群论、TACA和新领军一试模拟及讲评。"
+      ],
+      "limitations": [
+        "课程存在不等于有效；模拟题不可当历年真题。",
+        "旧课程未显式覆盖2027统计、优化、几何拓扑等全部新方向。",
+        "课程大纲高；适考范围与效果低"
+      ],
+      "related_urls": [],
+      "independence_family": "yuanfudao-2023-camp"
+    },
+    {
+      "id": "WEB051",
+      "title": "回忆初中三年的数学学习",
+      "url": "https://m.sohu.com/a/800688047_121910597/",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "2024-08-14"
+      ],
+      "admission_years": [
+        "文内五月TACA，场次年份无法仅据转载日期确定"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP14"
+        }
+      ],
+      "authors_or_publishers": [
+        "搜狐号米教育",
+        "第一人称学习回忆，未给原作者姓名；可能转载"
+      ],
+      "identity_notes": [
+        "自称初中生，原作者及参试无法确认",
+        "教育账号；未见本篇直接售课"
+      ],
+      "findings": [
+        "叙述者读过高阶数学书，却称TACA因换元漏因子和行列式计算失误受挫。"
+      ],
+      "limitations": [
+        "阅读清单不等于掌握证明与做题能力；参试和成绩无凭证。",
+        "发布日期与开篇八十多天到中考不一致，属于转发或编辑时间。",
+        "低中；只作学习风险例子"
+      ],
+      "related_urls": [],
+      "independence_family": "middle-school-math-memoir"
+    },
+    {
+      "id": "WEB052",
+      "title": "从华二设立“丘班”，来看看丘成桐领军计划究竟是什么？",
+      "url": "https://www.parentshome.cn/article/24876.html",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "2024-04-14"
+      ],
+      "admission_years": [
+        2024
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP15"
+        }
+      ],
+      "authors_or_publishers": [
+        "家长交流社区；原上海小升初/家长帮",
+        "上海小升初"
+      ],
+      "identity_notes": [
+        "无亲试或教师身份；旧简章与课程介绍组合",
+        "升学导流与学校通道宣传"
+      ],
+      "findings": [
+        "称大学基础课程需自学准备，并讨论先修课程前后关系。"
+      ],
+      "limitations": [
+        "零試15填空/2小时、答对5题及需一年以上等须核对具体场次。",
+        "将概率与数理统计列成2024一试正式范围，超出当年简章表述；不得以其证明正式范围。",
+        "文内称与本科培养计划高度一致，不等于要求完整本科课程。",
+        "基础区分中；考情量化与范围低"
+      ],
+      "related_urls": [],
+      "independence_family": "parentshome-huaer-2024"
+    },
+    {
+      "id": "WEB053",
+      "title": "巨变！清华新领军招生简章出炉，铁人三项式的车轮战选拔",
+      "url": "https://www.sohu.com/a/1082054905_120863305",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-09-29"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP16"
+        }
+      ],
+      "authors_or_publishers": [
+        "搜狐号史海流年",
+        "史海流年"
+      ],
+      "identity_notes": [
+        "未见亲试、教练或采访证明",
+        "平台流量；文末声明个人观点"
+      ],
+      "findings": [
+        "担忧多科多轮考核偏向应试适应与抗压，不能仅靠增加考试识别兴趣。",
+        "建议保持常规学习和其他升学安排。"
+      ],
+      "limitations": [
+        "将2027预科淘汰权与入围不等于录取说成全新规则，和2026官方简章冲突。",
+        "未提供选拔效果的样本，预测不升格为结果。",
+        "把王虹、邓煜成长路径举作因果证据不足。",
+        "意见可讨论；制度事实中低，存在误判"
+      ],
+      "related_urls": [],
+      "independence_family": "shihailiunian-2027-comment"
+    },
+    {
+      "id": "WEB054",
+      "title": "清华求真书院2027年领军计划招生新规解读：选拔逻辑转向综合素养",
+      "url": "https://www.zhongkaobj.cn/zhongkao/zixun/2026092914211.html",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "搜索快照2026-09-30，打开页显示2026-10-11；观察到日期变化"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP17"
+        }
+      ],
+      "authors_or_publishers": [
+        "北京中考信息网",
+        "信老师；声明网络整理"
+      ],
+      "identity_notes": [
+        "无独立采访；主要依官方简章及答问",
+        "添加老师微信导流"
+      ],
+      "findings": [
+        "建议从少数熟悉模块转向完整知识结构、自主阅读与表达。"
+      ],
+      "limitations": [
+        "把四大力学培养必修与入学前物理范围并列，易误读。",
+        "称现学现考暴露培训者短板、功利培训效果下降，尚无新版结果支持。",
+        "预科正式筛选不是今年才有。",
+        "清楚的范围概述中；效果推断低"
+      ],
+      "related_urls": [],
+      "independence_family": "2027-official-response-paraphrase"
+    },
+    {
+      "id": "WEB055",
+      "title": "清华“丘班”招生变了：要考语文、英语？",
+      "url": "https://m.sohu.com/a/1083276560_387091",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "2026-10-02"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP18"
+        }
+      ],
+      "authors_or_publishers": [
+        "搜狐号现代与经典",
+        "现代与经典（教学观摩研讨会推广账号）"
+      ],
+      "identity_notes": [
+        "作者评价及教学建议；未见学生/教练访谈",
+        "末尾全国教学观摩研讨会推广；不是领军官方文件"
+      ],
+      "findings": [
+        "区分必要练习与考试套路；六选二给兴趣差异留下空间。",
+        "强调读证明确认依据、改变条件、合书复述，并防止把改革理解为全科抢跑。"
+      ],
+      "limitations": [
+        "主体政策信息仍源于官方文件，不能算独立印证。",
+        "意见为规范性教学判断，不证明新选拔已达成目标。",
+        "政策复述中高；教学建议非实证"
+      ],
+      "related_urls": [],
+      "independence_family": "modern-classic-2027-comment"
+    },
+    {
+      "id": "WEB056",
+      "title": "清华丘成桐数学领军计划｜一试题逐题精讲 + 预科清退20%警示",
+      "url": "https://www.yeyulingfeng.com/a/1081439.html",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "搜索显示2026年9月下旬；打开本文后续片段"
+      ],
+      "admission_years": [
+        "题文混合2023—2026经历与2027预测"
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP19"
+        }
+      ],
+      "authors_or_publishers": [
+        "夜雨聆风学习资料网",
+        "可读正文未给可核验原作者"
+      ],
+      "identity_notes": [
+        "主要拼接新闻与经验，不见亲历资格",
+        "资料下载/VIP平台"
+      ],
+      "findings": [],
+      "limitations": [
+        "标题清退20%取自2026采访估计，流程图却把约20%固定为2027风险。",
+        "2027流程预测沿用旧二试现学现考和8题4小时，已与2027招生简章结构不一致。",
+        "大学物理四大力学概念框架、课程优先级是作者建议，非官方必学层次。",
+        "给出预测时序，不能引用为官方日期或新版题数时长。",
+        "低；仅错误与预测管理案例"
+      ],
+      "related_urls": [],
+      "independence_family": "yeyu-2027-forecast"
+    },
+    {
+      "id": "WEB057",
+      "title": "高中只能考一次，考试内容增加物理、语文、英语等！清华大学发布“丘班”招生简章",
+      "url": "https://www.yeyulingfeng.com/a/1099128.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-09-29"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP20"
+        }
+      ],
+      "authors_or_publishers": [
+        "夜雨聆风转载；原记者张娜但原媒体未定位",
+        "张娜（文末记者署名）"
+      ],
+      "identity_notes": [
+        "引两名匿名数学教练及高三班主任的判断",
+        "资料平台；匿名教练可能有招生利益"
+      ],
+      "findings": [
+        "匿名教练预期科目更广、机会减少使选拔更难；班主任赞成多学科与真实兴趣导向。"
+      ],
+      "limitations": [
+        "难度提升是首考前判断，无新版分数和题目支持。",
+        "一位教练把旧预科仅态度端正即可录取，和旧简章合格条件不同。",
+        "可作即时反应中低；原文溯源不足"
+      ],
+      "related_urls": [],
+      "independence_family": "zhangna-2027-local-teachers"
+    },
+    {
+      "id": "WEB058",
+      "title": "增加语文、英语考试！2027丘成桐数学领军计划招生简章公布",
+      "url": "https://www.eol.cn/kaoshi/gaokao/gkzx/202609/t20260929_2778765.shtml",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-09-29"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP21"
+        }
+      ],
+      "authors_or_publishers": [
+        "教育在线",
+        "教育在线综合整理"
+      ],
+      "identity_notes": [
+        "明确以官方简章及解读整理；无独立结果调查",
+        "升学信息/掌上高考产品导流"
+      ],
+      "findings": [
+        "清楚区分数学基础测试、一试科目、二试语言与六选二、三试现学现考。"
+      ],
+      "limitations": [
+        "不是官方发布主体；复述官方信息不累加为第三方一致预测。",
+        "对照简章的结构概述高；不构成独立命题证据"
+      ],
+      "related_urls": [],
+      "independence_family": "2027-official-doc-summary"
+    },
+    {
+      "id": "WEB059",
+      "title": "清华发布“数学领军计划”招生新举措，解读来了！",
+      "url": "https://www.21jingji.com/article/20260928/herald/3bf967de26320f934eff010d1db03eb3.html",
+      "kind": "media_official_response",
+      "publication_dates": [
+        "2026-09-28"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "mirror_body_read_original_unavailable",
+          "details": "21财经正文不可读；清华媒体转载同文正文已读"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP22"
+        }
+      ],
+      "authors_or_publishers": [
+        "人民日报客户端；21财经/重庆日报/清华新闻转载",
+        "吴月（清华转载标注）"
+      ],
+      "identity_notes": [
+        "官方负责人的公开回应，而非第三方独立测评",
+        "项目解释与媒体传播"
+      ],
+      "findings": [
+        "负责人说明拓宽科目为了视野、数理联系、阅读表达与不同领域好奇心。"
+      ],
+      "limitations": [
+        "不要把不同站转载同一次官方答问数成独立第三方意见。",
+        "受访方立场与政策解释高；不构成独立效果评估"
+      ],
+      "related_urls": [
+        "https://www.tsinghua.edu.cn/info/1182/128522.htm",
+        "https://app.cqrb.cn/shishi/2026-09-28/2786210_pc.html"
+      ],
+      "independence_family": "2027-official-public-response"
+    },
+    {
+      "id": "WEB060",
+      "title": "如何评价2022清华新领军计划专业测试一试试题？",
+      "url": "https://www.zhihu.com/question/492760598",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "问题搜索显示2021-10-16"
+      ],
+      "admission_years": [
+        2022
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "discovery_only_body_unavailable",
+          "details": "打开正文Internal Error"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP23"
+        }
+      ],
+      "authors_or_publishers": [
+        "知乎"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "仅有搜索摘要；不能确认回答作者、全部观点或是否亲试。",
+        "未读正文，不作为论据"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB060"
+    },
+    {
+      "id": "WEB061",
+      "title": "如何评价2023年清华大学丘成桐数学新领军计划专业测试？",
+      "url": "https://www.zhihu.com/question/619412268/answer/3249706725",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "2023-08-27"
+      ],
+      "admission_years": [
+        2023
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "discovery_only_body_unavailable",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP24"
+        }
+      ],
+      "authors_or_publishers": [
+        "知乎"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "未打开题解验证，不当标准解答或亲试记录。",
+        "仅线索；未进入证据集"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB061"
+    },
+    {
+      "id": "WEB062",
+      "title": "2023年4月清华大学学科能力综合测试(TACA)解析（代数部分）",
+      "url": "https://www.bilibili.com/video/BV1FM4y1b75j/",
+      "kind": "video_discovery",
+      "publication_dates": [
+        "2023年4月后",
+        "搜索显示相对时间，未核到精确发布日期"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "discovery_only_body_unavailable",
+          "details": "Internal Error；未观看视频或拿到字幕"
+        },
+        {
+          "research_group": "experience",
+          "status": "discovery_only_body_unavailable",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP25"
+        },
+        {
+          "research_group": "experience",
+          "original_id": "EXP-25"
+        }
+      ],
+      "authors_or_publishers": [
+        "哔哩哔哩",
+        "搜索摘要自称NJU计算数学博士在读；附付费辅导",
+        "BV1FM4y1b75j简介自称南京大学计算数学博士在读并提供付费辅导；其他未核身份"
+      ],
+      "identity_notes": [
+        "付费咨询及一对一辅导",
+        "搜索元数据，视频正文未访问"
+      ],
+      "findings": [],
+      "limitations": [
+        "不得声称已看视频，也不以搜索简介证明教师身份或题解正确。",
+        "只作课程线索",
+        "未把视频标题、简介当亲历经验或已核定教学观点；不猜口述内容。",
+        "仅发现：打开返回412，无转录"
+      ],
+      "related_urls": [
+        "https://www.bilibili.com/video/BV1Lu4y1p7Dt/",
+        "https://www.bilibili.com/video/BV1PR4y1174p/"
+      ],
+      "independence_family": "WEB062"
+    },
+    {
+      "id": "WEB063",
+      "title": "北大学长讲透《高等数学》（合集更新中）",
+      "url": "https://www.bilibili.com/video/BV1r44y1m7HW/",
+      "kind": "video_discovery",
+      "publication_dates": [],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "discovery_only_body_unavailable",
+          "details": "Internal Error"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP26"
+        }
+      ],
+      "authors_or_publishers": [
+        "哔哩哔哩"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "课程标题与简介不证明完整内容、质量或覆盖2027。",
+        "未读/未看，仅线索"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB063"
+    },
+    {
+      "id": "WEB064",
+      "title": "清华数学领军计划招生全面变革，已启动报名",
+      "url": "https://www.shobserver.cn/news/detail?id=1188799",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-10-03"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "discovery_only_body_unavailable",
+          "details": "仅动态模板，无正文"
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "TP27"
+        }
+      ],
+      "authors_or_publishers": [
+        "上观新闻；新浪镜像检索到"
+      ],
+      "identity_notes": [],
+      "findings": [],
+      "limitations": [
+        "正文不能读取；新浪摘要似复述文汇访谈与招生简章。",
+        "当前不作为关键证据"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB064"
+    },
+    {
+      "id": "WEB065",
+      "title": "清华大学2026年丘成桐数学科学领军人才培养计划招生简章",
+      "url": "https://www.join-tsinghua.edu.cn/info/1033/2096.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-09-22"
+      ],
+      "admission_years": [
+        2026
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "O26"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [],
+      "findings": [
+        "六8/七预科考察合格才录取，反证2027首次有淘汰权说法"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2026年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB066",
+      "title": "清华大学2027年丘成桐数学科学领军人才培养计划招生简章",
+      "url": "https://join-tsinghua.edu.cn/info/1033/2240.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2026-09-28"
+      ],
+      "admission_years": [
+        2027
+      ],
+      "access_records": [
+        {
+          "research_group": "third-party",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "third-party",
+          "original_id": "O27"
+        }
+      ],
+      "authors_or_publishers": [],
+      "identity_notes": [],
+      "findings": [
+        "六3新一/二/三试结构、六8预科严格考核、报名规则与日程"
+      ],
+      "limitations": [],
+      "related_urls": [],
+      "independence_family": "清华大学2027年丘成桐数学科学领军人才培养计划招生简章"
+    },
+    {
+      "id": "WEB067",
+      "title": "记 2025.4.20 新领军零试",
+      "url": "https://www.cnblogs.com/Xuan-tmp/p/18837295",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2025-04-20 19:37"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-01"
+        }
+      ],
+      "authors_or_publishers": [
+        "Xuan_tmp"
+      ],
+      "identity_notes": [
+        "博客园长期网名；本人自称参试；无实名或成绩单核验"
+      ],
+      "findings": [
+        "自述将非旋转几何体误套旋转体积分方法；行列式应用、群论与常用结论不熟。",
+        "自述同题反复算得不同答案；特征向量出现根式后一度放弃正确计算路径。"
+      ],
+      "limitations": [
+        "只支持个人失误类型，不能证明全卷内容、平均难度、排名门槛或考点统一管理。",
+        "文中分数和位比未见外部证明；自估丢分与补分后位比不用作技能事实。",
+        "中：当天具体复盘；参试身份与成绩仅自述"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB067"
+    },
+    {
+      "id": "WEB068",
+      "title": "2024年8月清华大学丘成桐领军计划数学水平考试游记",
+      "url": "https://www.luogu.com/article/5pd9zxfp",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2024-08-18 22:05:34"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-02"
+        }
+      ],
+      "authors_or_publishers": [
+        "Azufre"
+      ],
+      "identity_notes": [
+        "洛谷网名；自述参试；无实名或成绩单核验"
+      ],
+      "findings": [
+        "作者先跳过多题，再回做；复查发现矩阵元素、对数计算和分类遗漏。",
+        "作者总结计算不熟、群论练习不足、第一眼畏难和不写过程会影响表现。"
+      ],
+      "limitations": [
+        "题目只给片段与个人评价，不能据此重建完整卷或概率频率。",
+        "不得使用其押题预测或个人难度形容作为2027规律。",
+        "中：接近考试当天的详细个人记录"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB068"
+    },
+    {
+      "id": "WEB069",
+      "title": "回忆录",
+      "url": "https://www.luogu.com.cn/article/ai24qn50",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2022-07-13 17:35:32"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-03"
+        }
+      ],
+      "authors_or_publishers": [
+        "VinstaG173"
+      ],
+      "identity_notes": [
+        "洛谷网名；自述曾通过零试并入面试，后未通过"
+      ],
+      "findings": [
+        "作者自述零试通过后补学高等数学、进入面试但未通过，另一次零试高分也未感到能做好专业笔试。"
+      ],
+      "limitations": [
+        "未给正式场次、完整题面、答卷或面试内容；不能用于阶段成绩换算。",
+        "其物理低分还涉及校内期中和中科大测试，不能误写新领军物理成绩。",
+        "中低：个人生涯回忆；场次与日期不明"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB069"
+    },
+    {
+      "id": "WEB070",
+      "title": "无需高考，本硕博连读！武汉外校学生入选清华“数学领军计划”",
+      "url": "https://www.ctdsb.net/c1476_202311/1945835.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2023-11-07 20:31:07"
+      ],
+      "admission_years": [
+        "2024"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-04"
+        }
+      ],
+      "authors_or_publishers": [
+        "极目新闻记者王媛；通讯员周全"
+      ],
+      "identity_notes": [
+        "实名受访学生郭梓衡，武汉外国语学校高三，报道明确2024招生年度入围"
+      ],
+      "findings": [
+        "郭梓衡回忆第一场4小时8道大学数学大题；随后数学、物理当堂学习后测试。",
+        "他回忆三位老师向一名学生提数学专业问题；学习大学教材与视频时重视知识背后的逻辑联系。"
+      ],
+      "limitations": [
+        "旧流程与时长不可作为2027安排；没有正式题面或英文面试叙述。",
+        "中高：记者与校通讯员实名访谈；考情仍为个人回忆"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB070"
+    },
+    {
+      "id": "WEB071",
+      "title": "北京高二男生，将直接去清华本硕博连读",
+      "url": "https://www.sohu.com/a/501775440_113042",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2021-11-17 22:39"
+      ],
+      "admission_years": [
+        "2022"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-05"
+        }
+      ],
+      "authors_or_publishers": [
+        "京城教育圈，文署京教君"
+      ],
+      "identity_notes": [
+        "隔空采访北京101中学高二侯宇轩；2022首批入围"
+      ],
+      "findings": [
+        "侯宇轩认为当年数学有大学内容，语文英语物理接近高考；重视独立探究、自学与解题过程。"
+      ],
+      "limitations": [
+        "难度是个人判断；并未提供正式英文面试经验或评分标准。",
+        "中：可辨采访对象；个人难度感受"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB071"
+    },
+    {
+      "id": "WEB072",
+      "title": "北京一零一中学学生侯宇轩入围“丘成桐数学科学领军人才培养计划”",
+      "url": "https://peking.bjd.com.cn/content/s61a59194e4b04441fdc509f3.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2021-11-30 10:50"
+      ],
+      "admission_years": [
+        "2022"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-06"
+        }
+      ],
+      "authors_or_publishers": [
+        "北京海淀官方发布；记者刘畅"
+      ],
+      "identity_notes": [
+        "区级官方账号刊载实名学生采访"
+      ],
+      "findings": [
+        "确认侯宇轩2022首批入围；他说希望提高英语口语以准备大学外教课程。"
+      ],
+      "limitations": [
+        "口语需求属于未来大学学习，不能转写为旧正式英文面试的证据。",
+        "较高：身份交叉核验；不是招生规则文件"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB072"
+    },
+    {
+      "id": "WEB073",
+      "title": "对话｜清华本硕博8年连读！成都七中新领军计划入选学生谈竞赛与热爱",
+      "url": "https://sc.sina.cn/edu/scedu/2023-11-06/jy-imztstpk3225288.d.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2023-11-06 19:31"
+      ],
+      "admission_years": [
+        "页面未给两人逐一明确项目与年度"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-07"
+        }
+      ],
+      "authors_or_publishers": [
+        "新浪四川页面署综合；采访实名学生"
+      ],
+      "identity_notes": [
+        "杨文韬、张一蘅，成都七中高三；页面混称英才班与领军入选"
+      ],
+      "findings": [
+        "杨文韬说先自学大学数学网课，后加入校内系统学习；张一蘅复盘此前失利与陌生形式带来的慌张。"
+      ],
+      "limitations": [
+        "不能静默将两人都写成新领军录取者；不把集中学习作普遍必要条件。",
+        "中：实名经验；项目归属需追加核准"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB073"
+    },
+    {
+      "id": "WEB074",
+      "title": "探访清华人才培养“特区”",
+      "url": "https://www.52dzxy.com/2024/hqrw/202421/articles/tanfangqinghuarencaipeiyangtequ.html",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "环球人物2024年第21期；转载页未载精确刊日"
+      ],
+      "admission_years": [
+        "2021"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-08"
+        }
+      ],
+      "authors_or_publishers": [
+        "环球人物记者刘潇（作者图由协作研究者核读）"
+      ],
+      "identity_notes": [
+        "实名2021级学生丁徐祉晗；身份由求真书院官方转段报道交叉确认"
+      ],
+      "findings": [
+        "丁徐祉晗回忆正式二试以教学视频后当场作答，涉及狭义相对论和纽结理论。",
+        "文中八人一组、黑板展示拉格朗日力学是正式招生前摸底面试。"
+      ],
+      "limitations": [
+        "回忆发表于约三年后；正式招生前摸底不得称正式面试。",
+        "旧专题只支持快速学习训练，不是2027考查清单；正文原站未取得。",
+        "中高：实名访谈及身份核验；目前全文为非官方转载"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB074"
+    },
+    {
+      "id": "WEB075",
+      "title": "清华大学求真书院举行2025年数学领军计划转段仪式暨英才班毕业典礼",
+      "url": "https://qzc.tsinghua.edu.cn/info/1017/7364.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2025-06-24"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-09"
+        }
+      ],
+      "authors_or_publishers": [
+        "求真书院；文字李菲"
+      ],
+      "identity_notes": [
+        "清华求真书院官方报道"
+      ],
+      "findings": [
+        "官方报道确认丁徐祉晗为数学领军计划转段学生代表。"
+      ],
+      "limitations": [
+        "不证明其回忆的每一考试细节；转段活动不是选拔考试。",
+        "高：仅用于受访者身份"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB075"
+    },
+    {
+      "id": "WEB076",
+      "title": "“有学生只考了28分”，清华求真书院预科班清退风波背后",
+      "url": "https://www.inewsweek.cn/wh/2026-07-31/31383.shtml",
+      "kind": "media_or_interview",
+      "publication_dates": [
+        "2026-07-31 15:33:36"
+      ],
+      "admission_years": [
+        "个体入选年未知；不得等同2026或2027"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-10"
+        }
+      ],
+      "authors_or_publishers": [
+        "中国新闻周刊记者赵绛"
+      ],
+      "identity_notes": [
+        "赵睿：入选学生；陈辰：往届入选学生；王鑫：正在备考高中生；吴杰：培训教练；六位主要受访者均化名"
+      ],
+      "findings": [
+        "赵睿回忆竞赛转向自学大学数学后入选，认为近年一试风格变化。",
+        "王鑫回忆旧二试通过视频、讲义学习消化后考试；赵睿提到陌生数学与物理专题。"
+      ],
+      "limitations": [
+        "王鑫是备考者，不能写成成功录取者；专题年份和完整题面未载。",
+        "年际题型判断须与题库完整题面核对；未采用清退比例、压分或女生淘汰推论。",
+        "中：原站专业记者采访；化名与缺少年份限制独立核验"
+      ],
+      "related_urls": [],
+      "independence_family": "cn-newsweek-20260731"
+    },
+    {
+      "id": "WEB077",
+      "title": "清华新领军、丘班综测试题！数学考试有惊喜，非高考内容近7成",
+      "url": "https://cmo.eduzhixin.com/archives/268",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2021-03-02"
+      ],
+      "admission_years": [
+        "2021"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-11"
+        }
+      ],
+      "authors_or_publishers": [
+        "zhixin／质心教育；考生回忆收集"
+      ],
+      "identity_notes": [
+        "培训机构公开稿；首发公众号数学联赛"
+      ],
+      "findings": [
+        "机构稿描述2021综合测试数学15填空、120分钟，含微积分、线代、群论；自称由考生回忆整理。"
+      ],
+      "limitations": [
+        "大学内容占比和难度是机构分类；图片题面未逐项核验；与搜狐和物竞站同稿，不能算多源印证。",
+        "中低：明确回忆版；并非官方卷或一手署名学生"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB077"
+    },
+    {
+      "id": "WEB078",
+      "title": "2021清华新领军、丘班一试真题，风格延续往年，高数占比提升",
+      "url": "https://www.sohu.com/a/456762496_120114479",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2021-03-22 16:55"
+      ],
+      "admission_years": [
+        "2021"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-12"
+        }
+      ],
+      "authors_or_publishers": [
+        "质心教育"
+      ],
+      "identity_notes": [
+        "培训机构署名评析与回忆版题"
+      ],
+      "findings": [
+        "作者认为旧一试重概念、基本方法与知识广度；概念不熟会使考生现场推导耗时。"
+      ],
+      "limitations": [
+        "属于教师/机构判断；不得接受中等难度标签、招生方向推断为官方结论。",
+        "中低：当时评析，但无具名参试来源"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB078"
+    },
+    {
+      "id": "WEB079",
+      "title": "丘成桐女子数竞｜题目以高等数学内容为主，延续新领军考察风格",
+      "url": "https://www.sohu.com/a/498515080_120114479",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2021-11-01 15:05"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-13"
+        }
+      ],
+      "authors_or_publishers": [
+        "质心教育"
+      ],
+      "identity_notes": [
+        "培训机构数学组评析"
+      ],
+      "findings": [
+        "机构认为该届微积分与线性代数题除基本计算外，还需构造并证明性质。"
+      ],
+      "limitations": [
+        "不能把女子场题当领军一试；不能据2021比较推出后来或2027的固定难度排序。",
+        "中：明确比较对象；难度判断为机构观点"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB079"
+    },
+    {
+      "id": "WEB080",
+      "title": "第二届丘成桐女子中学生数学竞赛圆满收官",
+      "url": "https://www.tsinghua.edu.cn/info/1177/100132.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2022-11-24 15:22:51"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-14"
+        }
+      ],
+      "authors_or_publishers": [
+        "丘成桐数学科学中心供稿；清华新闻网"
+      ],
+      "identity_notes": [
+        "官方活动报道；评委余成龙、获奖者杨梦琪与胡殊闻具名"
+      ],
+      "findings": [
+        "余成龙表示竞赛希望学生接触高等数学与研究性问题，强调理解和运用基本工具。"
+      ],
+      "limitations": [
+        "活动宗旨不能转成2027题型分布或指定专题。",
+        "高：赛事及具名评委发言；不是领军考纲"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB080"
+    },
+    {
+      "id": "WEB081",
+      "title": "第四届丘成桐女子中学生数学竞赛于9月30开启报名",
+      "url": "https://yau-girls-contest.tsinghua.edu.cn/info/1012/1031.htm",
+      "kind": "official_primary",
+      "publication_dates": [
+        "2024-09-30"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-15"
+        }
+      ],
+      "authors_or_publishers": [
+        "赛事官方"
+      ],
+      "identity_notes": [
+        "清华丘成桐数学科学中心主办赛事官网"
+      ],
+      "findings": [
+        "该届女子赛由笔试和面试组成，范围含中学数学、微积分、线代、群与群作用。"
+      ],
+      "limitations": [
+        "只适用于该届；相近范围不等于相同试卷或2027规则。",
+        "高：该届形式与范围"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB081"
+    },
+    {
+      "id": "WEB082",
+      "title": "CACA比TACA升级在哪里？——CACA常见问题解答",
+      "url": "https://www.zizzs.com/gk/qiangjijihua/183520.html",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "2024-11-01 09:49"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-17"
+        }
+      ],
+      "authors_or_publishers": [
+        "自主选拔在线，于老师编辑"
+      ],
+      "identity_notes": [
+        "第三方教育信息/咨询网站；声明来源于网络"
+      ],
+      "findings": [
+        "稿称CACA承接TACA测评框架并取消语文英语，提供数理单科认证成绩单。"
+      ],
+      "limitations": [
+        "这是第三方转载；不据此断言清华2027必采信、免考或为零试。",
+        "中低：有具体制度描述，但原发公众号未核实"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB082"
+    },
+    {
+      "id": "WEB083",
+      "title": "CACA（综合学术能力评估）考试重大调整",
+      "url": "https://www.jingsailian.com/news/1480997.html",
+      "kind": "commercial_or_training",
+      "publication_dates": [
+        "2025-02-26"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-18"
+        }
+      ],
+      "authors_or_publishers": [
+        "Molly转载，国际教育联盟"
+      ],
+      "identity_notes": [
+        "教育咨询辅导平台，文章自署转载并带咨询推广"
+      ],
+      "findings": [
+        "该稿将Junior定位为高中数理、Senior定位为大学前两年数理基础；Senior数学列分析、线代和有限群。"
+      ],
+      "limitations": [
+        "不能据此映射2027数学1/2分科或对比过线分；今年级别已有进一步变化。",
+        "中低：具体内容可作线索；无原发签章与高校采信证据"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB083"
+    },
+    {
+      "id": "WEB084",
+      "title": "CSSAT、TDA—标准学术能力测试官网",
+      "url": "https://www.cssat.cn/",
+      "kind": "assessment_primary_limited",
+      "publication_dates": [],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "index_only_body_unavailable",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-19"
+        }
+      ],
+      "authors_or_publishers": [
+        "CSSAT项目官网"
+      ],
+      "identity_notes": [
+        "测评官方站点"
+      ],
+      "findings": [
+        "搜索索引将CACA表述为数理分级测评，列Pre、Basic、Junior、Senior。"
+      ],
+      "limitations": [
+        "未完成页面正文核读；不以该索引证明清华招生采信。",
+        "有限：官网索引可见定义，全文打开受JS限制"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB084"
+    },
+    {
+      "id": "WEB085",
+      "title": "为“热爱”开门 对“套路”说不",
+      "url": "https://www.tsinghua.edu.cn/info/1182/128524.htm",
+      "kind": "media_republication",
+      "publication_dates": [
+        "2026-09-30 09:25:01（清华转载）；来源光明日报2026-09-29"
+      ],
+      "admission_years": [
+        "2027"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-20"
+        }
+      ],
+      "authors_or_publishers": [
+        "光明日报记者邓晖；求真书院相关负责人访谈"
+      ],
+      "identity_notes": [
+        "清华官网媒体清华栏目转载官方负责人解释"
+      ],
+      "findings": [
+        "负责人解释数学拓展至几何拓扑、概率统计、应用数学；强调数理并重。",
+        "二试语言与六选二用于阅读表达、交流和兴趣积累；不支持针对选拔培训。"
+      ],
+      "limitations": [
+        "未给固定题量、比重、时长、分数线；采访目标不能代替考试技术细则。",
+        "高：当前招考目的解释；细则仍以简章/考纲"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB085"
+    },
+    {
+      "id": "WEB086",
+      "title": "关于求真书院招生简章及其解读的疑问",
+      "url": "https://www.cnblogs.com/Xuan-tmp/p/23159608",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2026-09-29 17:04"
+      ],
+      "admission_years": [
+        "讨论2027招生，但无新版参试经历"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-21"
+        }
+      ],
+      "authors_or_publishers": [
+        "Xuan_tmp"
+      ],
+      "identity_notes": [
+        "与EXP-01相同网名，曾公开旧零试复盘；现为个人意见"
+      ],
+      "findings": [
+        "作者质疑宽范围与六选二给兼顾课内学习者带来的时间压力。"
+      ],
+      "limitations": [
+        "不能证明新考纲利好培训、更难或无法自学；属于观点。",
+        "仅作学生视角：不可作规则或效果证明"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB086"
+    },
+    {
+      "id": "WEB087",
+      "title": "2022新领军一试部分题目及解答",
+      "url": "https://www.cnblogs.com/Eufisky/p/17725197.html",
+      "kind": "personal_or_forum",
+      "publication_dates": [
+        "2023-09-23 22:11"
+      ],
+      "admission_years": [],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-22"
+        }
+      ],
+      "authors_or_publishers": [
+        "Eufisky，引用知乎名小学渣"
+      ],
+      "identity_notes": [
+        "自称初中生；页面称记录本人解答，未声称亲历"
+      ],
+      "findings": [
+        "文章是后写的部分题目解答；第3条只列矩阵未给完整要求，并写未完待续。"
+      ],
+      "limitations": [
+        "不能当2022考试一手经验；无完整题面证据，不新建题卡。",
+        "低至中：可追溯解题笔记，题目来源与完整性待核"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB087"
+    },
+    {
+      "id": "WEB088",
+      "title": "2025清华新领军一试试题",
+      "url": "https://forum.eduzhixin.com/discuss-detail/45759?subjectType=2",
+      "kind": "third_party_commentary",
+      "publication_dates": [
+        "更新2024-11-23 00:32:22；评论最早见2024-11-09"
+      ],
+      "admission_years": [
+        "标题标2025，未经正文独立核验"
+      ],
+      "access_records": [
+        {
+          "research_group": "experience",
+          "status": "body_or_relevant_sections_read",
+          "details": null
+        }
+      ],
+      "original_records": [
+        {
+          "research_group": "experience",
+          "original_id": "EXP-23"
+        }
+      ],
+      "authors_or_publishers": [
+        "常常常常常"
+      ],
+      "identity_notes": [
+        "论坛网名，称与朋友聊天拼凑试卷"
+      ],
+      "findings": [
+        "发帖人称从朋友信息拼凑，并提醒手写版抄写有误。"
+      ],
+      "limitations": [
+        "图片题面未核，不能新建题卡或据此做科目比例。",
+        "低：间接拼凑、作者承认抄写有误"
+      ],
+      "related_urls": [],
+      "independence_family": "WEB088"
+    }
+  ],
+  "claims": [
+    {
+      "id": "history-2021-2023:H21-C01",
+      "type": "official_fact",
+      "admission_year": 2021,
+      "claim": "2021主选拔程序明确分综合测试和专业测试；综合测试科目为中英文阅读、数学和物理。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB002"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H21-C02",
+      "type": "official_fact",
+      "admission_year": 2021,
+      "claim": "2021数学一试的官方招生办法粗范围为中学数学全部内容、微积分、线性代数、群与群作用基本概念；数学二试为非固定形式开放内容。",
+      "precision": "coarse_scope_not_detailed_syllabus",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H21-C03",
+      "type": "official_fact",
+      "admission_year": 2021,
+      "claim": "官网2021-08-09目录公开了首届数学0试回顾的入口与粗范围摘要；原微信文章本次未成功打开。",
+      "scope_limit": "不能据此声称取得完整官方2021试卷或正式细目考纲",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB004"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H22-C01",
+      "type": "official_fact",
+      "admission_year": 2022,
+      "claim": "2022第一批建议提供TACA20210828等综合测试成绩，作为初评重要依据；其选拔程序没有2021那样独立列出的综合测试环节。",
+      "wording_limit": "只陈述简章结构变化，不据此声称综合能力考查消失",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB005"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H22-C02",
+      "type": "official_fact",
+      "admission_year": 2022,
+      "claim": "2022第一批数学一试仍列中学全部、微积分、线代、群与群作用基本概念等，二试仍非固定开放；初评优秀资格增写物理国家集训队。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB005"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H22-C03",
+      "type": "official_fact",
+      "admission_year": 2022,
+      "claim": "2022第二批针对数学物理集训队/女子赛获奖者，招生办法写专家资料综合评价；随后官方第二批结果通知使用测试结果表述。",
+      "wording_limit": "不能将资料评价解释成绝对不考试，也不能据结果通知自行补考试科目",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB006",
+        "WEB008"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H22-C04",
+      "type": "official_fact",
+      "admission_year": 2022,
+      "claim": "2022境外第三批初评分通过与不通过，学科能力测试和专业面试在线；该公开办法未列逐知识点数学范围。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB009"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C01",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "2023第一批接受TACA20210828、20220521、20220807等成绩供初评，仍保留数学一试、数学二试、心理测试与面试。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB013"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C02",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "2023第一批数学一试粗范围、二试开放描述与2021/2022实质相同。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB005",
+        "WEB013"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C03",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "2023境外第三批增加初评优秀档，优秀可以直接入围；测试主要在线进行。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB009",
+        "WEB016"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C04",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "2023数学/物理集训队及女子赛获奖者仍有第二批独立渠道，其程序未公开第一批数学考纲。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB015"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C05",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "日历2022-08-07 TACA官方通知把数学科称为丘成桐数学0试；数学安排120分钟，阅读180分钟、物理90分钟。",
+      "exam_date": "2022-08-07",
+      "precision": "该场次官方安排；非所有历史/新版考试统一时长",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB011"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:H23-C06",
+      "type": "official_fact",
+      "admission_year": 2023,
+      "claim": "2022-07-25报名截止通知把8月TACA截止日从7月24日延到7月27日24时；没有宣布学科范围变化。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB011",
+        "WEB012"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-C01",
+      "type": "official_fact",
+      "admission_year": [
+        2021,
+        2022,
+        2023
+      ],
+      "claim": "三年均有面向通过高考可被清华录取学生的高考综合选拔，其公开方案只规定初审、测试与认定，没有具体科目细纲。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB003",
+        "WEB010",
+        "WEB017"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-C02",
+      "type": "official_fact",
+      "exam_calendar_year": 2023,
+      "claim": "2023年4月官方零试卷是2024-04-11回顾公开的2页15题TACA数学测试；其年份是试卷日历月份，不能自动等同招生年度。",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB018",
+        "WEB019"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-C03",
+      "type": "bounded_negative_finding",
+      "admission_year": [
+        2021,
+        2022,
+        2023
+      ],
+      "claim": "在本次两搜索引擎与已检视官方目录/正文中，未找到2021—2023以逐知识点方式单独发布的正式公开考试大纲；有招生办法的粗范围及0试回顾。",
+      "scope_limit": "不是对全互联网、未登录报名系统、已删除网页或未公开材料的穷尽性证明；2027首次正式细纲由2027史料另行核实",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB005",
+        "WEB013",
+        "WEB004",
+        "WEB018",
+        "WEB020"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-I01",
+      "type": "expert_inference",
+      "claim": "从2022、2023招生办法看，第一批可理解为材料初评采信TACA成绩，再进入学校专业测试；不应把TACA等同于招生专业数学一试。",
+      "confidence": "high",
+      "limit": "这是对公开文件结构的比较性解释，不能替代系统内当年通知",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB005",
+        "WEB013",
+        "WEB011"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-I02",
+      "type": "expert_inference",
+      "claim": "三年粗范围相同只支持范围表述稳定，不能证明每年题型、题量、难度、满分、过线分或知识占比固定。",
+      "confidence": "high",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB001",
+        "WEB005",
+        "WEB013"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-I03",
+      "type": "expert_inference",
+      "claim": "构建Skill时应分别储存招生年度、试卷日历年月、批次、环节、材料类型和发布日期，避免将2023年4月零试回顾误作2023第一批数学一试考纲。",
+      "confidence": "high",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB013",
+        "WEB018",
+        "WEB019"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2021-2023:HX-C04",
+      "type": "source_quality_fact",
+      "claim": "部分官方转载/不同栏目镜像存在年份表述冲突，疑为笔误；未见官方勘误：2023求真转载第四批写2022级；2022高考方案初审日期写2021；2023第三批另栏目镜像截止年份写2021。规范记录应保留原文问题、优先招生办主页面，不静默改写。",
+      "additional_observed_url": "https://join-tsinghua.edu.cn/info/1033/1712.htm",
+      "limit": "第三批镜像错误仅搜索返回全文观察，主页面已打开确认2022，镜像未另开因此不作为日期主证据",
+      "research_group": "history-2021-2023",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB013",
+        "WEB014",
+        "WEB010",
+        "WEB016"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C01",
+      "kind": "official_fact",
+      "admission_year": 2024,
+      "data": {
+        "primary_batch_screening": "三档初评；通过者参加专业测试",
+        "ability_rounds": 2,
+        "round1_scope": [
+          "中学数学",
+          "微积分",
+          "线性代数",
+          "群与群作用基本概念"
+        ],
+        "round2": "开放性非固定形式",
+        "main_tests_calendar": "2023年10月中旬",
+        "announced_batches": 4
+      },
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB021"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C02",
+      "kind": "official_fact",
+      "admission_year": 2025,
+      "data": {
+        "primary_batch_screening": "四档；优异可直接认定，优秀可直接面试",
+        "ability_rounds": 2,
+        "round1_scope": "沿用2024简章所列四项",
+        "round2": "开放性非固定形式",
+        "main_tests_calendar": "2024-11-09至12",
+        "announced_batches": 3
+      },
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB025"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C03",
+      "kind": "official_fact",
+      "admission_year": 2026,
+      "data": {
+        "primary_batch_screening": "两档初审，突出特长可申请免试",
+        "math_foundation_test": "仅数学、全国部分城市机考、通过后进学科测试",
+        "ability_rounds": 2,
+        "round1_scope": "沿用2024/2025简章范围",
+        "round2": "开放性非固定形式",
+        "foundation_planned_date": "2025-10-19",
+        "ability_planned_dates": "2025-11-01至04",
+        "results_published": "2025-11-07",
+        "announced_batches": 2
+      },
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB027",
+        "WEB028"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C04",
+      "kind": "official_fact",
+      "admission_year": 2027,
+      "data": {
+        "math_foundation_test": "延续2026的仅数学机考",
+        "ability_rounds": 3,
+        "math1_directions": [
+          "分析",
+          "代数",
+          "几何与拓扑"
+        ],
+        "math2_directions": [
+          "概率与统计",
+          "应用数学"
+        ],
+        "round2_language": [
+          "语文",
+          "英语"
+        ],
+        "round2_choose": 2,
+        "round2_options": [
+          "物理加强",
+          "化学",
+          "生物",
+          "计算机",
+          "经济",
+          "社科"
+        ],
+        "round3": "开放性、现学现考",
+        "interview": "数学能力+综合能力；中英双语",
+        "first_batch_tests_planned": "2026年11月",
+        "announced_batches": 2,
+        "round1_subjects": [
+          "数学1",
+          "数学2",
+          "物理"
+        ],
+        "included_math_scope": "另含中学数学全部内容；不是第四门独立科目"
+      },
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB030",
+        "WEB032"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C05",
+      "kind": "official_fact",
+      "admission_year": 2027,
+      "data": {
+        "attempt_limit_start": 2027,
+        "high_school": "原则上只可报一次",
+        "grade9": "可报一次，进入高中再报一次",
+        "earlier_year_attempts": "不计入",
+        "effective_condition": "2027年度系统内报名生效",
+        "first_batch_registration": "2026-10-01至14"
+      },
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB030"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C06",
+      "kind": "official_fact_with_access_qualification",
+      "admission_year": 2027,
+      "text": "2027选拔第一次公开发布数学与物理科目详纲；首发日期据原附件为2026-08-20，官网目录日期为08-21；公众号在线正文此次抓取失败。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB031",
+        "WEB032",
+        "WEB034"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C07",
+      "kind": "cross_year_comparison",
+      "text": "基础机考在2026年度已入招生主流程；2027主要改变学科测试的科目和三轮结构。原来开放二试与2027新二试名称相同、内容不同。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB021",
+        "WEB025",
+        "WEB027",
+        "WEB030"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C08",
+      "kind": "official_fact",
+      "text": "2024公历年的数学水平考试承接历史0试称谓，用作2025首批初评依据之一；它不是2024招生年度第一批次一试。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB018",
+        "WEB035",
+        "WEB036"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C09",
+      "kind": "comparison_with_limit",
+      "text": "列明的一试考查方向从微积分/线代/群作用扩为数学五方向和物理；这不证明旧试绝不含几何、概率或组合，因为旧范围本就包括中学数学。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB021",
+        "WEB025",
+        "WEB027",
+        "WEB030"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C10",
+      "kind": "time_boundary",
+      "text": "研究基准日2026-10-11仍在2027首批报名期；2027首批基础及学科测试均计划11月，不能声称已存在2027首批真题、分数线、实际难度或录取结果。2026招生首批结果则早在2025-11-07发布。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB030",
+        "WEB028"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C11",
+      "kind": "official_fact_with_limit",
+      "text": "2027物理考纲以高中物理核心内容为基准；超纲新信息原则上由题目给出。推荐教材不等于全书逐章必考。此数学物理详纲不能自动充当二试六门综合科目的独立考纲。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB032"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:C12",
+      "kind": "interpretation",
+      "text": "从负责人公开解释看，扩展数学、物理、语言、跨学科选科服务于学术视野、阅读表达和长期研究兴趣；这是报道中的解释，不是各科权重与题型的证据。",
+      "research_group": "history-2024-2027",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB033",
+        "WEB034"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "history-2024-2027:I01",
+      "text": "将2027数学基础测试称作新环节会混淆2026改革；应先讲2026进入招生流程，再讲2027学科拓宽。",
+      "research_group": "history-2024-2027",
+      "record_type": "inferences",
+      "source_ids": [
+        "WEB027",
+        "WEB028",
+        "WEB030",
+        "WEB032"
+      ],
+      "basis_claim_ids": [
+        "history-2024-2027:C03",
+        "history-2024-2027:C04"
+      ],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "history-2024-2027:I02",
+      "text": "检索旧二试题用于2027三试的能力训练较自然，但不能说题型、分值与内容保证延续。",
+      "research_group": "history-2024-2027",
+      "record_type": "inferences",
+      "source_ids": [
+        "WEB021",
+        "WEB025",
+        "WEB027",
+        "WEB028",
+        "WEB030",
+        "WEB032"
+      ],
+      "basis_claim_ids": [
+        "history-2024-2027:C01",
+        "history-2024-2027:C02",
+        "history-2024-2027:C03",
+        "history-2024-2027:C04"
+      ],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "history-2024-2027:I03",
+      "text": "保存逐年官方考试范围足够支撑旧制史料，不应为资料齐全而编造逐年独立考纲。",
+      "research_group": "history-2024-2027",
+      "record_type": "inferences",
+      "source_ids": [
+        "WEB031",
+        "WEB032",
+        "WEB034"
+      ],
+      "basis_claim_ids": [
+        "history-2024-2027:C06"
+      ],
+      "basis_gap_ids": [
+        "history-2024-2027:G01"
+      ],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "third-party:TC01",
+      "claim": "大学数学知识与中学竞赛经验有交集，但竞赛奖项不能替代新内容学习。",
+      "status": "综合推断/训练判断",
+      "training_implication": "评估概念、证明和运算缺口，不以高联奖项直接换算掌握度。",
+      "caution": "不同匿名评论所称重合小或有竞赛题并不矛盾；旧卷也不能推新版竞赛题比例。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB038",
+        "WEB039",
+        "WEB041",
+        "WEB043",
+        "WEB052"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC02",
+      "claim": "基础、熟练计算、证明表达与陌生问题探索应共同训练。",
+      "status": "综合训练建议",
+      "training_implication": "短时基础演算保证准确率；长题解释选法和关键结构；间隔后复述定义与证明，避免只赶教材页数。",
+      "caution": "不由单个失败者经验归因所有考生；不把通读书名当能力证明。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB038",
+        "WEB040",
+        "WEB041",
+        "WEB051",
+        "WEB055"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC03",
+      "claim": "现学现考需要阅读理解、把新定义变成例子、连接已有知识并完成论证。",
+      "status": "旧考核经验支持的能力建议；新版结构须据官方",
+      "training_implication": "用陌生短材料做阅读—复述—迁移；题材与时间设置仅作训练，不冒称2027形式。",
+      "caution": "旧二试现学现考迁移至2027三试；不能继承旧两科各4小时。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB041",
+        "WEB049",
+        "WEB055"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC04",
+      "claim": "2027有多学科与语言明确要求，教学宜保留阅读、表达和兴趣。",
+      "status": "官方范围基础上的第三方解释",
+      "training_implication": "按本人基础从六门选两门；并练中文证明与英文材料概述。",
+      "caution": "经济与社科是两个选项，不是必须同时选；本轮没找到可核验新版细纲。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB054",
+        "WEB055",
+        "WEB057",
+        "WEB058"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC05",
+      "claim": "新2027概率统计与应用数学需要单独覆盖，不能因旧培训课和旧卷重分析代数而被排低。",
+      "status": "考纲结合课程样本的综合推断",
+      "training_implication": "据考纲列明内容补统计推断、应用建模与优化等缺口；应以官方考纲逐项决定，不按营销星级配置。",
+      "caution": "统计与优化的新版权重和题数尚未验证；没有旧题不等于不考。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB050",
+        "WEB052",
+        "WEB054",
+        "WEB058"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC06",
+      "claim": "高级物理专题曾出现于旧开放考核，但不能据此要求新版一试前系统学完四大力学。",
+      "status": "证据层级纠偏",
+      "training_implication": "先掌握新版物理考纲明确范围，练必要数学工具与陌生模型理解；高级大学物理列延伸。",
+      "caution": "书院培养要求、参考书目录、旧现学现考材料与入学前知识范围是不同证据。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB041",
+        "WEB044",
+        "WEB047",
+        "WEB054",
+        "WEB056"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC07",
+      "claim": "练习能够培养能力，反套路不等于取消训练；训练是否只适配熟题要用迁移表现检验。",
+      "status": "规范性判断；非选拔因果实证",
+      "training_implication": "做完题改条件、换表示、比较解法、口头说明；避免只记触发词和模板。",
+      "caution": "培训是否导致清退、限次是否提升人才识别，均无因果数据。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB038",
+        "WEB041",
+        "WEB055"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC08",
+      "claim": "预科是否合格本来就是录取条件，2027用更强考核表述，不是首次取得淘汰权。",
+      "status": "已核验官方旧新简章",
+      "training_implication": "以持续学习能力规划备考和入围后学习，不把入围当完成录取。",
+      "caution": "不指定2027淘汰比例。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB053",
+        "WEB054",
+        "WEB057",
+        "WEB058",
+        "WEB065",
+        "WEB066"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "third-party:TC09",
+      "claim": "有关评分压分、复核透明度和清退标准的争议可以记录，但不宜从自述推断整套选拔不公。",
+      "status": "争议归纳",
+      "training_implication": "保留完整论证并自己核验；制度评价需区分公布规则、个案体验和结果效果。",
+      "caution": "没有原始答卷、统一rubric、抽样评分或官方完整统计。",
+      "research_group": "third-party",
+      "record_type": "claims",
+      "source_ids": [
+        "WEB041",
+        "WEB046",
+        "WEB053"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": []
+    },
+    {
+      "id": "experience:R01",
+      "label": "先锁定年份、场次与证据身份",
+      "decision": "遇到旧经验，分别记录文章日、考试日、招生年度、阶段原称；无法确定则保留未知。2027首次新考纲以当年官方为准，旧零试不自动对应新版基础测试。",
+      "status": "证据管理规则",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB069",
+        "WEB074",
+        "WEB011",
+        "WEB085",
+        "WEB088"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R02",
+      "label": "用实际作答诊断，不用读书量代替准备程度",
+      "decision": "先让学习者做范围内基础任务并解释概念条件，再区分定义不熟、表征不对、不会迁移；教材与课程只作为补缺资源。",
+      "status": "从经验提炼的训练建议，非官方评分项",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB067",
+        "WEB070",
+        "WEB071",
+        "WEB073",
+        "WEB078",
+        "WEB080"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R03",
+      "label": "把计算与证明表达单独检查",
+      "decision": "计算核查对象、符号、分类、边界与代回；长根式或复杂中间值不是推翻方法的充分理由。证明写明假设及关键推理，先根据真实答卷定位缺口。",
+      "status": "从个人失误提炼的诊断规则；不宣称固定扣分",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB067",
+        "WEB068",
+        "WEB071"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R04",
+      "label": "减少第一眼畏难与反复无效计算",
+      "decision": "训练快速初读后先提取结构，保留未解决题和检查标记；复盘区分题面误读、概念缺口、手算、时间和情绪，不能据一次分数断言能力。",
+      "status": "训练建议；不强制照搬作者顺序或时间",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB067",
+        "WEB068",
+        "WEB073"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R05",
+      "label": "练习从陌生材料到新问题",
+      "decision": "设计未预学小专题，依次读定义与例子、整理可用结论及条件、独立解决变化后的问题、说明思路。必须标原创训练，不能保证新版仍按旧视频时长组织。",
+      "status": "历史现学现考经验支持的迁移训练",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB070",
+        "WEB074",
+        "WEB076"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R06",
+      "label": "语言和口述说明要进入训练",
+      "decision": "依据2027要求练阅读、复述与解释数学/物理思路；中英文表达任务可包括定义、例子、证明要点和学习兴趣，具体面试形式以官方新通知为准。",
+      "status": "2027官方目的＋训练设计推断；旧英文面试细节未证实",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB070",
+        "WEB072",
+        "WEB085"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R07",
+      "label": "物理不能被数学准备挤掉",
+      "decision": "按2027物理考纲核对基础与建模能力；旧回忆可提示现学迁移价值，不把拉格朗日、相对论、量子等历史名称升级成新增必考。",
+      "status": "官方数理并重＋历史材料边界",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB074",
+        "WEB076",
+        "WEB085"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R08",
+      "label": "新增概率统计与应用数学按考纲补齐",
+      "decision": "旧考题不足时从2027考纲列明内容设计统计推理、数据解释或建模任务，并标2027考纲训练/原创。科目位置、先修与题型须另读正式考纲，不能用受访者年际感受预测概率。",
+      "status": "官方范围确认；任务形式为教学推断",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB076",
+        "WEB085"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R09",
+      "label": "女子场、TACA与CACA保留独立标签",
+      "decision": "相近主题可用于方法训练，考试ID与原场次不变。CACA是独立分级测评，女子赛是独立赛事；任何采信、免考、难度换算需当前清华官方依据。",
+      "status": "证据分流规则",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB077",
+        "WEB079",
+        "WEB081",
+        "WEB011",
+        "WEB082",
+        "WEB083",
+        "WEB084"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R10",
+      "label": "制定计划先看时间与既有基础",
+      "decision": "用户询问学习计划时收集课内负担、前置基础与可用时间，以具体缺口安排；不依据单一学生意见认定必须停课、报班或无法自学。",
+      "status": "对学生视角的有限吸收",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB086"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    },
+    {
+      "id": "experience:R11",
+      "label": "没有完整题面与出处就只存来源线索",
+      "decision": "匿名评分、拼凑图片、视频标题和残缺解题稿不得新建真题卡。先补正式年份场次、全部条件与小问、版本核验，之后才与已有题库比对。",
+      "status": "题库维护规则",
+      "research_group": "experience",
+      "record_type": "proposed_decision_rules",
+      "source_ids": [
+        "WEB087",
+        "WEB088",
+        "WEB046",
+        "WEB062"
+      ],
+      "basis_claim_ids": [],
+      "basis_gap_ids": [],
+      "evidence_identity": "expert_inference_or_training_rule"
+    }
+  ],
+  "gaps": [
+    {
+      "id": "history-2021-2023:G01",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G01",
+        "item": "2021—2023单独正式公开逐知识点考纲",
+        "status": "not_found_in_searched_scope",
+        "searched_scope": "两搜索引擎精确项目名+年份+考纲/考试大纲/考试范围；清华招生数学人才培养计划两页目录；求真领军招生、考题资源与相关正文",
+        "consequence": "将粗范围列为招生办法测试说明，不创建伪造的2021/2022/2023考纲JSON"
+      }
+    },
+    {
+      "id": "history-2021-2023:G02",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G02",
+        "item": "2021首届0试微信原文/完整试卷",
+        "status": "linked_article_could_not_open",
+        "url": "https://mp.weixin.qq.com/s/lwA19vmtCvJ9YHn2EEWuWA",
+        "attempts": [
+          "官网click两次Internal Error",
+          "精确URLopen非重试错误"
+        ],
+        "available": "官网目录日期、标题、粗范围摘要",
+        "consequence": "不声称读取原文或完整试题"
+      }
+    },
+    {
+      "id": "history-2021-2023:G03",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G03",
+        "item": "主批次及境外/高考渠道每场详细时长、分值、题量、分数线",
+        "status": "not_public_on_opened_pages",
+        "available": "仅2022-08-07 TACA官方图片有各科时间；2023年4月零试卷写15题",
+        "consequence": "场次事实不外推；招生系统内通知未登录读取"
+      }
+    },
+    {
+      "id": "history-2021-2023:G04",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G04",
+        "item": "2027是否为首次公开正式细目考纲",
+        "status": "outside_assigned_years",
+        "consequence": "本子任务只能给出2021—2023负面检索结果与旧粗范围，首次发布判断需2027正面官方来源共同支持"
+      }
+    },
+    {
+      "id": "history-2021-2023:G05",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G05",
+        "item": "2021—2023全部考试变更通知",
+        "status": "bounded_search",
+        "available": "2022年8月TACA考试提前至8/7、报名截止延期7/27；2022第一批结果查询通知于11/10发布",
+        "consequence": "无法证明没有其他已删除或仅系统内发送的调整；不声称搜完互联网"
+      }
+    },
+    {
+      "id": "history-2021-2023:G06",
+      "research_group": "history-2021-2023",
+      "record": {
+        "id": "G06",
+        "item": "2023年4月零试对应具体招生批次",
+        "status": "not_assigned_by_review",
+        "available": "官方回顾确认试卷月份，2024水平考试供2025第一批初评；没有把2023年4月卷明确绑定2023招生第一批",
+        "consequence": "admission_year保留null，只填exam_calendar_year与exam_month"
+      }
+    },
+    {
+      "id": "history-2024-2027:G01",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G01",
+        "topic": "2024–2026独立正式详纲",
+        "finding": "此次未检出这些招生年度单独公开的详细数学物理考纲。已取得的是招生办法/简章中的考试范围，以及官方0试/水平考试通知。",
+        "allowed_wording": "未找到单独正式详纲；官方简章所列范围如下。",
+        "forbidden_wording": "2024/2025/2026官方考纲完整列出……"
+      }
+    },
+    {
+      "id": "history-2024-2027:G02",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G02",
+        "topic": "首次发布在线原文",
+        "finding": "官方目录确认公告和公众号链接，但链接抓取失败；首次发布原句和8月20日来自用户提供的官方文章导出。",
+        "allowed_wording": "依据用户提供原稿，官方目录及后续报道互证。",
+        "forbidden_wording": "已成功抓取公众号全文"
+      }
+    },
+    {
+      "id": "history-2024-2027:G03",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G03",
+        "topic": "2026公历年0试/水平考试",
+        "finding": "专门搜索2026、4月、TACA、报名通知，并查官方招生/考题/通知目录，未找到可读官方2026独立水平考试通知。第三方有取消说法，也有2026试卷标题，均未得到官方可读正文确认。",
+        "allowed_wording": "2026日历年独立水平考试的举行或取消，本次证据不足；2026招生主批已在2025完成。",
+        "forbidden_wording": "2026年所有0试均已取消；2026新零试实际范围/真题是……"
+      }
+    },
+    {
+      "id": "history-2024-2027:G04",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G04",
+        "topic": "2024春季执行日期",
+        "finding": "春季通知拟4月28日；8月通知附试卷却题名2024年5月。未找到日期变更通知。",
+        "allowed_wording": "通知原定4月28日；后来官方附件题名5月，执行日期待查。",
+        "forbidden_wording": "确定4月28日正式举行且5月卷必是另一次独立考试"
+      }
+    },
+    {
+      "id": "history-2024-2027:G05",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G05",
+        "topic": "2027实考试题与强度",
+        "finding": "2026-10-11时2027第一批仍报名，基础和学科测试计划11月；分值、时长、题型、各科比重、二试六科细纲、实际入围线未由所读简章给出。",
+        "allowed_wording": "依据公告解释范围与流程；实际题型难度尚待开考。",
+        "forbidden_wording": "2027一试已考过/新考纲已经由真题验证"
+      }
+    },
+    {
+      "id": "history-2024-2027:G06",
+      "research_group": "history-2024-2027",
+      "record": {
+        "id": "G06",
+        "topic": "教材与题目映射",
+        "finding": "2027推荐经典教材仅提供参考，不给出全书必考承诺；历史题目覆盖也不能证明未来权重。",
+        "allowed_wording": "按新纲知识点选读、标明历史题目年度与场次；预测单独标注。",
+        "forbidden_wording": "推荐教材整本全部必考；历年频率等于新制权重"
+      }
+    },
+    {
+      "id": "third-party:G01",
+      "research_group": "third-party",
+      "record": "未取得知乎关键回答全文，不能假装评审全部回答。"
+    },
+    {
+      "id": "third-party:G02",
+      "research_group": "third-party",
+      "record": "哔哩哔哩视频页正文/字幕无法读取；没有观看视频，所以不评价解法正确性。"
+    },
+    {
+      "id": "third-party:G03",
+      "research_group": "third-party",
+      "record": "未取得微信公众号私域文章或群内对话，公开搜索存在索引盲区。"
+    },
+    {
+      "id": "third-party:G04",
+      "research_group": "third-party",
+      "record": "未找到可靠的2027数学2分值、题数、统计/应用数学权重和难度实测；不能靠旧卷频率补成概率。"
+    },
+    {
+      "id": "third-party:G05",
+      "research_group": "third-party",
+      "record": "未找到2027经济与社科可核验独立细纲；不虚构教材/考试深度。"
+    },
+    {
+      "id": "third-party:G06",
+      "research_group": "third-party",
+      "record": "张娜2027教师反应仅找到转载，原媒体与匿名教练身份未确认。"
+    },
+    {
+      "id": "third-party:G07",
+      "research_group": "third-party",
+      "record": "潘奕晨原页面动态时间未解码，文章年份仅上下文暂定。"
+    },
+    {
+      "id": "third-party:G08",
+      "research_group": "third-party",
+      "record": "预科清退具体人数、比例、考试分布以及个案评分未得官方完整数据；争议需保留不确定。"
+    },
+    {
+      "id": "third-party:G09",
+      "research_group": "third-party",
+      "record": "搜索结果包含考研、夏季达沃斯、2015旧领军等噪声，本稿剔除；不能声称全网穷尽。"
+    },
+    {
+      "id": "experience:G01",
+      "research_group": "experience",
+      "record": "没有取得2027首次实施后的考试经验或已核定真题；2026年发表的旧回忆不等于2027考情。"
+    },
+    {
+      "id": "experience:G02",
+      "research_group": "experience",
+      "record": "未发现可信的2021/2022成功入选学生采访明确说明正式中英文面试流程；旧中英文阅读、大学外教课程需求与招生前摸底面试不可混称。"
+    },
+    {
+      "id": "experience:G03",
+      "research_group": "experience",
+      "record": "博客/洛谷参试身份及分数仅自述；未公开答卷、成绩单或官方评分标准，因此不能建模分数线、过线概率与过程分扣法。"
+    },
+    {
+      "id": "experience:G04",
+      "research_group": "experience",
+      "record": "CACA官网正文受JavaScript限制；已核读第三方公告与官网索引，原发微信公众号及2027清华具体采信仍待官方材料。"
+    },
+    {
+      "id": "experience:G05",
+      "research_group": "experience",
+      "record": "环球人物经验全文目前只取得第三方杂志转载；期次官网与学生官方身份已有交叉核验，正文原站未取得。"
+    },
+    {
+      "id": "experience:G06",
+      "research_group": "experience",
+      "record": "B站多条视频返回412；未获取字幕转录，不将简介或标题当已核读发言。"
+    },
+    {
+      "id": "experience:G07",
+      "research_group": "experience",
+      "record": "2022个人解答稿与2025论坛拼凑卷没有完整可靠题面核验；本轮新增题卡数为0。"
+    },
+    {
+      "id": "experience:G08",
+      "research_group": "experience",
+      "record": "概率统计/应用数学新版训练需正式考纲逐项映射，旧经验无法确认新科目题量、计算量和占比。"
+    },
+    {
+      "id": "experience:G09",
+      "research_group": "experience",
+      "record": "未采纳匿名压分、新版上岸周期、女子场长期难度排序或机构所谓官方授权等未证实推论。"
+    }
+  ]
+}

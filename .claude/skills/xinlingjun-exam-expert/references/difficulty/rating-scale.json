@@ -1,0 +1,505 @@
+{
+  "version": "1.1",
+  "name": "人类纸笔竞赛难度参考分",
+  "minimum": 1,
+  "maximum": 10,
+  "basis": "跨年跨赛固定内容参照尺。保留v1.0基础点，逐题核验后增补IMC2023/2024、Putnam2023–2025及CMC第16届内容定位。新增分数为有来源约束的内容估计，不是不同人群满分率等值或官方评级。",
+  "default_population": "基础数学分析、线性代数、初等数论和常见组合方法的本科竞赛生，首次独立纸笔，无计算器与网络",
+  "levels": [
+    {
+      "level": "I",
+      "scores": [
+        1,
+        2
+      ],
+      "label": "课程常规至竞赛入口"
+    },
+    {
+      "level": "II",
+      "scores": [
+        3,
+        4
+      ],
+      "label": "竞赛较易段"
+    },
+    {
+      "level": "III",
+      "scores": [
+        5,
+        6
+      ],
+      "label": "竞赛中段"
+    },
+    {
+      "level": "IV",
+      "scores": [
+        7,
+        8
+      ],
+      "label": "竞赛困难段"
+    },
+    {
+      "level": "V",
+      "scores": [
+        9,
+        10
+      ],
+      "label": "竞赛很难段"
+    }
+  ],
+  "fixed_points": [
+    {
+      "score": 1,
+      "anchor_ids": [
+        "CMC-16-2025-final-nonmathA-I3",
+        "CMC-16-2025-final-mathLow-I1"
+      ],
+      "note": "结构性基准，无逐题成绩校准。"
+    },
+    {
+      "score": 2,
+      "anchor_ids": [
+        "IMC-2025-P1",
+        "IMC-2025-P6"
+      ]
+    },
+    {
+      "score": 4,
+      "anchor_ids": [
+        "IMC-2025-P3",
+        "IMC-2025-P8"
+      ]
+    },
+    {
+      "score": 6,
+      "anchor_ids": [
+        "IMC-2025-P4",
+        "IMC-2025-P7"
+      ]
+    },
+    {
+      "score": 8,
+      "anchor_ids": [
+        "IMC-2025-P2",
+        "IMC-2025-P9"
+      ]
+    },
+    {
+      "score": 10,
+      "anchor_ids": [
+        "IMC-2025-P5"
+      ],
+      "context_only_anchor_ids": [
+        "IMC-2025-P10"
+      ],
+      "note": "P10题面/成绩为上端背景；其官方解答细节待修，不作为独立内容标定依据。P5有额外数论知识要求。"
+    }
+  ],
+  "interpolation": "所有1–10整数均可用；有已评分代表题时优先内容近邻，无贴近代表时在已核验两侧题之间定位。分差不表示等距或倍数；附范围和证据把握。",
+  "version_policy": "v1.1扩充题目并澄清编号，沿用v1.0已有基础点；新增题分值在本版本固定使用。不得随检索结果重排；修订某题定位须说明证据并更新版本。",
+  "numbering_note": "2023–2025 IMC分两天、每天5题：P5为第一天末题，P6为第二天首题。Putnam同年一天12题，A/B两场各6题；2026已改A/B/C/D各3题。题号不是难度排名。",
+  "rated_references": [
+    {
+      "anchor_id": "CMC-16-2025-final-mathLow-I1",
+      "score": 1,
+      "range": [
+        1,
+        2
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "题面矩阵关系直接提供约束，大阶数不要求逐项运算；作为课程核心工具直接应用的1分基准。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-nonmathA-I3",
+      "score": 1,
+      "range": [
+        1,
+        1
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "课程核心公式直接对应题目，求导与数值代入短；作为1分下端内容基准，不因“决赛”抬高。"
+    },
+    {
+      "anchor_id": "Putnam-2023-A1",
+      "score": 1,
+      "range": [
+        1,
+        2
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "核心课程工具可直接推进，识别任务短、手算规模小；和课程常规端接近。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-nonmathB-III",
+      "score": 2,
+      "range": [
+        1,
+        3
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "题面把两个互相关联的积分并列，并要求先证相等，已经提供探索方向；发现后只有短程三角代数和积分。"
+    },
+    {
+      "anchor_id": "IMC-2025-P1",
+      "score": 2,
+      "range": [
+        2,
+        3
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "基础分析可达；表示转换后还须区分两类多项式。"
+    },
+    {
+      "anchor_id": "IMC-2025-P6",
+      "score": 2,
+      "range": [
+        1,
+        3
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "基础课程工具可达，关键在首次识别适用方式。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-nonmathB-VI",
+      "score": 3,
+      "range": [
+        2,
+        4
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "第一问引导第二问；主要负担是保留矩阵乘法次序并把展开后的每类项论证完整，运算规模有限。"
+    },
+    {
+      "anchor_id": "IMC-2023-P1",
+      "score": 3,
+      "range": [
+        2,
+        4
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "知识仍是基础分析，但从局部光滑条件到所有函数的分类，比单次中值定理题多一层发现与证明。"
+    },
+    {
+      "anchor_id": "IMC-2024-P6",
+      "score": 3,
+      "range": [
+        2,
+        4
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "题意短、计算很少，但函数没有连续性；须围绕有理数域和整数值的差别自行组织完整论证。"
+    },
+    {
+      "anchor_id": "Putnam-2024-A1",
+      "score": 3,
+      "range": [
+        2,
+        4
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "初等整除是自然入口，但需要完成不同指数情形并证明没有遗漏；比直接课程计算多一层发现与分类。"
+    },
+    {
+      "anchor_id": "Putnam-2025-A2",
+      "score": 3,
+      "range": [
+        2,
+        4
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "有自然的微积分入口，但找出候选常数还不算完成，必须证明全区间最优；主要负担是推导与检查。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-nonmathA-V",
+      "score": 4,
+      "range": [
+        3,
+        5
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "两问有明确递进提示，但仍需协调矩阵变换、标量不等式和行列式因子，证明与记账量高于直接公式题。"
+    },
+    {
+      "anchor_id": "IMC-2025-P3",
+      "score": 4,
+      "range": [
+        3,
+        5
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "表示、重复计数与交换条件都需同时控制。"
+    },
+    {
+      "anchor_id": "IMC-2025-P8",
+      "score": 4,
+      "range": [
+        3,
+        5
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "把元素排布条件接到谱性质；发现后运算较短。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-mathLow-III",
+      "score": 5,
+      "range": [
+        4,
+        6
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "要把因子的局部条件传递到原多项式，包含两个相连的估计环节；数字较大但不需要大数计算，关键在联系的发现与严格不等式闭合。"
+    },
+    {
+      "anchor_id": "IMC-2023-P3",
+      "score": 5,
+      "range": [
+        4,
+        6
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "识别结构后仍要排除全部其他多项式；不能把看出熟悉乘法形式当作已完成。"
+    },
+    {
+      "anchor_id": "IMC-2024-P3",
+      "score": 5,
+      "range": [
+        4,
+        6
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "必要条件和可实现构造是两个不同任务；发现一种限制以后，还要独立设计满足全部乘法条件的例子。"
+    },
+    {
+      "anchor_id": "IMC-2024-P8",
+      "score": 5,
+      "range": [
+        4,
+        6
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "证明收敛和达到指定精度的上下界是两关；工具基础，但需持续保留足够信息完成末段。"
+    },
+    {
+      "anchor_id": "IMC-2025-P4",
+      "score": 6,
+      "range": [
+        5,
+        7
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "无穷条件的参数分类与边界核查同样重要。"
+    },
+    {
+      "anchor_id": "IMC-2025-P7",
+      "score": 6,
+      "range": [
+        5,
+        7
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "不能停在举例，须从局部闭合规则完成全部分类。"
+    },
+    {
+      "anchor_id": "Putnam-2025-A3",
+      "score": 6,
+      "range": [
+        5,
+        7
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "题意和计算都轻，困难集中在首次发现统一策略并解释它为何始终合法；短解不等于容易想到。"
+    },
+    {
+      "anchor_id": "Putnam-2024-A4",
+      "score": 7,
+      "range": [
+        6,
+        8
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "长条件背后的压缩方式隐蔽，压缩以后还要论证所有可能情形；知识门槛适中，方法发现和分类闭合较强。"
+    },
+    {
+      "anchor_id": "IMC-2025-P2",
+      "score": 8,
+      "range": [
+        7,
+        9
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "辅助对象需自行设计，同时达到锐界并追踪等号。"
+    },
+    {
+      "anchor_id": "IMC-2025-P9",
+      "score": 8,
+      "range": [
+        7,
+        10
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "非独立过程的发现与证明组织较重，熟悉期望公式不足。"
+    },
+    {
+      "anchor_id": "IMC-2024-P4",
+      "score": 9,
+      "range": [
+        8,
+        10
+      ],
+      "confidence": "低",
+      "role": "content_estimate",
+      "display_note": "除群与子群的基本可达性外，还要跨越无限序列到代数生成的转化，并在非交换条件下完成多层论证。"
+    },
+    {
+      "anchor_id": "Putnam-2023-A3",
+      "score": 9,
+      "range": [
+        8,
+        10
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "在找到有效表示之外，还要同时控制退化情形、局部定义与最早零点；发现和证明闭合是连续的多项任务。"
+    },
+    {
+      "anchor_id": "Putnam-2024-A6",
+      "score": 9,
+      "range": [
+        8,
+        10
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "一般公式的发现与证明都要自行完成；读懂系数定义后，还需把多层代数关系组织成可重复的矩阵推导。"
+    },
+    {
+      "anchor_id": "Putnam-2025-A4",
+      "score": 9,
+      "range": [
+        8,
+        10
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "既要证明小维数做不到，又要设计大维数例子并排除多余关系；构造发现和两个方向的完整证明都是主要要求。"
+    },
+    {
+      "anchor_id": "IMC-2023-P5",
+      "score": 10,
+      "range": [
+        9,
+        10
+      ],
+      "confidence": "低",
+      "role": "content_estimate",
+      "display_note": "背景知识不高，主要难在无提示地构造全局比较对象；局部允许换位不自动产生所需的大族。"
+    },
+    {
+      "anchor_id": "IMC-2025-P5",
+      "score": 10,
+      "range": [
+        9,
+        10
+      ],
+      "confidence": "中",
+      "role": "fixed_reference",
+      "display_note": "多个结构与渐近估计相连，额外知识不能免费引用。"
+    },
+    {
+      "anchor_id": "Putnam-2023-B6",
+      "score": 10,
+      "range": [
+        9,
+        10
+      ],
+      "confidence": "中",
+      "role": "content_estimate",
+      "display_note": "需要跨越计数与矩阵结构，关键转换后仍有一整段一般阶数的推导和核验；处于本尺很难端。"
+    }
+  ],
+  "conditional_references": [
+    {
+      "anchor_id": "CMC-16-2025-final-mathHigh-VI",
+      "score": 4,
+      "range": [
+        3,
+        5
+      ],
+      "confidence": "中",
+      "role": "conditional_content_estimate",
+      "display_note": "在已具备明确复分析基础、但未见本题等价结果时，三问要求选择复合映射并追踪定义域、原点条件和等号；前问对后问有支撑。",
+      "condition": "具备扎实的本科复分析课程基础，未见对应等价题或标准证明；具体前置工具清单见该题核验记录。"
+    },
+    {
+      "anchor_id": "CMC-16-2025-final-mathHigh-VIII",
+      "score": 4,
+      "range": [
+        3,
+        5
+      ],
+      "confidence": "中",
+      "role": "conditional_content_estimate",
+      "display_note": "在已具备明确微分几何基础、但未见本题等价结果时，要把曲线与曲面的两个标架联系起来并完成符号、非退化条件检查；执行量较短。",
+      "condition": "具备扎实的本科曲线曲面微分几何课程基础，未见对应等价题或标准证明；具体前置工具清单见该题核验记录。"
+    }
+  ],
+  "coverage": {
+    "default_profile_rated": 31,
+    "by_contest": {
+      "IMC": 16,
+      "Putnam": 9,
+      "CMC": 6
+    },
+    "years": {
+      "IMC": [
+        2023,
+        2024,
+        2025
+      ],
+      "Putnam": [
+        2023,
+        2024,
+        2025
+      ],
+      "CMC": [
+        2025
+      ]
+    },
+    "conditional_references": 2,
+    "solution_caveat_context_only": 1,
+    "new_default_ratings_since_v1_0": 20,
+    "note": "35道已有内容索引中，31道主参照、2道课程条件参照、1道评级分歧待复核、1道解答保留的历史背景；未将66题统计索引当成66道已处理题。",
+    "rating_disagreement_deferred": 1
+  },
+  "deferred_references": [
+    {
+      "anchor_id": "IMC-2023-P8",
+      "reason": "题面解答与成绩已核，但独立内容复评为4分(3–6)，首评复审为6分(5–8)，差异集中于关键发现应计多重。此次不作固定分数锚，不能机械取均值5。",
+      "eligible_for_default_profile_calibration": false
+    }
+  ]
+}
