@@ -100,7 +100,7 @@
       "extraFiles": [
         {
           "from": "build/motif.cmd",
-          "to": "motif.cmd"
+          "to": "bin/motif.cmd"
         }
       ],
       "extraResources": [

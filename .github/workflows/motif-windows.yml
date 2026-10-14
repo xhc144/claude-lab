@@ -47,7 +47,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $PSNativeCommandUseErrorActionPreference = $true
-          $cli = Resolve-Path 'release\win-unpacked\motif.cmd'
+          $cli = Resolve-Path 'release\win-unpacked\bin\motif.cmd'
           $out = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\smoke"
           & $cli doctor
           & $cli new "CI 冒烟测试" --template launch --agent ci --json
@@ -76,13 +76,25 @@ jobs:
           if (-not $exe) { throw 'Motif.exe was not installed' }
           $dir = $exe.DirectoryName
           Write-Host "installed to $dir"
+          # Only bin\ goes on PATH: with the install folder there, `motif` would resolve to Motif.exe
           $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
-          if (($userPath -split ';') -notcontains $dir) { throw "install dir missing from user PATH: $userPath" }
+          $entries = $userPath -split ';'
+          if ($entries -notcontains "$dir\bin") { throw "bin dir missing from user PATH: $userPath" }
+          if ($entries -contains $dir) { throw "install dir itself is on PATH (motif would start the GUI): $userPath" }
           if (-not (Test-Path "$dir\resources\ffmpeg\ffmpeg.exe")) { throw 'bundled ffmpeg missing' }
           if (-not (Test-Path "$dir\resources\skill\motif\SKILL.md")) { throw 'bundled Skill missing' }
-          $env:Path = "$dir;$env:Path"
-          motif doctor
+          $env:Path = "$userPath;$env:Path"
+          $resolved = (Get-Command motif).Source
+          Write-Host "motif → $resolved"
+          if ($resolved -notlike '*\bin\motif.cmd') { throw "motif resolves to $resolved" }
+          $doctor = motif doctor | Out-String
+          Write-Host $doctor
+          if ($doctor -notmatch 'FFmpeg') { throw 'motif doctor printed no report' }
           motif still "CI 冒烟测试" --scene 2 --out "$env:RUNNER_TEMP\smoke\installed-still.png"
+          if (-not (Test-Path "$env:RUNNER_TEMP\smoke\installed-still.png")) { throw 'installed motif still wrote nothing' }
+          # The bundled Skill's launcher, as an AI agent would call it
+          $viaSkill = node "$dir\resources\skill\motif\scripts\motif.mjs" templates --json | Out-String
+          if ($viaSkill -notmatch '"launch"') { throw "Skill launcher failed: $viaSkill" }
 
       - name: Editor end-to-end (GUI + in-app AI assistant against a mock model)
         timeout-minutes: 20

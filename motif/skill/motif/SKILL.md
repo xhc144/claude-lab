@@ -17,7 +17,7 @@ Motif 是一套把动态设计经验沉淀为软件的创作系统。**分工很
 按顺序找到可用的命令，之后文中的 `motif` 都指它：
 
 1. 本 Skill 目录下有 `motif-cli.json`（由 Motif 应用「设置 → AI 集成」安装时写入）：用其中的 `command` + `args` 调用（`env` 中的变量也要带上）。
-2. `motif` 已在 PATH 中（Windows 安装版自带 `motif.cmd`）。
+2. `motif` 已在 PATH 中（Windows 安装版自带 `bin\motif.cmd`，安装时加入用户 PATH）。
 3. 运行 `node <本 Skill 目录>/scripts/motif.mjs <参数>`：它会自动查找本机安装的 Motif。
 
 先运行一次 `motif doctor`，确认渲染器与 FFmpeg 可用。所有命令都支持 `--json`（推荐：输出结构化结果）。退出码：0 成功，2 参数错误，3 操作/检查失败（项目保持不变），其他为运行错误；错误信息带有 `→ 提示`，照提示修正即可。

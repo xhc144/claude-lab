@@ -210,9 +210,9 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
   function cliInfo() {
     // Packaged: Motif.exe runs the bundled CLI as Node (ELECTRON_RUN_AS_NODE). Agents and MCP
     // clients get that direct form: since CVE-2024-27980, spawning a .cmd without a shell fails.
-    // People in a terminal use the motif.cmd shim (on PATH after installation).
+    // People in a terminal use the bin\motif.cmd shim (on PATH after installation).
     if (app.isPackaged) {
-      const shim = path.join(path.dirname(process.execPath), process.platform === 'win32' ? 'motif.cmd' : 'motif');
+      const shim = path.join(path.dirname(process.execPath), process.platform === 'win32' ? 'bin/motif.cmd' : 'motif');
       const cli = path.join(process.resourcesPath, 'app.asar.unpacked', 'dist', 'cli.mjs');
       return { command: process.execPath, args: [cli], env: { ELECTRON_RUN_AS_NODE: '1' }, shim: fs.existsSync(shim) ? shim : null };
     }

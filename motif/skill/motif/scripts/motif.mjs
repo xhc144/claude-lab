@@ -22,18 +22,27 @@ function fromConfig() {
   if (!fs.existsSync(f)) return null;
   try { const c = JSON.parse(fs.readFileSync(f, 'utf8')); return c.command && (fs.existsSync(c.command) || c.command === 'node') ? c : null; } catch { return null; }
 }
+// An installed Windows app: run Motif.exe + cli.mjs directly (no cmd.exe, no quoting).
+function windowsApp(dir) {
+  const exe = path.join(dir, 'Motif.exe'), cli = path.join(dir, 'resources', 'app.asar.unpacked', 'dist', 'cli.mjs');
+  return fs.existsSync(exe) && fs.existsSync(cli) ? { command: exe, args: [cli], env: { ELECTRON_RUN_AS_NODE: '1' } } : null;
+}
 function onPath() {
-  const r = spawnSync(win ? 'where' : 'which', ['motif'], { encoding: 'utf8' });
-  const hit = r.status === 0 && r.stdout.split(/\r?\n/).find(Boolean);
-  return hit ? { command: hit.trim(), args: [], shell: win } : null;
+  // On Windows ask for motif.cmd by name: a bare `motif` could resolve to Motif.exe (the GUI).
+  const r = spawnSync(win ? 'where' : 'which', [win ? 'motif.cmd' : 'motif'], { encoding: 'utf8' });
+  const hit = r.status === 0 && r.stdout.split(/\r?\n/).find(Boolean)?.trim();
+  if (!hit) return null;
+  return (win && windowsApp(path.resolve(path.dirname(hit), '..'))) || { command: hit, args: [], shell: win };
 }
 function installed() {
-  const local = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
-  const cands = win
-    ? [path.join(local, 'Programs', 'Motif', 'motif.cmd'), path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Motif', 'motif.cmd')]
-    : process.platform === 'darwin' ? ['/Applications/Motif.app/Contents/Resources/motif'] : ['/opt/Motif/motif', path.join(os.homedir(), '.local/share/Motif/motif')];
+  if (win) {
+    const local = process.env.LOCALAPPDATA || path.join(os.homedir(), 'AppData', 'Local');
+    for (const dir of [path.join(local, 'Programs', 'Motif'), path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Motif')]) { const c = windowsApp(dir); if (c) return c; }
+    return null;
+  }
+  const cands = process.platform === 'darwin' ? ['/Applications/Motif.app/Contents/Resources/motif'] : ['/opt/Motif/motif', path.join(os.homedir(), '.local/share/Motif/motif')];
   const f = cands.find((c) => fs.existsSync(c));
-  return f ? { command: f, args: [], shell: win } : null;
+  return f ? { command: f, args: [], shell: false } : null;
 }
 function devCheckout() {
   for (const up of ['../..', '../../..', '../../../..']) {

@@ -86,7 +86,7 @@
 ## 打包（Windows）
 
 - 用 electron-builder 生成 NSIS 安装包和绿色版 zip。
-- `app.asar` 内放应用代码；`app.asar.unpacked/dist/cli.mjs` 和 pdf.js 解包在外，供 `motif.cmd` 用 `ELECTRON_RUN_AS_NODE` 运行；`resources/ffmpeg/ffmpeg.exe` 是固定版本的静态构建；`resources/skill/motif` 是 Skill 包。
+- `app.asar` 内放应用代码；`app.asar.unpacked/dist/cli.mjs` 和 pdf.js 解包在外，供 `bin\motif.cmd` 用 `ELECTRON_RUN_AS_NODE` 运行；`resources/ffmpeg/ffmpeg.exe` 是固定版本的静态构建；`resources/skill/motif` 是 Skill 包。
 - 安装程序会把安装目录加入用户 PATH。
 - 在非 Windows 主机上，exe 的图标和版本资源由 `scripts/after-pack.cjs`（resedit，纯 JS）写入。CI 在 `windows-latest` 上构建，并对打包结果做 CLI、渲染、导入和导出的冒烟测试。
 
