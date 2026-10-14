@@ -34,6 +34,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | --- | --- | --- | --- |
 | 《对称的语言》 | 约 3 分 40 秒的抽象代数主题影片 | [播放器](https://xhc144.github.io/claude-lab/films/symmetry-film/) | [symmetry-film/](symmetry-film/)；Python、Skia、Numba、FFmpeg；`bash build.sh preview` |
 | 《倒悬之海》The Sea Above | 约 71 秒的三维短片 | [播放器](https://xhc144.github.io/claude-lab/films/sea-above/) | [sea-above/](sea-above/)；Python、OpenGL/EGL、FFmpeg；`./make_film.sh` |
+| 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | 成片在 [fermat-windmill/output/](fermat-windmill/output/) | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
 
 站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。
 

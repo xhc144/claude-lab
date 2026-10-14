@@ -1,0 +1,2039 @@
+{
+ "hook_1": {
+  "scene": "S01_Hook",
+  "voice": "zh_narrator",
+  "dur": 6.856,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.856,
+    "text": "设想你正在面试，老师突然问你：你最喜欢的数学定理是什么？",
+    "lang": "zh"
+   }
+  ]
+ },
+ "hook_2": {
+  "scene": "S01_Hook",
+  "voice": "zh_narrator",
+  "dur": 19.367,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.472,
+    "text": "我的答案，要从几个素数说起。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.772,
+    "end": 6.143,
+    "text": "看 5、13、17、29。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.443,
+    "end": 9.73,
+    "text": "它们都能写成两个平方数之和。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.03,
+    "end": 11.686,
+    "text": "5 等于 1 加 4。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.986,
+    "end": 14.019,
+    "text": "13 等于 4 加 9。",
+    "lang": "zh"
+   },
+   {
+    "start": 14.319,
+    "end": 16.45,
+    "text": "17 等于 1 加 16。",
+    "lang": "zh"
+   },
+   {
+    "start": 16.75,
+    "end": 19.367,
+    "text": "29 等于 4 加 25。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "hook_3": {
+  "scene": "S01_Hook",
+  "voice": "zh_narrator",
+  "dur": 5.273,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.273,
+    "text": "可是 3、7、11、19，无论怎么拼，都拼不出来。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "hook_4": {
+  "scene": "S01_Hook",
+  "voice": "zh_narrator",
+  "dur": 8.19,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.555,
+    "text": "这两组数的差别在哪里？",
+    "lang": "zh"
+   },
+   {
+    "start": 2.855,
+    "end": 4.566,
+    "text": "除以 4 看余数。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.866,
+    "end": 8.19,
+    "text": "第一组都余 1，第二组都余 3。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "hook_5": {
+  "scene": "S01_Hook",
+  "voice": "zh_narrator",
+  "dur": 11.055,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.835,
+    "text": "这就是费马平方和定理。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.135,
+    "end": 11.055,
+    "text": "今天我想讲它的一个只有一句话的证明，以及一幅解释这句话为什么成立的风车图。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "st_1": {
+  "scene": "S02_Statement",
+  "voice": "zh_narrator",
+  "dur": 12.939,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.023,
+    "text": "先把定理说准确。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.323,
+    "end": 4.442,
+    "text": "设 p 是奇素数。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.742,
+    "end": 12.939,
+    "text": "那么 p 能写成 x² + y²，其中 x、y 是整数，当且仅当 p 除以 4 余 1。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "st_2": {
+  "scene": "S02_Statement",
+  "voice": "zh_narrator",
+  "dur": 10.764,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 10.764,
+    "text": "换成几何的说法：圆 x² + y² = p 会穿过网格上的整点，恰好是在 p 除以 4 余 1 的时候。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "st_3": {
+  "scene": "S02_Statement",
+  "voice": "zh_narrator",
+  "dur": 19.314,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.134,
+    "text": "故事从费马开始。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.434,
+    "end": 10.772,
+    "text": "1640 年的圣诞节，他在写给梅森的信里宣布了这个结论，还说自己有证明。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.072,
+    "end": 15.317,
+    "text": "但和往常一样，他没有把证明写下来。",
+    "lang": "zh"
+   },
+   {
+    "start": 15.617,
+    "end": 19.314,
+    "text": "所以这个定理也被叫作费马圣诞定理。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "st_4": {
+  "scene": "S02_Statement",
+  "voice": "zh_narrator",
+  "dur": 14.449,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.362,
+    "text": "第一个公开的证明，要等到一百多年后的欧拉，他用的是无穷递降法。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.662,
+    "end": 14.449,
+    "text": "后来，人们又借助以高斯命名的高斯整数，给出了更深刻的解释。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "st_5": {
+  "scene": "S02_Statement",
+  "voice": "zh_narrator",
+  "dur": 21.423,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 12.863,
+    "text": "到了 1990 年，扎吉尔发表了一篇标题很特别的论文：用一句话证明，每个除以 4 余 1 的素数都是两个平方数之和。",
+    "lang": "zh"
+   },
+   {
+    "start": 13.163,
+    "end": 17.023,
+    "text": "它建立在希思布朗更早的一个想法之上。",
+    "lang": "zh"
+   },
+   {
+    "start": 17.323,
+    "end": 21.423,
+    "text": "今天要拆开来看的，就是这一句话。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "ez_1": {
+  "scene": "S03_Easy",
+  "voice": "zh_narrator",
+  "dur": 15.901,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.684,
+    "text": "其中一个方向很容易，值得先看。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.984,
+    "end": 8.661,
+    "text": "任何平方数除以 4，余数只能是 0 或 1。",
+    "lang": "zh"
+   },
+   {
+    "start": 8.961,
+    "end": 11.672,
+    "text": "偶数的平方是 4 的倍数。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.972,
+    "end": 15.901,
+    "text": "奇数的平方，是 4 的倍数再加 1。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "ez_2": {
+  "scene": "S03_Easy",
+  "voice": "zh_narrator",
+  "dur": 13.612,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.918,
+    "text": "你看，一个奇数的平方，正好可以拆成中间一个小方块，加上四个相同的长方形。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.218,
+    "end": 13.612,
+    "text": "这幅“风车”一样的图，我们待会儿还会见到。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "ez_3": {
+  "scene": "S03_Easy",
+  "voice": "zh_narrator",
+  "dur": 11.172,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.61,
+    "text": "所以两个平方数相加，除以 4 只能余 0、1 或 2，永远不会余 3。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.91,
+    "end": 11.172,
+    "text": "这就排除了所有形如 4k + 3 的素数。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "ez_4": {
+  "scene": "S03_Easy",
+  "voice": "zh_narrator",
+  "dur": 23.571,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.333,
+    "text": "不过要注意，21 除以 4 也余 1，可它并不是两个平方数之和。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.633,
+    "end": 12.504,
+    "text": "所以“除以 4 余 1”是必要条件，但单靠它并不充分。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.804,
+    "end": 18.112,
+    "text": "素数这个条件，一定在证明的某个地方起了作用。",
+    "lang": "zh"
+   },
+   {
+    "start": 18.412,
+    "end": 23.571,
+    "text": "先记住这一点，后面我们会找到它到底用在哪里。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "ez_5": {
+  "scene": "S03_Easy",
+  "voice": "zh_narrator",
+  "dur": 19.077,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 9.276,
+    "text": "定理真正的难点在另一个方向：每个除以 4 余 1 的素数，都确实能写成两个平方数之和。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.576,
+    "end": 13.99,
+    "text": "难就难在，这是一个纯粹的存在性命题。",
+    "lang": "zh"
+   },
+   {
+    "start": 14.29,
+    "end": 19.077,
+    "text": "没有任何公式能直接告诉你 x 和 y 是多少。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_1": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 13.682,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.074,
+    "text": "那么，怎样在找不到它的情况下，证明它存在？",
+    "lang": "zh"
+   },
+   {
+    "start": 5.374,
+    "end": 8.24,
+    "text": "一个经典的思路是：数一数。",
+    "lang": "zh"
+   },
+   {
+    "start": 8.54,
+    "end": 13.682,
+    "text": "只要能证明解的个数是奇数，它就不可能是零。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_2": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 7.727,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.727,
+    "text": "而要证明一个数是奇数，并不需要把它精确地数出来，只需要两两配对。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_3": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 11.537,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.834,
+    "text": "这就引出了关键工具：对合。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.134,
+    "end": 11.537,
+    "text": "对合是一个集合到它自身的映射，它能抵消自己：连续做两次，就回到原地。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_4": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 11.435,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.948,
+    "text": "对合会把集合分成一对一对的元素，a 和 f(a) 配成一对。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.248,
+    "end": 11.435,
+    "text": "剩下的，是那些被映到自己的点，叫作不动点。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_5": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 9.89,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.491,
+    "text": "成对的元素加起来一定是偶数个。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.791,
+    "end": 9.89,
+    "text": "所以，集合的大小和不动点的个数，奇偶性永远相同。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_6": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 19.275,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.455,
+    "text": "现在假设同一个有限集合上，有两个不同的对合。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.755,
+    "end": 9.02,
+    "text": "它们的不动点个数奇偶性相同。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.32,
+    "end": 19.275,
+    "text": "特别地，如果其中一个恰好只有一个不动点，那另一个的不动点个数就是奇数，因此至少有一个。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "par_7": {
+  "scene": "S04_Parity",
+  "voice": "zh_narrator",
+  "dur": 12.438,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.925,
+    "text": "如果你觉得这个思路眼熟，那就对了。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.225,
+    "end": 12.438,
+    "text": "斯潘纳引理的证明，用的也是这种只看奇偶的配对论证，在那里我们数的是“门”。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_1": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 7.02,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.02,
+    "text": "于是计划是：让我们要找的解，以某个对合的不动点的身份出现。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_2": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 15.743,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.547,
+    "text": "因为 p 是奇数，两个平方数中必有一个是偶数的平方。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.847,
+    "end": 15.743,
+    "text": "所以我们真正要找的是：p 等于 x 平方，加上 2y 的平方，也就是 x² + 4·y·y。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_3": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 16.467,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.705,
+    "text": "关键的创造性一步来了：把两个 y 中的一个，换成新的字母 z。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.005,
+    "end": 16.467,
+    "text": "考虑所有满足 x² + 4yz = p 的正整数三元组，把它们组成的集合记作 S。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_4": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 9.004,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.222,
+    "text": "S 是有限集，因为 x 平方和 yz 都比 p 小。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.522,
+    "end": 9.004,
+    "text": "比如 p 等于 13 时，S 恰好有三个元素。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_5": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 17.527,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.089,
+    "text": "这个新集合有一个显而易见的对称：交换 y 和 z。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.389,
+    "end": 11.417,
+    "text": "这是一个对合，它的不动点恰好是 y 等于 z 的三元组。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.717,
+    "end": 17.527,
+    "text": "这时 p 等于 x 平方加 2y 的平方，正是我们想要的解。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_6": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 15.784,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.031,
+    "text": "于是整个定理归结成一个问题：S 的元素个数是不是奇数？",
+    "lang": "zh"
+   },
+   {
+    "start": 7.331,
+    "end": 15.784,
+    "text": "根据刚才的奇偶原理，只要在 S 上再找到一个恰好只有一个不动点的对合，就够了。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "set_7": {
+  "scene": "S05_Set",
+  "voice": "zh_narrator",
+  "dur": 14.911,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.338,
+    "text": "注意刚才发生了什么。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.638,
+    "end": 10.358,
+    "text": "我们不是发现了一个对称，而是制造了一个对称：把 y 乘 y 拆成 y 乘 z。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.658,
+    "end": 14.911,
+    "text": "把问题放大，反而给了我们腾挪的空间。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "wm_1": {
+  "scene": "S06_Windmill",
+  "voice": "zh_narrator",
+  "dur": 24.657,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.571,
+    "text": "为了找到第二个对合，我们把方程画出来。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.871,
+    "end": 9.344,
+    "text": "x 平方是一个边长是 x 的正方形。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.644,
+    "end": 13.406,
+    "text": "4yz 是四个 y 乘 z 的长方形。",
+    "lang": "zh"
+   },
+   {
+    "start": 13.706,
+    "end": 24.657,
+    "text": "把这四个长方形沿同一个旋转方向，分别贴在正方形的四条边上，就得到一个风车，它的面积恰好是 p。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "wm_2": {
+  "scene": "S06_Windmill",
+  "voice": "zh_narrator",
+  "dur": 7.619,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.15,
+    "text": "S 的每个元素都是一个风车。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.45,
+    "end": 7.619,
+    "text": "这是面积是 41 的全部 11 个风车。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "wm_3": {
+  "scene": "S06_Windmill",
+  "voice": "zh_narrator",
+  "dur": 8.122,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.122,
+    "text": "在这幅图里，交换 y 和 z，就是把每片风叶翻过来，让它的长度和宽度互换。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "wm_4": {
+  "scene": "S06_Windmill",
+  "voice": "zh_narrator",
+  "dur": 19.326,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.61,
+    "text": "不动的风车，就是风叶是正方形的风车。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.91,
+    "end": 13.677,
+    "text": "你看，四个边长是 y 的小正方形，恰好拼成一个边长是 2y 的大正方形。",
+    "lang": "zh"
+   },
+   {
+    "start": 13.977,
+    "end": 19.326,
+    "text": "所以一个不动的风车，就是把 p 拆成了两个平方数。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_1": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 12.318,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.64,
+    "text": "接下来是最漂亮的观察。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.94,
+    "end": 7.61,
+    "text": "把风车内部的分割线擦掉，只留下外轮廓。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.91,
+    "end": 12.318,
+    "text": "轮廓本身，并不记得自己是怎么被切割的。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_2": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 7.114,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.114,
+    "text": "同一个轮廓，往往还能用另一个中心正方形，重新切割成一个风车。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_3": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 18.602,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.667,
+    "text": "规则是这样的。",
+    "lang": "zh"
+   },
+   {
+    "start": 1.967,
+    "end": 7.403,
+    "text": "看四片风叶的尖端，画出经过这四个尖端的正方形。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.703,
+    "end": 12.515,
+    "text": "如果它能放进轮廓里，就沿着它重新切割。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.815,
+    "end": 18.602,
+    "text": "如果放不进去，就改用经过风叶外侧边的那个正方形。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_4": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 14.063,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.547,
+    "text": "新的正方形有时变大，有时变小，有时新风车的旋转方向还会反过来。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.847,
+    "end": 14.063,
+    "text": "把这条规则写成坐标，就是扎吉尔那个著名的三段式公式。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_5": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 14.807,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.77,
+    "text": "再切割一次，又回到原来的风车。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.07,
+    "end": 14.807,
+    "text": "所以这个重新切割是一个对合：变大的会变回小，变小的会变回大，镜像的那一类会再镜像回来。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_6": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 11.55,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.796,
+    "text": "什么样的风车在重新切割下保持不变？",
+    "lang": "zh"
+   },
+   {
+    "start": 4.096,
+    "end": 11.55,
+    "text": "恰好是经过尖端的正方形就是中心正方形本身的时候，也就是 x 等于 y。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_7": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 22.64,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.928,
+    "text": "素数条件正是在这里登场。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.228,
+    "end": 11.217,
+    "text": "如果 x 等于 y，那么 p 等于 x 平方加 4xz，也就是 x 乘以 (x + 4z)。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.517,
+    "end": 14.258,
+    "text": "p 是素数，所以 x 只能是 1。",
+    "lang": "zh"
+   },
+   {
+    "start": 14.558,
+    "end": 22.639,
+    "text": "于是唯一不动的风车，是 x 和 y 都等于 1 的那一个：一个完美对称的十字。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_8": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 13.55,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.016,
+    "text": "还有一个细节：这条规则不会卡在边界情形上。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.316,
+    "end": 13.55,
+    "text": "边界情形要求 p 是完全平方数，或者是偶数，而奇素数两样都不是。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_9": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 24.406,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.161,
+    "text": "现在把一切拼起来。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.461,
+    "end": 9.861,
+    "text": "重新切割这个对合恰好只有一个不动点，所以 S 的元素个数是奇数。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.161,
+    "end": 18.009,
+    "text": "因此，翻转风叶的那个对合也一定有不动点，也就是一个风叶是正方形的风车。",
+    "lang": "zh"
+   },
+   {
+    "start": 18.309,
+    "end": 22.874,
+    "text": "而它正好把 p 写成了两个平方数之和。",
+    "lang": "zh"
+   },
+   {
+    "start": 23.174,
+    "end": 24.406,
+    "text": "证明完毕。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "zg_10": {
+  "scene": "S07_Zagier",
+  "voice": "zh_narrator",
+  "dur": 5.207,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.799,
+    "text": "这就是扎吉尔的完整证明。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.099,
+    "end": 5.207,
+    "text": "它真的只有一句话。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_1": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 11.019,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.184,
+    "text": "第一次看到这个公式时，它像一个魔术。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.484,
+    "end": 11.019,
+    "text": "但每一步其实都有理由，而这些理由，才是最值得学的东西。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_2": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 10.533,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.854,
+    "text": "第一，我们要的是存在，不是公式。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.154,
+    "end": 10.533,
+    "text": "存在可以由“个数是奇数”推出，而奇偶性可以由配对得到。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_3": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 12.198,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.811,
+    "text": "第二，要用配对，我们想要的解就必须是不动点。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.111,
+    "end": 12.198,
+    "text": "所以我们把 y 平方拆成 y 乘 z，造出了一个自带对称的集合。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_4": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 15.382,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.101,
+    "text": "第三，我们还需要第二个对合。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.401,
+    "end": 7.259,
+    "text": "只看代数式，完全看不出线索。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.559,
+    "end": 15.381,
+    "text": "是图形给出了提示：一块面积能用两种方式切割，天然就构成了配对。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_5": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 27.162,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.238,
+    "text": "第四，素数条件只在一个关键点上使用：保证不动点唯一。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.538,
+    "end": 8.639,
+    "text": "用 21 检验一下。",
+    "lang": "zh"
+   },
+   {
+    "start": 8.939,
+    "end": 18.0,
+    "text": "它的集合 S 里有两个不动的风车：一个是 x 等于 1 的十字，另一个是 x 等于 3 的风车。",
+    "lang": "zh"
+   },
+   {
+    "start": 18.3,
+    "end": 22.543,
+    "text": "两个是偶数，论证就推不出任何东西。",
+    "lang": "zh"
+   },
+   {
+    "start": 22.843,
+    "end": 27.162,
+    "text": "而 21 也确实不是两个平方数之和。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "why_6": {
+  "scene": "S08_Why",
+  "voice": "zh_narrator",
+  "dur": 10.579,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.008,
+    "text": "这其实是一个很好的习惯。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.308,
+    "end": 8.085,
+    "text": "读任何证明，都问一问：每个条件到底用在哪里？",
+    "lang": "zh"
+   },
+   {
+    "start": 8.385,
+    "end": 10.579,
+    "text": "去掉它，哪里会断？",
+    "lang": "zh"
+   }
+  ]
+ },
+ "path_1": {
+  "scene": "S09_Path",
+  "voice": "zh_narrator",
+  "dur": 8.009,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.526,
+    "text": "还有一个惊喜。",
+    "lang": "zh"
+   },
+   {
+    "start": 1.826,
+    "end": 8.009,
+    "text": "这个证明看起来只说明了解存在，但它其实暗藏了一个算法。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "path_2": {
+  "scene": "S09_Path",
+  "voice": "zh_narrator",
+  "dur": 16.234,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.688,
+    "text": "从十字出发，它是重新切割的唯一不动点。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.988,
+    "end": 6.27,
+    "text": "翻转风叶。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.57,
+    "end": 7.877,
+    "text": "重新切割。",
+    "lang": "zh"
+   },
+   {
+    "start": 8.177,
+    "end": 10.067,
+    "text": "再翻转，再切割。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.367,
+    "end": 16.234,
+    "text": "每一步都是确定的，而且永远不会回到已经走过的风车。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "path_3": {
+  "scene": "S09_Path",
+  "voice": "zh_narrator",
+  "dur": 20.319,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.98,
+    "text": "因为 S 是有限的，这条路一定会停下来，而且只能停在一个翻转后不变的风车上。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.28,
+    "end": 20.319,
+    "text": "对 41 来说，走十步之后，我们到达风叶是 2 乘 2 的风车，读出 41 等于 5 的平方加 4 的平方。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "path_4": {
+  "scene": "S09_Path",
+  "voice": "zh_narrator",
+  "dur": 24.078,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.902,
+    "text": "为什么一定可行？",
+    "lang": "zh"
+   },
+   {
+    "start": 2.202,
+    "end": 7.559,
+    "text": "把每个风车看成一个点，把互相配对的风车连起来。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.859,
+    "end": 16.612,
+    "text": "每个点最多连两条线，两种对合各一条，所以整张图会分解成若干条路径和圈。",
+    "lang": "zh"
+   },
+   {
+    "start": 16.912,
+    "end": 24.078,
+    "text": "十字是某条路径的一个端点，那么另一个端点，必然就是我们要的解。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "path_5": {
+  "scene": "S09_Path",
+  "voice": "zh_narrator",
+  "dur": 18.989,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 9.694,
+    "text": "如果你熟悉斯潘纳引理的证明，会发现这和“穿过房间和门”的走法是同一个思想。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.994,
+    "end": 12.588,
+    "text": "不过它不是最快的方法。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.888,
+    "end": 18.989,
+    "text": "对很大的素数，有基于欧几里得算法的、快得多的办法。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_1": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 7.875,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.143,
+    "text": "接下来把视野放大。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.443,
+    "end": 7.875,
+    "text": "不只是素数，哪些正整数能写成两个平方数之和？",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_2": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 13.496,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.034,
+    "text": "关键是一个乘法规则：两个“平方和”相乘，结果仍然是平方和。",
+    "lang": "zh"
+   },
+   {
+    "start": 7.334,
+    "end": 13.496,
+    "text": "用复数的语言，这不过是说，乘积的长度等于长度的乘积。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_3": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 15.284,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 15.284,
+    "text": "把它和费马定理结合，就得到完整的答案：一个正整数能写成两个平方数之和，当且仅当它的每个形如 4k + 3 的素因子，都出现偶数次。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_4": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 22.34,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.269,
+    "text": "在高斯整数，也就是形如 a 加 b i 的数中，这变成了一个关于因数分解的命题。",
+    "lang": "zh"
+   },
+   {
+    "start": 8.569,
+    "end": 16.541,
+    "text": "除以 4 余 1 的素数会分裂成一对共轭因子，比如 5 等于 (2 + i)(2 − i)。",
+    "lang": "zh"
+   },
+   {
+    "start": 16.841,
+    "end": 22.34,
+    "text": "而除以 4 余 3 的素数无法分解，仍然是素数。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_5": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 12.097,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 12.097,
+    "text": "高斯整数的唯一分解，还告诉我们一件扎吉尔的证明没有说的事：p 的表示方法是唯一的，不计顺序和正负号。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "gen_6": {
+  "scene": "S10_General",
+  "voice": "zh_narrator",
+  "dur": 31.89,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.882,
+    "text": "故事还在继续。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.182,
+    "end": 6.298,
+    "text": "哪些素数能写成 x 平方加 2y 平方？",
+    "lang": "zh"
+   },
+   {
+    "start": 6.598,
+    "end": 10.909,
+    "text": "恰好是 2，以及除以 8 余 1 或余 3 的素数。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.209,
+    "end": 14.562,
+    "text": "哪些能写成 x 平方加 3y 平方？",
+    "lang": "zh"
+   },
+   {
+    "start": 14.862,
+    "end": 17.841,
+    "text": "是 3，以及除以 3 余 1 的素数。",
+    "lang": "zh"
+   },
+   {
+    "start": 18.141,
+    "end": 23.05,
+    "text": "这类问题通向二次互反律，最终通向类域论。",
+    "lang": "zh"
+   },
+   {
+    "start": 23.35,
+    "end": 31.89,
+    "text": "而如果允许用四个平方数，拉格朗日证明了：每个正整数都是四个平方数之和。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "app_1": {
+  "scene": "S11_Apps",
+  "voice": "zh_narrator",
+  "dur": 4.441,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.269,
+    "text": "它有什么用？",
+    "lang": "zh"
+   },
+   {
+    "start": 1.569,
+    "end": 4.441,
+    "text": "这里有两个我很喜欢的应用。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "app_2": {
+  "scene": "S11_Apps",
+  "voice": "zh_narrator",
+  "dur": 33.346,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.573,
+    "text": "第一个是直角三角形。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.873,
+    "end": 12.069,
+    "text": "如果 p 等于 a 平方加 b 平方，把 a 加 b i 平方，就得到 a 平方减 b 平方，再加上 2ab 乘 i。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.369,
+    "end": 19.815,
+    "text": "于是 a 平方减 b 平方、2ab 和 p，构成一个三边都是整数的直角三角形。",
+    "lang": "zh"
+   },
+   {
+    "start": 20.115,
+    "end": 21.869,
+    "text": "5 给出 3、4、5。",
+    "lang": "zh"
+   },
+   {
+    "start": 22.169,
+    "end": 24.578,
+    "text": "13 给出 5、12、13。",
+    "lang": "zh"
+   },
+   {
+    "start": 24.878,
+    "end": 33.346,
+    "text": "事实上，能作为整数直角三角形斜边的奇素数，恰好就是除以 4 余 1 的素数。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "app_3": {
+  "scene": "S11_Apps",
+  "voice": "zh_narrator",
+  "dur": 34.444,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.59,
+    "text": "第二个是一个和 π 有关的惊喜。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.89,
+    "end": 11.196,
+    "text": "数一数半径是 R 的大圆里有多少个整点，大约是 π 乘 R 平方个。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.496,
+    "end": 20.892,
+    "text": "同一批整点还有第二种数法：借助因数来数，而这种数法的根基，正是平方和的理论。",
+    "lang": "zh"
+   },
+   {
+    "start": 21.192,
+    "end": 34.444,
+    "text": "比较这两种数法，就得到莱布尼茨公式：π 除以 4，等于 1 减三分之一，加五分之一，减七分之一，一直下去。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "app_4": {
+  "scene": "S11_Apps",
+  "voice": "zh_narrator",
+  "dur": 14.833,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 9.367,
+    "text": "就这样，一个关于“哪些素数是平方和”的问题，最终和几何、复数、甚至 π 连在了一起。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.667,
+    "end": 14.833,
+    "text": "这张联系之网，正是我喜爱这个定理的重要原因。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "iv_intro": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 17.223,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.171,
+    "text": "下面进入模拟面试。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.471,
+    "end": 4.601,
+    "text": "面试用英文进行。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.901,
+    "end": 10.664,
+    "text": "我们先听考官的问题，再分析它在考什么、怎么回答。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.964,
+    "end": 17.223,
+    "text": "好的回答通常简短、准确，并且留下一个可以继续追问的线索。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q1": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.697,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.697,
+    "text": "So, what is your favorite theorem?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a1": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 16.289,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 9.687,
+    "text": "开场回答要做三件事：说出定理的名字，给出准确的陈述，再用一句话说明你为什么喜欢它。",
+    "lang": "zh"
+   },
+   {
+    "start": 9.987,
+    "end": 16.289,
+    "text": "最后那半句“一句话证明”，是在给考官留一个追问的钩子。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q2": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 5.79,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.79,
+    "text": "Can you show me why primes of the form four k plus three can't work?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a2": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 12.002,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.626,
+    "text": "这是送分题。",
+    "lang": "zh"
+   },
+   {
+    "start": 1.926,
+    "end": 6.432,
+    "text": "考官在看你能不能把一个简单论证讲得干净利落。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.732,
+    "end": 12.002,
+    "text": "关键词是 mod four、even squared、odd squared，不要绕远路。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q3": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.963,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.963,
+    "text": "Is that condition enough for any number, not just for primes?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a3": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 12.821,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.715,
+    "text": "这题考必要条件和充分条件的区别。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.015,
+    "end": 12.821,
+    "text": "马上举出反例 21，再给出一般整数的正确判定，说明你清楚定理的边界在哪里。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q4": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.481,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 0.834,
+    "text": "Good.",
+    "lang": "en"
+   },
+   {
+    "start": 1.384,
+    "end": 4.481,
+    "text": "How would you prove the hard direction?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a4": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 22.596,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.618,
+    "text": "这是核心题。",
+    "lang": "zh"
+   },
+   {
+    "start": 1.918,
+    "end": 17.861,
+    "text": "一分钟版本的证明要有清晰的骨架：集合 S，第一个对合和它的不动点，归结成 S 的大小是奇数，第二个对合恰有一个不动点，最后用奇偶性收尾。",
+    "lang": "zh"
+   },
+   {
+    "start": 18.161,
+    "end": 22.596,
+    "text": "不必背公式，讲清结构比背细节更重要。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q5": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.151,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.151,
+    "text": "Where exactly do you use the fact that p is prime?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a5": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 13.462,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.352,
+    "text": "考官很爱问“条件用在哪里”。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.652,
+    "end": 13.462,
+    "text": "回答要精确到具体步骤，再用 21 做一次反面检验，说明你是真正理解，而不是在背诵。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q6": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 6.709,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.445,
+    "text": "Interesting.",
+    "lang": "en"
+   },
+   {
+    "start": 1.995,
+    "end": 6.709,
+    "text": "But how would anyone come up with that second involution?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a6": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 16.117,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.295,
+    "text": "这是区分度最高的问题，考的是数学直觉，而不是知识。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.595,
+    "end": 16.117,
+    "text": "诚实地承认“只看代数想不到”，再讲出图形带来的启发，比假装一切都很显然要好得多。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q7": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 7.104,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.244,
+    "text": "Your proof only shows existence.",
+    "lang": "en"
+   },
+   {
+    "start": 3.794,
+    "end": 7.104,
+    "text": "Can you actually find x and y?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a7": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 18.466,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.589,
+    "text": "从存在到构造，是考官常用的追问方向。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.889,
+    "end": 11.801,
+    "text": "能把路径跟踪讲出来，并联系到斯潘纳引理，会让人眼前一亮。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.101,
+    "end": 18.466,
+    "text": "同时承认它效率不高、知道有更快的方法，显得更成熟。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q8": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.366,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.366,
+    "text": "Do you know any other proof?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a8": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 13.869,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.978,
+    "text": "能说出第二种证明，说明你的理解不是孤立的。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.278,
+    "end": 11.175,
+    "text": "高斯整数的证明要讲清两个事实：负一是模 p 的平方；",
+    "lang": "zh"
+   },
+   {
+    "start": 11.476,
+    "end": 13.869,
+    "text": "高斯整数有唯一分解。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q9": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 3.933,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.933,
+    "text": "Why is minus one a square modulo p?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a9": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 15.538,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.179,
+    "text": "被追问细节时，能当场推一推最好。",
+    "lang": "zh"
+   },
+   {
+    "start": 4.479,
+    "end": 10.321,
+    "text": "威尔逊定理，加上 k 和负 k 的配对，又是一次“配对”的思想。",
+    "lang": "zh"
+   },
+   {
+    "start": 10.621,
+    "end": 15.538,
+    "text": "把它点出来，会让整场面试有一条清楚的主线。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q10": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.829,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.829,
+    "text": "What about sums of three squares?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a10": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 14.755,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 12.271,
+    "text": "遇到超出自己掌握范围的问题，诚实地说“我知道结论，但不熟悉证明”，再讲出你能讲的部分，比如模 8 的论证。",
+    "lang": "zh"
+   },
+   {
+    "start": 12.571,
+    "end": 14.755,
+    "text": "这比硬编要好得多。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q11": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.102,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.102,
+    "text": "Is there an application you find meaningful?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a11": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 6.851,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.588,
+    "text": "应用题不需要展开证明。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.888,
+    "end": 6.851,
+    "text": "挑一两个你真正理解的例子讲清楚就够了。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "q12": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.952,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.667,
+    "text": "Last question.",
+    "lang": "en"
+   },
+   {
+    "start": 2.217,
+    "end": 4.952,
+    "text": "What did you learn from this theorem?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a12": {
+  "scene": "S12_Interview",
+  "voice": "zh_narrator",
+  "dur": 14.515,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.547,
+    "text": "收尾题考的是反思能力。",
+    "lang": "zh"
+   },
+   {
+    "start": 2.847,
+    "end": 14.515,
+    "text": "把具体的数学经验提炼成可以迁移的方法，并且和你之前学过的东西联系起来，能让考官看到你的数学成长轨迹。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "out_1": {
+  "scene": "S13_Outro",
+  "voice": "zh_narrator",
+  "dur": 3.645,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.645,
+    "text": "最后，说说这个定理教会我的东西。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "out_2": {
+  "scene": "S13_Outro",
+  "voice": "zh_narrator",
+  "dur": 19.566,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.651,
+    "text": "要证明某样东西存在，可以去数它，有时只数奇偶就够了。",
+    "lang": "zh"
+   },
+   {
+    "start": 6.951,
+    "end": 11.476,
+    "text": "对称不一定是现成的，有时要自己创造。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.776,
+    "end": 19.566,
+    "text": "一幅好的图，能把一个像魔术一样的公式，变成你自己也可能发现的东西。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "out_3": {
+  "scene": "S13_Outro",
+  "voice": "zh_narrator",
+  "dur": 20.774,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.782,
+    "text": "布劳威尔定理讲的是不动点。",
+    "lang": "zh"
+   },
+   {
+    "start": 3.082,
+    "end": 5.583,
+    "text": "斯潘纳引理讲的是奇偶。",
+    "lang": "zh"
+   },
+   {
+    "start": 5.883,
+    "end": 10.784,
+    "text": "而扎吉尔的证明，讲的恰恰是不动点的奇偶。",
+    "lang": "zh"
+   },
+   {
+    "start": 11.084,
+    "end": 14.116,
+    "text": "数学里的思想总会彼此相遇。",
+    "lang": "zh"
+   },
+   {
+    "start": 14.416,
+    "end": 20.774,
+    "text": "顺着这些联系走下去，对我来说，就是数学真正的乐趣。",
+    "lang": "zh"
+   }
+  ]
+ },
+ "out_4": {
+  "scene": "S13_Outro",
+  "voice": "zh_narrator",
+  "dur": 1.203,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.203,
+    "text": "感谢观看。",
+    "lang": "zh"
+   }
+  ]
+ }
+}
