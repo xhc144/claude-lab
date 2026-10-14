@@ -71,8 +71,12 @@ export function validate(target) {
   return { issues: validateDocument(doc) };
 }
 
+// The CLI renders through a spawned Electron worker; the desktop app swaps in its in-process runner.
+let jobRunner = runJob;
+export function setJobRunner(fn) { jobRunner = fn || runJob; }
+
 async function worker(job, o = {}) {
-  const r = await runJob(job, { onProgress: o.onProgress, onLog: o.verbose ? (s) => process.stderr.write(s + '\n') : undefined });
+  const r = await jobRunner(job, { onProgress: o.onProgress, onLog: o.verbose ? (s) => process.stderr.write(s + '\n') : undefined });
   if (!r.ok) throw new CliError(`渲染失败：${r.error}`, r.stack ? r.stack.split('\n').slice(0, 3).join('\n') : undefined);
   return r;
 }

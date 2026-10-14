@@ -130,7 +130,26 @@ export class MotifEngine {
   layoutAt(t) {
     const S = this.sceneAt(t);
     if (!S) return [];
-    return S.items.map((it) => ({ id: it.block.id, type: it.block.type, rect: it.rect, start: S.start + it.start, duration: it.inst.duration, framed: !!it.block.frame, bleed: it.bleed }));
+    return S.items.map((it) => ({ id: it.block.id, type: it.block.type, rect: it.rect, start: S.start + it.start, duration: it.inst.duration, framed: !!it.block.frame && typeof it.block.frame === 'object', bleed: it.bleed }));
+  }
+
+  /** Timing of every scene and its blocks (scene-relative block starts), for timelines. */
+  timing() {
+    if (!this.C) return { duration: 0, scenes: [] };
+    return {
+      duration: this.C.duration,
+      scenes: this.C.scenes.map((S) => ({
+        id: S.id, index: S.index, start: S.start, duration: S.duration, end: S.end, settled: S.start + settledTime(S),
+        contentEnd: S.contentEnd, layout: S.layout, tone: S.tone, transition: S.transitionIn ? { type: S.transitionIn.type, duration: S.transitionIn.duration } : null,
+        items: S.items.map((it) => ({ id: it.block.id, type: it.block.type, start: it.start, duration: it.inst.duration, rect: it.rect, bleed: it.bleed, framed: !!it.block.frame && typeof it.block.frame === 'object' })),
+      })),
+    };
+  }
+
+  /** Layout rectangles of one scene (design coordinates), regardless of the current time. */
+  layoutOf(sceneId) {
+    const S = this.C?.scenes.find((s) => s.id === sceneId);
+    return S ? S.items.map((it) => ({ id: it.block.id, type: it.block.type, rect: it.rect, framed: !!it.block.frame && typeof it.block.frame === 'object', bleed: it.bleed })) : [];
   }
 
   hitTest(x, y, t) {

@@ -54,7 +54,7 @@ async function runParallel(job, hooks, k) {
     ...hooks,
     onProgress: (p) => { if (p.done != null) { done[sg.i] = p.done; hooks.onProgress?.({ done: done.reduce((a, b) => a + b, 0), total }); } },
   })));
-  const bad = results.find((r) => !r.ok);
+  const bad = results.find((r) => r.cancelled) || results.find((r) => !r.ok);
   if (bad) { fs.rmSync(tmp, { recursive: true, force: true }); return bad; }
   const list = path.join(tmp, 'list.txt');
   fs.writeFileSync(list, segs.map((sg) => `file '${sg.file.replace(/\\/g, '/').replace(/'/g, "'\\''")}'`).join('\n'));
@@ -144,11 +144,16 @@ async function runSingleJob(job, hooks) {
       return true;
     });
     ipc.handle('motif:done', async (_e, r) => { resolve(r); return true; });
+    if (hooks.signal) {
+      const abort = () => { try { ffmpeg?.kill(); } catch { /* gone */ } resolve({ ok: false, cancelled: true, error: '已取消' }); };
+      if (hooks.signal.aborted) abort(); else hooks.signal.addEventListener('abort', abort, { once: true });
+    }
     win.webContents.on('render-process-gone', (_e, d) => resolve({ ok: false, error: `渲染进程退出：${d.reason}` }));
     win.webContents.on('console-message', (e) => { const lvl = e.level ?? e; if (lvl === 'error' || lvl === 3) hooks.onLog?.(`[renderer] ${e.message ?? ''}`); });
   });
   await win.loadURL('motif://app/worker.html');
   let r = await result;
+  if (r.cancelled) { win.destroy(); try { if (job.out && job.type === 'video') fs.rmSync(job.out, { force: true }); } catch { /* locked */ } return r; }
   if (r.ok && r.encodedInRenderer && job.out && fs.existsSync(job.out)) r = { ...r, out: path.resolve(job.out), bytes: fs.statSync(job.out).size };
   if (ffmpeg) {
     ffmpeg.stdin.end();

@@ -28,7 +28,8 @@ export function drawImageFit(ctx, img, box, { fit = 'cover', focus = [0.5, 0.5],
 }
 
 function frameKind(block, c) {
-  if (block.frame && block.frame !== 'auto') return block.frame;
+  const m = block.mount || (typeof block.frame === 'string' ? block.frame : null);
+  if (m && m !== 'auto') return m;
   if (c.hint?.bleed || c.hint?.backdrop) return 'none';
   return 'rounded';
 }
@@ -138,7 +139,7 @@ const image = {
     const capL = block.caption && !c.hint?.bleed ? c.te.layout(block.caption, role(env, 'text'), env.sizes.small, { maxWidth: rect.w, align: 'center' }) : null;
     const capH = capL ? capL.height + env.sizes.small * 0.8 : 0;
     const box = { x: rect.x, y: rect.y, w: rect.w, h: rect.h - (kind === 'polaroid' ? 0 : capH) };
-    const motion = block.motion && typeof block.motion === 'string' ? block.motion : block.motion?.enter === 'none' ? 'none' : (block.kenburns === false ? 'none' : (typeof block.motion === 'string' ? block.motion : 'auto'));
+    const motion = block.move || (typeof block.motion === 'string' ? block.motion : block.motion?.enter === 'none' ? 'none' : block.kenburns === false ? 'none' : 'auto');
     const focus = Array.isArray(block.focus) ? block.focus : [0.5, 0.42];
     const bleed = !!(c.hint?.bleed || c.hint?.backdrop);
     const overlay = c.hint?.overlay ?? block.overlay ?? 0;
@@ -219,7 +220,7 @@ const gallery = {
       const cw = (rect.w - gap * (cols - 1)) / cols, ch = (rect.h - gap * (rows - 1)) / rows;
       for (let i = 0; i < n; i++) boxes.push({ x: rect.x + (i % cols) * (cw + gap), y: rect.y + Math.floor(i / cols) * (ch + gap), w: cw, h: ch });
     }
-    const insts = imgs.map((im, i) => image.build({ ...(typeof im === 'string' ? { asset: im } : im), frame: 'rounded', caption: im.caption }, c, boxes[i]));
+    const insts = imgs.map((im, i) => image.build({ ...(typeof im === 'string' ? { asset: im } : im), mount: 'rounded', caption: im.caption }, c, boxes[i]));
     const per = Math.min(0.18, 1.2 / n) * env.motion.tempo;
     return {
       duration: per * (n - 1) + (insts[0]?.duration || 1), hold: 1.5 + n * 0.3,

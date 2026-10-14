@@ -37,7 +37,7 @@ const common = { bundle: true, sourcemap: prod ? false : 'inline', minify: prod,
 const targets = {
   render: { ...common, entryPoints: [path.join(root, 'src/engine/runtime.js')], outfile: path.join(dist, 'render.js'), format: 'iife', platform: 'browser', target: 'chrome120' },
   editor: { ...common, entryPoints: [path.join(root, 'src/app/renderer/main.jsx')], outfile: path.join(dist, 'editor.js'), format: 'iife', platform: 'browser', target: 'chrome120', jsx: 'automatic', loader: { ...common.loader, '.css': 'css', '.woff2': 'file' } },
-  main: { ...common, entryPoints: [path.join(root, 'src/app/main/index.js')], outfile: path.join(dist, 'main.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
+  main: { ...common, entryPoints: [path.join(root, 'src/app/main/index.js')], outfile: path.join(dist, 'main.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'], logOverride: { 'empty-import-meta': 'silent' } },
   preload: { ...common, entryPoints: [path.join(root, 'src/app/preload/index.js')], outfile: path.join(dist, 'preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   workerPreload: { ...common, entryPoints: [path.join(root, 'src/app/worker/preload.js')], outfile: path.join(dist, 'worker-preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   cli: { ...common, minify: false, entryPoints: [path.join(root, 'src/cli/index.js')], outfile: path.join(dist, 'cli.mjs'), format: 'esm', platform: 'node', target: 'node22', banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" }, external: ['electron'] },

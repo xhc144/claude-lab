@@ -3,6 +3,9 @@
 // 9:16, 1:1 and 4:5 because regions are derived from the frame, not stored as coordinates.
 import { COMPONENTS } from '../core/catalog/components.js';
 
+/** Manually positioned (editor drag / AI frame). Only an {x,y,w,h} object counts. */
+export const isFramed = (b) => !!b.frame && typeof b.frame === 'object';
+
 const BACKDROP = new Set(['image', 'video', 'shape3d', 'particles', 'globe', 'model', 'surface', 'simulation', 'vectorfield']);
 const WIDE_VISUAL = new Set(['timeline', 'steps', 'table', 'flow', 'compare', 'features', 'stats', 'gallery', 'hierarchy']);
 
@@ -13,7 +16,7 @@ export function natureOf(b) {
 
 export function resolveLayout(scene, index, count) {
   if (scene.layout && scene.layout !== 'auto') return scene.layout;
-  const blocks = scene.blocks.filter((b) => !b.hidden && !b.frame);
+  const blocks = scene.blocks.filter((b) => !b.hidden && !isFramed(b));
   const titles = blocks.filter((b) => b.type === 'title');
   const copy = blocks.filter((b) => natureOf(b) === 'copy');
   const vis = blocks.filter((b) => natureOf(b) === 'visual');
@@ -89,8 +92,8 @@ export function layoutScene(scene, env, mk, index, count) {
   const portrait = env.portrait;
   const square = !portrait && env.aspect < 1.2;
   const blocks = scene.blocks.filter((b) => !b.hidden);
-  const framed = blocks.filter((b) => b.frame);
-  const flowB = blocks.filter((b) => !b.frame);
+  const framed = blocks.filter(isFramed);
+  const flowB = blocks.filter((b) => !isFramed(b));
   const title = flowB.find((b) => b.type === 'title');
   const rest = flowB.filter((b) => b !== title);
   const copy = rest.filter((b) => natureOf(b) === 'copy');

@@ -109,7 +109,8 @@ export function importJson(text, { sourceName }) {
 let pdfjs = null;
 async function loadPdfjs() {
   if (pdfjs) return pdfjs;
-  const here = path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+  // bundled as ESM (CLI) and as CJS (app main process)
+  const here = typeof __dirname !== 'undefined' ? __dirname : path.dirname(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
   const cands = [process.env.MOTIF_PDFJS, path.join(here, 'vendor/pdfjs/pdf.mjs'), path.join(here, '../dist/vendor/pdfjs/pdf.mjs'), path.join(here, '../vendor/pdfjs/pdf.mjs'), path.join(here, '../../../node_modules/pdfjs-dist/legacy/build/pdf.mjs'), path.join(process.cwd(), 'node_modules/pdfjs-dist/legacy/build/pdf.mjs')].filter(Boolean);
   const file = cands.find((f) => fs.existsSync(f));
   if (!file) throw new Error('缺少 pdf.js 运行库（vendor/pdfjs）');

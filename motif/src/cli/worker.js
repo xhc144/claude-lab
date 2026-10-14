@@ -7,7 +7,8 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 
-const here = path.dirname(fileURLToPath(import.meta.url));
+// (bundled as ESM for the CLI and as CJS inside the app's main process)
+const here = typeof __dirname !== 'undefined' ? __dirname : path.dirname(fileURLToPath(import.meta.url));
 
 /** Find the app root (folder with package.json whose main is dist/main.cjs) for dev runs. */
 function appRoot() {

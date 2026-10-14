@@ -373,20 +373,27 @@ export const COMPONENTS = {
   image: {
     label: '图片', category: 'media', nature: 'visual',
     summary: '图片：智能裁切、缓慢推拉（Ken Burns）、蒙版与相框。',
-    description: 'asset 为项目资源 ID（motif assets add 导入后获得）；也可写 src 为本地路径或 URL（导入时会复制进项目）。frame: rounded 圆角、circle 圆形、arch 拱形、phone 手机样机、laptop 笔记本样机、browser 浏览器窗口、polaroid 相纸。motion: kenburns 慢推、parallax 视差、none。',
+    description: 'asset 为项目资源 ID（motif assets add 导入后获得）；也可写 src 为本地路径或 URL（导入时会复制进项目）。mount 外框: rounded 圆角、circle 圆形、arch 拱形、phone 手机样机、laptop 笔记本样机、browser 浏览器窗口、polaroid 相纸。move 画面运动: kenburns 慢推、parallax 视差、none。',
     params: {
       asset: P.asset('图片资源 ID'),
       src: P.str('图片路径或 URL（未导入时）'),
       fit: P.enm(['cover', 'contain'], 'cover', '填充方式'),
       focus: P.arr(P.num(''), '焦点 [x,y]（0–1），裁切时保留'),
-      frame: P.enm(['auto', 'none', 'rounded', 'circle', 'arch', 'phone', 'laptop', 'browser', 'polaroid'], 'auto', '外框'),
-      motion: P.enm(['auto', 'kenburns', 'parallax', 'none'], 'auto', '画面运动'),
+      mount: P.enm(['auto', 'none', 'rounded', 'circle', 'arch', 'phone', 'laptop', 'browser', 'polaroid'], 'auto', '外框 / 样机'),
+      move: P.enm(['auto', 'kenburns', 'parallax', 'none'], 'auto', '画面运动'),
       caption: P.rich('图注'),
       overlay: P.num('暗化遮罩 0–1（全屏图上叠字时使用）'),
     },
-    aliases: { photo: {}, picture: {}, img: {}, screenshot: { frame: 'browser', fit: 'contain' } },
-    examples: [{ type: 'image', asset: 'ast_hero', frame: 'rounded', caption: '新版编辑器' }],
-    normalize(b) { if (!b.asset && !b.src && b.url) { b.src = b.url; delete b.url; } if (!b.asset && !b.src && b.file) { b.src = b.file; delete b.file; } return b; },
+    aliases: { photo: {}, picture: {}, img: {}, screenshot: { mount: 'browser', fit: 'contain' } },
+    examples: [{ type: 'image', asset: 'ast_hero', mount: 'rounded', caption: '新版编辑器' }],
+    normalize(b) {
+      if (!b.asset && !b.src && b.url) { b.src = b.url; delete b.url; }
+      if (!b.asset && !b.src && b.file) { b.src = b.file; delete b.file; }
+      // legacy / natural spellings: frame:"phone" is a mount, motion:"kenburns" is camera-like movement
+      if (typeof b.frame === 'string') { b.mount = b.frame; delete b.frame; }
+      if (typeof b.motion === 'string') { b.move = b.motion; delete b.motion; }
+      return b;
+    },
   },
 
   gallery: {
@@ -420,11 +427,12 @@ export const COMPONENTS = {
       asset: P.asset('视频资源 ID', { required: true }),
       trim: P.arr(P.num(''), '[开始, 结束] 秒'),
       fit: P.enm(['cover', 'contain'], 'cover', '填充'),
-      frame: P.enm(['auto', 'none', 'rounded', 'phone', 'laptop', 'browser'], 'auto', '外框'),
+      mount: P.enm(['auto', 'none', 'rounded', 'phone', 'laptop', 'browser'], 'auto', '外框 / 样机'),
       volume: P.num('音量 0–1（导出时混入）'),
     },
     aliases: { clip: {}, footage: {} },
-    examples: [{ type: 'video', asset: 'ast_demo', trim: [2, 8], frame: 'laptop' }],
+    examples: [{ type: 'video', asset: 'ast_demo', trim: [2, 8], mount: 'laptop' }],
+    normalize(b) { if (typeof b.frame === 'string') { b.mount = b.frame; delete b.frame; } return b; },
   },
 
   shape: {

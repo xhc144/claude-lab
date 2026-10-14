@@ -108,7 +108,7 @@ function drawScene(ctx, C, S, lt, o) {
   const ownBg = !C.persistent || S.tone !== 'base' || (S.scene.background && S.scene.background !== 'auto') || o.forceBg;
   if (ownBg) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'under', env.assets);
   ctx.save();
-  cameraTransform(ctx, env, S.camera, lt, S.duration);
+  if (!o.noCamera) cameraTransform(ctx, env, S.camera, lt, S.duration);
   const ds = { sceneT: lt, sceneDur: S.duration, frame: o.frame };
   let scrimDrawn = false;
   for (const it of S.items) {
@@ -179,7 +179,7 @@ function drawChrome(ctx, C, t, S) {
 
 /**
  * Render compiled doc C at time t into ctx. `scale` maps design px → canvas px.
- * opts: { scale, chrome, frame, solo (render only one scene id) }
+ * opts: { scale, chrome, frame, solo (render only one scene id), noCamera (editing: keep blocks where the layout put them) }
  */
 export function renderFrame(ctx, C, t, opts = {}) {
   const { env } = C;
@@ -198,7 +198,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
   if (C.persistent) drawBackground(ctx, env, { ...env.theme.background }, env.palette('base'), t, 'under', env.assets);
   if (act.length === 1) {
     const S = act[0];
-    drawScene(ctx, C, S, opts.solo ? t : t - S.start, { globalT: t, frame: opts.frame });
+    drawScene(ctx, C, S, opts.solo ? t : t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera });
   } else {
     const [A, B] = act;
     const tr = B.transitionIn || { type: 'fade', duration: 0.6 };
@@ -211,7 +211,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
       g.clearRect(0, 0, pw, ph);
       g.setTransform(scale, 0, 0, scale, 0, 0);
       if (!transparentOK && C.persistent && S.tone === 'base' && !(S.scene.background && S.scene.background !== 'auto')) drawBackground(g, env, { ...env.theme.background }, env.palette('base'), t, 'under', env.assets);
-      drawScene(g, C, S, t - S.start, { globalT: t, frame: opts.frame });
+      drawScene(g, C, S, t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera });
     }
     if (transparentOK && (tr.type === 'fade' || tr.type === 'morph')) {
       ctx.save(); ctx.globalAlpha = 1 - EASE.inOutSine(p); ctx.drawImage(la, 0, 0, env.W, env.H); ctx.restore();
