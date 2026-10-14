@@ -49,6 +49,9 @@ if (!cli) {
   process.exit(127);
 }
 const command = cli.command === 'node' ? process.execPath : cli.command;
-const child = spawn(command, [...(cli.args || []), ...process.argv.slice(2)], { stdio: 'inherit', env: { ...process.env, ...(cli.env || {}) }, shell: !!cli.shell });
+// Windows refuses to spawn .cmd/.bat without a shell (CVE-2024-27980); quote for cmd.exe then
+const viaShell = !!cli.shell || /\.(cmd|bat)$/i.test(command);
+const q = (a) => (viaShell && /[\s"&|<>^]/.test(a) ? `"${String(a).replace(/"/g, '""')}"` : a);
+const child = spawn(q(command), [...(cli.args || []), ...process.argv.slice(2)].map(q), { stdio: 'inherit', env: { ...process.env, ...(cli.env || {}) }, shell: viaShell });
 child.on('exit', (code, sig) => process.exit(sig ? 1 : code ?? 1));
 child.on('error', (e) => { console.error(`无法启动 Motif CLI：${e.message}`); process.exit(127); });

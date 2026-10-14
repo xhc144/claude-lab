@@ -159,6 +159,7 @@ function Integrations() {
       </div>
       <h4 style={{ margin: '4px 0 8px', color: 'var(--fg0)' }}>2 · 命令行（CLI）</h4>
       <CopyBox text={`${info.cli} --help`} />
+      {info.cliPath ? <div className="dim" style={{ fontSize: 11.5, marginTop: 6 }}>安装时已加入用户 PATH（新开的终端窗口生效）：<span className="mono">{info.cliPath}</span></div> : null}
       <div style={{ height: 18 }} />
       <h4 style={{ margin: '4px 0 8px', color: 'var(--fg0)' }}>3 · MCP 服务器</h4>
       <div className="dim" style={{ marginBottom: 6 }}>Claude Code：</div>

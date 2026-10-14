@@ -208,11 +208,13 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
   });
 
   function cliInfo() {
-    // Packaged: Motif.exe runs the bundled CLI as Node (ELECTRON_RUN_AS_NODE); dev: node bin/motif.mjs.
+    // Packaged: Motif.exe runs the bundled CLI as Node (ELECTRON_RUN_AS_NODE). Agents and MCP
+    // clients get that direct form: since CVE-2024-27980, spawning a .cmd without a shell fails.
+    // People in a terminal use the motif.cmd shim (on PATH after installation).
     if (app.isPackaged) {
       const shim = path.join(path.dirname(process.execPath), process.platform === 'win32' ? 'motif.cmd' : 'motif');
       const cli = path.join(process.resourcesPath, 'app.asar.unpacked', 'dist', 'cli.mjs');
-      return { command: fs.existsSync(shim) ? shim : process.execPath, args: fs.existsSync(shim) ? [] : [cli], env: fs.existsSync(shim) ? {} : { ELECTRON_RUN_AS_NODE: '1' }, shim: fs.existsSync(shim) ? shim : null };
+      return { command: process.execPath, args: [cli], env: { ELECTRON_RUN_AS_NODE: '1' }, shim: fs.existsSync(shim) ? shim : null };
     }
     const bin = path.resolve(distDir, '..', 'bin', 'motif.mjs');
     return { command: 'node', args: [bin], env: {}, shim: null };
@@ -220,15 +222,17 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
 
   function integrationInfo() {
     const c = cliInfo();
-    const quote = (s) => (/\s/.test(s) ? `"${s}"` : s);
-    const cmdline = [c.command, ...c.args].map(quote).join(' ');
+    const quote = (s) => (/[\s"]/.test(s) ? `"${s}"` : s);
+    const direct = [c.command, ...c.args].map(quote).join(' ');
+    const envFlags = Object.entries(c.env).map(([k, v]) => `-e ${k}=${v} `).join('');
     const mcpJson = { mcpServers: { motif: { command: c.command, args: [...c.args, 'mcp'], ...(Object.keys(c.env).length ? { env: c.env } : {}) } } };
     const skillSrc = skillSource();
     return {
-      cli: cmdline,
+      cli: c.shim ? 'motif' : direct,
+      cliPath: c.shim,
       mcpJson,
-      claudeCode: `claude mcp add motif -- ${cmdline} mcp`,
-      codex: `[mcp_servers.motif]\ncommand = ${JSON.stringify(c.command)}\nargs = ${JSON.stringify([...c.args, 'mcp'])}${Object.keys(c.env).length ? `\nenv = { ELECTRON_RUN_AS_NODE = "1" }` : ''}`,
+      claudeCode: `claude mcp add motif ${envFlags}-- ${direct} mcp`,
+      codex: `[mcp_servers.motif]\ncommand = ${JSON.stringify(c.command)}\nargs = ${JSON.stringify([...c.args, 'mcp'])}${Object.keys(c.env).length ? `\nenv = { ${Object.entries(c.env).map(([k, v]) => `${k} = "${v}"`).join(', ')} }` : ''}`,
       skill: skillSrc,
       skillTargets: [
         { id: 'claude', label: 'Claude Code（~/.claude/skills/motif）', dir: path.join(os.homedir(), '.claude', 'skills', 'motif') },
