@@ -250,7 +250,7 @@ ScaledBorderAndShadow: yes
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
 Style: Main,{main_font},{66 if lang == 'zh' else 54},&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,{2 if lang == 'zh' else 0},0,1,3.5,0,2,120,120,{40 if lang == 'zh' else 58},1
-Style: Q,Inter,{50 if lang == 'zh' else 54},{FLIP_ASS},&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3.5,0,2,120,120,{104 if lang == 'zh' else 58},1
+Style: Q,Inter,{50 if lang == 'zh' else 54},{FLIP_ASS},&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3.5,0,2,120,120,{124 if lang == 'zh' else 58},1
 Style: QZ,Noto Sans CJK SC,56,&H00E6E6E6,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,1,0,1,3.5,0,2,120,120,36,1
 Style: Vocab,Inter,38,{SQ_ASS},&H00FFFFFF,&H00101010,&H90000000,0,0,0,0,100,100,0,0,1,3,0,2,60,60,10,1
 
@@ -260,7 +260,7 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
     ev, srt = [], []
 
     def add(start, end, style, text, layer=0):
-        ev.append(f"Dialogue: {layer},{ass_time(start)},{ass_time(end)},{style},,0,0,0,,{text}")
+        ev.append([start, end, style, text, layer])
 
     for sid, t0 in seg_starts:
         tm = timing[sid]
@@ -303,7 +303,20 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
         missing = [w for w in vocab if w not in shown_vocab]
         if missing and events:
             add(events[0][0], events[-1][1] + 0.4, "Vocab", gloss_line(missing, glossary), layer=2)
-    return header + "\n".join(ev) + "\n", srt
+    # no two caption events may overlap in time (libass would push the later one up and keep it there);
+    # a question and its translation start together and are treated as one pair
+    def clamp(rows):
+        rows.sort(key=lambda r: r[0])
+        for i, r in enumerate(rows):
+            nxt = [q[0] for q in rows[i + 1:] if q[0] > r[0] + 1e-3]
+            if nxt:
+                r[1] = min(r[1], nxt[0] - 0.02)
+    clamp([r for r in ev if r[2] in ("Main", "Q", "QZ")])
+    clamp([r for r in ev if r[2] == "Vocab"])
+    srt.sort(key=lambda r: r[0])
+    srt = [(a, min(b, srt[i + 1][0] - 0.02) if i + 1 < len(srt) else b, t) for i, (a, b, t) in enumerate(srt)]
+    lines = [f"Dialogue: {l},{ass_time(a)},{ass_time(b)},{st},,0,0,0,,{t}" for a, b, st, t, l in sorted(ev, key=lambda r: r[0])]
+    return header + "\n".join(lines) + "\n", srt
 
 
 # ------------------------------------------------------------------ main
@@ -373,7 +386,8 @@ def main():
                     "-i", str(work / "chapters.ffmeta"), "-map_metadata", "2", "-map_chapters", "2",
                     "-vf", f"ass={ass_path}", "-map", "0:v", "-map", "1:a",
                     "-c:v", "libx264", "-preset", args.preset, "-crf", str(args.crf), "-tune", "animation",
-                    "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k", "-shortest", "-movflags", "+faststart",
+                    "-pix_fmt", "yuv420p", "-af", "loudnorm=I=-16:TP=-1.5:LRA=11", "-ar", "48000",
+                    "-c:a", "aac", "-b:a", "128k", "-shortest", "-movflags", "+faststart",
                     str(out / f"{NAME}_{lang}.mp4")], check=True)
     print("wrote", out / f"{NAME}_{lang}.mp4")
 
