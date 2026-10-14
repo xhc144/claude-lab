@@ -48,9 +48,9 @@ class S5(VScene):
             t = T(title, 36, c, weight=BOLD)
             s = T(sub, 26, INK)
             groups.add(VGroup(art, t, s).arrange(DOWN, buff=0.3))
-        groups.arrange(RIGHT, buff=0.7, aligned_edge=UP).shift(DOWN * 0.4)
-        if groups.width > 13.4:
-            groups.scale_to_fit_width(13.4)
+        groups.arrange(RIGHT, buff=0.55, aligned_edge=UP).shift(DOWN * 0.4)
+        if groups.width > 12.6:
+            groups.scale_to_fit_width(12.6)
         for g, sid in zip(groups, ("s5_02", "s5_03", "s5_04")):
             with self.say(sid) as d:
                 self.play(FadeIn(g[1], shift=UP * 0.2), run_time=0.8)

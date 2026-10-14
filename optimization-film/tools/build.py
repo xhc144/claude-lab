@@ -52,7 +52,7 @@ def duration(p):
 
 def chunks(text, limit=19):
     """按标点把一段旁白切成适合一行显示的小句。"""
-    parts = re.findall(r"[^，。；：？！、]+[，。；：？！、]?", text)
+    parts = re.findall(r"[^，。；：？！]+[，。；：？！]?", text)
     out, cur = [], ""
     for p in parts:
         if cur and len(cur) + len(p) > limit:
@@ -68,7 +68,7 @@ def chunks(text, limit=19):
             res.append(c[:limit])
             c = c[limit:]
         res.append(c)
-    return [c.rstrip("，。；：、") for c in res if c.strip("，。；：、")]
+    return [c.rstrip("，。；：") for c in res if c.strip("，。；：")]
 
 
 def ass_time(t):
@@ -87,7 +87,7 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Noto Sans CJK SC,44,&H00F5EDE9,&H00F5EDE9,&H00201310,&H96000000,0,0,0,0,100,100,1,0,1,2.6,0.8,2,80,80,38,1
+Style: Default,Noto Sans CJK SC,50,&H00F5EDE9,&H00F5EDE9,&H00201310,&H96000000,0,0,0,0,100,100,1,0,1,2.8,0.8,2,80,80,40,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
