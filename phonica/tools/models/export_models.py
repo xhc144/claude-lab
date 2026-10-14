@@ -56,10 +56,15 @@ def main():
     if id2label and any(real(v) for v in id2label.values()):
         labels = {int(k): v for k, v in id2label.items()}
     else:
-        from transformers import AutoTokenizer
+        # read vocab.json directly (phoneme tokenizers need the phonemizer backend to load)
+        from huggingface_hub import hf_hub_download
 
-        tok = AutoTokenizer.from_pretrained(model_id)
-        labels = {i: t for t, i in tok.get_vocab().items()}
+        vocab_repo = model_id
+        for a in sys.argv[4:]:
+            if a.startswith("--vocab-repo="):
+                vocab_repo = a.split("=", 1)[1]
+        with open(hf_hub_download(vocab_repo, "vocab.json"), encoding="utf-8") as fh:
+            labels = {i: t for t, i in json.load(fh).items()}
     vocab = [labels.get(i, f"<{i}>") for i in range(config.vocab_size)]
 
     torch.manual_seed(0)

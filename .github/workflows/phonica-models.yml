@@ -44,10 +44,10 @@ jobs:
         include:
           - id: charsiu/en_w2v2_fc_10ms
             short: en_w2v2_fc_10ms
-            flags: ''
+            flags: '--vocab-repo=charsiu/tokenizer_en_cmu'
           - id: charsiu/en_w2v2_ctc_libris_and_cv
             short: en_w2v2_ctc_libris_and_cv
-            flags: ''
+            flags: '--vocab-repo=charsiu/tokenizer_en_cmu'
           - id: facebook/wav2vec2-lv-60-espeak-cv-ft
             short: w2v2_lv60_espeak_cv_ft
             flags: ''
