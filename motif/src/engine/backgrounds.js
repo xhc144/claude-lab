@@ -279,9 +279,9 @@ const GEN = {
       }
       // sun / moon disk
       ctx.save();
-      ctx.globalAlpha = p.dark ? 0.12 : 0.1;
+      ctx.globalAlpha = p.dark ? 0.08 : 0.065;
       ctx.fillStyle = p.accent;
-      ctx.beginPath(); ctx.arc(W * 0.8, H * 0.26, Math.min(W, H) * 0.11, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(W * 0.86, H * 0.2, Math.min(W, H) * 0.085, 0, TAU); ctx.fill();
       ctx.restore();
     },
     over(ctx, e) { drawGrain(ctx, e.W, e.H, e.spec.grain ?? 0.05, 0, e.fps, e.p.dark); vignette(ctx, e.W, e.H, e.p.dark ? 0.4 : 0.12, '#3b2a14'); },

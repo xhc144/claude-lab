@@ -21,6 +21,9 @@ export function chromiumPath() {
 }
 
 const doc = JSON.parse(fs.readFileSync(docFile, 'utf8'));
+if (opt('theme')) doc.theme = opt('theme');
+if (opt('aspect')) doc.format = opt('aspect');
+const tag = opt('tag', '');
 const srv = await serve({ '/': path.join(root, 'dist'), '/project/': path.dirname(path.resolve(docFile)) });
 const browser = await chromium.launch({ executablePath: chromiumPath(), args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage({ viewport: { width: 1000, height: 600 } });
@@ -35,7 +38,7 @@ let times = [];
 const tArg = opt('times');
 if (tArg) times = tArg.split(',').map(Number);
 if (args.includes('--sheet') || !times.length) times.push(...info.scenes.map((s) => s.settled));
-const name = path.basename(docFile, '.json');
+const name = path.basename(docFile, '.json') + (tag ? '-' + tag : '');
 let k = 0;
 for (const t of times) {
   const data = await page.evaluate((tt) => MotifHost.png(tt), t);

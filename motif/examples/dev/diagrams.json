@@ -1,0 +1,16 @@
+{
+  "title": "信息图测试",
+  "theme": "corporate",
+  "scenes": [
+    { "title": "三套方案对比", "table": { "columns": ["方案", "成本", "周期", "风险", "得分"], "rows": [["自研", "高", "9 个月", "中", "72"], ["采购", "中", "2 个月", "低", "88"], ["合作", "低", "4 个月", "中", "81"]], "highlight": { "row": 1 } } },
+    { "title": "发展历程", "timeline": { "items": [{ "date": "2019", "title": "公司创立", "text": "三人团队起步" }, { "date": "2021", "title": "A 轮融资", "text": "红杉领投" }, { "date": "2023", "title": "用户破百万" }, { "date": "2025", "title": "全球化", "text": "进入 30 个国家" }], "highlight": 3 } },
+    { "title": "从素材到成片只需四步", "steps": { "items": [{ "title": "导入素材", "text": "PPT、PDF、Excel", "icon": "file-up" }, { "title": "自动设计", "text": "主题与版式", "icon": "wand-sparkles" }, { "title": "精修", "text": "时间线微调", "icon": "sliders-horizontal" }, { "title": "导出", "text": "MP4 / GIF / HTML", "icon": "film" }] } },
+    { "title": "核心能力", "features": { "items": [{ "icon": "gauge", "title": "更快", "text": "渲染速度提升 4 倍" }, { "icon": "palette", "title": "更美", "text": "10 套专业主题" }, { "icon": "bot", "title": "更智能", "text": "AI 一键成片" }] } },
+    { "title": "过去 vs 现在", "compare": { "columns": [{ "title": "过去", "items": ["手动排版 3 天", "图表靠截图", "改一处重做一遍"] }, { "title": "现在", "items": ["自动成片 3 分钟", "数据驱动动画", "改内容即时更新"] }], "winner": 1 } },
+    { "title": "系统架构", "flow": { "nodes": [{ "id": "in", "label": "素材导入", "icon": "files" }, { "id": "ai", "label": "AI 分析", "icon": "brain" }, { "id": "doc", "label": "项目文档", "icon": "file-json" }, { "id": "eng", "label": "渲染引擎", "icon": "cpu" }, { "id": "ui", "label": "可视化编辑器", "icon": "monitor" }, { "id": "out", "label": "视频成片", "icon": "clapperboard" }], "edges": [["in", "ai"], ["ai", "doc"], ["ui", "doc"], ["doc", "eng"], ["eng", "out"]] } },
+    { "title": "产品架构", "hierarchy": { "root": { "label": "律影", "children": [{ "label": "引擎", "children": [{ "label": "排版" }, { "label": "动画" }, { "label": "渲染" }] }, { "label": "接口", "children": [{ "label": "CLI" }, { "label": "MCP" }] }, { "label": "编辑器", "children": [{ "label": "时间线" }, { "label": "检查器" }] }] } } },
+    { "title": "优先级矩阵", "matrix": { "axes": { "xLabel": "投入", "yLabel": "价值" }, "quadrants": ["重点投入", "战略项目", "快速见效", "暂缓"], "items": [{ "label": "自动成片", "x": 0.3, "y": 0.85 }, { "label": "3D 场景", "x": 0.8, "y": 0.7 }, { "label": "主题商店", "x": 0.25, "y": 0.3 }], "highlight": 0 } },
+    { "title": "需求层次", "pyramid": { "items": [{ "title": "自我实现", "text": "创造力、价值" }, { "title": "尊重" }, { "title": "社交" }, { "title": "安全" }, { "title": "生理" }] } },
+    { "title": "迭代循环", "steps": { "style": "circle", "items": [{ "title": "构思", "icon": "lightbulb" }, { "title": "制作", "icon": "pencil" }, { "title": "预览", "icon": "eye" }, { "title": "检查", "icon": "circle-check" }, { "title": "发布", "icon": "send" }] } }
+  ]
+}

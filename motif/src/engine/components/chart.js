@@ -134,13 +134,14 @@ class ChartCtx {
     const cs = this.cs, p = this.p;
     if (cs.hatch) {
       ctx.fillStyle = toCss(color, 0.18); ctx.fill();
+      ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, this.u * 2); ctx.stroke();
       ctx.save(); ctx.clip();
       ctx.strokeStyle = toCss(color, 0.55); ctx.lineWidth = Math.max(1, this.u * 1.4);
       const s = 9 * this.u;
       ctx.beginPath();
       for (let k = -box.h; k < box.w + box.h; k += s) { ctx.moveTo(box.x + k, box.y + box.h); ctx.lineTo(box.x + k + box.h, box.y); }
       ctx.stroke(); ctx.restore();
-      ctx.strokeStyle = color; ctx.lineWidth = Math.max(1.5, this.u * 2); ctx.stroke();
+      ctx.beginPath();
       return;
     }
     if (cs.glow && p.gradient && p.tone === 'base') {

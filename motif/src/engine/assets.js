@@ -9,6 +9,34 @@ export class AssetStore {
     this.pending = new Map();
     this.doc = null;
     this.extra = new Map();
+    this.videos = new Map();
+  }
+
+  /** Seekable video track: { element, ready, seek(seconds) → Promise }. */
+  video(ref) {
+    const url = this.urlFor(ref);
+    if (!url || typeof document === 'undefined') return null;
+    let tr = this.videos.get(url);
+    if (!tr) {
+      const el = document.createElement('video');
+      el.muted = true; el.playsInline = true; el.preload = 'auto'; el.crossOrigin = 'anonymous';
+      const ready = new Promise((r) => { el.addEventListener('loadeddata', r, { once: true }); el.addEventListener('error', r, { once: true }); setTimeout(r, 15000); });
+      el.src = url;
+      tr = {
+        element: el, ready,
+        seek: (time) => new Promise((res) => {
+          const target = Math.max(0, Math.min(time, (el.duration || time + 1) - 0.02));
+          if (el.readyState >= 2 && Math.abs(el.currentTime - target) < 0.004) return res();
+          const done = () => { el.removeEventListener('seeked', done); res(); };
+          el.addEventListener('seeked', done);
+          el.currentTime = target;
+          setTimeout(done, 3000);
+        }),
+      };
+      this.videos.set(url, tr);
+      this.pending.set('v:' + url, ready.then(() => { this.pending.delete('v:' + url); this.onLoad(url); }));
+    }
+    return tr;
   }
 
   setDocument(doc) { this.doc = doc; }

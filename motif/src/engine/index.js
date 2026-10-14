@@ -85,6 +85,7 @@ export class MotifEngine {
     for (const s of doc.scenes) for (const b of s.blocks) {
       const comp = getComponent(b.type);
       if (comp?.prepare) jobs.push(Promise.resolve(comp.prepare(b, { assets: this.assets, doc })).catch((e) => console.warn(e)));
+      if (b.type === 'video' && b.asset) this.assets.video(b.asset);
       if (b.type === 'image' || b.type === 'gallery') {
         const refs = b.type === 'image' ? [b.asset ? b.asset : b.src ? { src: b.src } : null] : (b.images || []);
         refs.filter(Boolean).forEach((r) => this.assets.image(r));
@@ -98,6 +99,16 @@ export class MotifEngine {
   _recompile() {
     if (!this.doc) return;
     this.C = compile(this.doc, { te: this.te, assets: this.assets, userThemes: this.userThemes, cache: this.cache });
+  }
+
+  /** Seek embedded videos to the frame at time t (await before rendering exported frames). */
+  async prepareFrame(t) {
+    if (!this.C) return;
+    const jobs = [];
+    for (const S of activeScenes(this.C, t)) for (const it of S.items) {
+      if (it.inst.track && it.inst.videoTime) jobs.push(it.inst.track.seek(it.inst.videoTime(t - S.start - it.start)));
+    }
+    if (jobs.length) await Promise.all(jobs);
   }
 
   get duration() { return this.C?.duration || 0; }

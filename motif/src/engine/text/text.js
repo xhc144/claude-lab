@@ -200,7 +200,8 @@ export class TextEngine {
   }
 }
 
-function breakLines(units, maxWidth) {
+function breakLines(unitsIn, maxWidth) {
+  const units = unitsIn.slice(); // hard-breaking inserts fragments; never mutate the caller's array
   const lines = [];
   let cur = [], w = 0, lastBreak = -1;
   const pushLine = (arr) => {
