@@ -175,7 +175,9 @@ async function runSelfTest() {
     const r: any = await engine.request('assess', { text: 'I think the weather is very nice today.', accent: 'us', mode: 'sentence', samples: w.samples, sampleRate: w.sampleRate });
     store!.save(r, w.samples, w.sampleRate);
     const think = r.words.find((x: any) => x.spoken === 'think');
-    return { thinkScore: think?.score, thPhone: think?.phones[0], scores: r.scores };
+    const very = r.words.find((x: any) => x.spoken === 'very');
+    if (very?.phones[0]?.error?.heard !== 'W') throw new Error(`/v/→/w/ in "very" not reported: ${JSON.stringify(very?.phones[0])}`);
+    return { thinkScore: think?.score, thPhone: think?.phones[0], veryScore: very?.score, vPhone: very?.phones[0], scores: r.scores };
   });
   await step('tts', async () => {
     const r: any = await engine.request('tts', { text: 'Hello, how are you today?', voice: 'bf_emma', speed: 1, align: true });

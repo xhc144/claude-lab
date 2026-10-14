@@ -13,7 +13,7 @@ const MODE: Record<string, string> = { word: '单词', sentence: '句子', passa
 function phoneCell(w: WordResult): string {
   return w.phones
     .map((p) => {
-      const e = p.error ? `,${ERR[p.error.type]}${p.error.heardIpa ? '→/' + p.error.heardIpa + '/' : ''}` : '';
+      const e = p.error ? `,${ERR[p.error.type]}${p.error.heardIpa ? '→/' + p.error.heardIpa + '/' : ''}${p.error.confirmed ? '（双模型确认）' : ''}` : '';
       return `/${p.ipa}/ ${p.score}${e}`;
     })
     .join(' · ');
@@ -164,7 +164,7 @@ export function compactForAi(r: AssessmentResult) {
       heard: w.heard,
       stress: w.stress ? { expected: w.stress.expected + 1, detected: w.stress.detected + 1, correct: w.stress.correct } : undefined,
       pauseAfter: w.pauseAfter,
-      phones: w.phones.map((p) => ({ ipa: p.ipa, t: p.start < 0 ? null : [p.start, p.end], score: p.score, error: p.error ? { type: p.error.type, heard: p.error.heardIpa } : undefined })),
+      phones: w.phones.map((p) => ({ ipa: p.ipa, t: p.start < 0 ? null : [p.start, p.end], score: p.score, error: p.error ? { type: p.error.type, heard: p.error.heardIpa, ...(p.error.confirmed ? { confirmed: true } : {}) } : undefined })),
       notes: w.notes.length ? w.notes : undefined,
     })),
     fluency: { ...r.fluency, pauses: r.fluency.pauses.map((p) => ({ after: r.words[p.afterWord]?.text, at: p.start, dur: p.duration, kind: p.kind, disfluent: p.disfluent })) },
@@ -178,7 +178,7 @@ export const SCHEMA_NOTES = {
   scores: '0–100. overall/accuracy/fluency/prosody are regression outputs calibrated on speechocean762 expert ratings (×10); completeness = % of reference words detected; stress = % of multi-syllable words whose most prominent syllable matches the dictionary primary stress; intonation = % of sentences whose final pitch movement matches the sentence type.',
   'words[].phones[].score': '0–100 phone accuracy (speechocean762 0–2 scale × 50). ≥80 good, 60–79 fair, <60 poor (flagged as an error).',
   'words[].phones[].gop': 'lpp/lpr: mean log posterior / log posterior ratio from the 10 ms phone classifier (charsiu en_w2v2_fc_10ms) over the aligned segment; frameAcc: share of frames where the target phone is the arg-max; ctc: log P(canonical) − log P(best substitution or deletion) from the CTC phoneme recogniser (wav2vec2-lv-60-espeak-cv-ft); ctcPeak: peak posterior of the target phone inside the word.',
-  'words[].phones[].error': 'type: substitution (heard = most likely produced phone), deletion, distortion (poor match without a clear substitute).',
+  'words[].phones[].error': 'type: substitution (heard = most likely produced phone), deletion, distortion (poor match without a clear substitute). confirmed = true when both acoustic models (frame classifier and CTC recognizer) independently heard the same substitute; such phones are capped at 79.',
   'words[].heard': 'free (text-independent) phoneme recognition of the word region, espeak IPA.',
   'words[].stress': 'syllables[].prominence combines z-scored vowel intensity, pitch and normalised duration.',
   fluency: 'times in seconds; pauses are gaps ≥ 0.15 s between words; boundary = after punctuation; disfluent = inside a phrase ≥ 0.3 s, filled, or very long.',

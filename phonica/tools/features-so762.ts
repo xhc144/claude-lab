@@ -8,6 +8,7 @@ import { phoneFeatures, wordFeatures, sentenceFeatures, Mlp } from '../src/engin
 import { PHONES, isVowel, stripStress } from '../src/engine/phones.ts';
 import { FUNCTION_WORDS } from '../src/engine/text.ts';
 import type { PhoneEvidence } from '../src/engine/gop.ts';
+import { salientSubstitution, neighbourPhone, SALIENT_SUB_CAP, SALIENT_SUB_WORD_CAP } from '../src/engine/substitution.ts';
 
 const [phase, dumpPath, a3, a4] = process.argv.slice(2);
 const lines = readFileSync(dumpPath, 'utf8').trim().split('\n').map((l) => JSON.parse(l));
@@ -70,6 +71,7 @@ if (phase === 'phone') {
   const wordModel = partial.word ? new Mlp(partial.word) : null;
   const WX: number[][] = [];
   const WY: number[] = [];
+  const WF: number[] = [];
   const SX: number[][] = [];
   const SY: number[][] = [];
   const ids: string[] = [];
@@ -77,7 +79,18 @@ if (phase === 'phone') {
     const { timed, flu, rateFactor } = analyse(u);
     const rows = phoneRows(u, rateFactor);
     const pred = new Map<string, number>();
-    for (const r of rows) pred.set(`${r.w}:${r.p}`, phoneModel.predict(r.x));
+    const flaggedWords = new Set<number>();
+    // same post-processing as the app: salient learner substitutions stay out of the good band
+    const nb = u.words.map((w: any) => ({ skipped: w.skipped, phones: w.phones.map((p: any) => ({ arpa: p.p })) }));
+    for (const r of rows) {
+      const ph = u.words[r.w].phones[r.p];
+      let y = phoneModel.predict(r.x);
+      if (ph.ctc && salientSubstitution(stripStress(ph.p), ph.ctc.a, ph.ev.comp, ph.ev.lpr, ph.ctc.g, neighbourPhone(nb, r.w, r.p, -1), neighbourPhone(nb, r.w, r.p, 1))) {
+        y = Math.min(y, SALIENT_SUB_CAP);
+        flaggedWords.add(r.w);
+      }
+      pred.set(`${r.w}:${r.p}`, y);
+    }
     const allPhone: number[] = [];
     const allLpr: number[] = [];
     const wordScores: number[] = [];
@@ -91,9 +104,11 @@ if (phase === 'phone') {
       const x = wordFeatures({ phoneScores: ps, phoneLpr: lprs, phoneFrameAcc: fas, skipped: w.skipped, isFunction: FUNCTION_WORDS.has(w.text.toLowerCase()), durSec: (w.end - w.start) * u.hop, expectedSec: expected });
       WX.push(x.map((v) => Math.round(v * 1000) / 1000));
       WY.push(w.acc);
+      WF.push(flaggedWords.has(wi) ? 1 : 0);
       allPhone.push(...ps);
       allLpr.push(...lprs);
-      wordScores.push(wordModel ? wordModel.predict(x) : (ps.reduce((a: number, b: number) => a + b, 0) / Math.max(1, ps.length)) * 5);
+      const ws = wordModel ? wordModel.predict(x) : (ps.reduce((a: number, b: number) => a + b, 0) / Math.max(1, ps.length)) * 5;
+      wordScores.push(flaggedWords.has(wi) ? Math.min(ws, SALIENT_SUB_WORD_CAP) : ws);
     });
     const pw: ProsodyWord[] = u.words.map((w: any, i: number) => ({
       index: i, skipped: w.skipped, isFunction: timed[i].isFunction, start: w.start * u.hop, end: w.end * u.hop,
@@ -108,6 +123,6 @@ if (phase === 'phone') {
     SY.push([u.acc, u.flu, u.pro, u.comp, u.total]);
     ids.push(u.id);
   }
-  writeFileSync(a4, JSON.stringify({ WX, WY, SX, SY, ids }));
+  writeFileSync(a4, JSON.stringify({ WX, WY, WF, SX, SY, ids }));
   console.error(`word rows ${WX.length}, sentence rows ${SX.length}`);
 }

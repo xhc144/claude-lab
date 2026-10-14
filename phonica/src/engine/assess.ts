@@ -12,6 +12,7 @@ import { resample } from './wav.ts';
 import { frameEnergyDb, pitchYin, formants, HOP_SEC } from './dsp.ts';
 import { fluencyStats, type TimedWord } from './fluency.ts';
 import { prosodyStats, type ProsodyWord } from './prosody.ts';
+import { salientSubstitution, neighbourPhone, SALIENT_SUB_CAP, SALIENT_SUB_WORD_CAP } from './substitution.ts';
 import { loadScoring, phoneFeatures, wordFeatures, sentenceFeatures, type ScoringModels } from './scoring.ts';
 import { PHONES, PHONE_LIST, isVowel, phoneIpa, pronIpa, stripStress, substitutionAdvice, formatEspeakIpa, syllabify } from './phones.ts';
 import type { AssessRequest, AssessmentResult, Issue, PhoneResult, WordResult, Accent, VowelPoint } from '../shared/types.ts';
@@ -252,22 +253,36 @@ export class Engine {
     progress?.('score', 0.75);
     const sc = this.scoring;
     const phoneScore: number[][] = [];
+    const salientSub: Array<Array<'both' | 'ctc' | null>> = [];
     const wordScore: number[] = [];
     pw.forEach((w, wi) => {
       const cw = ctcWords[wi];
       const lprs = w.phones.map((p) => (p.ev ? p.ev.lpr : -20));
       const wm = lprs.reduce((a, b) => a + b, 0) / Math.max(1, lprs.length);
       const wmin = Math.min(...lprs);
+      const conf: Array<'both' | 'ctc' | null> = w.phones.map(() => null);
       const ps = w.phones.map((p, pi) => {
         if (!p.ev) return 0;
         const c = cw?.phones[pi];
         const x = phoneFeatures({ arpa: p.arpa, ev: p.ev, durSec: p.end - p.start, prevLpr: pi > 0 ? lprs[pi - 1] : null, nextLpr: pi + 1 < lprs.length ? lprs[pi + 1] : null, wordMeanLpr: wm, wordMinLpr: wmin, rateFactor, ctc: c ? { gop: c.gop, del: c.delMargin, peak: c.peak } : null, wordCtcLL: cw ? cw.llPerFrame : null });
-        return sc ? sc.phone.predict(x) : Math.max(0, Math.min(2, 2 + p.ev.lpr / 2));
+        const pred = sc ? sc.phone.predict(x) : Math.max(0, Math.min(2, 2 + p.ev.lpr / 2));
+        // speechocean762 raters often accept the classic learner substitutions (/θ/→/s/,
+        // /v/→/w/, /ð/→/z/ …). When the acoustic evidence clearly shows one, report it
+        // and keep the phone out of the "good" band.
+        const fcComp = p.ev.competitor >= 0 ? this.model.labels[p.ev.competitor] : '';
+        const sub = c ? salientSubstitution(stripStress(p.arpa), c.alt, fcComp, p.ev.lpr, c.gop, neighbourPhone(pw, wi, pi, -1), neighbourPhone(pw, wi, pi, 1)) : null;
+        if (sub) {
+          conf[pi] = sub;
+          return Math.min(pred, SALIENT_SUB_CAP);
+        }
+        return pred;
       });
       phoneScore.push(ps);
+      salientSub.push(conf);
       const expected = w.pron.phones.reduce((s, p) => s + (PHONES[stripStress(p)]?.meanDurMs ?? 80) / 1000, 0) / rateFactor;
       const wx = wordFeatures({ phoneScores: ps, phoneLpr: lprs, phoneFrameAcc: w.phones.map((p) => p.ev?.frameAcc ?? 0), skipped: w.skipped, isFunction: FUNCTION_WORDS.has(w.unit.word), durSec: w.end - w.start, expectedSec: expected });
-      wordScore.push(w.skipped ? 0 : sc ? sc.word.predict(wx) : (ps.reduce((a, b) => a + b, 0) / Math.max(1, ps.length)) * 5);
+      const ws = w.skipped ? 0 : sc ? sc.word.predict(wx) : (ps.reduce((a, b) => a + b, 0) / Math.max(1, ps.length)) * 5;
+      wordScore.push(conf.some(Boolean) ? Math.min(ws, SALIENT_SUB_WORD_CAP) : ws);
     });
 
     // ---- prosody ----
@@ -335,7 +350,7 @@ export class Engine {
       const w = pw[i];
       const ipa = await this.wordIpa(w.unit.word, w.unit.prons);
       const cw = ctcWords[i];
-      const phones: PhoneResult[] = w.phones.map((p, pi) => this.phoneResult(p, phoneScore[i][pi], w.skipped, accent, cw?.phones[pi] ?? null));
+      const phones: PhoneResult[] = w.phones.map((p, pi) => this.phoneResult(p, phoneScore[i][pi], w.skipped, accent, cw?.phones[pi] ?? null, salientSub[i][pi]));
       const ws = Math.round(wordScore[i] * 10);
       const stressInfo = pro.stress.find((s) => s.index === i);
       const syl = syllabify(w.pron.phones);
@@ -470,7 +485,7 @@ export class Engine {
     return result;
   }
 
-  private phoneResult(p: { arpa: string; start: number; end: number; ev: PhoneEvidence | null }, pred: number, skipped: boolean, accent: Accent, ctc: { gop: number; delMargin: number; alt: string; peak: number } | null): PhoneResult {
+  private phoneResult(p: { arpa: string; start: number; end: number; ev: PhoneEvidence | null }, pred: number, skipped: boolean, accent: Accent, ctc: { gop: number; delMargin: number; alt: string; peak: number } | null, salient: 'both' | 'ctc' | null = null): PhoneResult {
     const base = stripStress(p.arpa);
     const ipa = phoneIpa(p.arpa, accent);
     if (skipped || !p.ev) {
@@ -494,9 +509,12 @@ export class Engine {
     };
     if (comp) r.closest = { arpa: comp, ipa: compIpa, margin: round2(useCtc ? ctc!.gop : ev.margin) };
     const deleted = (ctc ? ctc.alt === 'DEL' && ctc.gop < -1 : false) || ev.silFrac >= 0.6 || (ev.frames <= 3 && ev.lpr < -4);
-    // thresholds chosen on held-out speechocean762 speakers: < 60 flags ~5 % of phones
-    // with ~0.55 precision against expert labels; 60–79 is shown as "fair"
-    if (score < 80) {
+    // thresholds chosen on held-out speechocean762 training speakers; on the test set
+    // < 60 flags ~4 % of phones (61 % of them rated wrong by the experts), < 80 ~10 %
+    if (salient && ctc) {
+      const basis = salient === 'both' ? `两个独立的声学模型都把这个音听成了 /${compIpa}/。` : `音素识别模型明确把这个音听成了 /${compIpa}/。`;
+      r.error = { type: 'substitution', heard: ctc.alt, heardIpa: compIpa, ...(salient === 'both' ? { confirmed: true } : {}), advice: basis + substitutionAdvice(base, ctc.alt) };
+    } else if (score < 80) {
       if (deleted && score < 60) {
         r.error = { type: 'deletion', advice: `/${ipa}/ 几乎没有发出来（漏音）。${PHONES[base]?.tip ?? ''}` };
         if (score < 40) r.rating = 'missing';
@@ -590,7 +608,7 @@ function buildIssues(r: AssessmentResult, fillers: Array<{ start: number; end: n
 
   const badStress = r.words.filter((w) => w.stress && !w.stress.correct && !w.isFunction && !w.skipped);
   if (badStress.length) {
-    issues.push({ severity: badStress.length >= 3 ? 'medium' : 'low', category: 'stress', title: `${badStress.length} 个多音节词重音位置不对`, detail: badStress.slice(0, 6).map((w) => `${w.text}（应重读第 ${w.stress!.expected + 1} 音节）`).join('、') + '。重读音节要更响、更长、音高更突出，非重读音节弱化。', words: badStress.map((w) => w.index) });
+    issues.push({ severity: badStress.length >= 3 ? 'medium' : 'low', category: 'stress', title: `${badStress.length} 个多音节词的重音可能不在正确音节`, detail: badStress.slice(0, 6).map((w) => `${w.text}（应重读第 ${w.stress!.expected + 1} 音节）`).join('、') + '：录音中另一个音节明显更突出。重读音节要更响、更长、音高更突出，非重读音节弱化。', words: badStress.map((w) => w.index) });
   }
   for (const it of r.prosody.intonation) {
     if (it.ok || it.detected === 'unknown') continue;

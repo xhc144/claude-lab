@@ -213,7 +213,7 @@ function Annotated({ result, sel, onPick, playingTag, tag }: { result: Assessmen
               <Fragment key={wi}>
                 <span className={`w ${r} ${sel === wi ? 'sel' : ''} ${playingTag === `${tag}:w${wi}` ? 'playing' : ''}`} onClick={() => onPick(wi)} title={w.skipped ? '未读' : `${w.score} 分`}>
                   {label}
-                  {w.stress && !w.stress.correct && !w.isFunction && <span className="stress-x" title="重音位置不对">ˈ</span>}
+                  {w.stress && !w.stress.correct && !w.isFunction && <span className="stress-x" title="重音可能不在正确音节">ˈ</span>}
                   <span className="sc">{w.skipped ? '漏' : w.score}</span>
                 </span>
                 {k === t.words.length - 1 && t.punctAfter && <span className="punct">{t.punctAfter}</span>}

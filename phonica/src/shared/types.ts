@@ -23,6 +23,8 @@ export interface PhoneResult {
     type: 'substitution' | 'deletion' | 'distortion' | 'insertion';
     heard?: string;
     heardIpa?: string;
+    /** both acoustic models (frame classifier and CTC recognizer) independently heard `heard` */
+    confirmed?: boolean;
     advice: string;
   };
 }

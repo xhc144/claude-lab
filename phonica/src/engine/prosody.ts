@@ -81,6 +81,19 @@ function zs(a: number[]): number[] {
   return a.map((v) => (v - m) / sd);
 }
 
+export interface StressParams {
+  /** weights of the energy, pitch and duration z-scores in syllable prominence */
+  energy: number;
+  pitch: number;
+  duration: number;
+  /** another syllable must be this much more prominent before stress is called wrong */
+  margin: number;
+}
+
+// chosen on speechocean762 train word stress labels (tools/stress-eval.ts): on the test set
+// ~9 % of correctly stressed words are flagged and ~34 % of misplaced stress is caught
+export const STRESS_PARAMS: StressParams = { energy: 0.3, pitch: 0.5, duration: 0.2, margin: 0.9 };
+
 export function prosodyStats(
   words: ProsodyWord[],
   energyDb: Float32Array,
@@ -88,6 +101,7 @@ export function prosodyStats(
   sentences: Array<{ index: number; type: string; firstWord: number; lastWord: number }>,
   speechStart: number,
   speechEnd: number,
+  sp: StressParams = STRESS_PARAMS,
 ): ProsodyStats {
   const fr = (t: number) => Math.max(0, Math.min(energyDb.length - 1, Math.round(t / HOP_SEC)));
   const a0 = fr(speechStart);
@@ -127,7 +141,7 @@ export function prosodyStats(
   const fMean = fAvail.reduce((x, y) => x + y, 0) / Math.max(1, fAvail.length);
   const zf = zs(vowels.map((v) => (v.f === null ? fMean : v.f)));
   const zd = zs(vowels.map((v) => v.d));
-  const prom = vowels.map((_, i) => 0.4 * ze[i] + 0.3 * zf[i] + 0.3 * zd[i]);
+  const prom = vowels.map((_, i) => sp.energy * ze[i] + sp.pitch * zf[i] + sp.duration * zd[i]);
 
   // ---- lexical stress for multi-syllable words ----
   const stress: WordStress[] = [];
@@ -145,7 +159,7 @@ export function prosodyStats(
     const sorted = idx.map((i) => prom[i]).sort((a, b) => b - a);
     const gap = sorted[0] - sorted[1];
     // only call it wrong when another syllable is clearly more prominent
-    const correct = det === exp || prom[idx[det]] - prom[idx[exp]] < 0.35;
+    const correct = det === exp || prom[idx[det]] - prom[idx[exp]] < sp.margin;
     // margin of the expected syllable over its strongest rival, squashed to 0..100
     const rival = Math.max(...idx.filter((_, k) => k !== exp).map((i) => prom[i]));
     const marg = prom[idx[exp]] - rival;

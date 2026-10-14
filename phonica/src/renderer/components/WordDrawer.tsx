@@ -95,7 +95,7 @@ export function WordDrawer({ result, word, audioUrl, tag, onClose, onNav, refWor
                 <div key={i} className={`phone ${pr}`} title={`${p.arpa} · ${p.start >= 0 ? `${p.start.toFixed(2)}–${p.end.toFixed(2)} s` : '未检测到'}`} style={{ cursor: p.start >= 0 ? 'pointer' : 'default' }} onClick={() => p.start >= 0 && player.play(audioUrl, { tag: `${tag}:p`, start: Math.max(0, p.start - 0.02), end: p.end + 0.02, rate: 0.75 })}>
                   <div className="p">{p.ipa}</div>
                   <div className="s">{p.rating === 'missing' ? '缺失' : p.score}</div>
-                  {p.error?.heardIpa && <div className="h">像 /{p.error.heardIpa}/</div>}
+                  {p.error?.heardIpa && <div className="h" title={p.error.confirmed ? '两个独立的声学模型都听成这个音' : '最可能的实际发音'}>像 /{p.error.heardIpa}/</div>}
                 </div>
               );
             })}
@@ -125,7 +125,7 @@ export function WordDrawer({ result, word, audioUrl, tag, onClose, onNav, refWor
 
         {word.stress && (
           <div>
-            <div className="card-title">重音 <span className={`chip ${word.stress.correct ? 'good' : 'fair'}`}>{word.stress.correct ? '位置正确' : `应重读第 ${word.stress.expected + 1} 音节`}</span></div>
+            <div className="card-title">重音 <span className={`chip ${word.stress.correct ? 'good' : 'fair'}`}>{word.stress.correct ? '位置正确' : `可能读错，应重读第 ${word.stress.expected + 1} 音节`}</span></div>
             <div className="row" style={{ alignItems: 'flex-end', gap: 10, height: 90 }}>
               {word.stress.syllables.map((s, i) => {
                 const h = Math.max(8, Math.min(80, 40 + s.prominence * 22));
