@@ -1,0 +1,121 @@
+name: Motif · Windows build
+
+on:
+  push:
+    branches: [main, 'claude/**']
+    paths: ['motif/**', '.github/workflows/motif-windows.yml']
+  pull_request:
+    paths: ['motif/**', '.github/workflows/motif-windows.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: motif-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: motif
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: motif/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Unit tests
+        run: |
+          node scripts/build.mjs
+          npm test
+
+      - name: Build installer + portable zip
+        run: node scripts/dist-win.mjs
+
+      - name: Smoke test the packaged app (CLI + render worker + import + export)
+        env:
+          MOTIF_HOME: ${{ runner.temp }}\motif-library
+          MOTIF_USER_DATA: ${{ runner.temp }}\motif-userdata
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $cli = Resolve-Path 'release\win-unpacked\bin\motif.cmd'
+          $out = New-Item -ItemType Directory -Force "$env:RUNNER_TEMP\smoke"
+          & $cli doctor
+          & $cli new "CI 冒烟测试" --template launch --agent ci --json
+          & $cli lint "CI 冒烟测试"
+          & $cli still "CI 冒烟测试" --scene 1 --out "$out\cover.png"
+          & $cli preview "CI 冒烟测试" --out "$out\sheet.jpg" --scale 0.3
+          & $cli auto "examples\inputs\annual-review.pptx" --title "导入测试" --agent ci --json
+          & $cli export "导入测试" --format mp4 --quality small --width 960 --out "$out\import.mp4"
+          & $cli export "CI 冒烟测试" --format html --out "$out\launch.html"
+          & $cli new "Skill 示例" --from "skill\motif\examples\03-math-lesson.json" --json
+          & $cli export "Skill 示例" --format pdf --out "$out\math.pdf"
+          # MCP session exactly as MCP clients launch it: Motif.exe + cli.mjs with stdio pipes, no .cmd
+          # (PowerShell itself won't connect stdin to a GUI-subsystem exe, so a Node client drives it)
+          node tests/e2e/mcp-stdio.mjs 'release\win-unpacked\Motif.exe' 'release\win-unpacked\resources\app.asar.unpacked\dist\cli.mjs'
+          Get-ChildItem $out | Format-Table Name, Length
+
+      - name: Install silently and run the installed CLI from PATH
+        env:
+          MOTIF_HOME: ${{ runner.temp }}\motif-library
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $setup = Get-ChildItem release\Motif-Setup-*.exe | Select-Object -First 1
+          Start-Process $setup.FullName -ArgumentList '/S' -Wait
+          $exe = Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 2 -Filter Motif.exe | Select-Object -First 1
+          if (-not $exe) { throw 'Motif.exe was not installed' }
+          $dir = $exe.DirectoryName
+          Write-Host "installed to $dir"
+          # Only bin\ goes on PATH: with the install folder there, `motif` would resolve to Motif.exe
+          $userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+          $entries = $userPath -split ';'
+          if ($entries -notcontains "$dir\bin") { throw "bin dir missing from user PATH: $userPath" }
+          if ($entries -contains $dir) { throw "install dir itself is on PATH (motif would start the GUI): $userPath" }
+          if (-not (Test-Path "$dir\resources\ffmpeg\ffmpeg.exe")) { throw 'bundled ffmpeg missing' }
+          if (-not (Test-Path "$dir\resources\skill\motif\SKILL.md")) { throw 'bundled Skill missing' }
+          $env:Path = "$userPath;$env:Path"
+          $resolved = (Get-Command motif).Source
+          Write-Host "motif → $resolved"
+          if ($resolved -notlike '*\bin\motif.cmd') { throw "motif resolves to $resolved" }
+          $doctor = motif doctor | Out-String
+          Write-Host $doctor
+          if ($doctor -notmatch 'FFmpeg') { throw 'motif doctor printed no report' }
+          motif still "CI 冒烟测试" --scene 2 --out "$env:RUNNER_TEMP\smoke\installed-still.png"
+          if (-not (Test-Path "$env:RUNNER_TEMP\smoke\installed-still.png")) { throw 'installed motif still wrote nothing' }
+          # The bundled Skill's launcher, as an AI agent would call it
+          $viaSkill = node "$dir\resources\skill\motif\scripts\motif.mjs" templates --json | Out-String
+          if ($viaSkill -notmatch '"launch"') { throw "Skill launcher failed: $viaSkill" }
+
+      - name: Editor end-to-end (GUI + in-app AI assistant against a mock model)
+        timeout-minutes: 20
+        run: |
+          node tests/e2e/gui.mjs
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          node tests/e2e/ai-mock.mjs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Motif-windows-x64
+          path: |
+            motif/release/*.exe
+            motif/release/*.zip
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: smoke-outputs
+          path: |
+            ${{ runner.temp }}/smoke
+            motif/out/e2e
+          if-no-files-found: ignore

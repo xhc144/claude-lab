@@ -1,0 +1,15 @@
+{
+  "title": "一年省下 1095 小时",
+  "theme": "pop",
+  "aspect": "9:16",
+  "meta": { "description": "9:16 短视频节奏：钩子、大数字、三个要点、图表、行动号召" },
+  "style": { "energy": 0.9 },
+  "scenes": [
+    { "blocks": [{ "type": "title", "kicker": "你知道吗", "text": "每天 ==3 小时== 被浪费在找文件上" }] },
+    { "tone": "accent", "blocks": [{ "type": "stat", "value": 1095, "suffix": " 小时", "label": "一年加起来，相当于 45 天" }] },
+    { "blocks": [{ "type": "title", "text": "三招解决" }, { "type": "bullets", "style": "numbers", "items": ["统一命名：日期_项目_版本", "只用一个收件箱文件夹", "每周五花 10 分钟清理"] }] },
+    { "blocks": [{ "type": "title", "text": "坚持一个月之后" }, { "type": "chart", "kind": "hbar", "suffix": "%", "data": [{ "label": "找文件时间减少", "value": 72 }, { "label": "加班减少", "value": 31 }, { "label": "心情变好", "value": 67 }], "highlight": 0 }] },
+    { "blocks": [{ "type": "pictogram", "value": 8, "total": 10, "icon": "user", "label": "**8/10** 的人坚持了下来" }] },
+    { "tone": "inverse", "blocks": [{ "type": "title", "text": "关注我", "subtitle": "每天一个效率技巧" }] }
+  ]
+}

@@ -1,0 +1,5 @@
+[
+  { "op": "set_theme", "theme": "swiss", "accent": "#E4002B" },
+  { "op": "set_format", "aspect": "9:16" },
+  { "op": "set_style", "energy": 0.85, "progress": true }
+]

@@ -1,0 +1,18 @@
+{
+  "title": "数理测试",
+  "theme": "lumen",
+  "scenes": [
+    { "title": "欧拉恒等式", "equation": { "latex": "e^{i\\pi} + 1 = 0", "label": "被誉为最美的数学公式" } },
+    { "title": "展开平方", "equation": { "latex": "(a+b)^2", "steps": ["(a+b)(a+b)", "a^2 + ab + ba + b^2", "a^2 + \\hl{2ab} + b^2"] } },
+    { "title": "正弦与余弦", "plot": { "functions": [{ "expr": "sin(x)", "label": "\\sin x" }, { "expr": "cos(x)", "label": "\\cos x", "dashed": true }], "x": [-6.283, 6.283], "y": [-1.6, 1.6] } },
+    { "title": "积分即面积", "plot": { "functions": [{ "expr": "0.3x^2+0.5", "label": "f(x)" }], "x": [-1, 4], "area": { "from": 0.5, "to": 3, "label": "\\int_a^b f(x)\\,dx" }, "tangent": { "from": 0, "to": 3.5 } } },
+    { "title": "勾股定理", "geometry": { "points": { "A": [0, 0], "B": [4, 0], "C": [0, 3] }, "shapes": [{ "type": "polygon", "points": ["A", "B", "C"] }, { "type": "right-angle", "at": "A", "from": "B", "to": "C" }, { "type": "label", "between": ["A", "B"], "text": "a" }, { "type": "label", "between": ["A", "C"], "text": "b" }, { "type": "label", "between": ["B", "C"], "text": "c" }, { "type": "angle", "at": "B", "from": "C", "to": "A", "label": "\\theta" }] } },
+    { "title": "剪切变换", "transform": { "matrix": [[1, 1], [0, 1]] } },
+    { "title": "旋度场", "vectorfield": { "fx": "-y", "fy": "x" } },
+    { "title": "傅里叶画心", "fourier": { "shape": "heart", "terms": 40 } },
+    { "title": "双摆的混沌", "simulation": { "preset": "double-pendulum" } },
+    { "title": "单摆", "simulation": { "preset": "pendulum" } },
+    { "title": "开普勒第二定律", "simulation": { "preset": "orbit" } },
+    { "title": "双缝干涉", "simulation": { "preset": "interference" } }
+  ]
+}

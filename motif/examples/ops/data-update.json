@@ -1,0 +1,13 @@
+[
+  { "op": "update_block", "scene": 4, "block": 2, "set": {
+    "data": { "labels": ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"], "series": [{ "name": "2025", "values": [4.8, 5.1, 5.6, 5.9, 6.3, 6.6, 7.2, 7.9, 8.1, 8.8, 9.6, 10.9] }, { "name": "2024", "values": [3.2, 3.3, 3.6, 3.8, 3.9, 4.1, 4.3, 4.6, 4.7, 5.0, 5.3, 5.6] }] },
+    "annotate": [{ "at": "7月", "text": "东南亚上线" }, { "at": "12月", "text": "单月破 10 亿" }],
+    "highlight": "12月"
+  } },
+  { "op": "update_block", "scene": 2, "block": 2, "set": { "items": [
+    { "value": 86.6, "suffix": " 亿", "decimals": 1, "label": "全年营收", "delta": "+66%" },
+    { "value": 380, "suffix": " 万", "label": "付费用户", "delta": "+118%" },
+    { "value": 23, "suffix": "%", "label": "海外收入占比", "delta": "+9pt" },
+    { "value": 4.2, "suffix": " 亿", "decimals": 1, "label": "全年净利润", "delta": "首次盈利" }
+  ] } }
+]

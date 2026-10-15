@@ -1,0 +1,370 @@
+{
+  "title": "星云科技 2025 年度报告",
+  "theme": "editorial",
+  "aspect": "16:9",
+  "meta": {
+    "description": "数据叙事：关键数字、折线与注释、构成、排名、表格、里程碑、对比"
+  },
+  "style": {
+    "energy": 0.45,
+    "pageNumbers": true
+  },
+  "scenes": [
+    {
+      "layout": "cover",
+      "blocks": [
+        {
+          "type": "title",
+          "kicker": "ANNUAL REPORT · 2025",
+          "text": "规模与盈利，第一次同时突破",
+          "subtitle": "星云科技年度经营复盘"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "一年的四个数字"
+        },
+        {
+          "type": "stats",
+          "items": [
+            {
+              "value": 86,
+              "suffix": " 亿",
+              "label": "全年营收",
+              "delta": "+65%"
+            },
+            {
+              "value": 380,
+              "suffix": " 万",
+              "label": "付费用户",
+              "delta": "+118%"
+            },
+            {
+              "value": 23,
+              "suffix": "%",
+              "label": "海外收入占比",
+              "delta": "+9pt"
+            },
+            {
+              "value": 4.2,
+              "suffix": " 亿",
+              "decimals": 1,
+              "label": "全年净利润",
+              "delta": "首次盈利"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "layout": "section",
+      "tone": "inverse",
+      "blocks": [
+        {
+          "type": "title",
+          "kicker": "第一部分",
+          "text": "增长从哪里来"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "下半年增速明显加快"
+        },
+        {
+          "type": "chart",
+          "kind": "line",
+          "suffix": "亿",
+          "data": {
+            "labels": [
+              "1月",
+              "2月",
+              "3月",
+              "4月",
+              "5月",
+              "6月",
+              "7月",
+              "8月",
+              "9月",
+              "10月",
+              "11月",
+              "12月"
+            ],
+            "series": [
+              {
+                "name": "2025",
+                "values": [
+                  4.8,
+                  5.1,
+                  5.6,
+                  5.9,
+                  6.3,
+                  6.6,
+                  7.2,
+                  7.9,
+                  8.1,
+                  8.8,
+                  9.6,
+                  10.3
+                ]
+              },
+              {
+                "name": "2024",
+                "values": [
+                  3.2,
+                  3.3,
+                  3.6,
+                  3.8,
+                  3.9,
+                  4.1,
+                  4.3,
+                  4.6,
+                  4.7,
+                  5,
+                  5.3,
+                  5.6
+                ]
+              }
+            ]
+          },
+          "annotate": [
+            {
+              "at": "7月",
+              "text": "东南亚上线"
+            },
+            {
+              "at": "11月",
+              "text": "企业版发布"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "layout": "split",
+      "blocks": [
+        {
+          "type": "title",
+          "text": "订阅已占收入一半以上"
+        },
+        {
+          "type": "text",
+          "text": "企业服务增速最快，同比 **+92%**，是明年的重点。"
+        },
+        {
+          "type": "chart",
+          "kind": "donut",
+          "suffix": "%",
+          "data": [
+            {
+              "label": "订阅",
+              "value": 54
+            },
+            {
+              "label": "企业服务",
+              "value": 28
+            },
+            {
+              "label": "广告",
+              "value": 12
+            },
+            {
+              "label": "其他",
+              "value": 6
+            }
+          ],
+          "highlight": "订阅"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "海外增长最快，同比 +124%"
+        },
+        {
+          "type": "chart",
+          "kind": "hbar",
+          "suffix": "%",
+          "sort": "desc",
+          "data": [
+            {
+              "label": "海外",
+              "value": 124
+            },
+            {
+              "label": "华南",
+              "value": 71
+            },
+            {
+              "label": "华东",
+              "value": 58
+            },
+            {
+              "label": "华北",
+              "value": 34
+            },
+            {
+              "label": "其他",
+              "value": 22
+            }
+          ],
+          "highlight": "海外"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "区域明细"
+        },
+        {
+          "type": "table",
+          "columns": [
+            "区域",
+            "营收",
+            "同比",
+            "占比"
+          ],
+          "rows": [
+            [
+              "华东",
+              "31.2 亿",
+              "+58%",
+              "36%"
+            ],
+            [
+              "华南",
+              "22.4 亿",
+              "+71%",
+              "26%"
+            ],
+            [
+              "海外",
+              "19.6 亿",
+              "+124%",
+              "23%"
+            ],
+            [
+              "华北",
+              "8.1 亿",
+              "+34%",
+              "9%"
+            ],
+            [
+              "其他",
+              "4.7 亿",
+              "+22%",
+              "6%"
+            ]
+          ],
+          "highlight": {
+            "row": 2
+          }
+        }
+      ]
+    },
+    {
+      "layout": "section",
+      "tone": "inverse",
+      "blocks": [
+        {
+          "type": "title",
+          "kicker": "第二部分",
+          "text": "这一年我们做了什么"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "四个里程碑"
+        },
+        {
+          "type": "timeline",
+          "items": [
+            {
+              "date": "3 月",
+              "title": "发布 3.0",
+              "text": "全新协作内核"
+            },
+            {
+              "date": "7 月",
+              "title": "进入东南亚",
+              "text": "新加坡、雅加达"
+            },
+            {
+              "date": "9 月",
+              "title": "用户破 300 万"
+            },
+            {
+              "date": "12 月",
+              "title": "全年盈利",
+              "text": "净利润 4.2 亿"
+            }
+          ],
+          "highlight": 3
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "效率的变化"
+        },
+        {
+          "type": "compare",
+          "columns": [
+            {
+              "title": "2024",
+              "items": [
+                "发布周期 6 周",
+                "客服响应 4 小时",
+                "人均营收 210 万"
+              ]
+            },
+            {
+              "title": "2025",
+              "items": [
+                "发布周期 2 周",
+                "客服响应 15 分钟",
+                "人均营收 390 万"
+              ]
+            }
+          ],
+          "winner": 1
+        }
+      ]
+    },
+    {
+      "layout": "quote",
+      "blocks": [
+        {
+          "type": "quote",
+          "text": "增长不是目标，是我们把用户的事做好之后的回声。",
+          "author": "林夏",
+          "role": "星云科技 CEO"
+        }
+      ]
+    },
+    {
+      "layout": "closing",
+      "blocks": [
+        {
+          "type": "title",
+          "text": "2026，继续前行",
+          "subtitle": "ir@nebula.example"
+        }
+      ]
+    }
+  ]
+}

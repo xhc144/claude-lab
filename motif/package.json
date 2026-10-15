@@ -1,0 +1,132 @@
+{
+  "name": "motif",
+  "productName": "Motif",
+  "version": "0.9.0",
+  "description": "律影 Motif — 动态视觉创作软件：人类可视化编辑与 AI Skill/CLI/MCP 共用同一套项目、设计系统与渲染引擎",
+  "main": "dist/main.cjs",
+  "author": "Motif",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/xhc144/claude-lab/tree/main/motif",
+  "bin": {
+    "motif": "bin/motif.mjs"
+  },
+  "scripts": {
+    "gen": "node scripts/gen-assets.mjs",
+    "build": "node scripts/build.mjs",
+    "start": "node scripts/build.mjs && electron .",
+    "dev": "node scripts/dev.mjs",
+    "motif": "node bin/motif.mjs",
+    "test": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "node tests/e2e/mcp-stdio.mjs && node tests/e2e/gui.mjs && node tests/e2e/ai-mock.mjs",
+    "docs": "node scripts/gen-skill-docs.mjs",
+    "showcase": "node scripts/render-showcase.mjs",
+    "dist:win": "node scripts/dist-win.mjs",
+    "icons": "python3 scripts/make-icons.py"
+  },
+  "devDependencies": {
+    "@fontsource-variable/archivo": "5.3.0",
+    "@fontsource-variable/fraunces": "5.3.0",
+    "@fontsource-variable/inter": "5.3.0",
+    "@fontsource-variable/jetbrains-mono": "5.3.0",
+    "@fontsource-variable/noto-sans-sc": "5.3.0",
+    "@fontsource-variable/noto-serif-sc": "5.3.0",
+    "@fontsource-variable/outfit": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
+    "@fontsource/ma-shan-zheng": "5.3.0",
+    "@xmldom/xmldom": "0.9.12",
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "esbuild": "0.28.2",
+    "fflate": "0.8.2",
+    "lucide": "1.49.0",
+    "mathjax-full": "3.2.2",
+    "pdfjs-dist": "6.3.289",
+    "playwright-core": "1.56.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "resedit": "3.1.0",
+    "three": "0.186.1",
+    "topojson-client": "3.1.0",
+    "world-atlas": "2.0.2"
+  },
+  "build": {
+    "appId": "app.motif.studio",
+    "productName": "Motif",
+    "copyright": "© 2026 Motif",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json",
+      "!dist/**/*.map"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "dist/cli.mjs",
+      "dist/vendor/**"
+    ],
+    "extraResources": [
+      {
+        "from": "skill/motif",
+        "to": "skill/motif"
+      }
+    ],
+    "afterPack": "scripts/after-pack.cjs",
+    "electronLanguages": [
+      "zh-CN",
+      "en-US"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico",
+      "artifactName": "Motif-${version}-${arch}-${os}.${ext}",
+      "extraFiles": [
+        {
+          "from": "build/motif.cmd",
+          "to": "bin/motif.cmd"
+        }
+      ],
+      "extraResources": [
+        {
+          "from": "vendor/ffmpeg/win32-x64",
+          "to": "ffmpeg",
+          "filter": [
+            "ffmpeg.exe",
+            "*.txt"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Motif",
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "include": "build/installer.nsh",
+      "artifactName": "Motif-Setup-${version}.${ext}",
+      "language": "2052",
+      "unicode": true
+    }
+  }
+}

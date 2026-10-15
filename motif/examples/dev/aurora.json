@@ -1,0 +1,13 @@
+{
+  "title": "律影 Motif 发布会",
+  "theme": "aurora",
+  "scenes": [
+    { "title": { "kicker": "2026 产品发布", "text": "让每一份数据都 ==动起来==", "subtitle": "律影 Motif：人与 AI 共用的动态视觉创作引擎" } },
+    { "layout": "split", "title": "营收五年增长 7 倍", "text": "从 12 亿到 86 亿，**海外市场**贡献了超过一半的增量。", "chart": { "kind": "bar", "data": { "labels": ["2021","2022","2023","2024","2025"], "values": [12,19,31,52,86] }, "suffix": "亿", "highlight": "2025", "annotate": [{"at":"2025","text":"同比 +65%"}] } },
+    { "title": "核心指标", "stats": [ {"value":"3.8M","label":"月活跃用户","delta":"+212%"}, {"value":98.6,"suffix":"%","label":"服务可用性"}, {"value":"12ms","label":"P50 渲染延迟","delta":"-38%"} ] },
+    { "title": "为什么选择律影", "bullets": { "style": "icons", "items": [ {"text":"十套专业主题，一键切换","icon":"palette"}, {"text":"数据驱动的图表动画","icon":"chart-column"}, {"text":"AI 通过 Skill 直接创作","icon":"bot"}, {"text":"人机协作，同一个项目文件","icon":"users"} ] } },
+    { "title": "用户来源", "chart": { "kind": "donut", "data": [{"label":"移动端","value":62},{"label":"桌面端","value":28},{"label":"平板","value":10}], "suffix": "%", "highlight": "移动端" } },
+    { "title": "活跃用户走势", "chart": { "kind": "line", "data": { "labels": ["1月","2月","3月","4月","5月","6月","7月","8月","9月","10月","11月","12月"], "series": [{"name":"2025","values":[120,132,141,160,175,190,210,236,250,281,320,380]},{"name":"2024","values":[80,84,90,95,99,104,110,118,122,130,141,150]}] }, "suffix": "万" } },
+    { "quote": { "text": "设计不只是外观和感觉，设计是它如何运作。", "author": "Steve Jobs" } }
+  ]
+}
