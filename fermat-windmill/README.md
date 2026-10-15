@@ -9,9 +9,10 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| [`output/fermat_windmill_zh.mp4`](output/fermat_windmill_zh.mp4) | 中文版，1080p，中文配音 + 中文字幕；面试章节的考官提问为英文原声，附中文翻译 |
-| [`output/fermat_windmill_en.mp4`](output/fermat_windmill_en.mp4) | 英文版，1080p，约 140 词/分钟的放慢语速；英文字幕中难词高亮，下方同步显示美式音标与中文释义；模拟面试为考官与考生两种声音的完整问答 |
+| [`output/fermat_windmill_zh.mp4`](output/fermat_windmill_zh.mp4) | 中文版，22 分 35 秒，1080p30，53 MB，中文配音 + 中文字幕；面试章节的考官提问为英文原声，附中文翻译 |
+| [`output/fermat_windmill_en.mp4`](output/fermat_windmill_en.mp4) | 英文版，26 分 16 秒，1080p30，59 MB，约 140 词/分钟的放慢语速；英文字幕中难词高亮，下方同步显示美式音标与中文释义；模拟面试为考官与考生两种声音的完整问答 |
 | `output/fermat_windmill_{zh,en}.srt` / `.ass` | 外挂字幕（SRT 便于播放器加载，ASS 保留样式与音标行） |
+| `output/fermat_windmill_{zh,en}_chapters.txt` | 13 个章节的起始时间；MP4 内也写入了章节标记，播放器可直接跳转 |
 | [`output/transcript_bilingual.pdf`](output/transcript_bilingual.pdf) | **中英对照讲稿**：选题说明、一分钟/三分钟英文陈述、12 层追问地图、逐段对照、全部问答与答题要点、难词音标表、一页纸证明 |
 | `output/transcript_bilingual.md` / `.html` | 同一讲稿的 Markdown 与网页版本 |
 
@@ -81,5 +82,7 @@ python build/preview.py scenes_b S07_Zagier en   # 单场景低清预览
 - 配音：用 SenseVoice 语音识别回听全部句子（英文平均词误差约 7%，主要是数字写法差异）；中文旁白逐词对照分词词典，
   修正了“奇素数（jī）”“数一数（shǔ）”“切割（qiē）”“边长（cháng）”等多音字。
 - 英文语速：说话部分约 140 词/分钟，含停顿约 130 词/分钟。
+- 音频：响度归一化到约 −16 LUFS（峰值约 −1 dBFS），背景音乐在旁白下自动压低。
+- 字幕：烧录字幕带半透明底框；同一时刻不会有两条字幕重叠；英文版难词在字幕中高亮，下方一行显示音标与中文。
 
 语音：Kokoro-82M（Apache-2.0），经 sherpa-onnx（Apache-2.0）运行。

@@ -249,10 +249,10 @@ ScaledBorderAndShadow: yes
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Main,{main_font},{66 if lang == 'zh' else 54},&H00FFFFFF,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,{2 if lang == 'zh' else 0},0,1,3.5,0,2,120,120,{40 if lang == 'zh' else 58},1
-Style: Q,Inter,{50 if lang == 'zh' else 54},{FLIP_ASS},&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,0,0,1,3.5,0,2,120,120,{124 if lang == 'zh' else 58},1
-Style: QZ,Noto Sans CJK SC,56,&H00E6E6E6,&H00FFFFFF,&H00101010,&H80000000,0,0,0,0,100,100,1,0,1,3.5,0,2,120,120,36,1
-Style: Vocab,Inter,38,{SQ_ASS},&H00FFFFFF,&H00101010,&H90000000,0,0,0,0,100,100,0,0,1,3,0,2,60,60,10,1
+Style: Main,{main_font},{66 if lang == 'zh' else 54},&H00FFFFFF,&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,{2 if lang == 'zh' else 0},0,3,9,0,2,120,120,{40 if lang == 'zh' else 62},1
+Style: Q,Inter,{50 if lang == 'zh' else 54},{FLIP_ASS},&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,0,0,3,9,0,2,120,120,{138 if lang == 'zh' else 62},1
+Style: QZ,Noto Sans CJK SC,56,&H00E6E6E6,&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,1,0,3,9,0,2,120,120,36,1
+Style: Vocab,Inter,43,{SQ_ASS},&H00FFFFFF,&H5A0B0E14,&H90000000,0,0,0,0,100,100,0,0,3,6,0,2,60,60,8,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

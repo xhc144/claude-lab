@@ -1,0 +1,442 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Main,Inter,54,&H00FFFFFF,&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,0,0,3,9,0,2,120,120,62,1
+Style: Q,Inter,54,&H00F8A95A&,&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,0,0,3,9,0,2,120,120,62,1
+Style: QZ,Noto Sans CJK SC,56,&H00E6E6E6,&H00FFFFFF,&H5A0B0E14,&H80000000,0,0,0,0,100,100,1,0,3,9,0,2,120,120,36,1
+Style: Vocab,Inter,43,&H0052C1F4&,&H00FFFFFF,&H5A0B0E14,&H90000000,0,0,0,0,100,100,0,0,3,6,0,2,60,60,8,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:04.24,Main,,0,0,0,,Imagine you are in an interview, and the professor asks you,
+Dialogue: 0,0:00:04.26,0:00:07.01,Main,,0,0,0,,"What is your favorite {\c&H0052C1F4&}theorem{\c&H00FFFFFF&}?"
+Dialogue: 1,0:00:04.26,0:00:07.01,Vocab,,0,0,0,,{\fnInter\b1}theorem{\b0}  {\fnCharis SIL}/ˈθɪrəm/  {\fnNoto Sans CJK SC}定理
+Dialogue: 0,0:00:07.33,0:00:09.21,Main,,0,0,0,,Here is mine.
+Dialogue: 0,0:00:09.23,0:00:14.24,Main,,0,0,0,,Take the {\c&H0052C1F4&}primes{\c&H00FFFFFF&} five, thirteen, seventeen and twenty-nine.
+Dialogue: 1,0:00:09.23,0:00:14.26,Vocab,,0,0,0,,{\fnInter\b1}prime{\b0}  {\fnCharis SIL}/praɪm/  {\fnNoto Sans CJK SC}素数
+Dialogue: 0,0:00:14.26,0:00:17.74,Main,,0,0,0,,Each of them is a sum of two squares.
+Dialogue: 0,0:00:17.76,0:00:20.46,Main,,0,0,0,,Five is one plus four.
+Dialogue: 0,0:00:20.48,0:00:23.54,Main,,0,0,0,,Thirteen is four plus nine.
+Dialogue: 0,0:00:23.56,0:00:27.02,Main,,0,0,0,,Seventeen is one plus sixteen.
+Dialogue: 0,0:00:27.04,0:00:30.65,Main,,0,0,0,,And twenty-nine is four plus twenty-five.
+Dialogue: 0,0:00:30.67,0:00:36.95,Main,,0,0,0,,But three, seven, eleven and nineteen never are, no matter how hard you try.
+Dialogue: 0,0:00:36.97,0:00:39.90,Main,,0,0,0,,What separates the two groups?
+Dialogue: 0,0:00:39.92,0:00:42.08,Main,,0,0,0,,Divide by four.
+Dialogue: 0,0:00:42.10,0:00:45.45,Main,,0,0,0,,The first group leaves {\c&H0052C1F4&}remainder{\c&H00FFFFFF&} one.
+Dialogue: 1,0:00:42.10,0:00:45.45,Vocab,,0,0,0,,{\fnInter\b1}remainder{\b0}  {\fnCharis SIL}/rɪˈmeɪndɚ/  {\fnNoto Sans CJK SC}余数
+Dialogue: 0,0:00:45.47,0:00:48.78,Main,,0,0,0,,The second group leaves {\c&H0052C1F4&}remainder{\c&H00FFFFFF&} three.
+Dialogue: 1,0:00:45.47,0:00:48.98,Vocab,,0,0,0,,{\fnInter\b1}remainder{\b0}  {\fnCharis SIL}/rɪˈmeɪndɚ/  {\fnNoto Sans CJK SC}余数
+Dialogue: 0,0:00:48.80,0:00:52.04,Main,,0,0,0,,This is Fermat's two-square theorem.
+Dialogue: 0,0:00:52.06,0:00:56.95,Main,,0,0,0,,Today I want to show you a proof of it that fits in one sentence,
+Dialogue: 0,0:00:56.97,0:01:02.76,Main,,0,0,0,,and a picture of {\c&H0052C1F4&}windmills{\c&H00FFFFFF&} that explains why that sentence works.
+Dialogue: 1,0:00:56.97,0:01:02.76,Vocab,,0,0,0,,{\fnInter\b1}windmill{\b0}  {\fnCharis SIL}/ˈwɪndmɪl/  {\fnNoto Sans CJK SC}风车
+Dialogue: 0,0:01:06.57,0:01:09.47,Main,,0,0,0,,First, the precise statement.
+Dialogue: 0,0:01:09.49,0:01:12.09,Main,,0,0,0,,Let p be an odd prime.
+Dialogue: 0,0:01:12.11,0:01:17.79,Main,,0,0,0,,Then p can be written as x² + y², with x and y {\c&H0052C1F4&}integers{\c&H00FFFFFF&},
+Dialogue: 1,0:01:12.11,0:01:17.79,Vocab,,0,0,0,,{\fnInter\b1}integer{\b0}  {\fnCharis SIL}/ˈɪntɪdʒɚ/  {\fnNoto Sans CJK SC}整数
+Dialogue: 0,0:01:17.81,0:01:23.81,Main,,0,0,0,,{\c&H0052C1F4&}if and only if{\c&H00FFFFFF&} p is {\c&H0052C1F4&}congruent{\c&H00FFFFFF&} to one, {\c&H0052C1F4&}modulo{\c&H00FFFFFF&} four.
+Dialogue: 1,0:01:17.81,0:01:24.00,Vocab,,0,0,0,,{\fnInter\b1}if and only if{\b0}  {\fnCharis SIL}/ɪf ənd ˈoʊnli ɪf/  {\fnNoto Sans CJK SC}当且仅当{\fnInter}    ·    {\fnInter\b1}congruent{\b0}  {\fnCharis SIL}/ˈkɑːŋɡruənt/  {\fnNoto Sans CJK SC}同余的{\fnInter}    ·    {\fnInter\b1}modulo{\b0}  {\fnCharis SIL}/ˈmɑːdʒəloʊ/  {\fnNoto Sans CJK SC}模（取余）
+Dialogue: 0,0:01:23.83,0:01:25.58,Main,,0,0,0,,Geometrically,
+Dialogue: 0,0:01:25.60,0:01:31.14,Main,,0,0,0,,the circle x² + y² = p passes through points of the integer
+Dialogue: 0,0:01:31.16,0:01:37.73,Main,,0,0,0,,{\c&H0052C1F4&}lattice{\c&H00FFFFFF&} exactly when p is one more than a multiple of four.
+Dialogue: 1,0:01:31.16,0:01:37.73,Vocab,,0,0,0,,{\fnInter\b1}lattice{\b0}  {\fnCharis SIL}/ˈlætɪs/  {\fnNoto Sans CJK SC}格点（网格）
+Dialogue: 0,0:01:38.37,0:01:41.37,Main,,0,0,0,,The story begins with Fermat.
+Dialogue: 0,0:01:41.39,0:01:45.49,Main,,0,0,0,,In a letter to Mersenne, dated Christmas Day, 1640,
+Dialogue: 0,0:01:45.51,0:01:50.16,Main,,0,0,0,,he stated this theorem and claimed he had a proof.
+Dialogue: 0,0:01:50.18,0:01:53.38,Main,,0,0,0,,As usual, he never wrote it down.
+Dialogue: 0,0:01:53.40,0:01:58.33,Main,,0,0,0,,That is why it is sometimes called Fermat's Christmas theorem.
+Dialogue: 0,0:01:58.67,0:02:03.84,Main,,0,0,0,,The first published proof came more than a century later, from Euler,
+Dialogue: 0,0:02:03.86,0:02:07.48,Main,,0,0,0,,using a method called {\c&H0052C1F4&}infinite descent{\c&H00FFFFFF&}.
+Dialogue: 1,0:02:03.86,0:02:07.48,Vocab,,0,0,0,,{\fnInter\b1}infinite descent{\b0}  {\fnCharis SIL}/ˈɪnfɪnət dɪˈsent/  {\fnNoto Sans CJK SC}无穷递降法
+Dialogue: 0,0:02:07.50,0:02:13.67,Main,,0,0,0,,Later came a deeper explanation, through what we now call the {\c&H0052C1F4&}Gaussian integers{\c&H00FFFFFF&},
+Dialogue: 1,0:02:07.50,0:02:13.69,Vocab,,0,0,0,,{\fnInter\b1}Gaussian integers{\b0}  {\fnCharis SIL}/ˈɡaʊsiən ˈɪntɪdʒɚz/  {\fnNoto Sans CJK SC}高斯整数
+Dialogue: 0,0:02:13.69,0:02:15.48,Main,,0,0,0,,named after Gauss.
+Dialogue: 0,0:02:15.50,0:02:22.23,Main,,0,0,0,,And in 1990, Don Zagier published a paper with a {\c&H0052C1F4&}remarkable{\c&H00FFFFFF&} title.
+Dialogue: 1,0:02:15.50,0:02:22.25,Vocab,,0,0,0,,{\fnInter\b1}remarkable{\b0}  {\fnCharis SIL}/rɪˈmɑːrkəbəl/  {\fnNoto Sans CJK SC}非凡的
+Dialogue: 0,0:02:22.25,0:02:30.27,Main,,0,0,0,,A one-sentence proof that every prime p congruent to one mod four is a sum of two squares.
+Dialogue: 0,0:02:30.29,0:02:35.00,Main,,0,0,0,,It builds on an earlier idea of Roger Heath-Brown.
+Dialogue: 0,0:02:35.02,0:02:39.23,Main,,0,0,0,,That one sentence is what we will {\c&H0052C1F4&}unpack{\c&H00FFFFFF&} today.
+Dialogue: 1,0:02:35.02,0:02:39.23,Vocab,,0,0,0,,{\fnInter\b1}unpack{\b0}  {\fnCharis SIL}/ʌnˈpæk/  {\fnNoto Sans CJK SC}拆解、剖析
+Dialogue: 0,0:02:42.43,0:02:47.06,Main,,0,0,0,,One direction is easy, and it is worth seeing first.
+Dialogue: 0,0:02:47.08,0:02:53.09,Main,,0,0,0,,Every square leaves remainder zero or one when divided by four.
+Dialogue: 0,0:02:53.11,0:02:57.15,Main,,0,0,0,,An even number squared is a multiple of four.
+Dialogue: 0,0:02:57.17,0:03:01.98,Main,,0,0,0,,An odd number squared is one more than a multiple of four.
+Dialogue: 0,0:03:02.00,0:03:07.54,Main,,0,0,0,,Look, the square of an odd number splits into one small square in the middle,
+Dialogue: 0,0:03:07.56,0:03:10.25,Main,,0,0,0,,plus four equal {\c&H0052C1F4&}rectangles{\c&H00FFFFFF&}.
+Dialogue: 1,0:03:07.56,0:03:10.27,Vocab,,0,0,0,,{\fnInter\b1}rectangle{\b0}  {\fnCharis SIL}/ˈrektæŋɡəl/  {\fnNoto Sans CJK SC}长方形
+Dialogue: 0,0:03:10.27,0:03:13.36,Main,,0,0,0,,Keep this little windmill in mind.
+Dialogue: 0,0:03:13.38,0:03:15.38,Main,,0,0,0,,We will meet it again.
+Dialogue: 0,0:03:15.40,0:03:21.39,Main,,0,0,0,,So a sum of two squares can only be zero, one or two, modulo four.
+Dialogue: 0,0:03:21.41,0:03:23.32,Main,,0,0,0,,Never three.
+Dialogue: 0,0:03:23.34,0:03:28.34,Main,,0,0,0,,That rules out every prime of the form 4k + 3.
+Dialogue: 0,0:03:28.77,0:03:30.98,Main,,0,0,0,,But notice something.
+Dialogue: 0,0:03:31.00,0:03:35.16,Main,,0,0,0,,Twenty-one is also one more than a multiple of four,
+Dialogue: 0,0:03:35.18,0:03:38.69,Main,,0,0,0,,and yet it is not a sum of two squares.
+Dialogue: 0,0:03:38.71,0:03:44.53,Main,,0,0,0,,So the condition is {\c&H0052C1F4&}necessary{\c&H00FFFFFF&}, but on its own it is not {\c&H0052C1F4&}sufficient{\c&H00FFFFFF&}.
+Dialogue: 1,0:03:38.71,0:03:44.53,Vocab,,0,0,0,,{\fnInter\b1}necessary{\b0}  {\fnCharis SIL}/ˈnesəseri/  {\fnNoto Sans CJK SC}必要的{\fnInter}    ·    {\fnInter\b1}sufficient{\b0}  {\fnCharis SIL}/səˈfɪʃənt/  {\fnNoto Sans CJK SC}充分的
+Dialogue: 0,0:03:44.55,0:03:48.22,Main,,0,0,0,,{\c&H0052C1F4&}Primality{\c&H00FFFFFF&} must matter somewhere in the proof.
+Dialogue: 1,0:03:44.55,0:03:48.24,Vocab,,0,0,0,,{\fnInter\b1}primality{\b0}  {\fnCharis SIL}/praɪˈmæləti/  {\fnNoto Sans CJK SC}素性（是素数）
+Dialogue: 0,0:03:48.24,0:03:50.45,Main,,0,0,0,,Keep this in mind.
+Dialogue: 0,0:03:50.47,0:03:53.88,Main,,0,0,0,,We will find exactly where it is used.
+Dialogue: 0,0:03:54.30,0:03:58.74,Main,,0,0,0,,The real content of the theorem is the other direction.
+Dialogue: 0,0:03:58.76,0:04:04.50,Main,,0,0,0,,Every prime that leaves remainder one really is a sum of two squares.
+Dialogue: 0,0:04:04.52,0:04:09.53,Main,,0,0,0,,And that is hard, because it is a pure {\c&H0052C1F4&}existence{\c&H00FFFFFF&} statement.
+Dialogue: 1,0:04:04.52,0:04:09.55,Vocab,,0,0,0,,{\fnInter\b1}existence{\b0}  {\fnCharis SIL}/ɪɡˈzɪstəns/  {\fnNoto Sans CJK SC}存在性
+Dialogue: 0,0:04:09.55,0:04:14.31,Main,,0,0,0,,There is no formula that simply hands you x and y.
+Dialogue: 0,0:04:17.40,0:04:22.23,Main,,0,0,0,,So how do you prove that something exists without finding it?
+Dialogue: 0,0:04:22.25,0:04:25.44,Main,,0,0,0,,One classic answer is to count.
+Dialogue: 0,0:04:25.46,0:04:31.63,Main,,0,0,0,,If you can show that the number of solutions is odd, then it cannot be zero.
+Dialogue: 0,0:04:31.97,0:04:37.14,Main,,0,0,0,,And to show that a number is odd, you do not need to count exactly.
+Dialogue: 0,0:04:37.16,0:04:40.01,Main,,0,0,0,,You only need to pair things up.
+Dialogue: 0,0:04:40.33,0:04:44.05,Main,,0,0,0,,This leads to the key tool, an {\c&H0052C1F4&}involution{\c&H00FFFFFF&}.
+Dialogue: 1,0:04:40.33,0:04:44.05,Vocab,,0,0,0,,{\fnInter\b1}involution{\b0}  {\fnCharis SIL}/ˌɪnvəˈluːʃən/  {\fnNoto Sans CJK SC}对合
+Dialogue: 0,0:04:44.07,0:04:49.69,Main,,0,0,0,,An {\c&H0052C1F4&}involution{\c&H00FFFFFF&} is a map from a set to itself that undoes itself.
+Dialogue: 1,0:04:44.07,0:04:49.71,Vocab,,0,0,0,,{\fnInter\b1}involution{\b0}  {\fnCharis SIL}/ˌɪnvəˈluːʃən/  {\fnNoto Sans CJK SC}对合
+Dialogue: 0,0:04:49.71,0:04:53.35,Main,,0,0,0,,Apply it twice, and you are back where you started.
+Dialogue: 0,0:04:53.37,0:04:58.22,Main,,0,0,0,,An involution splits the set into pairs, a together with f of a,
+Dialogue: 0,0:04:58.24,0:05:02.40,Main,,0,0,0,,plus some points that are sent to themselves.
+Dialogue: 0,0:05:02.42,0:05:04.75,Main,,0,0,0,,Those are the {\c&H0052C1F4&}fixed points{\c&H00FFFFFF&}.
+Dialogue: 1,0:05:02.42,0:05:04.93,Vocab,,0,0,0,,{\fnInter\b1}fixed point{\b0}  {\fnCharis SIL}/ˌfɪkst ˈpɔɪnt/  {\fnNoto Sans CJK SC}不动点
+Dialogue: 0,0:05:04.77,0:05:08.85,Main,,0,0,0,,The pairs always contribute an even number.
+Dialogue: 0,0:05:08.87,0:05:15.27,Main,,0,0,0,,So the size of the set and the number of fixed points always have the same {\c&H0052C1F4&}parity{\c&H00FFFFFF&}.
+Dialogue: 1,0:05:08.87,0:05:15.27,Vocab,,0,0,0,,{\fnInter\b1}parity{\b0}  {\fnCharis SIL}/ˈperəti/  {\fnNoto Sans CJK SC}奇偶性
+Dialogue: 0,0:05:15.90,0:05:21.71,Main,,0,0,0,,Now suppose the same {\c&H0052C1F4&}finite{\c&H00FFFFFF&} set carries two different involutions.
+Dialogue: 1,0:05:15.90,0:05:21.73,Vocab,,0,0,0,,{\fnInter\b1}finite{\b0}  {\fnCharis SIL}/ˈfaɪnaɪt/  {\fnNoto Sans CJK SC}有限的
+Dialogue: 0,0:05:21.73,0:05:26.01,Main,,0,0,0,,Their numbers of fixed points have the same parity.
+Dialogue: 0,0:05:26.03,0:05:30.49,Main,,0,0,0,,In particular, if one of them has exactly one fixed point,
+Dialogue: 0,0:05:30.51,0:05:36.06,Main,,0,0,0,,the other has an odd number of fixed points, so it has at least one.
+Dialogue: 0,0:05:36.50,0:05:39.44,Main,,0,0,0,,If this sounds familiar, it should.
+Dialogue: 0,0:05:39.46,0:05:44.54,Main,,0,0,0,,Sperner's lemma is proved with the same kind of parity argument,
+Dialogue: 0,0:05:44.56,0:05:47.28,Main,,0,0,0,,by counting doors in pairs.
+Dialogue: 0,0:05:50.27,0:05:52.63,Main,,0,0,0,,So here is the plan.
+Dialogue: 0,0:05:52.65,0:05:59.54,Main,,0,0,0,,We want the solutions we are looking for to appear as the fixed points of an involution.
+Dialogue: 0,0:05:59.97,0:06:04.64,Main,,0,0,0,,Since p is odd, one of the two squares must be even.
+Dialogue: 0,0:06:04.66,0:06:13.66,Main,,0,0,0,,So we are really looking for p equals x squared plus the square of two y,
+Dialogue: 0,0:06:13.68,0:06:15.71,Main,,0,0,0,,that is, x² + 4·y·y.
+Dialogue: 0,0:06:15.73,0:06:18.67,Main,,0,0,0,,Now comes the creative step.
+Dialogue: 0,0:06:18.69,0:06:22.95,Main,,0,0,0,,Replace one of the two y's by a new letter, z.
+Dialogue: 0,0:06:22.97,0:06:29.98,Main,,0,0,0,,Consider every {\c&H0052C1F4&}triple{\c&H00FFFFFF&} of positive integers with x² + 4yz = p,
+Dialogue: 1,0:06:22.97,0:06:30.00,Vocab,,0,0,0,,{\fnInter\b1}triple{\b0}  {\fnCharis SIL}/ˈtrɪpəl/  {\fnNoto Sans CJK SC}三元组
+Dialogue: 0,0:06:30.00,0:06:32.71,Main,,0,0,0,,and call this set S.
+Dialogue: 0,0:06:32.73,0:06:38.98,Main,,0,0,0,,S is finite, because x squared and y z are both smaller than p.
+Dialogue: 0,0:06:39.00,0:06:45.21,Main,,0,0,0,,For p equal to thirteen, for example, S has exactly three elements.
+Dialogue: 0,0:06:45.23,0:06:48.77,Main,,0,0,0,,This new set has an obvious {\c&H0052C1F4&}symmetry{\c&H00FFFFFF&}.
+Dialogue: 1,0:06:45.23,0:06:48.79,Vocab,,0,0,0,,{\fnInter\b1}symmetry{\b0}  {\fnCharis SIL}/ˈsɪmətri/  {\fnNoto Sans CJK SC}对称
+Dialogue: 0,0:06:48.79,0:06:51.07,Main,,0,0,0,,Swap y and z.
+Dialogue: 0,0:06:51.09,0:06:53.04,Main,,0,0,0,,That is an involution,
+Dialogue: 0,0:06:53.06,0:06:58.89,Main,,0,0,0,,and its fixed points are exactly the triples with y equal to z.
+Dialogue: 0,0:06:58.91,0:07:03.72,Main,,0,0,0,,Then p equals x squared plus the square of two y.
+Dialogue: 0,0:07:03.74,0:07:07.62,Main,,0,0,0,,Those are precisely the solutions we want.
+Dialogue: 0,0:07:08.07,0:07:12.21,Main,,0,0,0,,So the whole theorem reduces to one question.
+Dialogue: 0,0:07:12.23,0:07:15.60,Main,,0,0,0,,Is the number of elements of S odd?
+Dialogue: 0,0:07:15.62,0:07:17.95,Main,,0,0,0,,And by the parity principle,
+Dialogue: 0,0:07:17.97,0:07:24.42,Main,,0,0,0,,it is enough to find a second involution on S with exactly one fixed point.
+Dialogue: 0,0:07:24.77,0:07:27.40,Main,,0,0,0,,Notice what just happened.
+Dialogue: 0,0:07:27.42,0:07:30.09,Main,,0,0,0,,We did not find a symmetry.
+Dialogue: 0,0:07:30.11,0:07:36.05,Main,,0,0,0,,We created one, by splitting y times y into y times z.
+Dialogue: 0,0:07:36.07,0:07:40.00,Main,,0,0,0,,Making the problem bigger gave us room to move.
+Dialogue: 0,0:07:43.20,0:07:45.80,Main,,0,0,0,,To find the second involution,
+Dialogue: 0,0:07:45.82,0:07:50.90,Main,,0,0,0,,let us draw the equation. x squared is a square of side x.
+Dialogue: 0,0:07:50.92,0:07:55.81,Main,,0,0,0,,Four y z is four {\c&H0052C1F4&}rectangles{\c&H00FFFFFF&}, each y by z.
+Dialogue: 1,0:07:50.92,0:07:55.81,Vocab,,0,0,0,,{\fnInter\b1}rectangle{\b0}  {\fnCharis SIL}/ˈrektæŋɡəl/  {\fnNoto Sans CJK SC}长方形
+Dialogue: 0,0:07:55.83,0:08:01.68,Main,,0,0,0,,Attach one {\c&H0052C1F4&}rectangle{\c&H00FFFFFF&} to each side of the square, all turning the same way,
+Dialogue: 1,0:07:55.83,0:08:01.68,Vocab,,0,0,0,,{\fnInter\b1}rectangle{\b0}  {\fnCharis SIL}/ˈrektæŋɡəl/  {\fnNoto Sans CJK SC}长方形
+Dialogue: 0,0:08:01.70,0:08:05.74,Main,,0,0,0,,and you get a {\c&H0052C1F4&}windmill{\c&H00FFFFFF&} whose area is exactly p.
+Dialogue: 1,0:08:01.70,0:08:05.92,Vocab,,0,0,0,,{\fnInter\b1}windmill{\b0}  {\fnCharis SIL}/ˈwɪndmɪl/  {\fnNoto Sans CJK SC}风车
+Dialogue: 0,0:08:05.76,0:08:09.13,Main,,0,0,0,,Every element of S is a windmill.
+Dialogue: 0,0:08:09.15,0:08:13.21,Main,,0,0,0,,Here are all eleven windmills of area forty-one.
+Dialogue: 0,0:08:13.23,0:08:18.19,Main,,0,0,0,,In this picture, swapping y and z simply flips each {\c&H0052C1F4&}blade{\c&H00FFFFFF&} over,
+Dialogue: 1,0:08:13.23,0:08:18.21,Vocab,,0,0,0,,{\fnInter\b1}blade{\b0}  {\fnCharis SIL}/bleɪd/  {\fnNoto Sans CJK SC}风叶（叶片）
+Dialogue: 0,0:08:18.21,0:08:21.94,Main,,0,0,0,,so that its length and width trade places.
+Dialogue: 0,0:08:21.96,0:08:26.09,Main,,0,0,0,,The fixed windmills are the ones with square blades.
+Dialogue: 0,0:08:26.11,0:08:27.65,Main,,0,0,0,,And look.
+Dialogue: 0,0:08:27.67,0:08:34.02,Main,,0,0,0,,Four squares of side y fit together into one square of side two y.
+Dialogue: 0,0:08:34.04,0:08:39.40,Main,,0,0,0,,So a fixed windmill is literally p, split into two squares.
+Dialogue: 0,0:08:42.50,0:08:46.33,Main,,0,0,0,,Now comes the most beautiful observation.
+Dialogue: 0,0:08:46.35,0:08:51.69,Main,,0,0,0,,Erase the lines inside a windmill, and keep only its {\c&H0052C1F4&}outline{\c&H00FFFFFF&}.
+Dialogue: 1,0:08:46.35,0:08:51.69,Vocab,,0,0,0,,{\fnInter\b1}outline{\b0}  {\fnCharis SIL}/ˈaʊtlaɪn/  {\fnNoto Sans CJK SC}轮廓
+Dialogue: 0,0:08:51.71,0:08:55.54,Main,,0,0,0,,The {\c&H0052C1F4&}outline{\c&H00FFFFFF&} does not remember how it was cut.
+Dialogue: 1,0:08:51.71,0:08:55.74,Vocab,,0,0,0,,{\fnInter\b1}outline{\b0}  {\fnCharis SIL}/ˈaʊtlaɪn/  {\fnNoto Sans CJK SC}轮廓
+Dialogue: 0,0:08:55.56,0:09:00.62,Main,,0,0,0,,The same outline can often be cut into a windmill in a different way,
+Dialogue: 0,0:09:00.64,0:09:03.86,Main,,0,0,0,,around a different central square.
+Dialogue: 0,0:09:04.20,0:09:06.15,Main,,0,0,0,,Here is the rule.
+Dialogue: 0,0:09:06.17,0:09:11.04,Main,,0,0,0,,Look at the four tips of the blades, and draw the square through them.
+Dialogue: 0,0:09:11.06,0:09:15.65,Main,,0,0,0,,If that square fits inside the outline, cut along it.
+Dialogue: 0,0:09:15.67,0:09:17.04,Main,,0,0,0,,If it does not fit,
+Dialogue: 0,0:09:17.06,0:09:22.29,Main,,0,0,0,,use the square through the outer edges of the blades instead.
+Dialogue: 0,0:09:22.73,0:09:27.34,Main,,0,0,0,,Sometimes the new square is larger, sometimes it is smaller,
+Dialogue: 0,0:09:27.36,0:09:33.35,Main,,0,0,0,,and sometimes the new windmill turns the other way, like a {\c&H0052C1F4&}mirror{\c&H00FFFFFF&} image.
+Dialogue: 1,0:09:27.36,0:09:33.35,Vocab,,0,0,0,,{\fnInter\b1}mirror{\b0}  {\fnCharis SIL}/ˈmɪrɚ/  {\fnNoto Sans CJK SC}镜像
+Dialogue: 0,0:09:33.37,0:09:38.80,Main,,0,0,0,,Written in {\c&H0052C1F4&}coordinates{\c&H00FFFFFF&}, this rule becomes Zagier's famous formula,
+Dialogue: 1,0:09:33.37,0:09:38.82,Vocab,,0,0,0,,{\fnInter\b1}coordinates{\b0}  {\fnCharis SIL}/koʊˈɔːrdənəts/  {\fnNoto Sans CJK SC}坐标
+Dialogue: 0,0:09:38.82,0:09:40.58,Main,,0,0,0,,with three cases.
+Dialogue: 0,0:09:40.60,0:09:47.49,Main,,0,0,0,,Cutting again brings back the original windmill, so re-cutting is an involution.
+Dialogue: 0,0:09:47.51,0:09:52.71,Main,,0,0,0,,A larger square becomes smaller again, a smaller one becomes larger,
+Dialogue: 0,0:09:52.73,0:09:55.97,Main,,0,0,0,,and the mirrored case mirrors back.
+Dialogue: 0,0:09:56.30,0:10:00.33,Main,,0,0,0,,When is a windmill unchanged by re-cutting?
+Dialogue: 0,0:10:00.35,0:10:06.81,Main,,0,0,0,,Exactly when the square through the tips is the central square itself, that is,
+Dialogue: 0,0:10:06.83,0:10:08.62,Main,,0,0,0,,when x equals y.
+Dialogue: 0,0:10:09.06,0:10:12.52,Main,,0,0,0,,And this is where {\c&H0052C1F4&}primality{\c&H00FFFFFF&} enters.
+Dialogue: 1,0:10:09.06,0:10:12.54,Vocab,,0,0,0,,{\fnInter\b1}primality{\b0}  {\fnCharis SIL}/praɪˈmæləti/  {\fnNoto Sans CJK SC}素性（是素数）
+Dialogue: 0,0:10:12.54,0:10:22.14,Main,,0,0,0,,If x equals y, then p equals x squared plus four x z, which is x times (x + 4z).
+Dialogue: 0,0:10:22.16,0:10:25.64,Main,,0,0,0,,Since p is prime, x must be one.
+Dialogue: 0,0:10:25.66,0:10:31.43,Main,,0,0,0,,So the only fixed windmill is the one with x and y both equal to one,
+Dialogue: 0,0:10:31.45,0:10:34.63,Main,,0,0,0,,a perfectly symmetric cross.
+Dialogue: 0,0:10:35.50,0:10:37.69,Main,,0,0,0,,One more detail.
+Dialogue: 0,0:10:37.71,0:10:41.82,Main,,0,0,0,,The rule never gets stuck on a {\c&H0052C1F4&}boundary{\c&H00FFFFFF&} case.
+Dialogue: 1,0:10:37.71,0:10:41.82,Vocab,,0,0,0,,{\fnInter\b1}boundary{\b0}  {\fnCharis SIL}/ˈbaʊndri/  {\fnNoto Sans CJK SC}边界
+Dialogue: 0,0:10:41.84,0:10:47.07,Main,,0,0,0,,Those cases would need p to be a {\c&H0052C1F4&}perfect square{\c&H00FFFFFF&}, or an even number,
+Dialogue: 1,0:10:41.84,0:10:47.09,Vocab,,0,0,0,,{\fnInter\b1}perfect square{\b0}  {\fnCharis SIL}/ˈpɝːfɪkt skwer/  {\fnNoto Sans CJK SC}完全平方数
+Dialogue: 0,0:10:47.09,0:10:49.87,Main,,0,0,0,,and an odd prime is neither.
+Dialogue: 0,0:10:50.20,0:10:52.99,Main,,0,0,0,,Now put everything together.
+Dialogue: 0,0:10:53.01,0:10:57.75,Main,,0,0,0,,The re-cutting involution has exactly one fixed point,
+Dialogue: 0,0:10:57.77,0:11:01.20,Main,,0,0,0,,so S has an odd number of elements.
+Dialogue: 0,0:11:01.22,0:11:05.64,Main,,0,0,0,,Therefore the flipping involution also has a fixed point,
+Dialogue: 0,0:11:05.66,0:11:08.54,Main,,0,0,0,,a windmill with square blades.
+Dialogue: 0,0:11:08.56,0:11:12.71,Main,,0,0,0,,And that is p, written as a sum of two squares.
+Dialogue: 0,0:11:13.23,0:11:18.74,Main,,0,0,0,,This is Zagier's entire proof, and it really is one sentence.
+Dialogue: 0,0:11:22.43,0:11:26.61,Main,,0,0,0,,When I first saw the formula, it looked like magic.
+Dialogue: 0,0:11:26.63,0:11:32.61,Main,,0,0,0,,But every step has a reason, and the reasons are the most valuable part.
+Dialogue: 0,0:11:32.93,0:11:36.95,Main,,0,0,0,,First, we needed existence, not a formula.
+Dialogue: 0,0:11:36.97,0:11:42.84,Main,,0,0,0,,Existence follows from an odd count, and an odd count follows from pairing.
+Dialogue: 0,0:11:42.86,0:11:48.76,Main,,0,0,0,,Second, to use pairing, the solutions we want must be fixed points.
+Dialogue: 0,0:11:48.78,0:11:52.34,Main,,0,0,0,,So we built a set with a built-in symmetry,
+Dialogue: 0,0:11:52.36,0:11:55.94,Main,,0,0,0,,by splitting y squared into y times z.
+Dialogue: 0,0:11:55.96,0:12:02.50,Main,,0,0,0,,Third, we needed a second involution, and the algebra alone gives no hint.
+Dialogue: 0,0:12:02.52,0:12:04.55,Main,,0,0,0,,The picture does.
+Dialogue: 0,0:12:04.57,0:12:10.11,Main,,0,0,0,,An area that can be cut in two ways is a natural source of pairs.
+Dialogue: 0,0:12:10.13,0:12:14.31,Main,,0,0,0,,Fourth, primality is used at exactly one sharp point,
+Dialogue: 0,0:12:14.33,0:12:17.34,Main,,0,0,0,,to make the fixed point unique.
+Dialogue: 0,0:12:17.36,0:12:19.82,Main,,0,0,0,,Test this with twenty-one.
+Dialogue: 0,0:12:19.84,0:12:25.17,Main,,0,0,0,,Its set S has two fixed windmills, the cross with x equal to one,
+Dialogue: 0,0:12:25.19,0:12:28.97,Main,,0,0,0,,and another one with x equal to three.
+Dialogue: 0,0:12:28.99,0:12:32.94,Main,,0,0,0,,Two is even, so the argument proves nothing.
+Dialogue: 0,0:12:32.96,0:12:37.46,Main,,0,0,0,,And indeed, twenty-one is not a sum of two squares.
+Dialogue: 0,0:12:37.90,0:12:41.01,Main,,0,0,0,,This is a good habit in general.
+Dialogue: 0,0:12:41.03,0:12:45.57,Main,,0,0,0,,For any proof, ask where exactly each {\c&H0052C1F4&}hypothesis{\c&H00FFFFFF&} is used,
+Dialogue: 1,0:12:41.03,0:12:45.59,Vocab,,0,0,0,,{\fnInter\b1}hypothesis{\b0}  {\fnCharis SIL}/haɪˈpɑːθəsɪs/  {\fnNoto Sans CJK SC}假设、条件
+Dialogue: 0,0:12:45.59,0:12:48.32,Main,,0,0,0,,and what breaks without it.
+Dialogue: 0,0:12:51.33,0:12:54.01,Main,,0,0,0,,There is one more surprise.
+Dialogue: 0,0:12:54.03,0:12:58.20,Main,,0,0,0,,The proof seems to say only that a solution exists,
+Dialogue: 0,0:12:58.22,0:13:02.01,Main,,0,0,0,,but it secretly contains an {\c&H0052C1F4&}algorithm{\c&H00FFFFFF&}.
+Dialogue: 1,0:12:58.22,0:13:02.01,Vocab,,0,0,0,,{\fnInter\b1}algorithm{\b0}  {\fnCharis SIL}/ˈælɡərɪðəm/  {\fnNoto Sans CJK SC}算法
+Dialogue: 0,0:13:02.33,0:13:07.20,Main,,0,0,0,,Start from the cross, the unique fixed point of re-cutting.
+Dialogue: 0,0:13:07.22,0:13:09.31,Main,,0,0,0,,Flip the blades.
+Dialogue: 0,0:13:09.33,0:13:10.99,Main,,0,0,0,,Re-cut.
+Dialogue: 0,0:13:11.01,0:13:12.72,Main,,0,0,0,,Flip again.
+Dialogue: 0,0:13:12.74,0:13:14.61,Main,,0,0,0,,Re-cut again.
+Dialogue: 0,0:13:14.63,0:13:16.18,Main,,0,0,0,,Every step is forced,
+Dialogue: 0,0:13:16.20,0:13:20.98,Main,,0,0,0,,and we can never return to a windmill we have already visited.
+Dialogue: 0,0:13:21.00,0:13:23.88,Main,,0,0,0,,Since S is finite, the walk must stop,
+Dialogue: 0,0:13:23.90,0:13:29.76,Main,,0,0,0,,and it can only stop at a windmill that flipping leaves unchanged.
+Dialogue: 0,0:13:29.78,0:13:35.03,Main,,0,0,0,,For forty-one, after ten steps we reach blades of size two by two,
+Dialogue: 0,0:13:35.05,0:13:40.93,Main,,0,0,0,,and we read off that forty-one is five squared plus four squared.
+Dialogue: 0,0:13:41.26,0:13:43.86,Main,,0,0,0,,Why does this always work?
+Dialogue: 0,0:13:43.88,0:13:49.47,Main,,0,0,0,,Think of each windmill as a dot, and join partners with lines.
+Dialogue: 0,0:13:49.49,0:13:53.33,Main,,0,0,0,,Every dot has at most two lines, one of each kind,
+Dialogue: 0,0:13:53.35,0:13:57.44,Main,,0,0,0,,so the picture breaks into paths and loops.
+Dialogue: 0,0:13:57.46,0:14:03.06,Main,,0,0,0,,The cross is the end of a path, and the other end must be a solution.
+Dialogue: 0,0:14:03.50,0:14:06.55,Main,,0,0,0,,If you know the proof of Sperner's lemma,
+Dialogue: 0,0:14:06.57,0:14:11.49,Main,,0,0,0,,this is the same idea as walking through rooms and doors.
+Dialogue: 0,0:14:11.51,0:14:14.87,Main,,0,0,0,,It is not the fastest method, though.
+Dialogue: 0,0:14:14.89,0:14:18.88,Main,,0,0,0,,For large primes, there are much faster algorithms,
+Dialogue: 0,0:14:18.90,0:14:22.10,Main,,0,0,0,,based on the {\c&H0052C1F4&}Euclidean algorithm{\c&H00FFFFFF&}.
+Dialogue: 1,0:14:18.90,0:14:22.10,Vocab,,0,0,0,,{\fnInter\b1}Euclidean algorithm{\b0}  {\fnCharis SIL}/juːˈklɪdiən ˈælɡərɪðəm/  {\fnNoto Sans CJK SC}欧几里得算法（辗转相除）
+Dialogue: 0,0:14:25.49,0:14:27.76,Main,,0,0,0,,Now let us zoom out.
+Dialogue: 0,0:14:27.78,0:14:32.91,Main,,0,0,0,,Which whole numbers, not just primes, are sums of two squares?
+Dialogue: 0,0:14:33.36,0:14:36.67,Main,,0,0,0,,The key is a {\c&H0052C1F4&}multiplication{\c&H00FFFFFF&} rule.
+Dialogue: 1,0:14:33.36,0:14:36.69,Vocab,,0,0,0,,{\fnInter\b1}multiplication{\b0}  {\fnCharis SIL}/ˌmʌltəplɪˈkeɪʃən/  {\fnNoto Sans CJK SC}乘法
+Dialogue: 0,0:14:36.69,0:14:42.60,Main,,0,0,0,,The product of two sums of two squares is again a sum of two squares.
+Dialogue: 0,0:14:42.62,0:14:45.28,Main,,0,0,0,,In the language of complex numbers,
+Dialogue: 0,0:14:45.30,0:14:51.15,Main,,0,0,0,,this just says that the length of a product is the product of the lengths.
+Dialogue: 0,0:14:51.59,0:14:56.55,Main,,0,0,0,,Combine this with Fermat's theorem, and you get the full answer.
+Dialogue: 0,0:14:56.57,0:15:02.50,Main,,0,0,0,,A positive integer is a sum of two squares exactly when every
+Dialogue: 0,0:15:02.52,0:15:08.84,Main,,0,0,0,,prime {\c&H0052C1F4&}factor{\c&H00FFFFFF&} of the form 4k + 3 appears an even number of times.
+Dialogue: 1,0:15:02.52,0:15:08.84,Vocab,,0,0,0,,{\fnInter\b1}factor{\b0}  {\fnCharis SIL}/ˈfæktɚ/  {\fnNoto Sans CJK SC}因子
+Dialogue: 0,0:15:09.26,0:15:13.51,Main,,0,0,0,,In the {\c&H0052C1F4&}Gaussian integers{\c&H00FFFFFF&}, numbers of the form a plus b i,
+Dialogue: 1,0:15:09.26,0:15:13.53,Vocab,,0,0,0,,{\fnInter\b1}Gaussian integers{\b0}  {\fnCharis SIL}/ˈɡaʊsiən ˈɪntɪdʒɚz/  {\fnNoto Sans CJK SC}高斯整数
+Dialogue: 0,0:15:13.53,0:15:17.47,Main,,0,0,0,,this becomes a statement about factoring.
+Dialogue: 0,0:15:17.49,0:15:25.06,Main,,0,0,0,,A prime that is one mod four splits into two {\c&H0052C1F4&}conjugate{\c&H00FFFFFF&} factors,
+Dialogue: 1,0:15:17.49,0:15:25.08,Vocab,,0,0,0,,{\fnInter\b1}conjugate{\b0}  {\fnCharis SIL}/ˈkɑːndʒəɡət/  {\fnNoto Sans CJK SC}共轭的
+Dialogue: 0,0:15:25.08,0:15:28.38,Main,,0,0,0,,like five equals (2 + i)(2 − i).
+Dialogue: 0,0:15:28.40,0:15:32.60,Main,,0,0,0,,A prime that is three mod four cannot be split.
+Dialogue: 0,0:15:32.62,0:15:34.70,Main,,0,0,0,,It stays prime.
+Dialogue: 0,0:15:35.13,0:15:39.00,Main,,0,0,0,,{\c&H0052C1F4&}Unique factorization{\c&H00FFFFFF&} in the Gaussian integers
+Dialogue: 1,0:15:35.13,0:15:39.02,Vocab,,0,0,0,,{\fnInter\b1}unique factorization{\b0}  {\fnCharis SIL}/juˈniːk ˌfæktərəˈzeɪʃən/  {\fnNoto Sans CJK SC}唯一分解
+Dialogue: 0,0:15:39.02,0:15:43.35,Main,,0,0,0,,also tells us something Zagier's proof does not.
+Dialogue: 0,0:15:43.37,0:15:50.51,Main,,0,0,0,,The way of writing p as a sum of two squares is unique, up to order and signs.
+Dialogue: 0,0:15:50.93,0:15:53.49,Main,,0,0,0,,And the story continues.
+Dialogue: 0,0:15:53.51,0:15:57.84,Main,,0,0,0,,Which primes are x squared plus two y squared?
+Dialogue: 0,0:15:57.86,0:16:02.10,Main,,0,0,0,,Two, and the primes that are one or three mod eight.
+Dialogue: 0,0:16:02.12,0:16:05.87,Main,,0,0,0,,Which are x squared plus three y squared?
+Dialogue: 0,0:16:05.89,0:16:09.65,Main,,0,0,0,,Three, and the primes that are one mod three.
+Dialogue: 0,0:16:09.67,0:16:13.89,Main,,0,0,0,,Questions like these lead to {\c&H0052C1F4&}quadratic reciprocity{\c&H00FFFFFF&},
+Dialogue: 1,0:16:09.67,0:16:13.89,Vocab,,0,0,0,,{\fnInter\b1}quadratic reciprocity{\b0}  {\fnCharis SIL}/kwɑːˈdrætɪk ˌresəˈprɑːsəti/  {\fnNoto Sans CJK SC}二次互反律
+Dialogue: 0,0:16:13.91,0:16:17.45,Main,,0,0,0,,and eventually to {\c&H0052C1F4&}class field theory{\c&H00FFFFFF&}.
+Dialogue: 1,0:16:13.91,0:16:17.47,Vocab,,0,0,0,,{\fnInter\b1}class field theory{\b0}  {\fnCharis SIL}/klæs fiːld ˈθiːəri/  {\fnNoto Sans CJK SC}类域论
+Dialogue: 0,0:16:17.47,0:16:21.04,Main,,0,0,0,,And if you allow four squares instead of two,
+Dialogue: 0,0:16:21.06,0:16:27.18,Main,,0,0,0,,Lagrange proved that every positive integer is a sum of four squares.
+Dialogue: 0,0:16:30.19,0:16:32.35,Main,,0,0,0,,What is it good for?
+Dialogue: 0,0:16:32.37,0:16:35.43,Main,,0,0,0,,Here are two applications I like.
+Dialogue: 0,0:16:35.76,0:16:39.41,Main,,0,0,0,,The first is about right triangles.
+Dialogue: 0,0:16:39.43,0:16:42.88,Main,,0,0,0,,If p equals a squared plus b squared,
+Dialogue: 0,0:16:42.90,0:16:49.92,Main,,0,0,0,,then squaring a plus b i gives a squared minus b squared, plus two a b i.
+Dialogue: 0,0:16:49.94,0:16:53.03,Main,,0,0,0,,So a squared minus b squared, two a b,
+Dialogue: 0,0:16:53.05,0:16:57.76,Main,,0,0,0,,and p form a right triangle with integer sides.
+Dialogue: 0,0:16:57.78,0:17:00.78,Main,,0,0,0,,Five gives three, four, five.
+Dialogue: 0,0:17:00.80,0:17:04.49,Main,,0,0,0,,Thirteen gives five, twelve, thirteen.
+Dialogue: 0,0:17:04.51,0:17:05.21,Main,,0,0,0,,In fact,
+Dialogue: 0,0:17:05.23,0:17:09.94,Main,,0,0,0,,the odd primes that can be the {\c&H0052C1F4&}hypotenuse{\c&H00FFFFFF&} of an integer
+Dialogue: 1,0:17:05.23,0:17:09.96,Vocab,,0,0,0,,{\fnInter\b1}hypotenuse{\b0}  {\fnCharis SIL}/haɪˈpɑːtənuːs/  {\fnNoto Sans CJK SC}斜边
+Dialogue: 0,0:17:09.96,0:17:15.60,Main,,0,0,0,,right triangle are exactly the primes that are one mod four.
+Dialogue: 0,0:17:16.03,0:17:20.04,Main,,0,0,0,,The second is a surprise involving pi.
+Dialogue: 0,0:17:20.06,0:17:25.84,Main,,0,0,0,,Count the integer points inside a large circle of radius R.
+Dialogue: 0,0:17:25.86,0:17:29.19,Main,,0,0,0,,There are about pi R squared of them.
+Dialogue: 0,0:17:29.21,0:17:34.15,Main,,0,0,0,,There is a second way to count the same points, using divisors,
+Dialogue: 0,0:17:34.17,0:17:38.59,Main,,0,0,0,,and it rests on the theory of sums of two squares.
+Dialogue: 0,0:17:38.61,0:17:43.05,Main,,0,0,0,,Comparing the two counts gives Leibniz's formula.
+Dialogue: 0,0:17:43.07,0:17:49.66,Main,,0,0,0,,Pi over four equals one, minus one third, plus one fifth, minus one seventh,
+Dialogue: 0,0:17:49.68,0:17:51.06,Main,,0,0,0,,and so on.
+Dialogue: 0,0:17:51.49,0:17:58.96,Main,,0,0,0,,So a question about which primes are sums of two squares ends up connected to geometry,
+Dialogue: 0,0:17:58.98,0:18:02.42,Main,,0,0,0,,to complex numbers, and even to pi.
+Dialogue: 0,0:18:02.44,0:18:08.12,Main,,0,0,0,,That web of connections is a big part of why I love this theorem.
+Dialogue: 0,0:18:11.23,0:18:13.66,Main,,0,0,0,,Now let us practice.
+Dialogue: 0,0:18:13.68,0:18:18.14,Main,,0,0,0,,Here is how an interview about this theorem might go.
+Dialogue: 0,0:18:18.16,0:18:21.70,Main,,0,0,0,,Notice that each answer is short and precise,
+Dialogue: 0,0:18:21.72,0:18:26.25,Main,,0,0,0,,and leaves something the examiner can follow up on.
+Dialogue: 0,0:18:27.49,0:18:30.51,Q,,0,0,0,,So, what is your favorite theorem?
+Dialogue: 0,0:18:30.53,0:18:34.95,Main,,0,0,0,,My favorite theorem is Fermat's two-square theorem.
+Dialogue: 2,0:18:30.53,0:18:55.14,Vocab,,0,0,0,,{\fnInter\b1}if and only if{\b0}  {\fnCharis SIL}/ɪf ənd ˈoʊnli ɪf/  {\fnNoto Sans CJK SC}当且仅当
+Dialogue: 0,0:18:34.97,0:18:39.23,Main,,0,0,0,,It says that an odd prime is a sum of two squares if
+Dialogue: 0,0:18:39.25,0:18:44.68,Main,,0,0,0,,and only if it leaves remainder one when divided by four.
+Dialogue: 0,0:18:44.70,0:18:48.25,Main,,0,0,0,,I like it because the statement is so simple,
+Dialogue: 0,0:18:48.27,0:18:55.04,Main,,0,0,0,,but the proof I like best is a clever counting argument that fits in one sentence.
+Dialogue: 0,0:18:55.06,0:19:01.17,Q,,0,0,0,,Can you show me why primes of the form four k plus three can't work?
+Dialogue: 0,0:19:01.19,0:19:02.53,Main,,0,0,0,,Sure.
+Dialogue: 2,0:19:01.19,0:19:21.01,Vocab,,0,0,0,,{\fnInter\b1}modulo{\b0}  {\fnCharis SIL}/ˈmɑːdʒəloʊ/  {\fnNoto Sans CJK SC}模（取余）
+Dialogue: 0,0:19:02.55,0:19:06.38,Main,,0,0,0,,Any square is zero or one, mod four.
+Dialogue: 0,0:19:06.40,0:19:09.87,Main,,0,0,0,,An even number squared is divisible by four,
+Dialogue: 0,0:19:09.89,0:19:15.14,Main,,0,0,0,,and an odd number squared is one more than a multiple of four.
+Dialogue: 0,0:19:15.16,0:19:20.91,Main,,0,0,0,,So a sum of two squares is zero, one or two, mod four, but never three.
+Dialogue: 0,0:19:20.93,0:19:26.21,Q,,0,0,0,,Is that condition enough for any number, not just for primes?
+Dialogue: 0,0:19:26.23,0:19:27.55,Main,,0,0,0,,No.
+Dialogue: 2,0:19:26.23,0:19:54.03,Vocab,,0,0,0,,{\fnInter\b1}counterexample{\b0}  {\fnCharis SIL}/ˈkaʊntɚɪɡˌzæmpəl/  {\fnNoto Sans CJK SC}反例
+Dialogue: 0,0:19:27.57,0:19:33.27,Main,,0,0,0,,Twenty-one leaves remainder one, but it is not a sum of two squares.
+Dialogue: 0,0:19:33.29,0:19:36.92,Main,,0,0,0,,That's because twenty-one is three times seven,
+Dialogue: 0,0:19:36.94,0:19:40.84,Main,,0,0,0,,and both of those primes are three mod four.
+Dialogue: 0,0:19:40.86,0:19:41.89,Main,,0,0,0,,In general,
+Dialogue: 0,0:19:41.91,0:19:47.75,Main,,0,0,0,,a positive integer is a sum of two squares exactly when every prime
+Dialogue: 0,0:19:47.77,0:19:53.94,Main,,0,0,0,,factor of the form four k plus three appears an even number of times.
+Dialogue: 0,0:19:53.96,0:19:55.33,Q,,0,0,0,,Good.
+Dialogue: 0,0:19:55.35,0:19:58.74,Q,,0,0,0,,How would you prove the hard direction?
+Dialogue: 0,0:19:58.76,0:20:01.37,Main,,0,0,0,,I'd use Zagier's proof.
+Dialogue: 0,0:20:01.39,0:20:09.02,Main,,0,0,0,,Take the set S of positive {\c&H0052C1F4&}triples{\c&H00FFFFFF&} with x squared plus four y z equal to p.
+Dialogue: 1,0:20:01.39,0:20:09.02,Vocab,,0,0,0,,{\fnInter\b1}triple{\b0}  {\fnCharis SIL}/ˈtrɪpəl/  {\fnNoto Sans CJK SC}三元组
+Dialogue: 0,0:20:09.04,0:20:12.18,Main,,0,0,0,,Swapping y and z is an {\c&H0052C1F4&}involution{\c&H00FFFFFF&},
+Dialogue: 1,0:20:09.04,0:20:12.20,Vocab,,0,0,0,,{\fnInter\b1}involution{\b0}  {\fnCharis SIL}/ˌɪnvəˈluːʃən/  {\fnNoto Sans CJK SC}对合
+Dialogue: 0,0:20:12.20,0:20:18.61,Main,,0,0,0,,and its fixed points give p as x squared plus the square of two y.
+Dialogue: 0,0:20:18.63,0:20:23.58,Main,,0,0,0,,So it's enough to show that S has an odd number of elements.
+Dialogue: 0,0:20:23.60,0:20:26.45,Main,,0,0,0,,For that, there's a second {\c&H0052C1F4&}involution{\c&H00FFFFFF&},
+Dialogue: 1,0:20:23.60,0:20:26.47,Vocab,,0,0,0,,{\fnInter\b1}involution{\b0}  {\fnCharis SIL}/ˌɪnvəˈluːʃən/  {\fnNoto Sans CJK SC}对合
+Dialogue: 0,0:20:26.47,0:20:30.06,Main,,0,0,0,,which you can picture as re-cutting a windmill,
+Dialogue: 0,0:20:30.08,0:20:33.30,Main,,0,0,0,,and it has exactly one fixed point.
+Dialogue: 0,0:20:33.32,0:20:38.34,Main,,0,0,0,,By {\c&H0052C1F4&}parity{\c&H00FFFFFF&}, S is odd, so the swap has a fixed point too.
+Dialogue: 1,0:20:33.32,0:20:38.53,Vocab,,0,0,0,,{\fnInter\b1}parity{\b0}  {\fnCharis SIL}/ˈperəti/  {\fnNoto Sans CJK SC}奇偶性
+Dialogue: 0,0:20:38.36,0:20:42.84,Q,,0,0,0,,Where exactly do you use the fact that p is prime?
+Dialogue: 0,0:20:42.86,0:20:47.77,Main,,0,0,0,,Mainly in one place, the uniqueness of the fixed point.
+Dialogue: 0,0:20:47.79,0:20:54.64,Main,,0,0,0,,A fixed windmill has x equal to y, so p equals x times x plus four z,
+Dialogue: 0,0:20:54.66,0:20:58.75,Main,,0,0,0,,and {\c&H0052C1F4&}primality{\c&H00FFFFFF&} forces x to be one.
+Dialogue: 1,0:20:54.66,0:20:58.75,Vocab,,0,0,0,,{\fnInter\b1}primality{\b0}  {\fnCharis SIL}/praɪˈmæləti/  {\fnNoto Sans CJK SC}素性（是素数）
+Dialogue: 0,0:20:58.77,0:21:05.75,Main,,0,0,0,,It also rules out the {\c&H0052C1F4&}boundary{\c&H00FFFFFF&} cases, which would need p to be a square or even.
+Dialogue: 1,0:20:58.77,0:21:05.77,Vocab,,0,0,0,,{\fnInter\b1}boundary{\b0}  {\fnCharis SIL}/ˈbaʊndri/  {\fnNoto Sans CJK SC}边界
+Dialogue: 0,0:21:05.77,0:21:10.04,Main,,0,0,0,,For twenty-one, for example, there are two fixed windmills,
+Dialogue: 0,0:21:10.06,0:21:13.04,Main,,0,0,0,,and the argument fails, as it should.
+Dialogue: 0,0:21:13.06,0:21:15.04,Q,,0,0,0,,Interesting.
+Dialogue: 0,0:21:15.06,0:21:20.07,Q,,0,0,0,,But how would anyone come up with that second involution?
+Dialogue: 0,0:21:20.09,0:21:24.69,Main,,0,0,0,,Honestly, from the algebra alone, I don't think I would.
+Dialogue: 2,0:21:20.09,0:21:28.87,Vocab,,0,0,0,,{\fnInter\b1}intuition{\b0}  {\fnCharis SIL}/ˌɪntuˈɪʃən/  {\fnNoto Sans CJK SC}直觉
+Dialogue: 0,0:21:24.71,0:21:28.87,Main,,0,0,0,,But if you draw x squared plus four y z as a windmill,
+Dialogue: 0,0:21:28.89,0:21:34.50,Main,,0,0,0,,you see that the same {\c&H0052C1F4&}outline{\c&H00FFFFFF&} can be cut in two different ways.
+Dialogue: 1,0:21:28.89,0:21:34.52,Vocab,,0,0,0,,{\fnInter\b1}outline{\b0}  {\fnCharis SIL}/ˈaʊtlaɪn/  {\fnNoto Sans CJK SC}轮廓
+Dialogue: 0,0:21:34.52,0:21:40.69,Main,,0,0,0,,Whenever an object can be described in two ways, you get a natural pairing.
+Dialogue: 0,0:21:40.71,0:21:47.01,Main,,0,0,0,,So the geometry suggests the involution, and the formula just records it.
+Dialogue: 0,0:21:47.03,0:21:50.80,Q,,0,0,0,,Your proof only shows existence.
+Dialogue: 0,0:21:50.82,0:21:54.44,Q,,0,0,0,,Can you actually find x and y?
+Dialogue: 0,0:21:54.46,0:21:58.80,Main,,0,0,0,,Yes, the proof actually contains an {\c&H0052C1F4&}algorithm{\c&H00FFFFFF&}.
+Dialogue: 1,0:21:54.46,0:21:58.82,Vocab,,0,0,0,,{\fnInter\b1}algorithm{\b0}  {\fnCharis SIL}/ˈælɡərɪðəm/  {\fnNoto Sans CJK SC}算法
+Dialogue: 0,0:21:58.82,0:22:04.95,Main,,0,0,0,,Start at the fixed point of re-cutting and alternate the two involutions.
+Dialogue: 0,0:22:04.97,0:22:10.02,Main,,0,0,0,,Each windmill has at most two {\c&H0052C1F4&}neighbours{\c&H00FFFFFF&}, so the walk can't repeat,
+Dialogue: 1,0:22:04.97,0:22:10.04,Vocab,,0,0,0,,{\fnInter\b1}neighbour{\b0}  {\fnCharis SIL}/ˈneɪbɚ/  {\fnNoto Sans CJK SC}相邻者
+Dialogue: 0,0:22:10.04,0:22:15.46,Main,,0,0,0,,and it has to end at a fixed point of the swap, which is a solution.
+Dialogue: 0,0:22:15.48,0:22:19.80,Main,,0,0,0,,It's like the path-following proof of Sperner's lemma.
+Dialogue: 0,0:22:19.82,0:22:22.34,Main,,0,0,0,,It's slow for large primes, though,
+Dialogue: 0,0:22:22.36,0:22:27.27,Main,,0,0,0,,and there are faster methods using the {\c&H0052C1F4&}Euclidean {\c&H0052C1F4&}algorithm{\c&H00FFFFFF&}{\c&H00FFFFFF&}.
+Dialogue: 1,0:22:22.36,0:22:27.47,Vocab,,0,0,0,,{\fnInter\b1}algorithm{\b0}  {\fnCharis SIL}/ˈælɡərɪðəm/  {\fnNoto Sans CJK SC}算法{\fnInter}    ·    {\fnInter\b1}Euclidean algorithm{\b0}  {\fnCharis SIL}/juːˈklɪdiən ˈælɡərɪðəm/  {\fnNoto Sans CJK SC}欧几里得算法（辗转相除）
+Dialogue: 0,0:22:27.29,0:22:29.97,Q,,0,0,0,,Do you know any other proof?
+Dialogue: 0,0:22:29.99,0:22:34.00,Main,,0,0,0,,Yes, there's one using the {\c&H0052C1F4&}Gaussian integers{\c&H00FFFFFF&}.
+Dialogue: 1,0:22:29.99,0:22:34.02,Vocab,,0,0,0,,{\fnInter\b1}Gaussian integers{\b0}  {\fnCharis SIL}/ˈɡaʊsiən ˈɪntɪdʒɚz/  {\fnNoto Sans CJK SC}高斯整数
+Dialogue: 0,0:22:34.02,0:22:41.28,Main,,0,0,0,,Since minus one is a square mod p, p divides n squared plus one for some n,
+Dialogue: 0,0:22:41.30,0:22:46.23,Main,,0,0,0,,and that factors as n plus i, times n minus i.
+Dialogue: 0,0:22:46.25,0:22:49.55,Main,,0,0,0,,If p stayed prime in the {\c&H0052C1F4&}Gaussian integers{\c&H00FFFFFF&},
+Dialogue: 1,0:22:46.25,0:22:49.57,Vocab,,0,0,0,,{\fnInter\b1}Gaussian integers{\b0}  {\fnCharis SIL}/ˈɡaʊsiən ˈɪntɪdʒɚz/  {\fnNoto Sans CJK SC}高斯整数
+Dialogue: 0,0:22:49.57,0:22:55.08,Main,,0,0,0,,it would have to divide one of those factors, which is impossible.
+Dialogue: 0,0:22:55.10,0:22:59.06,Main,,0,0,0,,So p splits as a plus b i, times a minus b i,
+Dialogue: 0,0:22:59.08,0:23:05.47,Main,,0,0,0,,and taking {\c&H0052C1F4&}norms{\c&H00FFFFFF&} gives p equals a squared plus b squared.
+Dialogue: 1,0:22:59.08,0:23:05.49,Vocab,,0,0,0,,{\fnInter\b1}norm{\b0}  {\fnCharis SIL}/nɔːrm/  {\fnNoto Sans CJK SC}范数
+Dialogue: 0,0:23:05.49,0:23:09.20,Main,,0,0,0,,There's also Euler's proof by infinite descent,
+Dialogue: 0,0:23:09.22,0:23:12.57,Main,,0,0,0,,and a {\c&H0052C1F4&}pigeonhole{\c&H00FFFFFF&} argument due to Thue.
+Dialogue: 1,0:23:09.22,0:23:12.78,Vocab,,0,0,0,,{\fnInter\b1}pigeonhole{\b0}  {\fnCharis SIL}/ˈpɪdʒənhoʊl/  {\fnNoto Sans CJK SC}抽屉（原理）
+Dialogue: 0,0:23:12.59,0:23:16.84,Q,,0,0,0,,Why is minus one a square modulo p?
+Dialogue: 0,0:23:16.86,0:23:23.46,Main,,0,0,0,,By {\c&H0052C1F4&}Wilson's theorem{\c&H00FFFFFF&}, p minus one, {\c&H0052C1F4&}factorial{\c&H00FFFFFF&}, is minus one mod p.
+Dialogue: 1,0:23:16.86,0:23:23.48,Vocab,,0,0,0,,{\fnInter\b1}Wilson's theorem{\b0}  {\fnCharis SIL}/ˈwɪlsənz ˈθɪrəm/  {\fnNoto Sans CJK SC}威尔逊定理{\fnInter}    ·    {\fnInter\b1}factorial{\b0}  {\fnCharis SIL}/fækˈtɔːriəl/  {\fnNoto Sans CJK SC}阶乘
+Dialogue: 0,0:23:23.48,0:23:26.93,Main,,0,0,0,,Pair each number k with minus k.
+Dialogue: 0,0:23:26.95,0:23:32.48,Main,,0,0,0,,When p is one mod four, the minus signs come in an even number,
+Dialogue: 0,0:23:32.50,0:23:38.69,Main,,0,0,0,,so the {\c&H0052C1F4&}factorial{\c&H00FFFFFF&} of p minus one over two, squared, is minus one.
+Dialogue: 1,0:23:32.50,0:23:38.71,Vocab,,0,0,0,,{\fnInter\b1}factorial{\b0}  {\fnCharis SIL}/fækˈtɔːriəl/  {\fnNoto Sans CJK SC}阶乘
+Dialogue: 0,0:23:38.71,0:23:41.54,Main,,0,0,0,,Again, it's a pairing argument.
+Dialogue: 0,0:23:41.56,0:23:44.71,Q,,0,0,0,,What about sums of three squares?
+Dialogue: 0,0:23:44.73,0:23:49.11,Main,,0,0,0,,That's harder, and I know the statement better than the proof.
+Dialogue: 0,0:23:49.13,0:23:54.42,Main,,0,0,0,,Legendre's three-square theorem says that a positive integer
+Dialogue: 0,0:23:54.44,0:23:59.43,Main,,0,0,0,,is a sum of three squares unless it has the form four to the a,
+Dialogue: 0,0:23:59.45,0:24:02.13,Main,,0,0,0,,times eight b plus seven.
+Dialogue: 0,0:24:02.15,0:24:08.18,Main,,0,0,0,,The easy half is again a {\c&H0052C1F4&}congruence{\c&H00FFFFFF&} argument, this time mod eight.
+Dialogue: 1,0:24:02.15,0:24:08.20,Vocab,,0,0,0,,{\fnInter\b1}congruence{\b0}  {\fnCharis SIL}/ˈkɑːŋɡruəns/  {\fnNoto Sans CJK SC}同余
+Dialogue: 0,0:24:08.20,0:24:14.41,Main,,0,0,0,,And with four squares, Lagrange proved that every positive integer works.
+Dialogue: 0,0:24:14.43,0:24:18.84,Q,,0,0,0,,Is there an application you find meaningful?
+Dialogue: 0,0:24:18.86,0:24:23.11,Main,,0,0,0,,I like the connection to {\c&H0052C1F4&}Pythagorean{\c&H00FFFFFF&} triples.
+Dialogue: 1,0:24:18.86,0:24:23.11,Vocab,,0,0,0,,{\fnInter\b1}Pythagorean{\b0}  {\fnCharis SIL}/pɪˌθæɡəˈriːən/  {\fnNoto Sans CJK SC}毕达哥拉斯的
+Dialogue: 2,0:24:18.86,0:24:23.11,Vocab,,0,0,0,,{\fnInter\b1}meaningful{\b0}  {\fnCharis SIL}/ˈmiːnɪŋfəl/  {\fnNoto Sans CJK SC}有意义的
+Dialogue: 0,0:24:23.13,0:24:29.14,Main,,0,0,0,,Squaring a plus b i shows that the primes that can be the {\c&H0052C1F4&}hypotenuse{\c&H00FFFFFF&} of
+Dialogue: 1,0:24:23.13,0:24:29.16,Vocab,,0,0,0,,{\fnInter\b1}hypotenuse{\b0}  {\fnCharis SIL}/haɪˈpɑːtənuːs/  {\fnNoto Sans CJK SC}斜边
+Dialogue: 0,0:24:29.16,0:24:35.82,Main,,0,0,0,,an integer right triangle are exactly the primes that are one mod four.
+Dialogue: 0,0:24:35.84,0:24:42.57,Main,,0,0,0,,And counting {\c&H0052C1F4&}lattice{\c&H00FFFFFF&} points in a circle even leads to Leibniz's series for pi.
+Dialogue: 1,0:24:35.84,0:24:42.75,Vocab,,0,0,0,,{\fnInter\b1}lattice{\b0}  {\fnCharis SIL}/ˈlætɪs/  {\fnNoto Sans CJK SC}格点（网格）
+Dialogue: 0,0:24:42.59,0:24:44.79,Q,,0,0,0,,Last question.
+Dialogue: 0,0:24:44.81,0:24:47.87,Q,,0,0,0,,What did you learn from this theorem?
+Dialogue: 0,0:24:47.89,0:24:49.71,Main,,0,0,0,,Three things.
+Dialogue: 0,0:24:49.73,0:24:56.45,Main,,0,0,0,,First, you can prove existence by counting, sometimes just modulo two.
+Dialogue: 0,0:24:56.47,0:25:02.12,Main,,0,0,0,,Second, sometimes you have to create a symmetry, not just find one.
+Dialogue: 0,0:25:02.14,0:25:08.76,Main,,0,0,0,,And third, a good picture can turn a mysterious formula into something natural.
+Dialogue: 0,0:25:08.78,0:25:12.34,Main,,0,0,0,,I first met the parity idea in Sperner's lemma,
+Dialogue: 0,0:25:12.36,0:25:17.33,Main,,0,0,0,,and seeing it again here made me realize it's a general {\c&H0052C1F4&}strategy{\c&H00FFFFFF&},
+Dialogue: 1,0:25:12.36,0:25:17.35,Vocab,,0,0,0,,{\fnInter\b1}strategy{\b0}  {\fnCharis SIL}/ˈstrætədʒi/  {\fnNoto Sans CJK SC}策略
+Dialogue: 0,0:25:17.35,0:25:19.17,Main,,0,0,0,,not just a trick.
+Dialogue: 0,0:25:22.12,0:25:25.66,Main,,0,0,0,,Let me end with what this theorem taught me.
+Dialogue: 0,0:25:25.98,0:25:29.64,Main,,0,0,0,,To prove that something exists, you can count it,
+Dialogue: 0,0:25:29.66,0:25:33.69,Main,,0,0,0,,and sometimes counting modulo two is enough.
+Dialogue: 0,0:25:33.71,0:25:36.89,Main,,0,0,0,,Symmetry is not always given.
+Dialogue: 0,0:25:36.91,0:25:39.84,Main,,0,0,0,,Sometimes you have to create it.
+Dialogue: 0,0:25:39.86,0:25:43.35,Main,,0,0,0,,And a good picture can turn a formula that looks like
+Dialogue: 0,0:25:43.37,0:25:47.78,Main,,0,0,0,,magic into something you could have discovered yourself.
+Dialogue: 0,0:25:48.22,0:25:51.96,Main,,0,0,0,,Brouwer's theorem is about fixed points.
+Dialogue: 0,0:25:51.98,0:25:55.10,Main,,0,0,0,,Sperner's lemma is about parity.
+Dialogue: 0,0:25:55.12,0:25:59.97,Main,,0,0,0,,And Zagier's proof is about the parity of fixed points.
+Dialogue: 0,0:25:59.99,0:26:03.83,Main,,0,0,0,,Ideas in mathematics keep meeting each other,
+Dialogue: 0,0:26:03.85,0:26:10.10,Main,,0,0,0,,and following those connections is, for me, the real joy of the subject.
+Dialogue: 0,0:26:10.85,0:26:13.16,Main,,0,0,0,,Thank you for watching.

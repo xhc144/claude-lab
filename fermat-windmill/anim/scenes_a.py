@@ -447,11 +447,11 @@ class S04_Parity(FScene):
 
         # ---- par_3: involution
         blob = Ellipse(width=8.6, height=4.0, stroke_color=GRID, stroke_width=2, fill_color=PANEL, fill_opacity=0.6)
-        blob.move_to(DOWN * 0.15)
+        blob.move_to(UP * 0.2)
         P = [np.array(p) for p in [(-3.2, 0.9, 0), (-2.1, -0.8, 0), (-1.2, 1.1, 0), (-0.1, -0.9, 0), (0.6, 0.8, 0),
                                    (1.7, -0.4, 0), (2.7, 1.0, 0), (3.3, -0.6, 0), (-2.9, -0.1, 0), (1.3, 1.45, 0),
                                    (0.2, 0.05, 0)]]
-        P = [p + DOWN * 0.15 for p in P]
+        P = [p + UP * 0.2 for p in P]
         pairs = [(0, 1), (2, 3), (4, 5), (6, 7)]
         fixed = [8, 9, 10]
         with self.seg("par_3"):
