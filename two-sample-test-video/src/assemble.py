@@ -1,0 +1,280 @@
+"""把各段动画、配音、铺底音乐和字幕合成成片。
+
+python assemble.py [hd|preview]
+输入：build/media/videos/*/<分辨率>/<场景>.mp4、build/timing/<场景>.json、build/voice/*.wav
+输出：output/two-sample-test.mp4 和同名 .srt
+"""
+import glob
+import json
+import os
+import re
+import subprocess
+import sys
+
+import numpy as np
+import soundfile as sf
+from scipy.signal import butter, fftconvolve, resample_poly, sosfilt
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.dirname(HERE)
+BUILD = os.path.join(ROOT, "build")
+OUT = os.path.join(ROOT, "output")
+SR = 48000
+
+SCENES = [
+    ("s00_opening", "Opening", "开场：差了 3.3 分"),
+    ("s03_vardiff", "VarDiff", "相减，抖得更厉害"),
+    ("s04_pooled", "PooledT", "σ 不知道的时候"),
+    ("s05_ftest", "FTest", "方差能不能合并"),
+    ("s06_welch", "Welch", "两个方差不一样"),
+    ("s07_paired", "Paired", "同一个人，考两次"),
+    ("s08_prop", "Proportion", "数人头"),
+    ("s09_finale", "Finale", "一棵树"),
+]
+
+
+def probe_duration(path):
+    r = subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", path],
+                       capture_output=True, text=True, check=True)
+    return float(r.stdout.strip())
+
+
+def timeline(res):
+    """每段视频的起点，以及每句旁白在全片中的绝对时间。"""
+    voice = json.load(open(os.path.join(BUILD, "voice", "durations.json"), encoding="utf-8"))
+    t0, files, events, chapters, pauses = 0.0, [], [], [], []
+    for mod, cls, title in SCENES:
+        found = glob.glob(os.path.join(BUILD, "media", "**", res, f"{cls}.mp4"), recursive=True)
+        if not found:
+            sys.exit(f"缺少 {cls} 的 {res} 渲染结果，先运行 render.sh")
+        v = max(found, key=os.path.getmtime)
+        d = probe_duration(v)
+        log = json.load(open(os.path.join(BUILD, "timing", f"{cls}.json"), encoding="utf-8"))
+        for ln in log["lines"]:
+            if ln["key"] == "_pause":
+                pauses.append((t0 + ln["t"], t0 + ln["t"] + ln["dur"]))
+            else:
+                events.append({"t": t0 + ln["t"], "dur": ln["dur"], "key": ln["key"], "sub": voice[ln["key"]]["sub"]})
+        chapters.append((t0, title))
+        files.append(v)
+        t0 += d
+    return files, events, chapters, pauses, t0
+
+
+# ------------------------------------------------------------------ 声音
+def narration(events, total):
+    out = np.zeros(int(total * SR) + SR)
+    for e in events:
+        w, sr = sf.read(os.path.join(BUILD, "voice", f"{e['key']}.wav"), dtype="float64")
+        w = resample_poly(w, SR, sr)
+        i = int(e["t"] * SR)
+        out[i:i + len(w)] += w[: len(out) - i]
+    return out
+
+
+def mtof(m):
+    return 440.0 * 2 ** ((m - 69) / 12)
+
+
+def pad_music(total, seed=4):
+    """很轻的铺底：四个和弦缓慢循环，加稀疏的高音。"""
+    rng = np.random.default_rng(seed)
+    n = int(total * SR) + SR
+    t = np.arange(n) / SR
+    out = np.zeros(n)
+    chords = [[41, 53, 57, 60, 64], [45, 52, 55, 60, 64], [46, 53, 57, 62, 65], [48, 55, 60, 62, 67]]
+    span = 8.0
+    k = 0
+    start = 0.0
+    while start < total:
+        notes = chords[k % 4]
+        a, b = int(start * SR), min(n, int((start + span + 4.0) * SR))
+        tt = t[a:b] - start
+        env = np.minimum(1, tt / 2.5) * np.clip((span + 4.0 - tt) / 4.0, 0, 1)
+        for j, m in enumerate(notes):
+            f = mtof(m)
+            amp = 0.5 if j == 0 else 0.32
+            for det in (-0.0018, 0.0018):
+                ph = rng.uniform(0, 2 * np.pi)
+                s = np.sin(2 * np.pi * f * (1 + det) * tt + ph) + 0.18 * np.sin(4 * np.pi * f * (1 + det) * tt + ph)
+                out[a:b] += amp * env * s * (0.85 + 0.15 * np.sin(2 * np.pi * 0.07 * tt + j))
+        # 稀疏高音：每个和弦里两三个轻轻的音
+        for _ in range(rng.integers(2, 4)):
+            m = rng.choice(notes[2:]) + 12
+            s0 = start + rng.uniform(0.5, span - 1)
+            i0, i1 = int(s0 * SR), min(n, int((s0 + 4) * SR))
+            tb = t[i0:i1] - s0
+            out[i0:i1] += 0.22 * np.exp(-tb / 1.3) * np.minimum(1, tb / 0.01) * np.sin(2 * np.pi * mtof(m) * tb)
+        start += span
+        k += 1
+    out = sosfilt(butter(2, 2600, "low", fs=SR, output="sos"), out)
+    ir_t = np.arange(int(2.8 * SR)) / SR
+    ir = rng.normal(0, 1, len(ir_t)) * np.exp(-ir_t / 0.9)
+    ir = sosfilt(butter(2, 3500, "low", fs=SR, output="sos"), ir)
+    ir /= np.sqrt((ir ** 2).sum())
+    wet = fftconvolve(out, ir)[:n]
+    out = 0.6 * out + 0.4 * wet
+    return out / np.abs(out).max()
+
+
+def smooth_env(x, attack, release):
+    y = np.zeros_like(x)
+    a = np.exp(-1 / (attack * SR)); r = np.exp(-1 / (release * SR))
+    v = 0.0
+    for i in range(0, len(x), 64):  # 64 采样一步，足够平滑
+        target = x[i]
+        c = a if target > v else r
+        v = target + (v - target) * c ** 64
+        y[i:i + 64] = v
+    return y
+
+
+def mix(events, pauses, total):
+    voice = narration(events, total)
+    music = pad_music(total)
+    n = len(voice)
+    active = np.zeros(n)
+    for e in events:
+        active[int(e["t"] * SR): int((e["t"] + e["dur"]) * SR)] = 1
+    duck = 1 - 0.55 * smooth_env(active, 0.25, 0.9)
+    silent = np.zeros(n)
+    for a, b in pauses:
+        silent[int((a - 0.4) * SR): int((b + 0.2) * SR)] = 1
+    gate = 1 - smooth_env(silent, 0.5, 0.8)
+    fade = np.clip(np.arange(n) / (2.5 * SR), 0, 1) * np.clip((total * SR - np.arange(n)) / (4 * SR), 0, 1)
+    bed = music * duck * gate * fade * 0.095
+    stereo = np.stack([voice * 0.92 + bed, voice * 0.92 + bed], axis=1)
+    stereo = stereo[: int(total * SR)]
+    peak = np.abs(stereo).max()
+    if peak > 0.98:
+        stereo *= 0.98 / peak
+    return stereo
+
+
+# ------------------------------------------------------------------ 字幕
+def split_sub(text, limit=22):
+    text = text.strip().rstrip("。，；：")
+    if len(text) <= limit:
+        return [text]
+    cut = [m.end() for m in re.finditer(r"[，；：。？！]", text) if 4 < m.end() < len(text) - 2]
+    if not cut:
+        return [text]
+    mid = len(text) / 2
+    c = min(cut, key=lambda x: abs(x - mid))
+    return split_sub(text[:c], limit) + split_sub(text[c:], limit)
+
+
+def subtitle_events(events):
+    out = []
+    for e in events:
+        parts = split_sub(e["sub"])
+        w = [max(1, len(p)) for p in parts]
+        t = e["t"]
+        for p, k in zip(parts, w):
+            d = e["dur"] * k / sum(w)
+            out.append((t, t + d, p.rstrip("。，；：")))
+            t += d
+    # 相邻两条之间留空不足 0.3 秒就接上，避免闪烁
+    fixed = []
+    for i, (a, b, s) in enumerate(out):
+        if i + 1 < len(out) and out[i + 1][0] - b < 0.3:
+            b = out[i + 1][0]
+        fixed.append((a, b, s))
+    return fixed
+
+
+def ts_ass(t):
+    h, r = divmod(t, 3600); m, s = divmod(r, 60)
+    return f"{int(h)}:{int(m):02d}:{s:05.2f}"
+
+
+def ts_srt(t):
+    h, r = divmod(t, 3600); m, s = divmod(r, 60)
+    return f"{int(h):02d}:{int(m):02d}:{int(s):02d},{int(round((s - int(s)) * 1000)):03d}"
+
+
+def write_subs(subs, ass_path, srt_path, scale):
+    fs = int(52 * scale); outline = max(1, round(3 * scale)); mv = int(34 * scale)
+    head = f"""[Script Info]
+ScriptType: v4.00+
+PlayResX: {int(1920 * scale)}
+PlayResY: {int(1080 * scale)}
+WrapStyle: 2
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Noto Sans CJK SC Medium,{fs},&H00282A2B,&H000000FF,&H00E8F1F5,&H00000000,0,0,0,0,100,100,1,0,1,{outline},0,2,60,60,{mv},1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+"""
+    with open(ass_path, "w", encoding="utf-8") as f:
+        f.write(head)
+        for a, b, s in subs:
+            f.write(f"Dialogue: 0,{ts_ass(a)},{ts_ass(b)},Default,,0,0,0,,{s}\n")
+    with open(srt_path, "w", encoding="utf-8") as f:
+        for i, (a, b, s) in enumerate(subs, 1):
+            f.write(f"{i}\n{ts_srt(a)} --> {ts_srt(b)}\n{s}\n\n")
+
+
+def loudnorm(src, dst, target="I=-16:TP=-1.5:LRA=11"):
+    """两遍 loudnorm，第二遍用线性增益，整片音量一致又不抽吸。"""
+    r = subprocess.run(["ffmpeg", "-hide_banner", "-i", src, "-af", f"loudnorm={target}:print_format=json", "-f", "null", "-"],
+                       capture_output=True, text=True, check=True)
+    m = json.loads(r.stderr[r.stderr.rindex("{"):])
+    af = (f"loudnorm={target}:measured_I={m['input_i']}:measured_TP={m['input_tp']}:measured_LRA={m['input_lra']}"
+          f":measured_thresh={m['input_thresh']}:offset={m['target_offset']}:linear=true")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", src, "-af", af, "-ar", str(SR), dst], check=True)
+
+
+def write_chapters(chapters, total, path):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(";FFMETADATA1\ntitle=差了 3.3 分，算不算数——双样本检验\n")
+        for i, (t, name) in enumerate(chapters):
+            end = chapters[i + 1][0] if i + 1 < len(chapters) else total
+            f.write(f"\n[CHAPTER]\nTIMEBASE=1/1000\nSTART={int(t * 1000)}\nEND={int(end * 1000)}\ntitle={name}\n")
+
+
+def main():
+    hd = (sys.argv[1] if len(sys.argv) > 1 else "hd") == "hd"
+    res = "1080p30" if hd else "540p30"
+    scale = 1.0 if hd else 0.5
+    os.makedirs(OUT, exist_ok=True)
+    work = os.path.join(BUILD, "assemble")
+    os.makedirs(work, exist_ok=True)
+
+    files, events, chapters, pauses, total = timeline(res)
+    print(f"{len(files)} 段，{len(events)} 句旁白，全片 {total / 60:.2f} 分钟")
+
+    audio = mix(events, pauses, total)
+    raw = os.path.join(work, "mix_raw.wav")
+    sf.write(raw, audio, SR, subtype="PCM_24")
+    wav = os.path.join(work, "mix.wav")
+    loudnorm(raw, wav)
+
+    subs = subtitle_events(events)
+    name = "two-sample-test" if hd else "two-sample-test-preview"
+    ass = os.path.join(work, f"{name}.ass")
+    srt = os.path.join(OUT, f"{name}.srt")
+    write_subs(subs, ass, srt, scale)
+    meta = os.path.join(work, "chapters.txt")
+    write_chapters(chapters, total, meta)
+    lst = os.path.join(work, "list.txt")
+    with open(lst, "w") as f:
+        for v in files:
+            f.write(f"file '{v}'\n")
+
+    mp4 = os.path.join(OUT, f"{name}.mp4")
+    cmd = ["ffmpeg", "-y", "-loglevel", "error", "-stats",
+           "-f", "concat", "-safe", "0", "-i", lst, "-i", wav, "-i", meta,
+           "-map", "0:v", "-map", "1:a", "-map_metadata", "2", "-map_chapters", "2",
+           "-vf", f"ass={ass}", "-c:v", "libx264", "-preset", "medium", "-crf", "21" if hd else "26",
+           "-tune", "animation", "-pix_fmt", "yuv420p", "-r", "30",
+           "-c:a", "aac", "-b:a", "160k", "-ar", "48000",
+           "-movflags", "+faststart", "-shortest", mp4]
+    subprocess.run(cmd, check=True)
+    print("成片：", mp4, f"{os.path.getsize(mp4) / 1e6:.1f} MB")
+
+
+if __name__ == "__main__":
+    main()
