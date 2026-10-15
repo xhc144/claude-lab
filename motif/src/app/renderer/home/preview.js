@@ -26,6 +26,8 @@ function engineFor(assetBase) {
 /** Render the settled frame of one scene of `doc` into `canvas` (CSS width decides resolution). */
 export function renderThumb(doc, canvas, { scene = 0, assetBase, width } = {}) {
   chain = chain.then(async () => {
+    // let queued input (clicks, typing) run between thumbnails
+    await new Promise((r) => setTimeout(r, 16));
     if (!canvas.isConnected) return;
     const eng = engineFor(assetBase);
     const d = normalizeDocument(doc).doc;
@@ -41,9 +43,13 @@ export function renderThumb(doc, canvas, { scene = 0, assetBase, width } = {}) {
   return chain;
 }
 
-/** Play `doc` in a loop on `canvas` until the returned stop() is called. */
+/**
+ * Play `doc` in a loop on `canvas` until the returned stop() is called. Frames are paced: at most
+ * ~30 fps, and when a frame is expensive (3D without a GPU, big canvases) the loop leaves the main
+ * thread idle for twice as long as the frame took, so the window stays responsive to input.
+ */
 export function playPreview(doc, canvas, { assetBase } = {}) {
-  let stopped = false, raf = 0;
+  let stopped = false, raf = 0, timer = 0;
   const eng = new MotifEngine({ resolveUrl: engineFor(assetBase).assets.resolveUrl });
   (async () => {
     await eng.setDocument(normalizeDocument(doc).doc, { normalized: true });
@@ -55,10 +61,12 @@ export function playPreview(doc, canvas, { assetBase } = {}) {
       if (stopped) return;
       const t = ((now - t0) / 1000) % D;
       if (canvas.width !== Math.round(W * s)) { canvas.width = Math.round(W * s); canvas.height = Math.round(eng.C.env.H * s); }
+      const a = performance.now();
       eng.render(t, canvas.getContext('2d'), { scale: s });
-      raf = requestAnimationFrame(loop);
+      const cost = performance.now() - a;
+      timer = setTimeout(() => { raf = requestAnimationFrame(loop); }, Math.max(0, 33 - cost, cost * 2));
     };
     raf = requestAnimationFrame(loop);
   })();
-  return () => { stopped = true; cancelAnimationFrame(raf); };
+  return () => { stopped = true; cancelAnimationFrame(raf); clearTimeout(timer); };
 }
