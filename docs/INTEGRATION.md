@@ -180,3 +180,12 @@ git push origin recovered-project
 | `claude/tender-lovelace-1pl4ki` | `e6971e64de2dfa0d4c97baf9b414084e7ee48f25` | 2 | two-sample-test-video/（双样本检验） |
 
 验证：`node scripts/check-pages.mjs` 通过（137 个白名单文件、319 个相对引用）。新增的 6 部影片 MP4 均小于 GitHub 单文件 100 MB 上限，只放在各项目 `output/`，未复制到 Pages。
+
+
+### 整合工作分支的恢复记录
+
+`claude/nifty-cori-rk2hop` 与整理后的 main 指向同一提交，没有独有代码；清理远端引用前补齐完整恢复 SHA。此处仅补充记录，项目内容与原合并历史保持不变。
+
+| 分支 | 原 tip / 恢复 SHA | 处理依据 |
+| --- | --- | --- |
+| `claude/nifty-cori-rk2hop` | `f02b2ca9bd0c2510f0ec9e40a93856fd9cb58776` | 与整合完成时的 main 相同，全部历史已保留 |
