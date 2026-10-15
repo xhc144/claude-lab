@@ -1,0 +1,640 @@
+% !TEX program = xelatex
+% =============================================================================
+%  墨经 Mojing · 数学讲义模板示例
+%  《复分析》第 4、5 讲
+%
+%  编译：latexmk main.tex        （latexmkrc 已设定 XeLaTeX 与模板路径）
+%  或：  xelatex main.tex ×2      （需先把 ../../tex 加入 TEXINPUTS，见 README）
+% =============================================================================
+\documentclass{mojing-notes}
+% 常用选项（逗号分隔写入方括号）：
+%   twoside       双面排版（旁注栏随奇偶页换边）
+%   nomargin      取消旁注栏，正文加宽到 150 mm
+%   latin=pagella 西文与数学改用 Palatino 风格（另有 termes、libertinus、newcm、lm）
+%   cjk=fandol    强制使用 TeX Live 自带的 Fandol 中文字体
+%   accent=mjPine 更换主题色（mjIndigo 黛蓝 / mjVermilion 朱砂 / mjPine 松绿 /
+%                 mjOchre 赭石 / mjPlum 紫檀，或任意 xcolor 颜色名）
+%   print         超链接改为黑色，便于印刷
+
+\course[Complex Analysis]{复分析}
+\term{2026 年秋季学期}
+\instructor{张三}
+\institute{示例大学数学科学学院}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\vspace{2\baselineskip}
+\noindent{\mojingheadfont\color{mjAccent} 关于本讲义}\par\smallskip
+\noindent 本讲义根据课堂板书整理，供选课同学复习之用。讲义按“讲”编号，节、公式、
+定理与图表都带讲次前缀，例如“定理~4.5”“式~(5.3)”。右侧旁注栏收录历史注记、
+补充说明与小插图，略去不读不影响正文的连贯。本讲义遵循国内通行的记号习惯：
+不等号写作 $\le$、$\ge$，微分号、自然对数的底与虚数单位用正体 $\dd$、$\ee$、$\ii$。
+标有“选做”的习题难度较高，供学有余力的同学练习。
+
+% =============================================================================
+\lecture[number=4, date=2026 年 10 月 12 日, scribe=李四, short=柯西积分公式]
+  {柯西积分公式及其推论}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 柯西积分公式：解析函数在圆盘内的值由它在边界圆周上的值完全决定；
+  \item 解析函数无穷次可导，并满足高阶导数公式与柯西不等式；
+  \item 刘维尔定理，以及由它得到的代数基本定理；
+  \item 莫雷拉定理——柯西定理的逆命题，以及它对一致收敛的应用。
+\end{itemize}
+\end{keypoints}
+
+上一讲证明了柯西--古尔萨定理：若 $f$ 在单连通区域 $D$ 内解析，则对 $D$ 内任一
+闭曲线 $\gamma$ 都有 $\oint_\gamma f(z)\dd z=0$。这一讲从它出发，导出复分析中
+最核心的公式。我们将看到，“复可导”这一条件远比“实可导”强得多：它迫使函数无穷次
+可导，迫使有界整函数退化为常数，还迫使函数的局部性态被边界值完全控制。
+
+\section{柯西积分公式}
+
+以下总设 $D\subset\C$ 是区域，即连通的开集。对 $z_0\in\C$ 与 $r>0$，记
+$B(z_0,r)=\set{z\given\abs{z-z_0}<r}$，并用 $C_r$ 表示按逆时针方向绕行一周的圆周
+$\abs{\zeta-z_0}=r$。
+
+\begin{theorem}[柯西积分公式]\label{thm:cauchy-formula}
+设 $f$ 在区域 $D$ 内解析，闭圆盘 $\overline{B}(z_0,r)\subset D$。则对任意
+$z\in B(z_0,r)$，有
+\begin{equation}\label{eq:cauchy-formula}
+  f(z)=\frac{1}{2\pi\ii}\oint_{C_r}\frac{f(\zeta)}{\zeta-z}\dd\zeta .
+\end{equation}
+\end{theorem}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.05]
+  \draw[mj thin, fill=mjLight]
+    plot[smooth cycle, tension=.8] coordinates
+      {(-3.1,-.2) (-2.4,1.9) (-.4,2.75) (1.9,2.35) (3.2,.6) (2.8,-1.9) (.6,-2.75) (-2.1,-2.25)};
+  \node at (-2.55,1.35) {$D$};
+  \fill[mj fill] (0,0) circle (2);
+  \fill[mjLight] (.85,.55) circle (.48);
+  \draw[mj curve, mj arrow mid=.13] (0,0) circle (2);
+  \draw[mj curve2, mj arrow mid=.4] (.85,.55) circle (.48);
+  \draw[mj aux] (0,0) -- node[below, pos=.55] {$r$} (-120:2);
+  \draw[mj aux] (.85,.55) -- node[below right=-2pt, pos=.6] {$\varepsilon$} ++(-60:.48);
+  \node[mj point, label={[label distance=-1pt]left:$z_0$}] at (0,0) {};
+  \node[mj point, label={[label distance=-2pt]above:$z$}] at (.85,.55) {};
+  \node[mjAccent] at (1.62,-1.62) {$C_r$};
+  \node[mjSecond] at (1.55,1.08) {$C_\varepsilon$};
+\end{tikzpicture}
+\caption{在圆周 $C_r$ 与 $C_\varepsilon$ 之间的圆环形区域（着色部分）上，
+$f(\zeta)/(\zeta-z)$ 处处解析}
+\label{fig:cauchy}
+\end{figure}
+
+\begin{proof}
+固定 $z\in B(z_0,r)$，取 $\varepsilon>0$ 充分小，使圆周
+$C_\varepsilon\colon\abs{\zeta-z}=\varepsilon$ 落在 $B(z_0,r)$ 内（\cref{fig:cauchy}）。
+函数 $g(\zeta)=f(\zeta)/(\zeta-z)$ 在 $C_r$ 与 $C_\varepsilon$ 所夹的闭圆环上解析，
+由多连通区域上的柯西定理，
+\[
+  \oint_{C_r}\frac{f(\zeta)}{\zeta-z}\dd\zeta
+  =\oint_{C_\varepsilon}\frac{f(\zeta)}{\zeta-z}\dd\zeta
+  =f(z)\oint_{C_\varepsilon}\frac{\dd\zeta}{\zeta-z}
+   +\oint_{C_\varepsilon}\frac{f(\zeta)-f(z)}{\zeta-z}\dd\zeta .
+\]
+右端第一项等于 $2\pi\ii f(z)$。记第二项为 $I_\varepsilon$，则由积分的长大不等式，
+\[
+  \abs{I_\varepsilon}
+  \le 2\pi\varepsilon\cdot\max_{\abs{\zeta-z}=\varepsilon}
+      \frac{\abs{f(\zeta)-f(z)}}{\varepsilon}
+  =2\pi\max_{\abs{\zeta-z}=\varepsilon}\abs{f(\zeta)-f(z)}
+  \longrightarrow 0\qquad(\varepsilon\to0^+),
+\]
+这里用到了 $f$ 在点 $z$ 的连续性。左端与 $\varepsilon$ 无关，故 $I_\varepsilon=0$，
+\cref{eq:cauchy-formula} 得证。
+\end{proof}
+
+\cref{eq:cauchy-formula} 的含义值得仔细体会：\emph{解析函数在圆盘内部的值，完全由它在
+边界圆周上的值决定。}\sidenote{实变量的光滑函数没有任何类似的性质：在区间端点取值
+相同的光滑函数，在区间内部可以完全不同。}证明中只用到“$g$ 在圆环上解析”这一点，因此把
+$C_r$ 换成 $D$ 内任一条正向简单闭曲线 $\gamma$，只要 $\gamma$ 的内部含于 $D$，公式依然成立。
+
+\begin{corollary}[平均值性质]\label{cor:mean-value}
+在\cref{thm:cauchy-formula} 的条件下，
+\[
+  f(z_0)=\frac{1}{2\pi}\int_0^{2\pi}f\bigl(z_0+r\ee^{\ii\theta}\bigr)\dd\theta .
+\]
+\end{corollary}
+
+\begin{proof}
+在 \cref{eq:cauchy-formula} 中取 $z=z_0$，并令 $\zeta=z_0+r\ee^{\ii\theta}$，则
+$\dd\zeta=\ii r\ee^{\ii\theta}\dd\theta$，代入即得。
+\end{proof}
+
+\begin{example}\label{ex:ez-over-z2+1}
+计算 $\displaystyle\oint_{\abs{z}=2}\frac{\ee^z}{z^2+1}\dd z$。
+\end{example}
+
+\begin{solution}
+被积函数的奇点 $\pm\ii$ 都在圆周 $\abs{z}=2$ 内部。利用部分分式
+\[
+  \frac{1}{z^2+1}=\frac{1}{2\ii}\Bigl(\frac{1}{z-\ii}-\frac{1}{z+\ii}\Bigr)
+\]
+以及柯西积分公式（取 $f(z)=\ee^z$），得
+\[
+  \oint_{\abs{z}=2}\frac{\ee^z}{z^2+1}\dd z
+  =\frac{1}{2\ii}\bigl(2\pi\ii\,\ee^{\ii}-2\pi\ii\,\ee^{-\ii}\bigr)
+  =\pi\bigl(\ee^{\ii}-\ee^{-\ii}\bigr)=2\pi\ii\sin 1 .
+\]
+\end{solution}
+
+\section{高阶导数公式}
+
+在 \cref{eq:cauchy-formula} 中，变量 $z$ 只出现在被积函数的分母里。形式地在积分号下
+对 $z$ 求导，便得到下面的定理；它的证明正是要说明这种求导是合法的。
+
+\begin{theorem}[高阶导数公式]\label{thm:higher-derivative}
+在\cref{thm:cauchy-formula} 的条件下，$f$ 在 $B(z_0,r)$ 内有任意阶导数，且
+\begin{equation}\label{eq:higher-derivative}
+  f^{(n)}(z)=\frac{n!}{2\pi\ii}\oint_{C_r}\frac{f(\zeta)}{(\zeta-z)^{n+1}}\dd\zeta,
+  \qquad n=0,1,2,\dotsc .
+\end{equation}
+\end{theorem}
+
+\begin{proof}
+只证 $n=1$ 的情形，一般情形用归纳法同理可得。固定 $z\in B(z_0,r)$，记
+$\delta=r-\abs{z-z_0}>0$，$M=\max_{C_r}\abs{f}$。当 $0<\abs{h}<\delta/2$ 时，由
+\cref{eq:cauchy-formula}，
+\[
+  \frac{f(z+h)-f(z)}{h}-\frac{1}{2\pi\ii}\oint_{C_r}\frac{f(\zeta)}{(\zeta-z)^2}\dd\zeta
+  =\frac{h}{2\pi\ii}\oint_{C_r}\frac{f(\zeta)}{(\zeta-z-h)(\zeta-z)^2}\dd\zeta .
+\]
+当 $\zeta\in C_r$ 时 $\abs{\zeta-z}\ge\delta$，$\abs{\zeta-z-h}\ge\delta/2$，于是右端的模
+\[
+  \le\frac{\abs{h}}{2\pi}\cdot\frac{M}{(\delta/2)\,\delta^2}\cdot2\pi r
+  =\frac{2Mr}{\delta^3}\abs{h}\longrightarrow0\qquad(h\to0). \qedhere
+\]
+\end{proof}
+
+\begin{corollary}\label{cor:infinitely-differentiable}
+若 $f$ 在区域 $D$ 内解析，则 $f'$ 也在 $D$ 内解析。从而解析函数有任意阶导数，
+且各阶导数都是解析函数。
+\end{corollary}
+
+\begin{marginfigure}[-2\baselineskip]
+\begin{tikzpicture}
+\begin{axis}[mojing, width=44mm, height=36mm, xmin=-1.2, xmax=1.3, ymin=-1.15, ymax=2.3,
+    xtick=\empty, ytick=\empty, samples=101, domain=-1.1:1.1]
+  \addplot[mjAccent] {x*abs(x)};
+  \addplot[mjSecond, dashed] {2*abs(x)};
+\end{axis}
+\end{tikzpicture}
+\caption{$x\abs{x}$（实线）可导，其导数 $2\abs{x}$（虚线）在原点不可导}
+\label{fig:xabsx}
+\end{marginfigure}
+
+这与实变量函数形成鲜明对照。例如 $f(x)=x\abs{x}$ 在 $\R$ 上处处可导，但
+$f'(x)=2\abs{x}$ 在原点不可导（\cref{fig:xabsx}）。\cref{tab:real-vs-complex}
+比较了实可微函数与解析函数的几项基本性质。
+
+\begin{table}[htbp]
+\centering
+\caption{实可微函数与解析函数的对照}\label{tab:real-vs-complex}
+\begin{tabular}{@{}lll@{}}
+\toprule
+性质 & 实变量可微函数 & 复变量解析函数 \\
+\midrule
+一阶可导蕴含任意阶可导       & 否，如 $x\abs{x}$         & 是（\cref{cor:infinitely-differentiable}） \\
+在每一点附近可展开为幂级数 & 否，如 $\ee^{-1/x^2}$     & 是（泰勒定理） \\
+有界且在整个定义域上可导即为常数 & 否，如 $\sin x$     & 是（刘维尔定理） \\
+内部的值由边界值决定         & 否                        & 是（\cref{thm:cauchy-formula}） \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{example}
+计算 $\displaystyle\oint_{\abs{z}=1}\frac{\ee^{2z}}{z^4}\dd z$。
+\end{example}
+
+\begin{solution}
+在 \cref{eq:higher-derivative} 中取 $f(z)=\ee^{2z}$，$z=0$，$n=3$：
+\[
+  \oint_{\abs{z}=1}\frac{\ee^{2z}}{z^4}\dd z=\frac{2\pi\ii}{3!}f'''(0)
+  =\frac{2\pi\ii}{6}\cdot 8=\frac{8\pi\ii}{3}.
+\]
+\end{solution}
+
+把长大不等式用到 \cref{eq:higher-derivative} 上，立即得到对导数的估计。
+
+\begin{theorem}[柯西不等式]\label{thm:cauchy-estimate}
+设 $f$ 在闭圆盘 $\overline{B}(z_0,r)$ 的某个邻域内解析，且在 $C_r$ 上 $\abs{f}\le M$，则
+\[
+  \abs[\big]{f^{(n)}(z_0)}\le\frac{n!\,M}{r^n},\qquad n=0,1,2,\dotsc .
+\]
+\end{theorem}
+
+\begin{proof}
+由 \cref{eq:higher-derivative}，
+$\abs{f^{(n)}(z_0)}\le\dfrac{n!}{2\pi}\cdot\dfrac{M}{r^{n+1}}\cdot2\pi r=\dfrac{n!\,M}{r^n}$。
+\end{proof}
+
+\section{刘维尔定理与代数基本定理}
+
+在整个复平面上解析的函数称为\textbf{整函数}，例如多项式、$\ee^z$、$\sin z$。
+
+\begin{theorem}[刘维尔]\label{thm:liouville}
+有界整函数必为常数。
+\end{theorem}
+
+\begin{proof}
+设 $\abs{f}\le M$。任取 $z_0\in\C$，对一切 $r>0$，由\cref{thm:cauchy-estimate}（取 $n=1$）
+得 $\abs{f'(z_0)}\le M/r$。令 $r\to\infty$ 得 $f'(z_0)=0$。于是 $f'\equiv0$，
+而 $\C$ 是连通的，故 $f$ 为常数。
+\end{proof}
+
+这一定理最早由柯西于 1844 年证明，后因刘维尔 1847 年在讲课中使用而得名。%
+\sidenote{类似的“张冠李戴”在数学史上屡见不鲜。斯蒂格勒（S.~Stigler）戏称之为
+“命名定律”：科学发现很少以其最初发现者的名字命名。}
+它的一个漂亮应用是代数基本定理。
+
+\begin{theorem}[代数基本定理]\label{thm:fta}
+每个次数 $n\ge1$ 的复系数多项式 $p(z)=a_nz^n+a_{n-1}z^{n-1}+\dotsb+a_0$
+（$a_n\ne0$）在 $\C$ 中至少有一个零点。
+\end{theorem}
+
+\begin{proof}
+设 $p$ 无零点，则 $1/p$ 是整函数。当 $\abs{z}\to\infty$ 时，
+\[
+  \abs{p(z)}\ge\abs{a_n}\abs{z}^n
+  \Bigl(1-\sum_{k=0}^{n-1}\frac{\abs{a_k}}{\abs{a_n}\abs{z}^{n-k}}\Bigr)\longrightarrow\infty,
+\]
+故存在 $R>0$，使 $\abs{z}\ge R$ 时 $\abs{1/p(z)}\le1$；而在紧集 $\abs{z}\le R$ 上，
+连续函数 $\abs{1/p}$ 有界。于是 $1/p$ 是有界整函数，由刘维尔定理它是常数，
+从而 $p$ 是常数，与 $n\ge1$ 矛盾。
+\end{proof}
+
+\begin{remark}
+对次数归纳，即知 $p$ 可分解为一次因式之积：
+$p(z)=a_n(z-z_1)(z-z_2)\dotsm(z-z_n)$。高斯在 1799 年的博士论文中给出了这一定理
+的第一个证明，但按今天的标准，其中关于平面曲线的拓扑论证并不完整。
+\end{remark}
+
+\section{莫雷拉定理}
+
+柯西定理说：解析函数沿闭曲线的积分为零。下面的定理表明，其逆命题在相当弱的
+意义下也成立。
+
+\begin{theorem}[莫雷拉]\label{thm:morera}
+设 $f$ 在区域 $D$ 内连续，且对 $D$ 内每个闭三角形 $T$，都有 $\oint_{\partial T}f(z)\dd z=0$，
+则 $f$ 在 $D$ 内解析。
+\end{theorem}
+
+\begin{proof}
+解析性是局部性质，只需证明 $f$ 在 $D$ 内任一圆盘 $B=B(z_0,\rho)\subset D$ 上解析。
+对 $z\in B$，令 $F(z)=\int_{[z_0,z]}f(\zeta)\dd\zeta$，积分沿线段 $[z_0,z]$。
+由假设，对三角形 $z_0,z,z+h$ 的积分为零，故
+\[
+  \frac{F(z+h)-F(z)}{h}-f(z)=\frac1h\int_{[z,z+h]}\bigl(f(\zeta)-f(z)\bigr)\dd\zeta,
+\]
+其模不超过 $\max_{\zeta\in[z,z+h]}\abs{f(\zeta)-f(z)}$，由 $f$ 的连续性，当 $h\to0$ 时趋于零。
+所以 $F$ 在 $B$ 内解析且 $F'=f$。由\cref{cor:infinitely-differentiable}，$f=F'$ 也解析。
+\end{proof}
+
+\begin{corollary}[魏尔斯特拉斯]\label{cor:weierstrass}
+若 $f_n$ 在区域 $D$ 内解析，且在 $D$ 的每个紧子集上一致收敛于 $f$，则 $f$ 在 $D$ 内解析。
+\end{corollary}
+
+\begin{proof}
+$f$ 作为连续函数的局部一致极限是连续的。对 $D$ 内任一闭三角形 $T$，一致收敛允许积分与
+极限交换次序：$\oint_{\partial T}f\dd z=\lim_{n\to\infty}\oint_{\partial T}f_n\dd z=0$。
+由莫雷拉定理，$f$ 解析。
+\end{proof}
+
+实分析中没有这样的结论：由魏尔斯特拉斯逼近定理，$[-1,1]$ 上的连续函数 $\abs{x}$ 是
+多项式（处处光滑）的一致极限，它本身却在原点不可导。
+
+\begin{exercises}
+  \item 计算 $\displaystyle\oint_{\abs{z}=3}\frac{z}{(z-1)(z-2)}\dd z$。
+  \item 设 $f$ 为整函数，且存在常数 $M,R>0$ 与正整数 $n$，使当 $\abs{z}\ge R$ 时
+        $\abs{f(z)}\le M\abs{z}^n$。证明 $f$ 是次数不超过 $n$ 的多项式。
+  \item 设 $f$ 为整函数，且对一切 $z$ 有 $\Re f(z)\le0$。证明 $f$ 为常数。
+        （提示：考虑 $\ee^{f(z)}$。）
+  \item 利用平均值性质（\cref{cor:mean-value}）证明 $\displaystyle
+        \int_0^{2\pi}\ee^{\cos\theta}\cos(\sin\theta)\dd\theta=2\pi$。
+  \item\hard （最大模原理）设 $f$ 在区域 $D$ 内解析，且 $\abs{f}$ 在 $D$ 内某点 $z_0$
+        取到最大值。利用平均值性质证明 $f$ 在 $D$ 内为常数。
+\end{exercises}
+
+% =============================================================================
+\lecture[date=2026 年 10 月 15 日, scribe=王五, short=留数定理]
+  {留数定理及其在实积分中的应用}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 孤立奇点的分类，以及极点处留数的计算公式；
+  \item 留数定理：闭曲线上的积分等于内部各奇点留数之和的 $2\pi\ii$ 倍；
+  \item 用留数计算三类实积分：三角有理式的积分、有理函数的广义积分、傅里叶型积分；
+  \item 约当引理与带“缺口”的围道。
+\end{itemize}
+\end{keypoints}
+
+\section{孤立奇点与留数}
+
+若 $f$ 在去心圆盘 $0<\abs{z-z_0}<R$ 内解析，就称 $z_0$ 为 $f$ 的\textbf{孤立奇点}。
+此时 $f$ 在该去心圆盘内有洛朗展开
+\begin{equation}\label{eq:laurent}
+  f(z)=\sum_{n=-\infty}^{\infty}c_n(z-z_0)^n,\qquad
+  c_n=\frac{1}{2\pi\ii}\oint_{\abs{\zeta-z_0}=\rho}\frac{f(\zeta)}{(\zeta-z_0)^{n+1}}\dd\zeta,
+\end{equation}
+其中 $0<\rho<R$。按负幂项的多少，孤立奇点分为三类：
+\begin{description}
+  \item[可去奇点] 没有负幂项，此时补充定义 $f(z_0)=c_0$ 后 $f$ 在 $z_0$ 解析；
+  \item[$m$ 阶极点] 只有有限个负幂项，且 $c_{-m}\ne0$，$c_n=0$（$n<-m$）；
+  \item[本性奇点] 有无穷多个负幂项，例如 $\ee^{1/z}$ 的奇点 $z=0$。
+\end{description}
+
+\begin{definition}[留数]
+设 $z_0$ 是 $f$ 的孤立奇点，称洛朗展开 \cref{eq:laurent} 中 $(z-z_0)^{-1}$ 的系数为
+$f$ 在 $z_0$ 处的\textbf{留数}，记作
+\[
+  \Res(f,z_0)=c_{-1}=\frac{1}{2\pi\ii}\oint_{\abs{z-z_0}=\rho}f(z)\dd z .
+\]
+\end{definition}
+
+“留数”（résidu）一词是柯西于 1826 年引入的：\sidenote{柯西的这篇文章题为《论一种
+类似于无穷小演算的新演算》，留数理论由此发端。}沿小圆周积分时，洛朗级数的
+其余各项都积为零，唯独 $c_{-1}$ 这一项“留”了下来。在极点处，留数无需展开级数即可求得。
+
+\begin{proposition}\label{prop:residue-pole}
+\begin{enumerate}
+  \item 若 $z_0$ 是 $f$ 的 $m$ 阶极点，则
+        \[
+          \Res(f,z_0)=\frac{1}{(m-1)!}\lim_{z\to z_0}
+          \frac{\dd^{m-1}}{\dd z^{m-1}}\bigl[(z-z_0)^mf(z)\bigr];
+        \]
+  \item 若 $f=P/Q$，$P$、$Q$ 在 $z_0$ 处解析，$P(z_0)\ne0$，$Q(z_0)=0$，$Q'(z_0)\ne0$，
+        则 $z_0$ 是 $f$ 的一阶极点，且 $\Res(f,z_0)=P(z_0)/Q'(z_0)$。
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(1)~在 $z_0$ 附近，$(z-z_0)^mf(z)=c_{-m}+c_{-m+1}(z-z_0)+\dotsb+c_{-1}(z-z_0)^{m-1}+\dotsb$
+是解析函数，求 $m-1$ 阶导数后令 $z\to z_0$，只剩下 $(m-1)!\,c_{-1}$。
+
+(2)~由 $Q(z_0)=0$，$Q'(z_0)\ne0$ 知 $z_0$ 是 $Q$ 的一阶零点，从而是 $f$ 的一阶极点。由 (1)，
+\[
+  \Res(f,z_0)=\lim_{z\to z_0}\frac{P(z)}{\bigl(Q(z)-Q(z_0)\bigr)/(z-z_0)}=\frac{P(z_0)}{Q'(z_0)}. \qedhere
+\]
+\end{proof}
+
+\section{留数定理}
+
+\begin{theorem}[留数定理]\label{thm:residue}
+设 $\gamma$ 是正向简单闭曲线，$f$ 在 $\gamma$ 及其内部除有限个点 $z_1,\dotsc,z_n$ 外
+解析，这些点都在 $\gamma$ 的内部，则
+\begin{equation}\label{eq:residue}
+  \oint_\gamma f(z)\dd z=2\pi\ii\sum_{k=1}^n\Res(f,z_k).
+\end{equation}
+\end{theorem}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0]
+  \fill[mj fill] plot[smooth cycle, tension=.75] coordinates
+    {(-3,0) (-2.2,1.6) (-.2,1.95) (1.8,1.7) (3.1,.3) (2.4,-1.5) (.2,-1.9) (-2,-1.55)};
+  \draw[mj curve, mj arrow mid=.31] plot[smooth cycle, tension=.75] coordinates
+    {(-3,0) (-2.2,1.6) (-.2,1.95) (1.8,1.7) (3.1,.3) (2.4,-1.5) (.2,-1.9) (-2,-1.55)};
+  \foreach \p/\n/\a in {(-1.6,.3)/1/above, (.4,.9)/2/above, (1.5,-.7)/3/below} {
+    \fill[white] \p circle (.36);
+    \draw[mj curve2, mj arrow mid=.3] \p circle (.36);
+    \node[mj cross] at \p {};
+    \node[\a=12pt] at \p {$z_\n$};
+  }
+  \node[mjAccent] at (2.95,1.35) {$\gamma$};
+  \node[mjSecond] at (2.15,-.95) {$C_3$};
+\end{tikzpicture}
+\caption{挖去以各奇点为心的小圆盘后，$f$ 在余下的区域（着色部分）上解析}
+\label{fig:residue}
+\end{figure}
+
+\begin{proof}
+以每个 $z_k$ 为心作小圆周 $C_k$（逆时针），使它们彼此不交且都在 $\gamma$ 内部
+（\cref{fig:residue}）。$f$ 在 $\gamma$ 与诸 $C_k$ 围成的区域上解析，由多连通区域的柯西定理，
+\[
+  \oint_\gamma f(z)\dd z=\sum_{k=1}^n\oint_{C_k}f(z)\dd z=2\pi\ii\sum_{k=1}^n\Res(f,z_k). \qedhere
+\]
+\end{proof}
+
+\begin{example}
+计算 $\displaystyle\oint_{\abs{z}=2}\frac{z\ee^z}{z^2-1}\dd z$。
+\end{example}
+
+\begin{solution}
+$\pm1$ 都是一阶极点，位于圆周内部。由\cref{prop:residue-pole}(2)，
+\[
+  \Res(f,1)=\frac{1\cdot\ee}{2\cdot1}=\frac{\ee}{2},\qquad
+  \Res(f,-1)=\frac{(-1)\ee^{-1}}{2\cdot(-1)}=\frac{\ee^{-1}}{2},
+\]
+所以原积分 $=2\pi\ii\cdot\dfrac{\ee+\ee^{-1}}{2}=2\pi\ii\cosh1$。
+\end{solution}
+
+\section{用留数计算实积分}
+
+留数定理最令人称道的应用之一，是计算那些用实分析方法难以处理的定积分。
+基本思路是：把实积分看作某条闭曲线上复积分的一部分，再设法控制其余部分。
+
+\subsection{三角有理式的积分}
+
+对 $\int_0^{2\pi}R(\cos\theta,\sin\theta)\dd\theta$，令 $z=\ee^{\ii\theta}$，则
+\[
+  \cos\theta=\frac12\Bigl(z+\frac1z\Bigr),\quad
+  \sin\theta=\frac1{2\ii}\Bigl(z-\frac1z\Bigr),\quad
+  \dd\theta=\frac{\dd z}{\ii z},
+\]
+积分化为单位圆周上有理函数的积分。
+
+\begin{example}\label{ex:trig}
+设 $a>1$，计算 $\displaystyle\int_0^{2\pi}\frac{\dd\theta}{a+\cos\theta}$。
+\end{example}
+
+\begin{solution}
+作上述代换，
+\[
+  \int_0^{2\pi}\frac{\dd\theta}{a+\cos\theta}
+  =\oint_{\abs{z}=1}\frac{1}{a+\frac12(z+z^{-1})}\cdot\frac{\dd z}{\ii z}
+  =\frac{2}{\ii}\oint_{\abs{z}=1}\frac{\dd z}{z^2+2az+1}.
+\]
+分母的两个根 $z_\pm=-a\pm\sqrt{a^2-1}$ 满足 $z_+z_-=1$ 且 $\abs{z_-}>1$，故只有 $z_+$
+在单位圆内，$\Res\Bigl(\dfrac{1}{z^2+2az+1},z_+\Bigr)=\dfrac{1}{z_+-z_-}=\dfrac{1}{2\sqrt{a^2-1}}$。所以
+\[
+  \int_0^{2\pi}\frac{\dd\theta}{a+\cos\theta}
+  =\frac2\ii\cdot2\pi\ii\cdot\frac{1}{2\sqrt{a^2-1}}=\frac{2\pi}{\sqrt{a^2-1}}.
+\]
+\end{solution}
+
+\subsection{有理函数的广义积分}
+
+设 $R=P/Q$ 是有理函数，$\deg Q\ge\deg P+2$，且 $Q$ 无实零点。取围道为线段 $[-R_0,R_0]$
+加上半圆周 $\Gamma_{R_0}\colon z=R_0\ee^{\ii\theta}$（$0\le\theta\le\pi$），如\cref{fig:semicircle}。
+当 $R_0$ 充分大时，围道内部包含 $R$ 在上半平面的全部极点；而
+\[
+  \abs[\Big]{\int_{\Gamma_{R_0}}R(z)\dd z}\le\pi R_0\max_{\abs{z}=R_0}\abs{R(z)}
+  =O\Bigl(\frac{1}{R_0}\Bigr)\longrightarrow0 .
+\]
+于是得到
+\begin{equation}\label{eq:rational}
+  \int_{-\infty}^{\infty}R(x)\dd x=2\pi\ii\sum_{\Im z_k>0}\Res(R,z_k).
+\end{equation}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0]
+  \fill[mj fill] (2.4,0) arc (0:180:2.4) -- cycle;
+  \draw[mj axis] (-3.1,0) -- (3.3,0) node[below] {$\Re z$};
+  \draw[mj axis] (0,-.5) -- (0,3.0) node[left] {$\Im z$};
+  \draw[mj curve, mj arrow mid=.3] (2.4,0) arc (0:180:2.4);
+  \draw[mj curve, mj arrow mid=.55] (-2.4,0) -- (2.4,0);
+  \node[mj cross] at (.9,1.1) {};  \node[right=3pt] at (.9,1.1) {$z_1$};
+  \node[mj cross] at (-1.0,.75) {}; \node[left=3pt] at (-1.0,.75) {$z_2$};
+  \node[mj cross] at (.7,-.55) {};  \node[right=3pt, mjGray] at (.7,-.55) {$\bar z_1$};
+  \node[below] at (2.4,0) {$R_0$};
+  \node[below] at (-2.4,0) {$-R_0$};
+  \node[mjAccent] at (1.95,1.85) {$\Gamma_{R_0}$};
+\end{tikzpicture}
+\caption{半圆形围道：下半平面的极点不在围道内部}
+\label{fig:semicircle}
+\end{figure}
+
+\begin{example}\label{ex:x4}
+计算 $\displaystyle\int_{-\infty}^{\infty}\frac{\dd x}{1+x^4}$。
+\end{example}
+
+\begin{solution}
+$1+z^4$ 在上半平面的零点为 $z_1=\ee^{\ii\pi/4}$，$z_2=\ee^{3\ii\pi/4}$，都是一阶极点。
+由于 $z_k^4=-1$，
+$\Res\Bigl(\dfrac{1}{1+z^4},z_k\Bigr)=\dfrac{1}{4z_k^3}=\dfrac{z_k}{4z_k^4}=-\dfrac{z_k}{4}$，而
+$z_1+z_2=\ii\sqrt2$，于是由 \cref{eq:rational}，
+\[
+  \int_{-\infty}^{\infty}\frac{\dd x}{1+x^4}=2\pi\ii\cdot\Bigl(-\frac{\ii\sqrt2}{4}\Bigr)
+  =\frac{\pi}{\sqrt2}.
+\]
+\end{solution}
+
+\subsection{傅里叶型积分与约当引理}
+
+对 $\int_{-\infty}^{\infty}R(x)\ee^{\ii ax}\dd x$（$a>0$），只要求 $\deg Q\ge\deg P+1$ 即可，
+这时半圆周上的积分趋于零要依靠下面的引理。
+
+\begin{lemma}[约当]\label{lem:jordan}
+设 $a>0$，$g$ 在上半平面的 $\abs{z}\ge R_1$ 部分连续，且
+$M(R)=\max_{z\in\Gamma_R}\abs{g(z)}\to0$（$R\to\infty$），则
+\[
+  \lim_{R\to\infty}\int_{\Gamma_R}g(z)\ee^{\ii az}\dd z=0 .
+\]
+\end{lemma}
+
+\begin{marginfigure}[1\baselineskip]
+\begin{tikzpicture}
+\begin{axis}[mojing, width=44mm, height=34mm, xmin=0, xmax=1.85, ymin=0, ymax=1.25,
+    xtick={1.5708}, xticklabels={$\frac{\pi}{2}$}, ytick={1}, samples=60, domain=0:1.5708]
+  \addplot[mjAccent] {sin(deg(x))};
+  \addplot[mjSecond, dashed] {2*x/pi};
+\end{axis}
+\end{tikzpicture}
+\caption{约当不等式：在 $[0,\frac{\pi}{2}]$ 上 $\sin\theta\ge\frac{2\theta}{\pi}$}
+\label{fig:jordan}
+\end{marginfigure}
+
+\begin{proof}
+令 $z=R\ee^{\ii\theta}$，则 $\abs{\ee^{\ii az}}=\ee^{-aR\sin\theta}$。利用对称性与约当不等式
+$\sin\theta\ge2\theta/\pi$（$0\le\theta\le\pi/2$），
+\begin{align*}
+  \abs[\Big]{\int_{\Gamma_R}g(z)\ee^{\ii az}\dd z}
+  &\le 2M(R)R\int_0^{\pi/2}\ee^{-aR\sin\theta}\dd\theta
+   \le 2M(R)R\int_0^{\pi/2}\ee^{-2aR\theta/\pi}\dd\theta \\
+  &=\frac{\pi M(R)}{a}\bigl(1-\ee^{-aR}\bigr)<\frac{\pi M(R)}{a}\longrightarrow0 . \qedhere
+\end{align*}
+\end{proof}
+
+\begin{example}
+计算 $\displaystyle\int_{-\infty}^{\infty}\frac{\cos x}{x^2+1}\dd x$。
+\end{example}
+
+\begin{solution}
+它是 $\int_{-\infty}^\infty\frac{\ee^{\ii x}}{x^2+1}\dd x$ 的实部。在上半平面，
+$\ee^{\ii z}/(z^2+1)$ 只有一阶极点 $\ii$，留数为 $\ee^{-1}/(2\ii)$。由约当引理，
+\[
+  \int_{-\infty}^{\infty}\frac{\ee^{\ii x}}{x^2+1}\dd x=2\pi\ii\cdot\frac{\ee^{-1}}{2\ii}=\frac{\pi}{\ee},
+\]
+它已是实数，故所求积分等于 $\pi/\ee$。
+\end{solution}
+
+被积函数在实轴上有极点时，需要在围道上开一个“缺口”绕过它。下面这个经典例子中用到
+一个简单的事实：若 $z_0$ 是 $f$ 的一阶极点，$\gamma_\varepsilon$ 是以 $z_0$ 为心、半径为
+$\varepsilon$、圆心角为 $\alpha$ 的逆时针圆弧，则
+$\lim_{\varepsilon\to0}\int_{\gamma_\varepsilon}f(z)\dd z=\ii\alpha\Res(f,z_0)$。
+
+\begin{example}[狄利克雷积分]\label{ex:dirichlet}
+证明 $\displaystyle\int_0^{\infty}\frac{\sin x}{x}\dd x=\frac{\pi}{2}$。
+\end{example}
+
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=1.0]
+  \fill[mj fill] (2.4,0) arc (0:180:2.4) -- (-.45,0) arc (180:0:.45) -- cycle;
+  \draw[mj axis] (-3.1,0) -- (3.3,0) node[below] {$\Re z$};
+  \draw[mj axis] (0,-.5) -- (0,3.0) node[left] {$\Im z$};
+  \draw[mj curve, mj arrow mid=.3] (2.4,0) arc (0:180:2.4);
+  \draw[mj curve, mj arrow mid=.55] (-2.4,0) -- (-.45,0);
+  \draw[mj curve2, mj arrow mid=.5] (-.45,0) arc (180:0:.45);
+  \draw[mj curve, mj arrow mid=.5] (.45,0) -- (2.4,0);
+  \node[mj hollow] at (0,0) {};
+  \node[below] at (2.4,0) {$R$};
+  \node[below] at (-2.4,0) {$-R$};
+  \node[below=1pt] at (.5,0) {$\varepsilon$};
+  \node[below=1pt] at (-.5,0) {$-\varepsilon$};
+  \node[mjAccent] at (1.95,1.85) {$\Gamma_R$};
+  \node[mjSecond] at (.62,.62) {$\gamma_\varepsilon$};
+\end{tikzpicture}
+\caption{带缺口的半圆形围道，小半圆 $\gamma_\varepsilon$ 按顺时针方向绕过原点}
+\label{fig:indented}
+\end{figure}
+
+\begin{proof}
+考虑 $f(z)=\ee^{\ii z}/z$ 沿\cref{fig:indented} 中围道的积分。围道内部没有奇点，故
+\[
+  \int_{\Gamma_R}f\dd z+\int_{-R}^{-\varepsilon}\frac{\ee^{\ii x}}{x}\dd x
+  +\int_{\gamma_\varepsilon}f\dd z+\int_{\varepsilon}^{R}\frac{\ee^{\ii x}}{x}\dd x=0 .
+\]
+由约当引理（取 $g(z)=1/z$），第一项当 $R\to\infty$ 时趋于零。$\gamma_\varepsilon$ 是顺时针的
+半圆弧，而 $\Res(f,0)=1$，故第三项趋于 $-\ii\pi$。把第二、四两项合并，
+\[
+  \int_{\varepsilon}^{R}\frac{\ee^{\ii x}-\ee^{-\ii x}}{x}\dd x
+  =2\ii\int_{\varepsilon}^{R}\frac{\sin x}{x}\dd x .
+\]
+令 $\varepsilon\to0$，$R\to\infty$，得 $2\ii\int_0^\infty\frac{\sin x}{x}\dd x=\ii\pi$。
+\end{proof}
+
+\begin{remark}
+被积函数 $\sin x/x$ 在 $[0,\infty)$ 上并不绝对可积，这里的广义积分是条件收敛的。
+直接用实分析方法计算它需要引入含参变量积分等技巧，而留数方法把问题化成了
+几行计算。
+\end{remark}
+
+\begin{exercises}
+  \item 求下列函数在指定点的留数：
+        \begin{inlinelist}
+          \item $\dfrac{z}{z^2+4}$，$z=2\ii$；
+          \item $\dfrac{\ee^z}{z^3}$，$z=0$；
+          \item $z^2\sin\dfrac1z$，$z=0$。
+        \end{inlinelist}
+  \item 计算 $\displaystyle\int_0^{2\pi}\frac{\dd\theta}{5+3\sin\theta}$。
+  \item 计算 $\displaystyle\int_{-\infty}^{\infty}\frac{x^2}{(x^2+1)(x^2+4)}\dd x$，
+        并用部分分式验证结果。
+  \item 设 $a\ge0$，$b>0$，证明 $\displaystyle\int_0^{\infty}\frac{\cos ax}{x^2+b^2}\dd x
+        =\frac{\pi\ee^{-ab}}{2b}$。
+  \item\hard 设整数 $n\ge2$。沿扇形围道 $0\le\arg z\le 2\pi/n$ 积分，证明
+        $\displaystyle\int_0^{\infty}\frac{\dd x}{1+x^n}=\frac{\pi/n}{\sin(\pi/n)}$。
+\end{exercises}
+
+\end{document}

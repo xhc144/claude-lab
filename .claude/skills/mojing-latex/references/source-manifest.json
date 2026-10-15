@@ -1,0 +1,100 @@
+{
+  "repository": "https://github.com/xhc144/claude-lab",
+  "directory": "mojing",
+  "commit": "35a5afc2524a4162e28a9cd9de3b9e1d32f61a0a",
+  "retrieved_utc": "2026-10-13",
+  "license_observed": {
+    "template_files": "README.md and all bundled .cls/.sty headers declare LPPL 1.3c.",
+    "examples": "README.md states example documents may be freely used; no separate license text or explicit license version for examples was found.",
+    "standalone_license_file": "Not found in the source repository tree at this commit.",
+    "license_url": "https://www.latex-project.org/lppl/lppl-1-3c/"
+  },
+  "archives": {
+    "notes": {
+      "source_path": "mojing/dist/mojing-notes.zip",
+      "sha256": "861c30a0d26ec27b6a026c8e30b8e5edbe897bb46a392a43dcf16f453ba4061c",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-notes.cls": "f04d06848d3008982e60d2be5031eaac5cf15ac5ce91f232ffe54eff40e0f212",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "main.tex": "8b6c37f11ebc6b5360f04636a46acb4a77d853d77bcf4f636775d9509fa8a6f7"
+      }
+    },
+    "exercise": {
+      "source_path": "mojing/dist/mojing-exercise.zip",
+      "sha256": "065cbb275434ca9165a10e1a857eb8a35fb4e8205c649b10c869c5924c1405ec",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-exercise.cls": "398fd1e84b84f58cd817f840508b73f2446952744d33bcf1064676031025731c",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "main.tex": "a4ca791f72c8d89ef2053202a24ed16dcc61a41298abb8d68fe419858c2ca282"
+      }
+    },
+    "exam": {
+      "source_path": "mojing/dist/mojing-exam.zip",
+      "sha256": "73f56ee92d2ae6de85c07554b8c58786c9d1898a45f937142026ef7dee693dcd",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-exam.cls": "03f7630e1cc73cd403c611d0a04a05305ca66953e42d5209c2c0f41f99b9cd3b",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "main.tex": "7c5f40133558740f2f0cb21636a98665745d66e6f33174b580573c4f040a5ba6"
+      }
+    },
+    "paper": {
+      "source_path": "mojing/dist/mojing-paper.zip",
+      "sha256": "d1ec2a994ae9128d782f0f9126efb3f9be493316940fbea969c753f8b39fbfa7",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-paper.cls": "4a3c12dfe62abcc6041b9f07c49b3d3f8fc1a7000e1fac7f987d2ee4521d4ea3",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "refs.bib": "74338ea1f7773921d62770ff57bfc5887ffcadbdcc24648d820a952e09aae881",
+        "data/bernstein-abs.dat": "d59f8312bb3e27844f8f7897160e9e223ff17aeae1308378ce615ef8e3cd6fd6",
+        "data/voronovskaya.dat": "1b400579a215792ad50b7f72aab705951bad1e4c17b8af8d111af9396f54f38e",
+        "data/make_data.py": "c0403dd7956b2ed7e531ee20bfdd1a1e324b612e8d7b70768230f3c9699cb90f",
+        "main.tex": "603c334c629e62a84a6ae6c77317e534f1a45157654aa372d4df2ead0d40fb77"
+      }
+    },
+    "book": {
+      "source_path": "mojing/dist/mojing-book.zip",
+      "sha256": "5d0e5d2d352869ed653fbdad21245f54005513fcae9560b75c07fef65791a257",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-book.cls": "2af18cffccb2eda28816ac89c82eccde6cc4f5536043c916315d186bad0d3387",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "chapters/ch2.tex": "049029635a48e4c3b9904ba1242787b08fc963cedd0cb9b51fa123c385faa1cc",
+        "chapters/answers.tex": "06c55f0033e8a0f5eb33269249e36a57771c5d331de955ac2101188463eefba6",
+        "chapters/ch1.tex": "f897c59e6472bf96f248d409651520ded97197f636ffe3348449b3545b4f051e",
+        "refs.bib": "dcf56ce9718fd886c6c477a2383cc53526aa1d146a4c2c83293ed8e417cacf3a",
+        "main.tex": "94e9b001b920c0260081a6d3582bc5f2600ad4b1823bb9bdc7a94674f0d8333f"
+      }
+    },
+    "translation": {
+      "source_path": "mojing/dist/mojing-translation.zip",
+      "sha256": "e83067ee2c0848f5390aca1e317a5ad8f3d7e7f5b9d5ec5f4a95ae131828c769",
+      "files": {
+        "latexmkrc": "303d51b318d9434d25baf287ae921be72df8ae10586074b2c0c28e1eeaecd5bc",
+        "mojing-translation.cls": "bd314b3242c04b94f5ac281dd96ca78b3733806e02521ac3c8b35ccacc438e2f",
+        "mojing-tikz.sty": "c66d819714056db8a2baad5c3cf18081b477017f51f23a9aa096df19a5c1fac5",
+        "mojing-math.sty": "e1aaba4e3ee4a44c2dda671b8e32cd30207ba7c2a8cb6b48d021a60ea63fd8a1",
+        "mojing-theorem.sty": "6936976d0beda0c42926088f90cd7dc7816cedca2d085273aa6956a88e14777a",
+        "mojing-core.sty": "c11166331a584ea77a2293629eab8097f8db94d7dd8adc90b678b5ba2cc02b74",
+        "main.tex": "713590a001e686e1cda18bc79ee783a6a607c00b614a11c58796ea27dbc33cd8"
+      }
+    }
+  }
+}

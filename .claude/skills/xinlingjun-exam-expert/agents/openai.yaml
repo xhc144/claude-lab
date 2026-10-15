@@ -1,0 +1,13 @@
+interface:
+  display_name: 新领军考试专家
+  short_description: 按实际卡点讲解与提示，诊断学习缺口，并按教师标准命题和评估难度
+  default_prompt: 请使用 $xinlingjun-exam-expert，按我的卡点讲解并留下一步让我做；概念、查题、批改完成所问任务；明确要全解时展开。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

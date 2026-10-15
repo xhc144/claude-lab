@@ -1,0 +1,74 @@
+{
+  "schema_version": 2,
+  "_instructions": "可选详细审校记录。不得伪填通过；短稿无须为运行文件检查先填写本表。",
+  "scope": {
+    "topic": "",
+    "audience": "",
+    "status": "draft",
+    "units": [
+      {
+        "id": "U01",
+        "goal": "",
+        "status": "draft"
+      }
+    ]
+  },
+  "claims": [
+    {
+      "id": "C01",
+      "central": true,
+      "statement": "",
+      "bottleneck": "",
+      "dependencies": [],
+      "support": {
+        "kind": "local_proof",
+        "path": "main.tex",
+        "marker": "\\label{thm:core}"
+      },
+      "review": {
+        "status": "pending",
+        "note": ""
+      },
+      "proof_required": true,
+      "proof_scope_reason": ""
+    }
+  ],
+  "sources": [],
+  "figures": [],
+  "review_snapshot": [],
+  "deliverables": [],
+  "build_record": "",
+  "render_record": "",
+  "reviews": {
+    "mathematics": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    },
+    "pedagogy": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    },
+    "sources": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    },
+    "visuals": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    },
+    "layout": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    },
+    "delivery": {
+      "status": "pending",
+      "note": "",
+      "reviewer": ""
+    }
+  }
+}

@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "exam_year": 2027,
+  "new_syllabus_first_year": true,
+  "created_date_utc": "2026-10-11",
+  "attachments": [
+    {
+      "filename": "2027清华新领军计划考试大纲.pdf",
+      "sha256": "81c3fae0482d3bbf043eefd6e53db34756a9ebe0f7c7d0e3d185d158be71bd4a",
+      "bytes": 181845,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "2027清华新领军计划考试大纲.tex",
+      "sha256": "028c99e8dfc16f0a87d6c017b49d31013bcf2184a9e499d5e27e444ab14f2241",
+      "bytes": 10925,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "image(20261011-014402).png",
+      "sha256": "4d12895380ee2e544b4b0fba81441a2438b02e5ed1e6e53d741f4b3f42ae6d42",
+      "bytes": 132364,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "数之谜试卷.zip",
+      "sha256": "3bb70315ce51d0816e449627d9f34d5e6bc33ea24c6f7baab88b563c3ff0061b",
+      "bytes": 4552162,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "领军参考教材知识点.pdf",
+      "sha256": "2c1d64004288000177b8ea7bc089c63d78f56def0034408861c7ddc197251f16",
+      "bytes": 760377,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "领军参考教材知识点.tex",
+      "sha256": "f0ad35d73f80a0d06bd74b1530bdfd9448b7115ce6692cd58944cfb55ec2a45c",
+      "bytes": 85604,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "领军招生简章(1).pdf",
+      "sha256": "42191bfbfd37276f3a510b1832ba453de6e1fda513a121e836404948afde4cf5",
+      "bytes": 1270823,
+      "stored_original_in_skill": false
+    },
+    {
+      "filename": "领军考试大纲(4).pdf",
+      "sha256": "81c3fae0482d3bbf043eefd6e53db34756a9ebe0f7c7d0e3d185d158be71bd4a",
+      "bytes": 181845,
+      "stored_original_in_skill": false
+    }
+  ],
+  "paper_sources": [
+    {
+      "paper_id": "CACA-202412",
+      "filename": "2024年12月CACA数学2h.pdf",
+      "archive_path": "数之谜试卷/2024年12月CACA数学2h.pdf",
+      "sha256": "5eeeb1fbbb3528a3458141659862d48282289042796526f0c1b04dc1895f085c",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202110-YI",
+      "filename": "2021年10月一试.pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2021年10月一试.pdf",
+      "sha256": "ef11364f32d51c734700781493ea388f20f2133cd0b6bbbd2f8e89e4928c4650",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202103-YI",
+      "filename": "2021年3月一试(已完成).pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2021年3月一试(已完成).pdf",
+      "sha256": "19c0b463606dd355be9e4f0a04a3ba81eb91615326dc8269f5065f805831f38d",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202209-YI",
+      "filename": "2022年9月TACA一试.pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2022年9月TACA一试.pdf",
+      "sha256": "8a9a1a3c94fcdd47d4cc6d6f1b5ccca993270637f790e84d87313030829924dd",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202310-YI",
+      "filename": "2023年10月TACA一试.pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2023年10月TACA一试.pdf",
+      "sha256": "ea5cba8c1a59665dfad03ced0e084144af59fa725ff834bf39f022aeca436dc8",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202411-YI",
+      "filename": "2024年11月TACA一试.pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2024年11月TACA一试.pdf",
+      "sha256": "1523e37ad09f11007dd140948a4817fa542b6f7c59a58bafe98f720e94f7a941",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202511-YI",
+      "filename": "2025年11月TACA一试.pdf",
+      "archive_path": "数之谜试卷/一试4h共6份/2025年11月TACA一试.pdf",
+      "sha256": "b68ae56419f3e80463ae7d7be9c7d96bd8ba3b35d634405eb534a4e6f58e999b",
+      "pages": 2,
+      "expected_questions": 8,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "GIRLS-202110",
+      "filename": "2021年10月女子(已完成).pdf",
+      "archive_path": "数之谜试卷/女子3h共5份/2021年10月女子(已完成).pdf",
+      "sha256": "49f4f5501262f806405de2db7d4e5cdaa4f6b99e1da0e0afe88ea9b2c99ceb7b",
+      "pages": 2,
+      "expected_questions": 6,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "GIRLS-202211",
+      "filename": "2022年11月女子.pdf",
+      "archive_path": "数之谜试卷/女子3h共5份/2022年11月女子.pdf",
+      "sha256": "41042532ee3a5758b8775412657156d508ba4bdd473c3e36d0c0a478b65be2ea",
+      "pages": 1,
+      "expected_questions": 6,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "GIRLS-202311",
+      "filename": "2023年11月女子.pdf",
+      "archive_path": "数之谜试卷/女子3h共5份/2023年11月女子.pdf",
+      "sha256": "387ae9817439342b0049b8bc4be43fc38e43b46e69989b803557ea9b40e95185",
+      "pages": 1,
+      "expected_questions": 6,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "GIRLS-202410",
+      "filename": "2024年10月女子.pdf",
+      "archive_path": "数之谜试卷/女子3h共5份/2024年10月女子.pdf",
+      "sha256": "01b9ba422fb3b6ff7d88fb6e92894e61ec24e657a6ad9505ba7eab26bfcf8995",
+      "pages": 2,
+      "expected_questions": 6,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "GIRLS-202510",
+      "filename": "2025年10月女子.pdf",
+      "archive_path": "数之谜试卷/女子3h共5份/2025年10月女子.pdf",
+      "sha256": "3fa5c69389da09ecfbc9f72bab6773003acb66d8917e7482fb65f55f07b6e222",
+      "pages": 2,
+      "expected_questions": 6,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202103-ZERO",
+      "filename": "2021年3月零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2021年3月零试.pdf",
+      "sha256": "76a595a49bdde49cf996a5fb35c337581605929d5108e45be0e644d55faf7ea2",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202104-ZERO",
+      "filename": "2021年4月零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2021年4月零试.pdf",
+      "sha256": "589111be4a0c3ad6d33e8275ead75e13ba278e2fbe21fe7903963a24bf137c2b",
+      "pages": 2,
+      "expected_questions": 10,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202109-ZERO",
+      "filename": "2021年9月零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2021年9月零试.pdf",
+      "sha256": "d953dddac7db3e7ac5b51d4c2860ef7c7cb9dd6022150f66244af0eb5c45ebd4",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202205-ZERO",
+      "filename": "2022年5月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2022年5月TACA零试.pdf",
+      "sha256": "a41559d6c22b386dc2bf1ce4be83762520e7816414c79a030934855b4fd176a7",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202208-ZERO",
+      "filename": "2022年8月TACA.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2022年8月TACA.pdf",
+      "sha256": "2efde4e63d7405fb7ce91a2f970ec143236258a32b3f2c1f3850fe0ebc968de6",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202304-ZERO",
+      "filename": "2023年4月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2023年4月TACA零试.pdf",
+      "sha256": "d12640ae541d514e6d96afb9c67d3442a884809509f06e40c87208c51f29c9cc",
+      "pages": 4,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202308-ZERO",
+      "filename": "2023年8月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2023年8月TACA零试.pdf",
+      "sha256": "b7423021fb2972bd9305fa6dafbe6d451d4c21f5ecd8facf254430ed691bcc26",
+      "pages": 5,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202405-ZERO",
+      "filename": "2024年5月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2024年5月TACA零试.pdf",
+      "sha256": "6926306524630dcd034d9065e0c468bfecd7bb1e54026cb6c9e5577b67811489",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202408-ZERO",
+      "filename": "2024年8月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2024年8月TACA零试.pdf",
+      "sha256": "d5ac553661d2618f026ca2f01472002971c44747f53d6c758d9c30cbbde73ee5",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202510-ZERO",
+      "filename": "2025年10月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2025年10月TACA零试.pdf",
+      "sha256": "abf5ace66d8c603936121ac9d444f44bf27e344ba4a2f688c0247195f9dd3597",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    },
+    {
+      "paper_id": "TACA-202504-ZERO",
+      "filename": "2025年4月TACA零试.pdf",
+      "archive_path": "数之谜试卷/零试3h共11份/2025年4月TACA零试.pdf",
+      "sha256": "c4b74610eb3576c325a268cb0a5adbb16c9c75a7b4eb7dccbec589b533be9397",
+      "pages": 3,
+      "expected_questions": 15,
+      "source_kind": "用户提供历年整理卷；未独立核验官方原卷"
+    }
+  ],
+  "corpus_expectations": {
+    "papers": 23,
+    "questions": 253,
+    "stage_papers": {
+      "一试": 6,
+      "零试": 11,
+      "女子": 5,
+      "CACA": 1
+    },
+    "stage_questions": {
+      "一试": 48,
+      "零试": 160,
+      "女子": 30,
+      "CACA": 15
+    }
+  },
+  "scope": "保存全部所给23卷大题完整转录与分类；不含任何PDF；教材815条目录原始明细未随附件提供，现有39书目44专题222知识组已结构化。",
+  "web_research": {
+    "researched_on": "2026-10-11",
+    "ledger": "references/web-evidence.json",
+    "audit": "references/research-audit.json",
+    "corpus_analysis": "references/corpus-analysis.json",
+    "full_web_articles_stored": false,
+    "pdf_files_stored": false
+  }
+}

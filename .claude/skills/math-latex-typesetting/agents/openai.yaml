@@ -1,0 +1,13 @@
+interface:
+  display_name: 数学 LaTeX 排版
+  short_description: 固定王者版式与真实编译核验，不限制讲义详略。
+  default_prompt: 使用 $math-latex-typesetting 排版数学稿件，保留内容与完整证明，执行实际编译及页面核验。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

@@ -1,0 +1,13 @@
+interface:
+  display_name: 数学竞赛题难度评估
+  short_description: 按人类纸笔能力，用固定1–10等级和真题参照给出具体难度
+  default_prompt: 请使用 $assess-math-difficulty 按人类独立纸笔条件评价题目，最后给出固定1–10难度分、等级、范围和真题参照，不要透露解法。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

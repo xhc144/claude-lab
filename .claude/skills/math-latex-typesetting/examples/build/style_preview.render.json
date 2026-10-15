@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "pdf": {
+    "path": "build/style_preview.pdf",
+    "sha256": "9f36400a1ed370643937a286dab861f5a38b520597acb9c368f3da9b53f7fcf1"
+  },
+  "page_count": 3,
+  "dpi": 130,
+  "inspected": false,
+  "pages": [
+    {
+      "page": 1,
+      "path": "build/.qa/style_preview-hxxuy3uv/page-0001.png",
+      "sha256": "9d36bd55e4eb2d81eef9e7699401e80738a5c6a896601c476fe2bdbdac3e1911"
+    },
+    {
+      "page": 2,
+      "path": "build/.qa/style_preview-hxxuy3uv/page-0002.png",
+      "sha256": "c464c14aeefc64cbd9e35a70776f3cc9c0edbafba731b29a9f5c510910acb931"
+    },
+    {
+      "page": 3,
+      "path": "build/.qa/style_preview-hxxuy3uv/page-0003.png",
+      "sha256": "1d72e85725c24fd23dd805e8160673d1e64499e931822720a055659533eef0f0"
+    }
+  ],
+  "contacts": [
+    "build/.qa/style_preview-hxxuy3uv/contact-001.png"
+  ],
+  "limitation": "Rendered files exist; no claim that any page has been visually inspected."
+}

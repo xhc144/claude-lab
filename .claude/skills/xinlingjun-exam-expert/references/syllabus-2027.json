@@ -1,0 +1,2466 @@
+{
+  "schema_version": "1.0",
+  "exam_year": 2027,
+  "first_year_of_new_syllabus": true,
+  "publication_date": "2026-08-20",
+  "source_authority": "用户提供的求真书院官方文稿副本；已联网核实官网发布目录及指向原文链接，微信在线正文未成功抓取",
+  "source_sha256": "81c3fae0482d3bbf043eefd6e53db34756a9ebe0f7c7d0e3d185d158be71bd4a",
+  "duplicate_source_file": "2027清华新领军计划考试大纲.pdf",
+  "duplicate_is_same_bytes": true,
+  "exam_stage_mapping": {
+    "数学基础测试": {
+      "form": "机考",
+      "subjects": [
+        "数学"
+      ],
+      "specific_syllabus": "本考纲未单独给出数学基础测试细目，不能自动宣称与学科能力一试同范围"
+    },
+    "一试": {
+      "数学基础内容": [
+        "M0"
+      ],
+      "数学1": [
+        "M1-A",
+        "M1-L",
+        "M1-G",
+        "M1-T"
+      ],
+      "数学2": [
+        "M2-P",
+        "M2-C",
+        "M2-S",
+        "M2-N",
+        "M2-L",
+        "M2-O"
+      ],
+      "物理": [
+        "P"
+      ],
+      "source_file": "领军招生简章(1).pdf",
+      "source_pages": [
+        3
+      ]
+    },
+    "二试": {
+      "语言": [
+        "语文",
+        "英语"
+      ],
+      "综合六选二": [
+        "物理加强",
+        "化学",
+        "生物",
+        "计算机",
+        "经济",
+        "社科"
+      ],
+      "economics_and_social_science_are_separate": true,
+      "detailed_syllabi_available": false,
+      "source_file": "领军招生简章(1).pdf",
+      "source_pages": [
+        3
+      ]
+    },
+    "三试": {
+      "content": "非固定形式的开放性内容（现学现考）",
+      "detailed_fixed_syllabus_available": false,
+      "source_file": "领军招生简章(1).pdf",
+      "source_pages": [
+        3
+      ]
+    }
+  },
+  "official_physics_policy": {
+    "text": "以高中物理核心内容为基准。涉及超出高中范围的新概念、公式或模型时，题目原则上提供必要信息，重点考察理解、建模、推理和知识迁移能力。",
+    "source_pages": [
+      6
+    ]
+  },
+  "version_policy": {
+    "text": "除非特殊注明，同一教材的不同版本均可作为参考。",
+    "source_pages": [
+      6
+    ]
+  },
+  "limits": [
+    "没有2027新考纲真实考试样本，历史题只能说明旧体系题型与训练价值。",
+    "本考纲未公布分值、时长、逐科题量、录取分数线，不能沿用旧卷抬头推断。",
+    "经济与社科是两个选考科目；当前附件只有科目名，无其官方细纲。",
+    "本文本的官方列项与教材知识图谱必须分别加载和注明性质。"
+  ],
+  "groups": [
+    {
+      "id": "M0-G01",
+      "syllabus_code": "M0",
+      "name": "中学数学",
+      "official_wording": "中学数学全部内容",
+      "source_pages": [
+        1
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M0-G01-K01",
+          "name": "中学数学全部内容",
+          "syllabus_code": "M0",
+          "source_pages": [
+            1
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-A-G01",
+      "syllabus_code": "M1-A",
+      "name": "分析",
+      "official_wording": "单变量微积分、多元微积分、傅立叶级数等数学分析课程内容。",
+      "source_pages": [
+        1
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "仅为概括性方向，原文有“等数学分析课程内容”，没有逐项给出每门分析课程或每个定理的深度。",
+      "items": [
+        {
+          "id": "M1-A-G01-K01",
+          "name": "单变量微积分",
+          "syllabus_code": "M1-A",
+          "source_pages": [
+            1
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "仅为概括性方向，原文有“等数学分析课程内容”，没有逐项给出每门分析课程或每个定理的深度。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-A-G01-K02",
+          "name": "多元微积分",
+          "syllabus_code": "M1-A",
+          "source_pages": [
+            1
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "仅为概括性方向，原文有“等数学分析课程内容”，没有逐项给出每门分析课程或每个定理的深度。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-A-G01-K03",
+          "name": "傅立叶级数",
+          "syllabus_code": "M1-A",
+          "source_pages": [
+            1
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "仅为概括性方向，原文有“等数学分析课程内容”，没有逐项给出每门分析课程或每个定理的深度。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "傅里叶级数",
+            "Fourier级数"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "M1-L-G01",
+      "syllabus_code": "M1-L",
+      "name": "线性代数",
+      "official_wording": "矩阵运算、高斯消元法与行列式、向量空间、基、维数与直和、线性算子、矩阵表示、特征值与若尔当标准形、内积空间、自伴和正规算子、谱定理、双（多）线性函数、二次型、张量积。",
+      "source_pages": [
+        2
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M1-L-G01-K01",
+          "name": "矩阵运算",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K02",
+          "name": "高斯消元法",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K03",
+          "name": "行列式",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K04",
+          "name": "向量空间",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K05",
+          "name": "基",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K06",
+          "name": "维数",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K07",
+          "name": "直和",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K08",
+          "name": "线性算子",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K09",
+          "name": "矩阵表示",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K10",
+          "name": "特征值",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K11",
+          "name": "若尔当标准形",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "Jordan标准形",
+            "约当标准形"
+          ]
+        },
+        {
+          "id": "M1-L-G01-K12",
+          "name": "内积空间",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K13",
+          "name": "自伴算子",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K14",
+          "name": "正规算子",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K15",
+          "name": "谱定理",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K16",
+          "name": "双（多）线性函数",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K17",
+          "name": "二次型",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-L-G01-K18",
+          "name": "张量积",
+          "syllabus_code": "M1-L",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-G-G01",
+      "syllabus_code": "M1-G",
+      "name": "群论",
+      "official_wording": "群、子群、同态与同构、陪集、商群与同构定理、群作用、计数公式、西罗定理、对称群、线性群、自由群与生成元关系、群的表示、特征标、舒尔引理。",
+      "source_pages": [
+        2
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M1-G-G01-K01",
+          "name": "群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K02",
+          "name": "子群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K03",
+          "name": "同态",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K04",
+          "name": "同构",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K05",
+          "name": "陪集",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K06",
+          "name": "商群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K07",
+          "name": "同构定理",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K08",
+          "name": "群作用",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K09",
+          "name": "计数公式",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K10",
+          "name": "西罗定理",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "Sylow定理"
+          ]
+        },
+        {
+          "id": "M1-G-G01-K11",
+          "name": "对称群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K12",
+          "name": "线性群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K13",
+          "name": "自由群",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K14",
+          "name": "生成元关系",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K15",
+          "name": "群的表示",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K16",
+          "name": "特征标",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-G-G01-K17",
+          "name": "舒尔引理",
+          "syllabus_code": "M1-G",
+          "source_pages": [
+            2
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-T-G01",
+      "syllabus_code": "M1-T",
+      "name": "高中几何",
+      "official_wording": "高中几何：平面几何、立体几何、解析几何等。",
+      "source_pages": [
+        3
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M1-T-G01-K01",
+          "name": "平面几何",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G01-K02",
+          "name": "立体几何",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G01-K03",
+          "name": "解析几何",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-T-G02",
+      "syllabus_code": "M1-T",
+      "name": "组合几何与组合拓扑",
+      "official_wording": "组合几何与组合拓扑：凸性与凸包、几何染色、三角剖分、欧拉数、简单的图论，简单的扭结与亏格问题。",
+      "source_pages": [
+        3
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+      "items": [
+        {
+          "id": "M1-T-G02-K01",
+          "name": "凸性",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G02-K02",
+          "name": "凸包",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G02-K03",
+          "name": "几何染色",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G02-K04",
+          "name": "三角剖分",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G02-K05",
+          "name": "欧拉数",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "欧拉示性数"
+          ]
+        },
+        {
+          "id": "M1-T-G02-K06",
+          "name": "简单的图论",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G02-K07",
+          "name": "简单的扭结问题",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "简单纽结问题"
+          ]
+        },
+        {
+          "id": "M1-T-G02-K08",
+          "name": "简单的亏格问题",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单的图论、简单的扭结与亏格问题”措辞；不自动确认全部图论/三维拓扑理论为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-T-G03",
+      "syllabus_code": "M1-T",
+      "name": "实数轴的拓扑",
+      "official_wording": "实数轴的拓扑：开集与闭集、紧致性、连续性、完备性等。",
+      "source_pages": [
+        3
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+      "items": [
+        {
+          "id": "M1-T-G03-K01",
+          "name": "实数轴的开集",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G03-K02",
+          "name": "实数轴的闭集",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G03-K03",
+          "name": "实数轴的紧致性",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G03-K04",
+          "name": "实数轴的连续性",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G03-K05",
+          "name": "实数轴的完备性",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "拓扑范围在此项明确为实数轴，不能凭此项把全部一般拓扑升级为直接列项。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M1-T-G04",
+      "syllabus_code": "M1-T",
+      "name": "曲线微分几何",
+      "official_wording": "曲线微分几何：参数曲线、弧长、曲率、向量方法与几何直观的结合。",
+      "source_pages": [
+        3
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出曲线微分几何；挠率可作曲线理论解释性拓展，曲面/高斯—博内并未在此直接列出。",
+      "items": [
+        {
+          "id": "M1-T-G04-K01",
+          "name": "参数曲线",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出曲线微分几何；挠率可作曲线理论解释性拓展，曲面/高斯—博内并未在此直接列出。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G04-K02",
+          "name": "弧长",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出曲线微分几何；挠率可作曲线理论解释性拓展，曲面/高斯—博内并未在此直接列出。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G04-K03",
+          "name": "曲率",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出曲线微分几何；挠率可作曲线理论解释性拓展，曲面/高斯—博内并未在此直接列出。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M1-T-G04-K04",
+          "name": "向量方法与几何直观的结合",
+          "syllabus_code": "M1-T",
+          "source_pages": [
+            3
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出曲线微分几何；挠率可作曲线理论解释性拓展，曲面/高斯—博内并未在此直接列出。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-P-G01",
+      "syllabus_code": "M2-P",
+      "name": "概率基础与计算",
+      "official_wording": "有限样本空间与典型概率模型、古典概率计算、条件概率与乘法公式、独立事件与互斥事件、全概率公式。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-P-G01-K01",
+          "name": "有限样本空间",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K02",
+          "name": "典型概率模型",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K03",
+          "name": "古典概率计算",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K04",
+          "name": "条件概率",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K05",
+          "name": "概率乘法公式",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K06",
+          "name": "独立事件",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K07",
+          "name": "互斥事件",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G01-K08",
+          "name": "全概率公式",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-P-G02",
+      "syllabus_code": "M2-P",
+      "name": "随机变量与分布",
+      "official_wording": "离散随机变量、数学期望、方差与正态分布。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-P-G02-K01",
+          "name": "离散随机变量",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G02-K02",
+          "name": "数学期望",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G02-K03",
+          "name": "方差",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G02-K04",
+          "name": "正态分布",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-P-G03",
+      "syllabus_code": "M2-P",
+      "name": "随机过程与极限定理",
+      "official_wording": "简单随机过程与随机游走、简单版本的大数定律与中心极限定理。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "必须保留“简单”及“简单版本”限制；本条不自动确认鞅、布朗运动等高阶工具为必备前置。",
+      "items": [
+        {
+          "id": "M2-P-G03-K01",
+          "name": "简单随机过程",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单”及“简单版本”限制；本条不自动确认鞅、布朗运动等高阶工具为必备前置。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G03-K02",
+          "name": "随机游走",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单”及“简单版本”限制；本条不自动确认鞅、布朗运动等高阶工具为必备前置。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G03-K03",
+          "name": "简单版本的大数定律",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单”及“简单版本”限制；本条不自动确认鞅、布朗运动等高阶工具为必备前置。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-P-G03-K04",
+          "name": "简单版本的中心极限定理",
+          "syllabus_code": "M2-P",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "必须保留“简单”及“简单版本”限制；本条不自动确认鞅、布朗运动等高阶工具为必备前置。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-C-G01",
+      "syllabus_code": "M2-C",
+      "name": "组合",
+      "official_wording": "加法原理、乘法原理、排列与组合、分类计数、抽屉原理、容斥原理、递推关系。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-C-G01-K01",
+          "name": "加法原理",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K02",
+          "name": "乘法原理",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K03",
+          "name": "排列",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K04",
+          "name": "组合",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K05",
+          "name": "分类计数",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K06",
+          "name": "抽屉原理",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K07",
+          "name": "容斥原理",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-C-G01-K08",
+          "name": "递推关系",
+          "syllabus_code": "M2-C",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-S-G01",
+      "syllabus_code": "M2-S",
+      "name": "抽样",
+      "official_wording": "简单抽样、分层抽样等方法。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-S-G01-K01",
+          "name": "简单抽样",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G01-K02",
+          "name": "分层抽样",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-S-G02",
+      "syllabus_code": "M2-S",
+      "name": "基本统计量与图形",
+      "official_wording": "基本统计量与图形：样本均值、中位数、箱线图、数据压缩。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-S-G02-K01",
+          "name": "样本均值",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G02-K02",
+          "name": "中位数",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G02-K03",
+          "name": "箱线图",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G02-K04",
+          "name": "数据压缩",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-S-G03",
+      "syllabus_code": "M2-S",
+      "name": "参数估计",
+      "official_wording": "参数估计：极大似然估计、矩估计。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-S-G03-K01",
+          "name": "极大似然估计",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G03-K02",
+          "name": "矩估计",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-S-G04",
+      "syllabus_code": "M2-S",
+      "name": "假设检验",
+      "official_wording": "假设检验：两类错误、p-值、基于对称性的检验，以及单样本与双样本检验。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-S-G04-K01",
+          "name": "第一类错误与第二类错误",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G04-K02",
+          "name": "p-值",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": [
+            "p值",
+            "p value"
+          ]
+        },
+        {
+          "id": "M2-S-G04-K03",
+          "name": "基于对称性的检验",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G04-K04",
+          "name": "单样本检验",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G04-K05",
+          "name": "双样本检验",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-S-G05",
+      "syllabus_code": "M2-S",
+      "name": "一元线性回归",
+      "official_wording": "一元线性回归：回归现象、最小二乘、无偏估计。",
+      "source_pages": [
+        4
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-S-G05-K01",
+          "name": "一元线性回归",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G05-K02",
+          "name": "回归现象",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G05-K03",
+          "name": "最小二乘",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-S-G05-K04",
+          "name": "无偏估计",
+          "syllabus_code": "M2-S",
+          "source_pages": [
+            4
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-N-G01",
+      "syllabus_code": "M2-N",
+      "name": "数值分析",
+      "official_wording": "近似计算和误差思想、非线性方程组数值方法、多项式插值和逼近、数值积分与数值微分。",
+      "source_pages": [
+        5
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-N-G01-K01",
+          "name": "近似计算",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K02",
+          "name": "误差思想",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K03",
+          "name": "非线性方程组数值方法",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K04",
+          "name": "多项式插值",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K05",
+          "name": "逼近",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K06",
+          "name": "数值积分",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-N-G01-K07",
+          "name": "数值微分",
+          "syllabus_code": "M2-N",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-L-G01",
+      "syllabus_code": "M2-L",
+      "name": "数值代数",
+      "official_wording": "线性方程组的直接法与迭代法、矩阵分解、特征值和特征向量计算。",
+      "source_pages": [
+        5
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-L-G01-K01",
+          "name": "线性方程组的直接法",
+          "syllabus_code": "M2-L",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-L-G01-K02",
+          "name": "线性方程组的迭代法",
+          "syllabus_code": "M2-L",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-L-G01-K03",
+          "name": "矩阵分解",
+          "syllabus_code": "M2-L",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-L-G01-K04",
+          "name": "特征值计算",
+          "syllabus_code": "M2-L",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-L-G01-K05",
+          "name": "特征向量计算",
+          "syllabus_code": "M2-L",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "M2-O-G01",
+      "syllabus_code": "M2-O",
+      "name": "最优化理论与算法",
+      "official_wording": "不等式与极值问题、凸优化理论和梯度下降法、线性规划。",
+      "source_pages": [
+        5
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+      "items": [
+        {
+          "id": "M2-O-G01-K01",
+          "name": "不等式问题",
+          "syllabus_code": "M2-O",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-O-G01-K02",
+          "name": "极值问题",
+          "syllabus_code": "M2-O",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-O-G01-K03",
+          "name": "凸优化理论",
+          "syllabus_code": "M2-O",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-O-G01-K04",
+          "name": "梯度下降法",
+          "syllabus_code": "M2-O",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "M2-O-G01-K05",
+          "name": "线性规划",
+          "syllabus_code": "M2-O",
+          "source_pages": [
+            5
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "官方列出本组内容；由教材展开得到的具体算法/定理另标解释性展开或延伸，不能推断题量、分值与必考概率。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G01",
+      "syllabus_code": "P",
+      "name": "经典力学",
+      "official_wording": "运动学、受力分析、牛顿定律、动量与能量、万有引力。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G01-K01",
+          "name": "运动学",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G01-K02",
+          "name": "受力分析",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G01-K03",
+          "name": "牛顿定律",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G01-K04",
+          "name": "动量",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G01-K05",
+          "name": "能量",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G01-K06",
+          "name": "万有引力",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G02",
+      "syllabus_code": "P",
+      "name": "热学",
+      "official_wording": "分子动理论、理想气体、热力学过程与能量转化。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G02-K01",
+          "name": "分子动理论",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G02-K02",
+          "name": "理想气体",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G02-K03",
+          "name": "热力学过程",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G02-K04",
+          "name": "能量转化",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G03",
+      "syllabus_code": "P",
+      "name": "电磁学",
+      "official_wording": "静电场、恒定电流、磁场、电磁感应与电磁波。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G03-K01",
+          "name": "静电场",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G03-K02",
+          "name": "恒定电流",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G03-K03",
+          "name": "磁场",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G03-K04",
+          "name": "电磁感应",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G03-K05",
+          "name": "电磁波",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G04",
+      "syllabus_code": "P",
+      "name": "振动、波与光学",
+      "official_wording": "简谐振动、机械波、几何光学、干涉与衍射。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G04-K01",
+          "name": "简谐振动",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G04-K02",
+          "name": "机械波",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G04-K03",
+          "name": "几何光学",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G04-K04",
+          "name": "干涉",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G04-K05",
+          "name": "衍射",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G05",
+      "syllabus_code": "P",
+      "name": "近代物理初步",
+      "official_wording": "原子与原子核、光电效应、相对论与量子物理的基本概念。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G05-K01",
+          "name": "原子",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G05-K02",
+          "name": "原子核",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G05-K03",
+          "name": "光电效应",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G05-K04",
+          "name": "相对论的基本概念",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G05-K05",
+          "name": "量子物理的基本概念",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G06",
+      "syllabus_code": "P",
+      "name": "实验与数据分析",
+      "official_wording": "实验设计、测量与误差、数据处理与结果判断、实验方案改进。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G06-K01",
+          "name": "实验设计",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G06-K02",
+          "name": "测量",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G06-K03",
+          "name": "误差",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G06-K04",
+          "name": "数据处理",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G06-K05",
+          "name": "结果判断",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G06-K06",
+          "name": "实验方案改进",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    },
+    {
+      "id": "P-G07",
+      "syllabus_code": "P",
+      "name": "物理思维与综合应用",
+      "official_wording": "物理建模与量纲分析、数量级估算、陌生情境中的综合推理。",
+      "source_pages": [
+        6
+      ],
+      "source_kind": "官方考纲（用户提供副本）",
+      "source_file": "领军考试大纲(4).pdf",
+      "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+      "items": [
+        {
+          "id": "P-G07-K01",
+          "name": "物理建模",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G07-K02",
+          "name": "量纲分析",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G07-K03",
+          "name": "数量级估算",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        },
+        {
+          "id": "P-G07-K04",
+          "name": "陌生情境中的综合推理",
+          "syllabus_code": "P",
+          "source_pages": [
+            6
+          ],
+          "source_kind": "官方考纲（用户提供副本）",
+          "source_file": "领军考试大纲(4).pdf",
+          "wording_boundary": "高中物理核心为基准；超高中新概念、公式或模型原则上题目提供必要信息，不等于要求完整大学物理课程。",
+          "evidence_level": "官方明确列项",
+          "aliases": []
+        }
+      ]
+    }
+  ],
+  "counts": {
+    "groups": 27,
+    "explicit_topic_records": 152
+  }
+}
