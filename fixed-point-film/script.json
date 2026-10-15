@@ -1,0 +1,296 @@
+{
+  "title": {
+    "en": "The Point That Stays — Brouwer's Fixed Point Theorem",
+    "zh": "总有一点不动 —— 布劳威尔不动点定理"
+  },
+  "voices": {
+    "en": "af_heart",
+    "zh": "zf_001"
+  },
+  "scenes": [
+    {
+      "id": "coffee",
+      "lead": 1.2,
+      "tail": 1.6,
+      "lines": [
+        {
+          "en": "Stir your coffee as much as you like.",
+          "zh": "拿起勺子，随便搅拌你的咖啡。"
+        },
+        {
+          "en": "Swirl it one way, then the other. Just stir smoothly, without splashing.",
+          "zh": "顺着转，再反着转，怎么搅都行，只要搅得连续，别溅出来。"
+        },
+        {
+          "en": "When it settles, at least one point on the surface is exactly where it started.",
+          "zh": "等它静下来，液面上至少有一个点，恰好回到了它出发的位置。"
+        },
+        {
+          "en": "That's not luck. It's a theorem.",
+          "zh": "这不是运气，而是一条定理。"
+        }
+      ]
+    },
+    {
+      "id": "title",
+      "fixed": 4.2,
+      "lines": []
+    },
+    {
+      "id": "map",
+      "lead": 0.6,
+      "tail": 2.4,
+      "lines": [
+        {
+          "en": "Here's another picture. Take a map of a park.",
+          "zh": "换一个画面。拿一张公园的地图。"
+        },
+        {
+          "en": "Lay it on the ground, anywhere inside that same park.",
+          "zh": "把它放在这个公园里的任意地方。"
+        },
+        {
+          "en": "Rotate it, shrink it, even crumple it, as long as it stays inside the park.",
+          "zh": "旋转它、缩小它，甚至揉皱它，只要不超出公园的范围。"
+        },
+        {
+          "en": "Then some point on the map lies exactly on top of the real place it shows.",
+          "zh": "那么地图上一定有一个点，恰好压在它所代表的真实位置上。"
+        },
+        {
+          "en": "For a simple rotate-and-shrink, you can even find it: keep applying the same move, and the maps spiral right into it.",
+          "zh": "如果只是旋转加缩小，我们甚至能把它找出来：一次又一次重复这个变换，地图就会一圈圈地旋进那个点。"
+        }
+      ]
+    },
+    {
+      "id": "statement",
+      "lead": 0.6,
+      "tail": 2.0,
+      "lines": [
+        {
+          "en": "This is Brouwer's fixed point theorem, proved by the Dutch mathematician L. E. J. Brouwer around 1910.",
+          "en_tts": "This is Brouwer's fixed point theorem, proved by the Dutch mathematician L. E. J. Brouwer, around nineteen ten.",
+          "zh": "这就是布劳威尔不动点定理，由荷兰数学家布劳威尔在 1910 年前后证明。",
+          "zh_tts": "这就是布劳威尔不动点定理，由荷兰数学家布劳威尔，在一九一零年前后证明。"
+        },
+        {
+          "en": "Let D be a closed disk, or a solid ball in any dimension.",
+          "zh": "设 D 是一个闭圆盘，或者任意维数的实心闭球。",
+          "zh_tts": "设 D 是一个闭圆盘，或者任意维数的实心闭球。"
+        },
+        {
+          "en": "If f is a continuous map from D into itself, then f has a fixed point: a point x with f(x) = x.",
+          "en_tts": "If f is a continuous map from D into itself, then f has a fixed point: a point x, with f of x equal to x.",
+          "zh": "如果 f 是从 D 到自身的连续映射，那么 f 一定有不动点：存在一点 x，使得 f(x) = x。",
+          "zh_tts": "如果 f 是从 D 到自身的连续映射，那么 f 一定有不动点：存在一点 x，使得 f x 等于 x。"
+        },
+        {
+          "en": "Give every point an arrow, from where it is to where it goes. Somewhere, an arrow must have length zero.",
+          "zh": "给每个点画一个箭头，从它现在的位置，指向它被送到的位置。总有某处，箭头的长度是零。"
+        }
+      ]
+    },
+    {
+      "id": "oned",
+      "lead": 0.6,
+      "tail": 1.6,
+      "lines": [
+        {
+          "en": "In one dimension, you already know this theorem.",
+          "zh": "在一维的情形，这个定理你其实早就认识。"
+        },
+        {
+          "en": "The disk becomes the interval from 0 to 1, and the graph of f is a continuous curve in the unit square.",
+          "en_tts": "The disk becomes the interval from zero to one, and the graph of f is a continuous curve in the unit square.",
+          "zh": "圆盘变成区间 [0, 1]，f 的图像是单位正方形里的一条连续曲线。",
+          "zh_tts": "圆盘变成从零到一的区间，f 的图像，是单位正方形里的一条连续曲线。"
+        },
+        {
+          "en": "It starts on or above the diagonal, and ends on or below it.",
+          "zh": "它从对角线上或上方出发，在对角线上或下方结束。"
+        },
+        {
+          "en": "So it must cross the line y = x. The crossing is a fixed point. That's just the intermediate value theorem.",
+          "en_tts": "So it must cross the line y equals x. The crossing is a fixed point. That's just the intermediate value theorem.",
+          "zh": "所以它必然穿过直线 y = x，交点就是不动点。这正是介值定理。",
+          "zh_tts": "所以它必然穿过直线 y 等于 x，交点就是不动点。这正是介值定理。"
+        }
+      ]
+    },
+    {
+      "id": "conditions",
+      "lead": 0.6,
+      "tail": 1.8,
+      "lines": [
+        {
+          "en": "Every condition matters.",
+          "zh": "每一个条件都不可或缺。"
+        },
+        {
+          "en": "Cut a hole in the disk, and a simple rotation moves every point.",
+          "zh": "在圆盘中间挖一个洞，一个旋转就能让所有的点都动起来。"
+        },
+        {
+          "en": "Remove the boundary, and points can slide toward an edge that isn't there.",
+          "zh": "去掉边界，点就能一直滑向一个并不存在的边缘。"
+        },
+        {
+          "en": "Allow a jump, and the curve can leap right over the diagonal.",
+          "zh": "允许跳跃，曲线就能直接跳过对角线。"
+        },
+        {
+          "en": "The space must be closed, bounded and without holes, and the map must be continuous.",
+          "zh": "空间必须有界、封闭、没有洞，映射必须连续。"
+        }
+      ]
+    },
+    {
+      "id": "sperner",
+      "lead": 0.6,
+      "tail": 2.2,
+      "lines": [
+        {
+          "en": "So why is it true? One of the most beautiful proofs is a coloring puzzle, called Sperner's lemma.",
+          "zh": "那么，它为什么成立？最漂亮的证明之一，来自一个染色游戏：斯佩纳引理。"
+        },
+        {
+          "en": "Take a big triangle with a red, a green and a blue corner, and cut it into small triangles.",
+          "zh": "取一个大三角形，三个顶点分别涂成红、绿、蓝，再把它剖分成许多小三角形。"
+        },
+        {
+          "en": "Now color every vertex. The only rule: a vertex on a side must use one of the two colors at the ends of that side.",
+          "zh": "现在给每个顶点染色。唯一的规则是：大三角形边上的点，只能用这条边两端的颜色。"
+        },
+        {
+          "en": "Inside, anything goes.",
+          "zh": "内部的点，随便涂。"
+        },
+        {
+          "en": "Sperner's lemma says there is always a small triangle with all three colors. In fact, there's an odd number of them.",
+          "zh": "斯佩纳引理说：一定有一个三色齐全的小三角形；事实上，这样的三角形有奇数个。"
+        },
+        {
+          "en": "Here's the proof. Think of each small triangle as a room, and each red-green edge as a door.",
+          "zh": "证明是这样的：把每个小三角形看成一个房间，把每条红绿边看成一扇门。"
+        },
+        {
+          "en": "Along the bottom side, the colors go from red to green, so there's an odd number of doors. The other two sides have no doors at all.",
+          "zh": "沿着底边，颜色从红变到绿，所以底边上的门有奇数扇；另外两条边上，一扇门也没有。"
+        },
+        {
+          "en": "Walk in through a door, and leave each room by its other door. A room has at most two doors, so you never enter the same room twice.",
+          "zh": "从一扇门走进去，每到一个房间，就从它的另一扇门出去。每个房间最多两扇门，所以你永远不会两次走进同一个房间。"
+        },
+        {
+          "en": "So the walk either leaves through another door on the bottom, or it stops in a room with just one door: a rainbow room.",
+          "zh": "所以这条路，要么从底边的另一扇门出去，要么停在只有一扇门的房间里：一个三色房间。"
+        },
+        {
+          "en": "The bottom doors pair up, but there's an odd number of them. So at least one walk must end in a rainbow room.",
+          "zh": "底边的门两两配对，可门的总数是奇数，所以至少有一条路，终点是三色房间。"
+        }
+      ]
+    },
+    {
+      "id": "proof",
+      "lead": 0.6,
+      "tail": 2.4,
+      "lines": [
+        {
+          "en": "Now, back to Brouwer. Let f map the triangle into itself, and draw the arrows again.",
+          "zh": "现在回到布劳威尔。设 f 把三角形映到它自身，再把箭头画出来。"
+        },
+        {
+          "en": "Color each vertex by a corner its arrow moves away from.",
+          "zh": "看每个点的箭头在远离哪个顶点，就给它染上那个顶点的颜色。"
+        },
+        {
+          "en": "A point on a side can only move away from that side's two corners, so this is a legal Sperner coloring.",
+          "zh": "边上的点，只可能远离这条边的两个端点，所以这恰好是一个合法的斯佩纳染色。"
+        },
+        {
+          "en": "So there's a rainbow triangle: a tiny spot where the arrows move away from all three corners.",
+          "zh": "所以一定有一个三色小三角形：在这一小块地方，箭头同时在远离三个顶点。"
+        },
+        {
+          "en": "Make the grid finer and finer, and the rainbow triangles close in on a single point.",
+          "zh": "网格越分越细，三色三角形就收缩到一个点。"
+        },
+        {
+          "en": "There, the arrow would have to move away from all three corners at once.",
+          "zh": "在这个点，箭头必须同时远离三个顶点。"
+        },
+        {
+          "en": "But the three coordinates always add up to one, so they can't all go down. None of them can change.",
+          "zh": "可是三个坐标之和永远是一，它们不可能同时减少，所以哪个坐标都不能变。"
+        },
+        {
+          "en": "The arrow has length zero. That's the fixed point.",
+          "zh": "箭头的长度是零。这就是不动点。"
+        }
+      ]
+    },
+    {
+      "id": "apps",
+      "lead": 0.6,
+      "tail": 2.2,
+      "lines": [
+        {
+          "en": "This idea reaches far beyond geometry.",
+          "zh": "这个思想，远远超出了几何。"
+        },
+        {
+          "en": "In 1950, John Nash used a fixed point theorem to prove that every finite game has an equilibrium, if players may randomize.",
+          "en_tts": "In nineteen fifty, John Nash used a fixed point theorem to prove that every finite game has an equilibrium, if players may randomize.",
+          "zh": "1950 年，约翰·纳什用不动点定理证明：只要允许随机策略，每个有限博弈都存在均衡。",
+          "zh_tts": "一九五零年，约翰纳什用不动点定理证明：只要允许随机策略，每个有限博弈都存在均衡。"
+        },
+        {
+          "en": "That work later earned him a Nobel Prize.",
+          "zh": "这项工作后来为他赢得了诺贝尔奖。"
+        },
+        {
+          "en": "In the board game Hex, a full board always has exactly one winner. Amazingly, that fact is equivalent to Brouwer's theorem in two dimensions.",
+          "zh": "在六贯棋 Hex 里，下满的棋盘总是恰好有一方获胜。令人惊讶的是，这个事实与二维的布劳威尔定理等价。",
+          "zh_tts": "在六贯棋里，下满的棋盘，总是恰好有一方获胜。令人惊讶的是，这个事实，与二维的布劳威尔定理等价。"
+        },
+        {
+          "en": "And Sperner's lemma can even tell roommates how to split the rent, so that nobody wants to swap rooms.",
+          "zh": "斯佩纳引理甚至能告诉合租的室友们，怎样分房租，才能让谁都不想换房间。"
+        }
+      ]
+    },
+    {
+      "id": "closing",
+      "lead": 0.6,
+      "tail": 4.5,
+      "lines": [
+        {
+          "en": "But notice what the theorem doesn't tell you: where the fixed point is.",
+          "zh": "但请注意，这个定理没有告诉你：不动点到底在哪里。"
+        },
+        {
+          "en": "It's a pure existence proof.",
+          "zh": "这是一个纯粹的存在性证明。"
+        },
+        {
+          "en": "Ironically, Brouwer later became the great champion of intuitionism,",
+          "zh": "颇具讽刺意味的是，布劳威尔后来成了直觉主义的领军人物。"
+        },
+        {
+          "en": "a school which insists that to prove something exists, you must show how to construct it.",
+          "zh": "这一派主张：要证明一个东西存在，就必须说明怎样把它构造出来。"
+        },
+        {
+          "en": "Today, how hard it is to actually find a fixed point is a deep question in computer science.",
+          "zh": "今天，真正找到不动点到底有多难，是计算机科学中一个深刻的问题。"
+        },
+        {
+          "en": "So the next time you stir your coffee, remember: somewhere in that cup, one point hasn't moved at all.",
+          "zh": "所以下次搅拌咖啡时，请记住：杯子里的某个地方，有一个点，始终没有动。"
+        }
+      ]
+    }
+  ]
+}

@@ -46,6 +46,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | 《倒悬之海》The Sea Above | 约 71 秒的三维短片 | [播放器](https://xhc144.github.io/claude-lab/films/sea-above/) | [sea-above/](sea-above/)；Python、OpenGL/EGL、FFmpeg；`./make_film.sh` |
 | 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版与英文版（含模拟面试、难词音标、中英对照讲稿） | 仓库内 `windmill-theorem/output/`（暂未上线 Pages） | [windmill-theorem/](windmill-theorem/)；Manim、TeX、FFmpeg；`bash build.sh` |
 | 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | 成片在 [fermat-windmill/output/](fermat-windmill/output/) | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
+| 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | 仓库内 [output/](fixed-point-film/output/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
 
 站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。
 

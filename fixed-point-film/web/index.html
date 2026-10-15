@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fixed Point Film</title>
+<link rel="stylesheet" href="../node_modules/@fontsource/inter/400.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/inter/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/inter/700.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/source-serif-4/400.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/source-serif-4/400-italic.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/source-serif-4/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/source-serif-4/700.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-sans-sc/400.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-sans-sc/500.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-sans-sc/700.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-sc/600.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/noto-serif-sc/700.css">
+<style>
+  html, body { margin: 0; background: #000; overflow: hidden; }
+  canvas { display: block; }
+  #ui { position: fixed; left: 8px; bottom: 8px; color: #fff; font: 12px monospace; }
+</style>
+<script>
+  window.MathJax = {
+    startup: { typeset: false },
+    svg: { fontCache: 'none' },
+    tex: { packages: { '[+]': ['ams'] } },
+  };
+</script>
+<script src="../node_modules/mathjax/es5/tex-svg-full.js"></script>
+</head>
+<body>
+<canvas id="c" width="1920" height="1080"></canvas>
+<script type="module" src="main.js"></script>
+</body>
+</html>
