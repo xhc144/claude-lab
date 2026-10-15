@@ -128,7 +128,7 @@ class Space(VThreeDScene):
         mv = Dot(P(*cur()), radius=0.07, color=BLUE).add_updater(lambda m: m.move_to(P(*cur())))
         with self.say("g08") as d:
             self.play(FadeIn(plane), FadeIn(span), run_time=1.0)
-            self.add(mv)
+            self.add_fixed_orientation_mobjects(mv)
             self.play(sa.animate.set_value(2.4), tb.animate.set_value(-0.4), run_time=d * 0.35)
             self.play(sa.animate.set_value(1.0), tb.animate.set_value(0.9), run_time=d * 0.3)
 
@@ -158,6 +158,7 @@ class Space(VThreeDScene):
         leg = DashedLine(P(*other), hat, color=GRAY, stroke_width=3)
         why = side(VGroup(zh("斜边 > 直角边", 26, SOFT)), -2.5)
         with self.say("g12") as d:
+            self.add_fixed_orientation_mobjects(po)
             self.play(FadeIn(po), Create(leg), run_time=0.8)
             self.play(Create(hyp), FadeIn(why), run_time=0.8)
             self.wait(d * 0.3)
