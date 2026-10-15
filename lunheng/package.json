@@ -1,0 +1,32 @@
+{
+  "name": "lunheng",
+  "version": "1.0.0",
+  "description": "论衡 Lunheng：多智能体学术辩论与研究实验室——多家 AI 模型组成研究团队，独立推导、交叉质询、反例检验与独立核验",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.11"
+  },
+  "bin": {
+    "lunheng": "bin/lunheng.mjs"
+  },
+  "scripts": {
+    "start": "node bin/lunheng.mjs",
+    "dev": "node --watch bin/lunheng.mjs",
+    "mock": "node tools/mock-providers.mjs",
+    "probe": "node tools/probe-endpoints.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test --test-concurrency=1 \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test",
+    "check": "node tools/check.mjs"
+  },
+  "dependencies": {
+    "dompurify": "3.4.17",
+    "katex": "0.19.0",
+    "marked": "18.1.1",
+    "quickjs-emscripten": "0.32.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1"
+  }
+}
