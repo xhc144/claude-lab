@@ -1,0 +1,6 @@
+# render cache, intermediate audio and logs
+build/
+media/
+# speech models are downloaded separately (see README)
+models/
+__pycache__/

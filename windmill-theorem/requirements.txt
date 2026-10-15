@@ -1,0 +1,9 @@
+# 已验证：Python 3.13，Ubuntu 24.04，manim 0.22.0，sherpa-onnx（2026-10）
+# 另需系统依赖：ffmpeg（含 libass）、TeX Live（latex + dvisvgm，含 amsmath）、
+# 字体 Noto Sans CJK SC、Noto Sans、Inter；pycairo / manimpango 需要 libcairo2-dev、libpango1.0-dev
+manim>=0.19
+numpy>=1.26
+pillow>=10
+soundfile>=0.12
+# 仅在生成配音时需要
+sherpa-onnx>=1.12
