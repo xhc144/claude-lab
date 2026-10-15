@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw
 HERE = os.path.dirname(os.path.abspath(__file__))
 BUILD = os.path.join(os.path.dirname(HERE), "build")
 cls = sys.argv[1]
-res = {"pv": "270p30", "preview": "540p30", "hd": "1080p30"}[sys.argv[2] if len(sys.argv) > 2 else "pv"]
+res = {"pv": "270p30", "fast": "270p6", "preview": "540p30", "hd": "1080p30"}[sys.argv[2] if len(sys.argv) > 2 else "pv"]
 mp4 = max(glob.glob(os.path.join(BUILD, "media", cls, "videos", "*", res, f"{cls}.mp4")), key=os.path.getmtime)
 log = json.load(open(os.path.join(BUILD, "timing", f"{cls}.json")))
 shots = [(ln["key"], ln["t"] + ln["dur"] * 0.92) for ln in log["lines"]] + [("end", log["duration"] - 0.05)]

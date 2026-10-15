@@ -67,7 +67,7 @@ class Space(VThreeDScene):
         THETA = -135 * DEGREES
         PHI = 75 * DEGREES
         ax = ThreeDAxes(x_range=[-0.5, 3.0, 1], y_range=[-0.5, 4.5, 1], z_range=[-0.5, 4.0, 1],
-                        x_length=3.5, y_length=5.0, z_length=4.5,
+                        x_length=4.0, y_length=5.75, z_length=5.2,
                         axis_config={"color": LINE, "stroke_width": 2, "include_tip": False, "tick_size": 0.04})
         # 把三维内容挪到画面左边，右边留给公式（只移动内容，不移动镜头，固定在画面上的文字才不会跟着偏）
         right_dir = np.array([-np.sin(THETA), np.cos(THETA), 0])
