@@ -1,6 +1,6 @@
 # 分支整合与发布记录
 
-最新状态（2026-10-14）：后续成果已上线，远端分支 **6 → 1**，仅保留 `main`。本轮恢复 SHA、验证与部署证据见末尾的“2026-10-14 后续成果整合”；下方较早轮次的记录保留。
+最新状态（2026-10-15）：11 个新开发分支已合并，恢复 SHA 见末尾的“2026-10-15 新项目分支整合”；下方较早轮次的记录保留。
 
 基线：`43f38cdac1dd649fcc6a04505ffd435590789976`。默认分支 `main`，仓库公开属性保持不变。整合前 8 个远端分支；清理后只保留 `main`，远端分支数量 **8 → 1**。
 
@@ -160,3 +160,23 @@ git push origin recovered-project
 - 没有强推、永久清除对象、修改 Pages 来源或仓库可见性/安全设置。上表五个恢复 SHA 全部继续保留于 main 历史。
 
 本记录的后续提交仅补充验证和恢复说明，发布项目文件与上述受测产物保持一致。
+
+## 2026-10-15 新项目分支整合
+
+基线为 `c649733`（当时的 `main`）。11 个远端分支均以 `--no-ff` 合并提交并入，原历史完整保留；只有根 `README.md` 冲突，合并后按栏目重新整理。各项目目录互不重叠，Pages 白名单与 `docs/` 发布内容不变。
+
+| 分支 | 原 tip | 独有提交 | 内容 |
+| --- | --- | ---: | --- |
+| `claude/admiring-darwin-n77vx0` | `46b33903ec8a3a8caf6412afbe98f7cb878f452e` | 16 | motif/（律影 Windows 创作软件） |
+| `claude/affectionate-wozniak-q0zygl` | `598e6687375115b091061726288af59a16bb0008` | 2 | .claude/skills/（六个数学技能） |
+| `claude/wonderful-bardeen-4iwz6c` | `e8bae964e337cb56b0514fce3a629a33f880d87d` | 1 | .claude/skills/（与上一行树完全相同，冗余） |
+| `claude/busy-feynman-qk5zjq` | `43b9d8cdd65aeb98a33f48b1cce596d7487b2a91` | 5 | windmill-theorem/（费马风车影片） |
+| `claude/magical-pasteur-r7n64d` | `36fb2b16cf5b8ba35b23a1c53322d764c28ac478` | 7 | fermat-windmill/（风车里的素数） |
+| `claude/gifted-hypatia-yeum34` | `29abc4892b48ef2049de5df43c13dfddd8a1a0f8` | 5 | particle-universe/（音乐粒子宇宙） |
+| `claude/keen-dijkstra-pq6orc` | `d3e4bd73ca398fb3335283bded6a0c5e162b1aee` | 2 | lunheng/（论衡研究实验室） |
+| `claude/kind-lovelace-ujf2cs` | `4e1e15ecb3151d0032bbcfdec17832adfce1d7cb` | 6 | phonica/（声准发音评测） |
+| `claude/peaceful-thompson-1eau5t` | `4f2a7c7d85da5bb7ebe2131932626bfa57131e75` | 1 | fixed-point-film/（不动点影片） |
+| `claude/tender-franklin-ibm8hg` | `721b76eba9e2a17da35ffd6f1d06fcf5c9507e4c` | 5 | optimization-film/、video-scripts/（最优化） |
+| `claude/tender-lovelace-1pl4ki` | `e6971e64de2dfa0d4c97baf9b414084e7ee48f25` | 2 | two-sample-test-video/（双样本检验） |
+
+验证：`node scripts/check-pages.mjs` 通过（137 个白名单文件、319 个相对引用）。新增的 6 部影片 MP4 均小于 GitHub 单文件 100 MB 上限，只放在各项目 `output/`，未复制到 Pages。
