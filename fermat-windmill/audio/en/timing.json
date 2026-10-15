@@ -1,0 +1,2285 @@
+{
+ "hook_1": {
+  "scene": "S01_Hook",
+  "voice": "en_narrator",
+  "dur": 6.515,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.515,
+    "text": "Imagine you are in an interview, and the professor asks you, \"What is your favorite theorem?\"",
+    "lang": "en"
+   }
+  ]
+ },
+ "hook_2": {
+  "scene": "S01_Hook",
+  "voice": "en_narrator",
+  "dur": 23.002,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.344,
+    "text": "Here is mine.",
+    "lang": "en"
+   },
+   {
+    "start": 1.894,
+    "end": 6.376,
+    "text": "Take the primes five, thirteen, seventeen and twenty-nine.",
+    "lang": "en"
+   },
+   {
+    "start": 6.926,
+    "end": 9.878,
+    "text": "Each of them is a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 10.428,
+    "end": 12.602,
+    "text": "Five is one plus four.",
+    "lang": "en"
+   },
+   {
+    "start": 13.152,
+    "end": 15.675,
+    "text": "Thirteen is four plus nine.",
+    "lang": "en"
+   },
+   {
+    "start": 16.225,
+    "end": 19.155,
+    "text": "Seventeen is one plus sixteen.",
+    "lang": "en"
+   },
+   {
+    "start": 19.705,
+    "end": 23.002,
+    "text": "And twenty-nine is four plus twenty-five.",
+    "lang": "en"
+   }
+  ]
+ },
+ "hook_3": {
+  "scene": "S01_Hook",
+  "voice": "en_narrator",
+  "dur": 5.977,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.977,
+    "text": "But three, seven, eleven and nineteen never are, no matter how hard you try.",
+    "lang": "en"
+   }
+  ]
+ },
+ "hook_4": {
+  "scene": "S01_Hook",
+  "voice": "en_narrator",
+  "dur": 11.51,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.4,
+    "text": "What separates the two groups?",
+    "lang": "en"
+   },
+   {
+    "start": 2.95,
+    "end": 4.583,
+    "text": "Divide by four.",
+    "lang": "en"
+   },
+   {
+    "start": 5.133,
+    "end": 7.956,
+    "text": "The first group leaves remainder one.",
+    "lang": "en"
+   },
+   {
+    "start": 8.506,
+    "end": 11.51,
+    "text": "The second group leaves remainder three.",
+    "lang": "en"
+   }
+  ]
+ },
+ "hook_5": {
+  "scene": "S01_Hook",
+  "voice": "en_narrator",
+  "dur": 13.464,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.711,
+    "text": "This is Fermat's two-square theorem.",
+    "lang": "en"
+   },
+   {
+    "start": 3.261,
+    "end": 13.464,
+    "text": "Today I want to show you a proof of it that fits in one sentence, and a picture of windmills that explains why that sentence works.",
+    "lang": "en"
+   }
+  ]
+ },
+ "st_1": {
+  "scene": "S02_Statement",
+  "voice": "en_narrator",
+  "dur": 16.935,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.375,
+    "text": "First, the precise statement.",
+    "lang": "en"
+   },
+   {
+    "start": 2.925,
+    "end": 4.997,
+    "text": "Let p be an odd prime.",
+    "lang": "en"
+   },
+   {
+    "start": 5.547,
+    "end": 16.935,
+    "text": "Then p can be written as x² + y², with x and y integers, if and only if p is congruent to one, modulo four.",
+    "lang": "en"
+   }
+  ]
+ },
+ "st_2": {
+  "scene": "S02_Statement",
+  "voice": "en_narrator",
+  "dur": 13.399,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 13.399,
+    "text": "Geometrically, the circle x² + y² = p passes through points of the integer lattice exactly when p is one more than a multiple of four.",
+    "lang": "en"
+   }
+  ]
+ },
+ "st_3": {
+  "scene": "S02_Statement",
+  "voice": "en_narrator",
+  "dur": 19.462,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.473,
+    "text": "The story begins with Fermat.",
+    "lang": "en"
+   },
+   {
+    "start": 3.023,
+    "end": 11.267,
+    "text": "In a letter to Mersenne, dated Christmas Day, 1640, he stated this theorem and claimed he had a proof.",
+    "lang": "en"
+   },
+   {
+    "start": 11.817,
+    "end": 14.481,
+    "text": "As usual, he never wrote it down.",
+    "lang": "en"
+   },
+   {
+    "start": 15.031,
+    "end": 19.462,
+    "text": "That is why it is sometimes called Fermat's Christmas theorem.",
+    "lang": "en"
+   }
+  ]
+ },
+ "st_4": {
+  "scene": "S02_Statement",
+  "voice": "en_narrator",
+  "dur": 16.497,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.288,
+    "text": "The first published proof came more than a century later, from Euler, using a method called infinite descent.",
+    "lang": "en"
+   },
+   {
+    "start": 8.838,
+    "end": 16.497,
+    "text": "Later came a deeper explanation, through what we now call the Gaussian integers, named after Gauss.",
+    "lang": "en"
+   }
+  ]
+ },
+ "st_5": {
+  "scene": "S02_Statement",
+  "voice": "en_narrator",
+  "dur": 23.226,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.201,
+    "text": "And in 1990, Don Zagier published a paper with a remarkable title.",
+    "lang": "en"
+   },
+   {
+    "start": 6.751,
+    "end": 14.245,
+    "text": "A one-sentence proof that every prime p congruent to one mod four is a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 14.795,
+    "end": 18.968,
+    "text": "It builds on an earlier idea of Roger Heath-Brown.",
+    "lang": "en"
+   },
+   {
+    "start": 19.518,
+    "end": 23.226,
+    "text": "That one sentence is what we will unpack today.",
+    "lang": "en"
+   }
+  ]
+ },
+ "ez_1": {
+  "scene": "S03_Easy",
+  "voice": "en_narrator",
+  "dur": 19.227,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.099,
+    "text": "One direction is easy, and it is worth seeing first.",
+    "lang": "en"
+   },
+   {
+    "start": 4.649,
+    "end": 10.125,
+    "text": "Every square leaves remainder zero or one when divided by four.",
+    "lang": "en"
+   },
+   {
+    "start": 10.675,
+    "end": 14.188,
+    "text": "An even number squared is a multiple of four.",
+    "lang": "en"
+   },
+   {
+    "start": 14.738,
+    "end": 19.227,
+    "text": "An odd number squared is one more than a multiple of four.",
+    "lang": "en"
+   }
+  ]
+ },
+ "ez_2": {
+  "scene": "S03_Easy",
+  "voice": "en_narrator",
+  "dur": 13.076,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.717,
+    "text": "Look, the square of an odd number splits into one small square in the middle, plus four equal rectangles.",
+    "lang": "en"
+   },
+   {
+    "start": 8.267,
+    "end": 10.827,
+    "text": "Keep this little windmill in mind.",
+    "lang": "en"
+   },
+   {
+    "start": 11.377,
+    "end": 13.076,
+    "text": "We will meet it again.",
+    "lang": "en"
+   }
+  ]
+ },
+ "ez_3": {
+  "scene": "S03_Easy",
+  "voice": "en_narrator",
+  "dur": 12.437,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.457,
+    "text": "So a sum of two squares can only be zero, one or two, modulo four.",
+    "lang": "en"
+   },
+   {
+    "start": 6.006,
+    "end": 7.387,
+    "text": "Never three.",
+    "lang": "en"
+   },
+   {
+    "start": 7.937,
+    "end": 12.437,
+    "text": "That rules out every prime of the form 4k + 3.",
+    "lang": "en"
+   }
+  ]
+ },
+ "ez_4": {
+  "scene": "S03_Easy",
+  "voice": "en_narrator",
+  "dur": 24.613,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.68,
+    "text": "But notice something.",
+    "lang": "en"
+   },
+   {
+    "start": 2.23,
+    "end": 9.398,
+    "text": "Twenty-one is also one more than a multiple of four, and yet it is not a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 9.948,
+    "end": 15.23,
+    "text": "So the condition is necessary, but on its own it is not sufficient.",
+    "lang": "en"
+   },
+   {
+    "start": 15.78,
+    "end": 18.92,
+    "text": "Primality must matter somewhere in the proof.",
+    "lang": "en"
+   },
+   {
+    "start": 19.47,
+    "end": 21.157,
+    "text": "Keep this in mind.",
+    "lang": "en"
+   },
+   {
+    "start": 21.707,
+    "end": 24.613,
+    "text": "We will find exactly where it is used.",
+    "lang": "en"
+   }
+  ]
+ },
+ "ez_5": {
+  "scene": "S03_Easy",
+  "voice": "en_narrator",
+  "dur": 19.507,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.909,
+    "text": "The real content of the theorem is the other direction.",
+    "lang": "en"
+   },
+   {
+    "start": 4.459,
+    "end": 9.665,
+    "text": "Every prime that leaves remainder one really is a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 10.216,
+    "end": 14.698,
+    "text": "And that is hard, because it is a pure existence statement.",
+    "lang": "en"
+   },
+   {
+    "start": 15.248,
+    "end": 19.507,
+    "text": "There is no formula that simply hands you x and y.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_1": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 13.727,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.301,
+    "text": "So how do you prove that something exists without finding it?",
+    "lang": "en"
+   },
+   {
+    "start": 4.851,
+    "end": 7.508,
+    "text": "One classic answer is to count.",
+    "lang": "en"
+   },
+   {
+    "start": 8.058,
+    "end": 13.727,
+    "text": "If you can show that the number of solutions is odd, then it cannot be zero.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_2": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 7.54,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.64,
+    "text": "And to show that a number is odd, you do not need to count exactly.",
+    "lang": "en"
+   },
+   {
+    "start": 5.19,
+    "end": 7.54,
+    "text": "You only need to pair things up.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_3": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 12.7,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.191,
+    "text": "This leads to the key tool, an involution.",
+    "lang": "en"
+   },
+   {
+    "start": 3.741,
+    "end": 8.826,
+    "text": "An involution is a map from a set to itself that undoes itself.",
+    "lang": "en"
+   },
+   {
+    "start": 9.376,
+    "end": 12.7,
+    "text": "Apply it twice, and you are back where you started.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_4": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 11.065,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.502,
+    "text": "An involution splits the set into pairs, a together with f of a, plus some points that are sent to themselves.",
+    "lang": "en"
+   },
+   {
+    "start": 9.052,
+    "end": 11.065,
+    "text": "Those are the fixed points.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_5": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 10.002,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.55,
+    "text": "The pairs always contribute an even number.",
+    "lang": "en"
+   },
+   {
+    "start": 4.1,
+    "end": 10.002,
+    "text": "So the size of the set and the number of fixed points always have the same parity.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_6": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 19.665,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.277,
+    "text": "Now suppose the same finite set carries two different involutions.",
+    "lang": "en"
+   },
+   {
+    "start": 5.827,
+    "end": 9.581,
+    "text": "Their numbers of fixed points have the same parity.",
+    "lang": "en"
+   },
+   {
+    "start": 10.131,
+    "end": 19.665,
+    "text": "In particular, if one of them has exactly one fixed point, the other has an odd number of fixed points, so it has at least one.",
+    "lang": "en"
+   }
+  ]
+ },
+ "par_7": {
+  "scene": "S04_Parity",
+  "voice": "en_narrator",
+  "dur": 10.28,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.414,
+    "text": "If this sounds familiar, it should.",
+    "lang": "en"
+   },
+   {
+    "start": 2.964,
+    "end": 10.28,
+    "text": "Sperner's lemma is proved with the same kind of parity argument, by counting doors in pairs.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_1": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 8.771,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.834,
+    "text": "So here is the plan.",
+    "lang": "en"
+   },
+   {
+    "start": 2.384,
+    "end": 8.771,
+    "text": "We want the solutions we are looking for to appear as the fixed points of an involution.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_2": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 15.43,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.145,
+    "text": "Since p is odd, one of the two squares must be even.",
+    "lang": "en"
+   },
+   {
+    "start": 4.695,
+    "end": 15.43,
+    "text": "So we are really looking for p equals x squared plus the square of two y, that is, x² + 4·y·y.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_3": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 16.661,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.404,
+    "text": "Now comes the creative step.",
+    "lang": "en"
+   },
+   {
+    "start": 2.954,
+    "end": 6.693,
+    "text": "Replace one of the two y's by a new letter, z.",
+    "lang": "en"
+   },
+   {
+    "start": 7.243,
+    "end": 16.661,
+    "text": "Consider every triple of positive integers with x² + 4yz = p, and call this set S.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_4": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 12.162,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.719,
+    "text": "S is finite, because x squared and y z are both smaller than p.",
+    "lang": "en"
+   },
+   {
+    "start": 6.269,
+    "end": 12.162,
+    "text": "For p equal to thirteen, for example, S has exactly three elements.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_5": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 21.888,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.005,
+    "text": "This new set has an obvious symmetry.",
+    "lang": "en"
+   },
+   {
+    "start": 3.555,
+    "end": 5.306,
+    "text": "Swap y and z.",
+    "lang": "en"
+   },
+   {
+    "start": 5.856,
+    "end": 13.126,
+    "text": "That is an involution, and its fixed points are exactly the triples with y equal to z.",
+    "lang": "en"
+   },
+   {
+    "start": 13.676,
+    "end": 17.956,
+    "text": "Then p equals x squared plus the square of two y.",
+    "lang": "en"
+   },
+   {
+    "start": 18.506,
+    "end": 21.888,
+    "text": "Those are precisely the solutions we want.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_6": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 15.859,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.615,
+    "text": "So the whole theorem reduces to one question.",
+    "lang": "en"
+   },
+   {
+    "start": 4.165,
+    "end": 7.009,
+    "text": "Is the number of elements of S odd?",
+    "lang": "en"
+   },
+   {
+    "start": 7.559,
+    "end": 15.859,
+    "text": "And by the parity principle, it is enough to find a second involution on S with exactly one fixed point.",
+    "lang": "en"
+   }
+  ]
+ },
+ "set_7": {
+  "scene": "S05_Set",
+  "voice": "en_narrator",
+  "dur": 14.737,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.1,
+    "text": "Notice what just happened.",
+    "lang": "en"
+   },
+   {
+    "start": 2.65,
+    "end": 4.796,
+    "text": "We did not find a symmetry.",
+    "lang": "en"
+   },
+   {
+    "start": 5.346,
+    "end": 10.759,
+    "text": "We created one, by splitting y times y into y times z.",
+    "lang": "en"
+   },
+   {
+    "start": 11.309,
+    "end": 14.737,
+    "text": "Making the problem bigger gave us room to move.",
+    "lang": "en"
+   }
+  ]
+ },
+ "wm_1": {
+  "scene": "S06_Windmill",
+  "voice": "en_narrator",
+  "dur": 22.22,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.171,
+    "text": "To find the second involution, let us draw the equation. x squared is a square of side x.",
+    "lang": "en"
+   },
+   {
+    "start": 7.721,
+    "end": 12.085,
+    "text": "Four y z is four rectangles, each y by z.",
+    "lang": "en"
+   },
+   {
+    "start": 12.635,
+    "end": 22.22,
+    "text": "Attach one rectangle to each side of the square, all turning the same way, and you get a windmill whose area is exactly p.",
+    "lang": "en"
+   }
+  ]
+ },
+ "wm_2": {
+  "scene": "S06_Windmill",
+  "voice": "en_narrator",
+  "dur": 7.117,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.833,
+    "text": "Every element of S is a windmill.",
+    "lang": "en"
+   },
+   {
+    "start": 3.383,
+    "end": 7.117,
+    "text": "Here are all eleven windmills of area forty-one.",
+    "lang": "en"
+   }
+  ]
+ },
+ "wm_3": {
+  "scene": "S06_Windmill",
+  "voice": "en_narrator",
+  "dur": 8.395,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.395,
+    "text": "In this picture, swapping y and z simply flips each blade over, so that its length and width trade places.",
+    "lang": "en"
+   }
+  ]
+ },
+ "wm_4": {
+  "scene": "S06_Windmill",
+  "voice": "en_narrator",
+  "dur": 16.939,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.601,
+    "text": "The fixed windmills are the ones with square blades.",
+    "lang": "en"
+   },
+   {
+    "start": 4.151,
+    "end": 5.152,
+    "text": "And look.",
+    "lang": "en"
+   },
+   {
+    "start": 5.702,
+    "end": 11.53,
+    "text": "Four squares of side y fit together into one square of side two y.",
+    "lang": "en"
+   },
+   {
+    "start": 12.081,
+    "end": 16.939,
+    "text": "So a fixed windmill is literally p, split into two squares.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_1": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 12.741,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.306,
+    "text": "Now comes the most beautiful observation.",
+    "lang": "en"
+   },
+   {
+    "start": 3.856,
+    "end": 8.666,
+    "text": "Erase the lines inside a windmill, and keep only its outline.",
+    "lang": "en"
+   },
+   {
+    "start": 9.216,
+    "end": 12.741,
+    "text": "The outline does not remember how it was cut.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_2": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 7.794,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.794,
+    "text": "The same outline can often be cut into a windmill in a different way, around a different central square.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_3": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 17.59,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.419,
+    "text": "Here is the rule.",
+    "lang": "en"
+   },
+   {
+    "start": 1.97,
+    "end": 6.317,
+    "text": "Look at the four tips of the blades, and draw the square through them.",
+    "lang": "en"
+   },
+   {
+    "start": 6.867,
+    "end": 10.918,
+    "text": "If that square fits inside the outline, cut along it.",
+    "lang": "en"
+   },
+   {
+    "start": 11.468,
+    "end": 17.59,
+    "text": "If it does not fit, use the square through the outer edges of the blades instead.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_4": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 17.546,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 10.087,
+    "text": "Sometimes the new square is larger, sometimes it is smaller, and sometimes the new windmill turns the other way, like a mirror image.",
+    "lang": "en"
+   },
+   {
+    "start": 10.637,
+    "end": 17.546,
+    "text": "Written in coordinates, this rule becomes Zagier's famous formula, with three cases.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_5": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 14.876,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.36,
+    "text": "Cutting again brings back the original windmill, so re-cutting is an involution.",
+    "lang": "en"
+   },
+   {
+    "start": 6.91,
+    "end": 14.876,
+    "text": "A larger square becomes smaller again, a smaller one becomes larger, and the mirrored case mirrors back.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_6": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 11.827,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.501,
+    "text": "When is a windmill unchanged by re-cutting?",
+    "lang": "en"
+   },
+   {
+    "start": 4.051,
+    "end": 11.827,
+    "text": "Exactly when the square through the tips is the central square itself, that is, when x equals y.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_7": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 25.068,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.927,
+    "text": "And this is where primality enters.",
+    "lang": "en"
+   },
+   {
+    "start": 3.477,
+    "end": 12.546,
+    "text": "If x equals y, then p equals x squared plus four x z, which is x times (x + 4z).",
+    "lang": "en"
+   },
+   {
+    "start": 13.096,
+    "end": 16.045,
+    "text": "Since p is prime, x must be one.",
+    "lang": "en"
+   },
+   {
+    "start": 16.595,
+    "end": 25.068,
+    "text": "So the only fixed windmill is the one with x and y both equal to one, a perfectly symmetric cross.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_8": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 13.873,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.667,
+    "text": "One more detail.",
+    "lang": "en"
+   },
+   {
+    "start": 2.216,
+    "end": 5.795,
+    "text": "The rule never gets stuck on a boundary case.",
+    "lang": "en"
+   },
+   {
+    "start": 6.345,
+    "end": 13.873,
+    "text": "Those cases would need p to be a perfect square, or an even number, and an odd prime is neither.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_9": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 22.012,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.26,
+    "text": "Now put everything together.",
+    "lang": "en"
+   },
+   {
+    "start": 2.81,
+    "end": 10.477,
+    "text": "The re-cutting involution has exactly one fixed point, so S has an odd number of elements.",
+    "lang": "en"
+   },
+   {
+    "start": 11.027,
+    "end": 17.811,
+    "text": "Therefore the flipping involution also has a fixed point, a windmill with square blades.",
+    "lang": "en"
+   },
+   {
+    "start": 18.361,
+    "end": 22.012,
+    "text": "And that is p, written as a sum of two squares.",
+    "lang": "en"
+   }
+  ]
+ },
+ "zg_10": {
+  "scene": "S07_Zagier",
+  "voice": "en_narrator",
+  "dur": 5.005,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.005,
+    "text": "This is Zagier's entire proof, and it really is one sentence.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_1": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 9.678,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.65,
+    "text": "When I first saw the formula, it looked like magic.",
+    "lang": "en"
+   },
+   {
+    "start": 4.2,
+    "end": 9.678,
+    "text": "But every step has a reason, and the reasons are the most valuable part.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_2": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 9.601,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.488,
+    "text": "First, we needed existence, not a formula.",
+    "lang": "en"
+   },
+   {
+    "start": 4.038,
+    "end": 9.601,
+    "text": "Existence follows from an odd count, and an odd count follows from pairing.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_3": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 12.764,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.364,
+    "text": "Second, to use pairing, the solutions we want must be fixed points.",
+    "lang": "en"
+   },
+   {
+    "start": 5.914,
+    "end": 12.764,
+    "text": "So we built a set with a built-in symmetry, by splitting y squared into y times z.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_4": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 13.824,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.011,
+    "text": "Third, we needed a second involution, and the algebra alone gives no hint.",
+    "lang": "en"
+   },
+   {
+    "start": 6.561,
+    "end": 8.061,
+    "text": "The picture does.",
+    "lang": "en"
+   },
+   {
+    "start": 8.611,
+    "end": 13.824,
+    "text": "An area that can be cut in two ways is a natural source of pairs.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_5": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 26.828,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.677,
+    "text": "Fourth, primality is used at exactly one sharp point, to make the fixed point unique.",
+    "lang": "en"
+   },
+   {
+    "start": 7.227,
+    "end": 9.16,
+    "text": "Test this with twenty-one.",
+    "lang": "en"
+   },
+   {
+    "start": 9.71,
+    "end": 18.313,
+    "text": "Its set S has two fixed windmills, the cross with x equal to one, and another one with x equal to three.",
+    "lang": "en"
+   },
+   {
+    "start": 18.863,
+    "end": 22.283,
+    "text": "Two is even, so the argument proves nothing.",
+    "lang": "en"
+   },
+   {
+    "start": 22.833,
+    "end": 26.828,
+    "text": "And indeed, twenty-one is not a sum of two squares.",
+    "lang": "en"
+   }
+  ]
+ },
+ "why_6": {
+  "scene": "S08_Why",
+  "voice": "en_narrator",
+  "dur": 9.925,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.586,
+    "text": "This is a good habit in general.",
+    "lang": "en"
+   },
+   {
+    "start": 3.136,
+    "end": 9.925,
+    "text": "For any proof, ask where exactly each hypothesis is used, and what breaks without it.",
+    "lang": "en"
+   }
+  ]
+ },
+ "path_1": {
+  "scene": "S09_Path",
+  "voice": "en_narrator",
+  "dur": 10.178,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.153,
+    "text": "There is one more surprise.",
+    "lang": "en"
+   },
+   {
+    "start": 2.703,
+    "end": 10.178,
+    "text": "The proof seems to say only that a solution exists, but it secretly contains an algorithm.",
+    "lang": "en"
+   }
+  ]
+ },
+ "path_2": {
+  "scene": "S09_Path",
+  "voice": "en_narrator",
+  "dur": 18.331,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.339,
+    "text": "Start from the cross, the unique fixed point of re-cutting.",
+    "lang": "en"
+   },
+   {
+    "start": 4.889,
+    "end": 6.446,
+    "text": "Flip the blades.",
+    "lang": "en"
+   },
+   {
+    "start": 6.996,
+    "end": 8.134,
+    "text": "Re-cut.",
+    "lang": "en"
+   },
+   {
+    "start": 8.684,
+    "end": 9.86,
+    "text": "Flip again.",
+    "lang": "en"
+   },
+   {
+    "start": 10.41,
+    "end": 11.752,
+    "text": "Re-cut again.",
+    "lang": "en"
+   },
+   {
+    "start": 12.302,
+    "end": 18.331,
+    "text": "Every step is forced, and we can never return to a windmill we have already visited.",
+    "lang": "en"
+   }
+  ]
+ },
+ "path_3": {
+  "scene": "S09_Path",
+  "voice": "en_narrator",
+  "dur": 19.438,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 8.233,
+    "text": "Since S is finite, the walk must stop, and it can only stop at a windmill that flipping leaves unchanged.",
+    "lang": "en"
+   },
+   {
+    "start": 8.783,
+    "end": 19.438,
+    "text": "For forty-one, after ten steps we reach blades of size two by two, and we read off that forty-one is five squared plus four squared.",
+    "lang": "en"
+   }
+  ]
+ },
+ "path_4": {
+  "scene": "S09_Path",
+  "voice": "en_narrator",
+  "dur": 21.3,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.07,
+    "text": "Why does this always work?",
+    "lang": "en"
+   },
+   {
+    "start": 2.62,
+    "end": 7.681,
+    "text": "Think of each windmill as a dot, and join partners with lines.",
+    "lang": "en"
+   },
+   {
+    "start": 8.231,
+    "end": 15.643,
+    "text": "Every dot has at most two lines, one of each kind, so the picture breaks into paths and loops.",
+    "lang": "en"
+   },
+   {
+    "start": 16.193,
+    "end": 21.3,
+    "text": "The cross is the end of a path, and the other end must be a solution.",
+    "lang": "en"
+   }
+  ]
+ },
+ "path_5": {
+  "scene": "S09_Path",
+  "voice": "en_narrator",
+  "dur": 18.103,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.464,
+    "text": "If you know the proof of Sperner's lemma, this is the same idea as walking through rooms and doors.",
+    "lang": "en"
+   },
+   {
+    "start": 8.014,
+    "end": 10.845,
+    "text": "It is not the fastest method, though.",
+    "lang": "en"
+   },
+   {
+    "start": 11.395,
+    "end": 18.103,
+    "text": "For large primes, there are much faster algorithms, based on the Euclidean algorithm.",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_1": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 6.917,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.732,
+    "text": "Now let us zoom out.",
+    "lang": "en"
+   },
+   {
+    "start": 2.282,
+    "end": 6.917,
+    "text": "Which whole numbers, not just primes, are sums of two squares?",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_2": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 17.293,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.78,
+    "text": "The key is a multiplication rule.",
+    "lang": "en"
+   },
+   {
+    "start": 3.33,
+    "end": 8.709,
+    "text": "The product of two sums of two squares is again a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 9.259,
+    "end": 17.293,
+    "text": "In the language of complex numbers, this just says that the length of a product is the product of the lengths.",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_3": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 16.747,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.429,
+    "text": "Combine this with Fermat's theorem, and you get the full answer.",
+    "lang": "en"
+   },
+   {
+    "start": 4.979,
+    "end": 16.747,
+    "text": "A positive integer is a sum of two squares exactly when every prime factor of the form 4k + 3 appears an even number of times.",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_4": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 24.935,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.677,
+    "text": "In the Gaussian integers, numbers of the form a plus b i, this becomes a statement about factoring.",
+    "lang": "en"
+   },
+   {
+    "start": 8.227,
+    "end": 18.593,
+    "text": "A prime that is one mod four splits into two conjugate factors, like five equals (2 + i)(2 − i).",
+    "lang": "en"
+   },
+   {
+    "start": 19.143,
+    "end": 22.809,
+    "text": "A prime that is three mod four cannot be split.",
+    "lang": "en"
+   },
+   {
+    "start": 23.359,
+    "end": 24.935,
+    "text": "It stays prime.",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_5": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 14.88,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.694,
+    "text": "Unique factorization in the Gaussian integers also tells us something Zagier's proof does not.",
+    "lang": "en"
+   },
+   {
+    "start": 8.244,
+    "end": 14.88,
+    "text": "The way of writing p as a sum of two squares is unique, up to order and signs.",
+    "lang": "en"
+   }
+  ]
+ },
+ "gen_6": {
+  "scene": "S10_General",
+  "voice": "en_narrator",
+  "dur": 35.751,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.028,
+    "text": "And the story continues.",
+    "lang": "en"
+   },
+   {
+    "start": 2.578,
+    "end": 6.383,
+    "text": "Which primes are x squared plus two y squared?",
+    "lang": "en"
+   },
+   {
+    "start": 6.933,
+    "end": 10.647,
+    "text": "Two, and the primes that are one or three mod eight.",
+    "lang": "en"
+   },
+   {
+    "start": 11.197,
+    "end": 14.408,
+    "text": "Which are x squared plus three y squared?",
+    "lang": "en"
+   },
+   {
+    "start": 14.958,
+    "end": 18.194,
+    "text": "Three, and the primes that are one mod three.",
+    "lang": "en"
+   },
+   {
+    "start": 18.744,
+    "end": 25.991,
+    "text": "Questions like these lead to quadratic reciprocity, and eventually to class field theory.",
+    "lang": "en"
+   },
+   {
+    "start": 26.541,
+    "end": 35.751,
+    "text": "And if you allow four squares instead of two, Lagrange proved that every positive integer is a sum of four squares.",
+    "lang": "en"
+   }
+  ]
+ },
+ "app_1": {
+  "scene": "S11_Apps",
+  "voice": "en_narrator",
+  "dur": 4.734,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.625,
+    "text": "What is it good for?",
+    "lang": "en"
+   },
+   {
+    "start": 2.175,
+    "end": 4.734,
+    "text": "Here are two applications I like.",
+    "lang": "en"
+   }
+  ]
+ },
+ "app_2": {
+  "scene": "S11_Apps",
+  "voice": "en_narrator",
+  "dur": 39.343,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.121,
+    "text": "The first is about right triangles.",
+    "lang": "en"
+   },
+   {
+    "start": 3.671,
+    "end": 13.627,
+    "text": "If p equals a squared plus b squared, then squaring a plus b i gives a squared minus b squared, plus two a b i.",
+    "lang": "en"
+   },
+   {
+    "start": 14.177,
+    "end": 21.47,
+    "text": "So a squared minus b squared, two a b, and p form a right triangle with integer sides.",
+    "lang": "en"
+   },
+   {
+    "start": 22.02,
+    "end": 24.488,
+    "text": "Five gives three, four, five.",
+    "lang": "en"
+   },
+   {
+    "start": 25.038,
+    "end": 28.196,
+    "text": "Thirteen gives five, twelve, thirteen.",
+    "lang": "en"
+   },
+   {
+    "start": 28.746,
+    "end": 39.343,
+    "text": "In fact, the odd primes that can be the hypotenuse of an integer right triangle are exactly the primes that are one mod four.",
+    "lang": "en"
+   }
+  ]
+ },
+ "app_3": {
+  "scene": "S11_Apps",
+  "voice": "en_narrator",
+  "dur": 34.534,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.484,
+    "text": "The second is a surprise involving pi.",
+    "lang": "en"
+   },
+   {
+    "start": 4.034,
+    "end": 9.282,
+    "text": "Count the integer points inside a large circle of radius R.",
+    "lang": "en"
+   },
+   {
+    "start": 9.832,
+    "end": 12.636,
+    "text": "There are about pi R squared of them.",
+    "lang": "en"
+   },
+   {
+    "start": 13.186,
+    "end": 22.032,
+    "text": "There is a second way to count the same points, using divisors, and it rests on the theory of sums of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 22.582,
+    "end": 26.496,
+    "text": "Comparing the two counts gives Leibniz's formula.",
+    "lang": "en"
+   },
+   {
+    "start": 27.046,
+    "end": 34.534,
+    "text": "Pi over four equals one, minus one third, plus one fifth, minus one seventh, and so on.",
+    "lang": "en"
+   }
+  ]
+ },
+ "app_4": {
+  "scene": "S11_Apps",
+  "voice": "en_narrator",
+  "dur": 16.124,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 10.392,
+    "text": "So a question about which primes are sums of two squares ends up connected to geometry, to complex numbers, and even to pi.",
+    "lang": "en"
+   },
+   {
+    "start": 10.942,
+    "end": 16.124,
+    "text": "That web of connections is a big part of why I love this theorem.",
+    "lang": "en"
+   }
+  ]
+ },
+ "iv_intro": {
+  "scene": "S12_Interview",
+  "voice": "en_narrator",
+  "dur": 14.521,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.904,
+    "text": "Now let us practice.",
+    "lang": "en"
+   },
+   {
+    "start": 2.454,
+    "end": 6.384,
+    "text": "Here is how an interview about this theorem might go.",
+    "lang": "en"
+   },
+   {
+    "start": 6.934,
+    "end": 14.521,
+    "text": "Notice that each answer is short and precise, and leaves something the examiner can follow up on.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q1": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.697,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.697,
+    "text": "So, what is your favorite theorem?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a1": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 24.208,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.893,
+    "text": "My favorite theorem is Fermat's two-square theorem.",
+    "lang": "en"
+   },
+   {
+    "start": 4.443,
+    "end": 13.622,
+    "text": "It says that an odd prime is a sum of two squares if and only if it leaves remainder one when divided by four.",
+    "lang": "en"
+   },
+   {
+    "start": 14.172,
+    "end": 24.208,
+    "text": "I like it because the statement is so simple, but the proof I like best is a clever counting argument that fits in one sentence.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q2": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 5.79,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 5.79,
+    "text": "Can you show me why primes of the form four k plus three can't work?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a2": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 19.414,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 0.804,
+    "text": "Sure.",
+    "lang": "en"
+   },
+   {
+    "start": 1.355,
+    "end": 4.651,
+    "text": "Any square is zero or one, mod four.",
+    "lang": "en"
+   },
+   {
+    "start": 5.201,
+    "end": 13.417,
+    "text": "An even number squared is divisible by four, and an odd number squared is one more than a multiple of four.",
+    "lang": "en"
+   },
+   {
+    "start": 13.967,
+    "end": 19.414,
+    "text": "So a sum of two squares is zero, one or two, mod four, but never three.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q3": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.963,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.963,
+    "text": "Is that condition enough for any number, not just for primes?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a3": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 27.406,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 0.79,
+    "text": "No.",
+    "lang": "en"
+   },
+   {
+    "start": 1.34,
+    "end": 6.513,
+    "text": "Twenty-one leaves remainder one, but it is not a sum of two squares.",
+    "lang": "en"
+   },
+   {
+    "start": 7.063,
+    "end": 14.083,
+    "text": "That's because twenty-one is three times seven, and both of those primes are three mod four.",
+    "lang": "en"
+   },
+   {
+    "start": 14.633,
+    "end": 27.406,
+    "text": "In general, a positive integer is a sum of two squares exactly when every prime factor of the form four k plus three appears an even number of times.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q4": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.481,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 0.834,
+    "text": "Good.",
+    "lang": "en"
+   },
+   {
+    "start": 1.384,
+    "end": 4.481,
+    "text": "How would you prove the hard direction?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a4": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 39.272,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.074,
+    "text": "I'd use Zagier's proof.",
+    "lang": "en"
+   },
+   {
+    "start": 2.624,
+    "end": 9.731,
+    "text": "Take the set S of positive triples with x squared plus four y z equal to p.",
+    "lang": "en"
+   },
+   {
+    "start": 10.281,
+    "end": 19.314,
+    "text": "Swapping y and z is an involution, and its fixed points give p as x squared plus the square of two y.",
+    "lang": "en"
+   },
+   {
+    "start": 19.864,
+    "end": 24.291,
+    "text": "So it's enough to show that S has an odd number of elements.",
+    "lang": "en"
+   },
+   {
+    "start": 24.841,
+    "end": 34.006,
+    "text": "For that, there's a second involution, which you can picture as re-cutting a windmill, and it has exactly one fixed point.",
+    "lang": "en"
+   },
+   {
+    "start": 34.556,
+    "end": 39.272,
+    "text": "By parity, S is odd, so the swap has a fixed point too.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q5": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.151,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.151,
+    "text": "Where exactly do you use the fact that p is prime?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a5": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 29.878,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.376,
+    "text": "Mainly in one place, the uniqueness of the fixed point.",
+    "lang": "en"
+   },
+   {
+    "start": 4.926,
+    "end": 15.361,
+    "text": "A fixed windmill has x equal to y, so p equals x times x plus four z, and primality forces x to be one.",
+    "lang": "en"
+   },
+   {
+    "start": 15.911,
+    "end": 22.359,
+    "text": "It also rules out the boundary cases, which would need p to be a square or even.",
+    "lang": "en"
+   },
+   {
+    "start": 22.909,
+    "end": 29.878,
+    "text": "For twenty-one, for example, there are two fixed windmills, and the argument fails, as it should.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q6": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 6.709,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.445,
+    "text": "Interesting.",
+    "lang": "en"
+   },
+   {
+    "start": 1.995,
+    "end": 6.709,
+    "text": "But how would anyone come up with that second involution?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a6": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 26.593,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.064,
+    "text": "Honestly, from the algebra alone, I don't think I would.",
+    "lang": "en"
+   },
+   {
+    "start": 4.614,
+    "end": 13.874,
+    "text": "But if you draw x squared plus four y z as a windmill, you see that the same outline can be cut in two different ways.",
+    "lang": "en"
+   },
+   {
+    "start": 14.424,
+    "end": 20.068,
+    "text": "Whenever an object can be described in two ways, you get a natural pairing.",
+    "lang": "en"
+   },
+   {
+    "start": 20.618,
+    "end": 26.593,
+    "text": "So the geometry suggests the involution, and the formula just records it.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q7": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 7.104,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.244,
+    "text": "Your proof only shows existence.",
+    "lang": "en"
+   },
+   {
+    "start": 3.794,
+    "end": 7.104,
+    "text": "Can you actually find x and y?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a7": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 32.513,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.806,
+    "text": "Yes, the proof actually contains an algorithm.",
+    "lang": "en"
+   },
+   {
+    "start": 4.356,
+    "end": 9.955,
+    "text": "Start at the fixed point of re-cutting and alternate the two involutions.",
+    "lang": "en"
+   },
+   {
+    "start": 10.505,
+    "end": 20.469,
+    "text": "Each windmill has at most two neighbours, so the walk can't repeat, and it has to end at a fixed point of the swap, which is a solution.",
+    "lang": "en"
+   },
+   {
+    "start": 21.019,
+    "end": 24.809,
+    "text": "It's like the path-following proof of Sperner's lemma.",
+    "lang": "en"
+   },
+   {
+    "start": 25.359,
+    "end": 32.513,
+    "text": "It's slow for large primes, though, and there are faster methods using the Euclidean algorithm.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q8": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.366,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.366,
+    "text": "Do you know any other proof?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a8": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 42.283,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.478,
+    "text": "Yes, there's one using the Gaussian integers.",
+    "lang": "en"
+   },
+   {
+    "start": 4.028,
+    "end": 15.701,
+    "text": "Since minus one is a square mod p, p divides n squared plus one for some n, and that factors as n plus i, times n minus i.",
+    "lang": "en"
+   },
+   {
+    "start": 16.251,
+    "end": 24.551,
+    "text": "If p stayed prime in the Gaussian integers, it would have to divide one of those factors, which is impossible.",
+    "lang": "en"
+   },
+   {
+    "start": 25.101,
+    "end": 34.941,
+    "text": "So p splits as a plus b i, times a minus b i, and taking norms gives p equals a squared plus b squared.",
+    "lang": "en"
+   },
+   {
+    "start": 35.491,
+    "end": 42.283,
+    "text": "There's also Euler's proof by infinite descent, and a pigeonhole argument due to Thue.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q9": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 3.933,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.933,
+    "text": "Why is minus one a square modulo p?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a9": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 24.365,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 6.065,
+    "text": "By Wilson's theorem, p minus one, factorial, is minus one mod p.",
+    "lang": "en"
+   },
+   {
+    "start": 6.615,
+    "end": 9.536,
+    "text": "Pair each number k with minus k.",
+    "lang": "en"
+   },
+   {
+    "start": 10.086,
+    "end": 21.297,
+    "text": "When p is one mod four, the minus signs come in an even number, so the factorial of p minus one over two, squared, is minus one.",
+    "lang": "en"
+   },
+   {
+    "start": 21.847,
+    "end": 24.365,
+    "text": "Again, it's a pairing argument.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q10": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 2.829,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 2.829,
+    "text": "What about sums of three squares?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a10": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 29.36,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.854,
+    "text": "That's harder, and I know the statement better than the proof.",
+    "lang": "en"
+   },
+   {
+    "start": 4.404,
+    "end": 16.868,
+    "text": "Legendre's three-square theorem says that a positive integer is a sum of three squares unless it has the form four to the a, times eight b plus seven.",
+    "lang": "en"
+   },
+   {
+    "start": 17.418,
+    "end": 22.923,
+    "text": "The easy half is again a congruence argument, this time mod eight.",
+    "lang": "en"
+   },
+   {
+    "start": 23.473,
+    "end": 29.36,
+    "text": "And with four squares, Lagrange proved that every positive integer works.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q11": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.102,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 4.102,
+    "text": "Is there an application you find meaningful?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a11": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 23.386,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.716,
+    "text": "I like the connection to Pythagorean triples.",
+    "lang": "en"
+   },
+   {
+    "start": 4.266,
+    "end": 16.432,
+    "text": "Squaring a plus b i shows that the primes that can be the hypotenuse of an integer right triangle are exactly the primes that are one mod four.",
+    "lang": "en"
+   },
+   {
+    "start": 16.982,
+    "end": 23.386,
+    "text": "And counting lattice points in a circle even leads to Leibniz's series for pi.",
+    "lang": "en"
+   }
+  ]
+ },
+ "q12": {
+  "scene": "S12_Interview",
+  "voice": "en_examiner",
+  "dur": 4.952,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.667,
+    "text": "Last question.",
+    "lang": "en"
+   },
+   {
+    "start": 2.217,
+    "end": 4.952,
+    "text": "What did you learn from this theorem?",
+    "lang": "en"
+   }
+  ]
+ },
+ "a12": {
+  "scene": "S12_Interview",
+  "voice": "en_candidate",
+  "dur": 30.777,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.283,
+    "text": "Three things.",
+    "lang": "en"
+   },
+   {
+    "start": 1.833,
+    "end": 8.024,
+    "text": "First, you can prove existence by counting, sometimes just modulo two.",
+    "lang": "en"
+   },
+   {
+    "start": 8.574,
+    "end": 13.695,
+    "text": "Second, sometimes you have to create a symmetry, not just find one.",
+    "lang": "en"
+   },
+   {
+    "start": 14.245,
+    "end": 20.338,
+    "text": "And third, a good picture can turn a mysterious formula into something natural.",
+    "lang": "en"
+   },
+   {
+    "start": 20.888,
+    "end": 30.777,
+    "text": "I first met the parity idea in Sperner's lemma, and seeing it again here made me realize it's a general strategy, not just a trick.",
+    "lang": "en"
+   }
+  ]
+ },
+ "out_1": {
+  "scene": "S13_Outro",
+  "voice": "en_narrator",
+  "dur": 3.042,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.042,
+    "text": "Let me end with what this theorem taught me.",
+    "lang": "en"
+   }
+  ]
+ },
+ "out_2": {
+  "scene": "S13_Outro",
+  "voice": "en_narrator",
+  "dur": 21.299,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 7.178,
+    "text": "To prove that something exists, you can count it, and sometimes counting modulo two is enough.",
+    "lang": "en"
+   },
+   {
+    "start": 7.728,
+    "end": 10.373,
+    "text": "Symmetry is not always given.",
+    "lang": "en"
+   },
+   {
+    "start": 10.923,
+    "end": 13.323,
+    "text": "Sometimes you have to create it.",
+    "lang": "en"
+   },
+   {
+    "start": 13.873,
+    "end": 21.299,
+    "text": "And a good picture can turn a formula that looks like magic into something you could have discovered yourself.",
+    "lang": "en"
+   }
+  ]
+ },
+ "out_3": {
+  "scene": "S13_Outro",
+  "voice": "en_narrator",
+  "dur": 21.378,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 3.209,
+    "text": "Brouwer's theorem is about fixed points.",
+    "lang": "en"
+   },
+   {
+    "start": 3.759,
+    "end": 6.349,
+    "text": "Sperner's lemma is about parity.",
+    "lang": "en"
+   },
+   {
+    "start": 6.899,
+    "end": 11.225,
+    "text": "And Zagier's proof is about the parity of fixed points.",
+    "lang": "en"
+   },
+   {
+    "start": 11.775,
+    "end": 21.378,
+    "text": "Ideas in mathematics keep meeting each other, and following those connections is, for me, the real joy of the subject.",
+    "lang": "en"
+   }
+  ]
+ },
+ "out_4": {
+  "scene": "S13_Outro",
+  "voice": "en_narrator",
+  "dur": 1.811,
+  "sentences": [
+   {
+    "start": 0.0,
+    "end": 1.811,
+    "text": "Thank you for watching.",
+    "lang": "en"
+   }
+  ]
+ }
+}
