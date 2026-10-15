@@ -53,6 +53,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 [音乐粒子宇宙 Particle Universe](particle-universe/) 是 Electron / WebGL2 的 Windows 音乐可视化程序：导入本地音乐后，离线分析频谱、鼓点、节拍网格、段落与高潮，驱动 13 万–419 万颗 GPU 粒子组成的 8 个场景（星云、黑洞、银河、能量风暴、流体丝绸、共振星球、超空间、奇异吸引子），带自动运镜、自适应画质与逐帧离线的 MP4 / WebM 视频导出。Windows 便携版 zip（约 129 MB，超过仓库单文件上限）由 `particle-universe · Windows build` 工作流构建并自检；本地可用 `npm run dist:win` 生成。
 
+[声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`），未做代码签名。
 
 [鸿雁邮箱 Hongyan Mail](hongyan-mail/) 是 Electron / Node.js 的本地多账户邮件客户端，需要本地程序、SQLite 与 IMAP / SMTP，无法在 Pages 上运行。
 
