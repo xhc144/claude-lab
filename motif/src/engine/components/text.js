@@ -2,6 +2,7 @@
 import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon, pickIcon,
   roundRect, toCss, EASE, clamp01, colorOf, blockPreset,
+  recItem,
 } from './kit.js';
 
 const alignOf = (block, c, fallback = 'left') => (block.style?.align && block.style.align !== 'auto' ? block.style.align : c.hint?.align || fallback);
@@ -346,6 +347,7 @@ const bullets = {
           const x = rect.x + col * (B.colW + B.gap);
           const ti = t - i * itemStagger;
           if (ti <= 0) return;
+          recItem(i, { x, y, w: B.markerW, h: r.L.lineHeight }, ctx);
           drawMarker(ctx, c, B, r, i, x, y, ti);
           drawText(ctx, r.L, x + B.markerW, y, B.colW - B.markerW, paint, anims[i], ti - 0.08);
           if (r.D) {
@@ -415,6 +417,7 @@ function drawBulletCards(ctx, c, B, rect, t, stagger, yOff) {
     for (let k = 0; k < row; k++) y += B.rowH[k] + B.gap;
     const box = { x, y, w: B.cw, h: B.rowH[row] };
     const ti = t - i * stagger;
+    recItem(i, box, ctx);
     withState(ctx, blockState(c, ti, preset, { size: B.size * 2 }), box, () => {
       drawCard(ctx, c, box);
       const icon = r.it.icon || pickIcon(r.it.text);

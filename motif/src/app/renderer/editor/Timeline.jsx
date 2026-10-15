@@ -9,6 +9,17 @@ import { openMenu } from '../ui.jsx';
 import { blockMenu } from './menus.js';
 import { natureOf } from '../../../engine/layout.js';
 import { fmtTime } from '../api.js';
+import { TRANSITIONS } from '../../../core/catalog/scene.js';
+import { GUIDE_ACTIONS } from '../../../core/catalog/guide.js';
+import { ACTION_ICON } from './GuideEditor.jsx';
+
+const TRANS_ICON = { fade: 'blend', morph: 'shapes', push: 'arrow-right-left', slide: 'panel-right', wipe: 'columns-2', zoom: 'zoom-in', blur: 'droplets', dip: 'moon', band: 'rows-3', stripes: 'menu', iris: 'circle', scan: 'scan-line', ink: 'brush', cut: 'scissors' };
+
+function setGuideAt(scene, idx, at, message) {
+  const steps = (scene.guide?.steps || []).map((st, k) => { if (k !== idx) return st; const o = { ...st }; if (at == null) delete o.at; else o.at = at; return o; });
+  editor.updateScene(scene.id, { guide: { ...scene.guide, steps } }, { message, coalesce: null });
+}
+
 
 const LABEL_W = 120;
 
@@ -94,6 +105,31 @@ export function Timeline() {
     addEventListener('mousemove', mv); addEventListener('mouseup', up);
   };
 
+  // drag a pointer step to pin its start time (scene-relative); double-click returns it to auto
+  const dragGuide = (e, g, sc) => {
+    if (e.button !== 0) return;
+    e.stopPropagation();
+    const scene0 = editor.s.doc.scenes.find((q) => q.id === sc.id);
+    if (!scene0?.guide) return;
+    const base = editor.s.doc;
+    const x0 = e.clientX;
+    let last = null;
+    editor.pause();
+    editor.seek(sc.start + g.at + g.drawDur);
+    const withAt = (at) => ({ guide: { ...scene0.guide, steps: scene0.guide.steps.map((st, k) => (k === g.idx ? { ...st, at } : st)) } });
+    const mv = (ev) => {
+      if (Math.abs(ev.clientX - x0) < 3) return;
+      last = Math.max(0, +(g.at + (ev.clientX - x0) / pps).toFixed(2));
+      editor.edit([{ op: 'update_scene', scene: sc.id, set: withAt(last) }], { base, transient: true });
+      editor.set({ time: sc.start + last + g.drawDur });
+    };
+    const up = () => {
+      removeEventListener('mousemove', mv); removeEventListener('mouseup', up);
+      if (last != null) editor.edit([{ op: 'update_scene', scene: sc.id, set: withAt(last) }], { base, message: '调整讲解时间' });
+    };
+    addEventListener('mousemove', mv); addEventListener('mouseup', up);
+  };
+
   const music = doc.audio?.music;
   const musicAsset = music?.asset ? doc.assets?.[music.asset] : null;
 
@@ -124,21 +160,55 @@ export function Timeline() {
               {timing.scenes.map((sc, i) => {
                 const s = doc.scenes.find((q) => q.id === sc.id);
                 const title = s?.name || plain(s?.blocks.find((b) => b.type === 'title')?.text) || `场景 ${i + 1}`;
+                // Scenes overlap during a transition; draw each one up to the middle of the cut so the
+                // strip reads as clean segments, with the transition as a chip sitting on the seam.
+                const inD = i > 0 && sc.transition ? sc.transition.duration : 0;
+                const nx = timing.scenes[i + 1];
+                const outD = nx?.transition ? nx.transition.duration : 0;
+                const v0 = sc.start + inD / 2, v1 = sc.end - outD / 2;
+                const guided = !!sc.guide?.length;
+                const soft = sc.transition && sc.transition.type !== 'cut';
                 return (
                   <div key={sc.id}>
-                    {sc.transition && i > 0 ? <div className="tl-trans" style={{ left: x(sc.start), width: Math.max(3, x(sc.transition.duration)) }} title={`转场：${sc.transition.type}`} /> : null}
-                    <div className={`tl-scene ${sel.scene === sc.id ? 'on' : ''}`} style={{ left: x(sc.start) + 1, width: Math.max(8, x(sc.duration) - 2) }}
+                    <div className={`tl-scene ${sel.scene === sc.id ? 'on' : ''}`} style={{ left: x(v0) + 1, width: Math.max(8, x(v1 - v0) - 2) }}
                       onMouseDown={(e) => { e.stopPropagation(); if (e.button === 0) { editor.pause(); editor.selectScene(sc.id); } }}
                       onDoubleClick={() => editor.playScene(sc.id)}
-                      title={`${i + 1}. ${title} · ${sc.duration.toFixed(1)}s${typeof s?.duration === 'number' ? '（固定）' : '（自动）'}`}>
+                      title={`${i + 1}. ${title} · ${sc.duration.toFixed(1)}s${typeof s?.duration === 'number' ? '（固定）' : '（自动）'}${guided ? ` · 讲解 ${sc.guide.length} 步` : ''}`}>
                       <span className="lbl"><b style={{ color: 'var(--fg3)', marginRight: 5 }}>{i + 1}</b>{title}</span>
+                      {guided ? <span className="tl-guided" title="含讲解指针"><Icon name="mouse-pointer-2" size={11} />{sc.guide.length}</span> : null}
                       <span className="edge" onMouseDown={(e) => dragEdge(e, sc)} onDoubleClick={(e) => { e.stopPropagation(); editor.updateScene(sc.id, { duration: 'auto' }, { message: '时长改为自动' }); }} title="拖动设置时长 · 双击恢复自动" />
                     </div>
+                    {i > 0 ? (
+                      <div className={`tl-cut ${soft ? '' : 'hard'}`} style={{ left: x(sc.start + inD / 2) }}
+                        onMouseDown={(e) => { e.stopPropagation(); if (e.button === 0) { editor.pause(); editor.selectScene(sc.id, { seek: false }); editor.seek(Math.max(0, sc.start - 0.15)); } }}
+                        onDoubleClick={(e) => { e.stopPropagation(); editor.set({ time: Math.max(0, sc.start - 0.4) }); editor.play(); }}
+                        title={soft ? `转场：${TRANSITIONS[sc.transition.type]?.label || sc.transition.type} · ${sc.transition.duration.toFixed(2)}s · 单击定位，双击播放；在「场景」面板中修改` : '直接切换 · 在「场景」面板中可加转场'}>
+                        {soft ? <span className="tl-cut-span" style={{ width: Math.max(0, x(inD)) }} /> : null}
+                        <span className="tl-cut-dot"><Icon name={TRANS_ICON[sc.transition?.type] || 'chevrons-right'} size={10} /></span>
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}
             </div>
           </div>
+          {/* explanation pointer steps of the selected scene */}
+          {scT?.guide?.length && scene ? (
+            <div className="tl-row">
+              <div className="tl-label" onClick={() => dispatchEvent(new CustomEvent('motif:show-guide', { detail: { scene: scene.id } }))}><Icon name="mouse-pointer-2" size={13} /><span className="ellipsis">讲解指针</span></div>
+              <div className="tl-track" onMouseDown={onScrub}>
+                {scT.guide.map((g) => (
+                  <div key={g.idx} className={`tl-guide ${g.fixed ? 'fixed' : ''}`} style={{ left: x(scT.start + g.at), width: Math.max(10, x(g.end - g.at) - 2) }}
+                    onMouseDown={(e) => dragGuide(e, g, scT)} onDoubleClick={(e) => { e.stopPropagation(); setGuideAt(scene, g.idx, undefined, '讲解时间改为自动'); }}
+                    title={`${g.idx + 1}. ${GUIDE_ACTIONS[g.do]?.label || g.do}${g.part != null ? `「${Array.isArray(g.part) ? g.part.join(', ') : g.part}」` : ''} · ${g.at.toFixed(1)}s${g.fixed ? '（固定，双击恢复自动）' : '（自动，拖动可固定时间）'}${g.say ? `\n${g.say}` : ''}`}>
+                    <span className="tl-guide-travel" style={{ width: Math.max(0, x(g.travel)), left: -Math.max(0, x(g.travel)) }} />
+                    <Icon name={ACTION_ICON[g.do] || 'mouse-pointer-2'} size={11} />
+                    <span className="ellipsis">{g.note || g.say || (g.part != null ? String(g.part) : GUIDE_ACTIONS[g.do]?.label)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
           {/* blocks of the selected scene */}
           {scT && scene ? scT.items.map((it) => {
             const b = scene.blocks.find((q) => q.id === it.id);

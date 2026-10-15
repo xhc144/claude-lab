@@ -36,19 +36,26 @@ export function Stage({ zoom = 'fit', showSafe }) {
   const vw = Math.round(W * scale), vh = Math.round(H * scale);
   const left = Math.round((box.w - vw) / 2), top = Math.round((box.h - vh) / 2);
 
-  // draw
+  // draw: at most one frame per animation frame, always with the latest state. A pending draw is
+  // never cancelled by a newer change — during playback the play loop updates the time every frame,
+  // and cancel-and-reschedule would starve the canvas (it froze on the first frame).
+  const drawArgs = useRef(null);
+  drawArgs.current = { time, vw, vh, W, playing };
   const drawRef = useRef(0);
   useEffect(() => {
-    const c = canvasRef.current;
-    if (!c || !editor.engine?.C) return;
-    cancelAnimationFrame(drawRef.current);
+    if (drawRef.current) return;
     drawRef.current = requestAnimationFrame(() => {
+      drawRef.current = 0;
+      const c = canvasRef.current;
+      if (!c || !editor.engine?.C) return;
+      const a = drawArgs.current;
       const dpr = Math.min(2, window.devicePixelRatio || 1);
-      const cw = Math.round(vw * dpr), ch = Math.round(vh * dpr);
+      const cw = Math.round(a.vw * dpr), ch = Math.round(a.vh * dpr);
       if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; }
-      editor.engine.render(time, c.getContext('2d'), { scale: cw / W, noCamera: !playing });
+      editor.engine.render(a.time, c.getContext('2d'), { scale: cw / a.W, noCamera: !a.playing });
     });
   }, [time, version, vw, vh, W, playing]);
+  useEffect(() => () => { cancelAnimationFrame(drawRef.current); drawRef.current = 0; }, []);
 
   const sceneNow = editor.sceneAtTime(time);
   const items = !playing && sceneNow && editor.engine ? editor.engine.layoutOf(sceneNow.id) : [];

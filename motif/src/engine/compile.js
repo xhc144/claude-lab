@@ -3,6 +3,7 @@ import { layoutScene, natureOf } from './layout.js';
 import { getComponent, placeholder } from './components/index.js';
 import { resolveTheme, makeEnv } from './env.js';
 import { IN_DELAY } from './transitions.js';
+import { planGuide } from './guide.js';
 import { stableStringify, hash32, clamp } from '../core/util/misc.js';
 
 const TONE_OK = new Set(['base', 'inverse', 'accent']);
@@ -84,9 +85,12 @@ export function compile(doc, o) {
     }
     const nextD = next?.transitionIn?.duration || 0;
     const sc = scenes[i];
+    // the explanation track (guide) may run well past the build: the scene lasts until it is done
+    cs.guideMiss = null;
+    const guideEnd = planGuide(cs, env, lead);
     let dur;
     if (typeof sc.duration === 'number') dur = sc.duration;
-    else dur = clamp(contentEnd + cs.hold + nextD * 0.55 + (sc.hold || 0), 2.4, 30);
+    else dur = clamp(Math.max(contentEnd + cs.hold, guideEnd ? guideEnd + 0.9 : 0) + nextD * 0.55 + (sc.hold || 0), 2.4, guideEnd ? 240 : 30);
     cs.duration = dur;
     cs.contentEnd = contentEnd;
     if (tin && i > 0) {
@@ -98,6 +102,7 @@ export function compile(doc, o) {
     cs.end = cs.start + dur;
     t = cs.end;
     for (const it of cs.items) for (const iss of it.inst.issues || []) issues.push({ ...iss, scene: sc.id, block: it.block.id, sceneIndex: i });
+    if (typeof sc.duration === 'number' && guideEnd > sc.duration - 0.3) issues.push({ level: 'warning', scene: sc.id, sceneIndex: i, message: `讲解指针需要 ${guideEnd.toFixed(1)}s，长于场景时长 ${sc.duration}s，后面的步骤会被截断`, hint: '把 duration 改为 "auto"，或缩短 say / hold' });
     if (typeof sc.duration === 'number' && sc.duration < contentEnd + 0.5) issues.push({ level: 'warning', scene: sc.id, sceneIndex: i, message: `场景时长 ${sc.duration}s 短于动画完成所需的 ${contentEnd.toFixed(1)}s`, hint: '把 duration 改为 "auto" 或加长' });
   });
   const duration = out.length ? out[out.length - 1].end : 0;

@@ -3,6 +3,7 @@
 // Styling comes from theme.chart (grid, radius, glow, hatch, outline, dot) and the palette.
 import {
   role, drawText, roundRect, toCss, EASE, clamp01, colorOf, formatNumber, decimalsOf, mix, drawIcon, textAnimator, paintFor,
+  recItem,
 } from './kit.js';
 import { fontString } from '../text/text.js';
 
@@ -62,6 +63,16 @@ function hl(block, labels) {
     else { const i = labels.indexOf(String(x)); if (i >= 0) set.add(i); }
   }
   return set.size ? set : null;
+}
+
+/** Category index from a 1-based number or a label (exact, then partial match). */
+function catIndex(part, labels) {
+  if (part == null || part === '') return null;
+  if (typeof part === 'number' || /^\d+$/.test(String(part))) { const i = Number(part) - 1; return i >= 0 && i < labels.length ? i : null; }
+  const s = String(part);
+  let i = labels.findIndex((l) => String(l) === s);
+  if (i < 0) i = labels.findIndex((l) => String(l).includes(s));
+  return i < 0 ? null : i;
 }
 
 function resolveAt(at, labels) {
@@ -498,6 +509,17 @@ function cartesian(C, kind) {
   return {
     duration,
     hold: 2.2 + Math.min(3, n * S * 0.06),
+    // Explanation pointer: category by number (1-based) or label → its bar / data point.
+    anchor(part) {
+      const i = catIndex(part, C.labels);
+      if (i == null) return null;
+      const vs = C.series.map((s) => s.values[i]).filter((v) => v != null);
+      if (!vs.length) return null;
+      if (kind === 'line' || kind === 'area') { const r = C.small * 0.7; const y = yOf(Math.max(...vs)); return [{ x: xFor(i) - r, y: y - r, w: r * 2, h: r * 2, point: true }]; }
+      const top = kind === 'stacked' ? yOf(vs.filter((v) => v > 0).reduce((a, b) => a + b, 0)) : kind === 'waterfall' && C.wf ? Math.min(yOf(C.wf[i].from), yOf(C.wf[i].to)) : yOf(Math.max(...vs, 0));
+      const bot = kind === 'waterfall' && C.wf ? Math.max(yOf(C.wf[i].from), yOf(C.wf[i].to)) : base;
+      return [{ x: plot.x + band * i + band * 0.12, y: top, w: band * 0.76, h: Math.max(4, bot - top) }];
+    },
     draw(ctx, t) {
       C.ctx = ctx;
       C.title(ctx, t);
@@ -535,6 +557,13 @@ function hbar(C) {
   const r = Math.min(bh / 2, (C.cs.barRadius || 0) * C.u);
   return {
     duration: tHl + (C.hl ? 0.5 : 0), hold: 2 + n * 0.12,
+    anchor(part) {
+      const i = catIndex(part, C.labels);
+      if (i == null) return null;
+      const k = idx.indexOf(i);
+      const y = plot.y + band * k + (band - bh) / 2;
+      return [{ x: plot.x, y, w: Math.max(bh, ((vals[i] ?? 0) / max) * plot.w), h: bh }];
+    },
     draw(ctx, t) {
       C.ctx = ctx;
       C.title(ctx, t);

@@ -162,6 +162,7 @@ function systemPrompt(project, selection) {
 - 修改作品一律用 motif_apply_ops（原子操作，失败会返回原因与提示）。改之前确认场景与块 ID（见下方项目摘要，或 motif_get_project）。
 - 不确定某组件的参数时，先用 motif_catalog 查询（如 "chart"、"timeline"、"scene"、"ops"）。
 - 每场景只讲一件事：标题短（中文 ≤ 20 字）、要点 ≤ 5 条、正文 ≤ 80 字；数据优先用图表/数字组件表达。
+- 讲解公式、图表、流程等需要停留较久的内容时，用场景的 guide（讲解指针）让光标依次圈出/划线/指向局部，每步配一句 say；写法用 motif_catalog("scene") 查看「讲解指针」。
 - 改完运行 motif_lint，修正 error 与重要 warning；需要目视确认时用 motif_render_still 或 motif_preview。
 - 不要编造事实与数据；缺少信息时用占位并告诉用户。
 - 用用户使用的语言简洁回复，说明你改了什么（场景序号 + 要点），不要贴大段 JSON。${ctx}`;

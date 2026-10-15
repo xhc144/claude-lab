@@ -2,6 +2,8 @@
 // Static schema checks live in core/doc.js validateDocument.
 import { plainText } from './text/text.js';
 import { contrast } from '../core/util/color.js';
+import { renderFrame } from './render.js';
+import { makeCanvas } from './backgrounds.js';
 
 const area = (r) => Math.max(0, r.w) * Math.max(0, r.h);
 function overlap(a, b) {
@@ -22,8 +24,29 @@ function textOf(b) {
   return parts.join(' ');
 }
 
+/** Render each explanation step once (small, offscreen) and report targets/parts that never appear. */
+function lintGuides(C, out) {
+  let canvas = null;
+  C.scenes.forEach((S, i) => {
+    if (!S.guide) return;
+    canvas = canvas || makeCanvas(Math.round(C.env.W * 0.2), Math.round(C.env.H * 0.2));
+    const ctx = canvas.getContext('2d');
+    S.guideMiss = null;
+    for (const g of S.guide.steps) {
+      if (!g.item) continue;
+      if (g.at > S.duration) { out.push({ level: 'warning', scene: S.id, sceneIndex: i, message: `讲解第 ${g.idx + 1} 步在场景结束后才开始，不会出现`, hint: '去掉 at 或加长场景' }); continue; }
+      try { renderFrame(ctx, C, S.start + Math.min(S.duration - 0.01, g.at + g.drawDur * 0.6), { scale: 0.2, chrome: false }); } catch { /* reported elsewhere */ }
+    }
+    for (const idx of S.guideMiss || []) {
+      const g = S.guide.steps.find((x) => x.idx === idx);
+      out.push({ level: 'warning', scene: S.id, sceneIndex: i, block: g?.block?.id, message: `讲解第 ${idx + 1} 步找不到「${Array.isArray(g?.part) ? g.part.join(', ') : g?.part}」`, hint: g?.block?.type === 'equation' ? 'part 应是 latex 中原样出现的片段，如 "b^2"、"\\frac{a}{b}"' : '用块中实际出现的文字、条目序号（1 起）或坐标 [x, y]' });
+    }
+  });
+}
+
 export function lintCompiled(C, assets) {
   const out = [...(C.issues || [])];
+  try { lintGuides(C, out); } catch (e) { out.push({ level: 'info', message: `讲解指针检查未完成：${e.message}` }); }
   const { env } = C;
   const W = env.W, H = env.H;
   let sameRun = 1;

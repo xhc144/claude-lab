@@ -1,5 +1,6 @@
 // Generates human/AI-readable reference docs from the live catalogs, so documentation can never
 // drift from what the software actually accepts.
+import { guideMarkdown } from './guide.js';
 import { COMPONENTS, CATEGORY_LABELS } from './components.js';
 import { COMMON_BLOCK_PARAMS } from './spec.js';
 import { LAYOUTS, TRANSITIONS, BACKGROUNDS, MOTIONS, CAMERAS, FORMATS } from './scene.js';
@@ -57,6 +58,7 @@ export function sceneMarkdown() {
     '| `variant` | 版式变体：`{flip: true}` 左右交换，`{align: "center"}`，`{ratio: 0.45}` 文字栏比例 |',
     '| `notes` | 演讲者备注 |',
     '| `narration` | 旁白：字符串或 `{text, asset}`；开启 `style.captions` 时显示字幕 |',
+    '| `guide` | 讲解指针：光标依次圈出/划线/指向内容的局部，配合每步讲解词（见下文） |',
     '', '## 版式 layout', '', '| ID | 名称 | 说明 |', '| --- | --- | --- |',
     ...Object.entries(LAYOUTS).map(([k, v]) => `| \`${k}\` | ${v.label} | ${v.description} |`),
     '', '## 转场 transition', '', '| ID | 名称 | 说明 |', '| --- | --- | --- |',
@@ -67,6 +69,7 @@ export function sceneMarkdown() {
     ...Object.entries(MOTIONS).map(([k, v]) => `| \`${k}\` | ${v} |`),
     '', '## 镜头 camera', '', ...Object.entries(CAMERAS).map(([k, v]) => `- \`${k}\`：${v}`),
     '', '## 画幅 format', '', ...Object.entries(FORMATS).map(([k, v]) => `- \`${k}\`：${v.width}×${v.height}，${v.label}`),
+    '', guideMarkdown(),
   ];
   return lines.join('\n');
 }

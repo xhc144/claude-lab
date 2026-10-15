@@ -96,7 +96,21 @@ export function textAnimator(env, L, preset, o = {}) {
 }
 
 /** Draw text layout L at rect with an animator at local time t. */
+// Anchor recorder: while a scene with an explanation track (guide) renders, components report
+// where their text and items landed this frame, so the pointer can find "this phrase" or "item 2"
+// without each component re-deriving its own layout.
+// Positions are stored with the canvas transform current at record time (m), so text drawn inside
+// a translate/scale still maps back to scene coordinates.
+export const REC = { on: false, block: null, item: null, texts: [], items: [] };
+/** Mark the start of item i (0-based) in a list-like component; box = its frame or marker, if any. */
+export function recItem(i, box, ctx, key) {
+  if (!REC.on) return;
+  REC.item = i;
+  REC.items.push({ block: REC.block, i, box: box ? { x: box.x, y: box.y, w: box.w, h: box.h } : null, m: ctx ? ctx.getTransform() : null, key });
+}
+
 export function drawText(ctx, L, x, y, w, paint, anim, t) {
+  if (REC.on && L?.lines) REC.texts.push({ block: REC.block, item: REC.item, L, x, y, w, m: ctx.getTransform() });
   if (!anim) return drawLayout(ctx, L, x, y, w, paint, null, applyState);
   drawLayout(ctx, L, x, y, w, paint, (u, line) => anim.state(u, line, t), applyState);
   if (anim.caret) {

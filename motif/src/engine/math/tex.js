@@ -95,6 +95,51 @@ function flatten(svgText) {
   return { glyphs, width: W, height: H, minX, minY };
 }
 
+/** Tight bounds of a glyph in formula units (from its path data), cached on the glyph. */
+export function glyphBox(g) {
+  if (g.tbox) return g.tbox;
+  if (g.kind !== 'path') return (g.tbox = g.bbox);
+  const nums = [];
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  const add = (x, y) => {
+    const X = g.m[0] * x + g.m[2] * y + g.m[4], Y = g.m[1] * x + g.m[3] * y + g.m[5];
+    if (X < minX) minX = X; if (X > maxX) maxX = X; if (Y < minY) minY = Y; if (Y > maxY) maxY = Y;
+  };
+  let cx = 0, cy = 0;
+  for (const m of g.d.matchAll(/([MLHVQTCSZmlhvqtcsz])([^MLHVQTCSZmlhvqtcsz]*)/g)) {
+    nums.length = 0;
+    for (const n of m[2].matchAll(/-?\d*\.?\d+(?:e-?\d+)?/gi)) nums.push(+n[0]);
+    const cmd = m[1], rel = cmd === cmd.toLowerCase();
+    const C = cmd.toUpperCase();
+    if (C === 'H') for (const x of nums) { cx = rel ? cx + x : x; add(cx, cy); }
+    else if (C === 'V') for (const y of nums) { cy = rel ? cy + y : y; add(cx, cy); }
+    else if (C !== 'Z') {
+      // every pair is an end or control point; control points only widen the box a little
+      const per = C === 'Q' || C === 'S' ? 2 : C === 'C' ? 3 : 1;
+      let bx = cx, by = cy;
+      for (let i = 0, k = 0; i + 1 < nums.length; i += 2, k++) {
+        const x = rel ? bx + nums[i] : nums[i], y = rel ? by + nums[i + 1] : nums[i + 1];
+        add(x, y);
+        if ((k + 1) % per === 0) { cx = x; cy = y; bx = cx; by = cy; }
+      }
+    }
+  }
+  g.tbox = Number.isFinite(minX) ? [minX, minY, maxX - minX, maxY - minY] : g.bbox;
+  return g.tbox;
+}
+
+/** Glyph indices of the first (or nth) occurrence of a TeX fragment inside a rendered formula. */
+export function findTexPart(T, P, nth = 1) {
+  if (!T?.glyphs?.length || !P?.glyphs?.length) return null;
+  const key = (g) => (g.kind === 'rect' ? 'rect' : g.c);
+  const want = P.glyphs.map(key), have = T.glyphs.map(key);
+  let found = 0;
+  for (let i = 0; i + want.length <= have.length; i++) {
+    if (want.every((w, j) => have[i + j] === w) && ++found === nth) return want.map((_, j) => i + j);
+  }
+  return null;
+}
+
 const pathCache = new Map();
 export function glyphPath(d) {
   let p = pathCache.get(d);

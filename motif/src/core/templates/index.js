@@ -60,7 +60,7 @@ export const BUILTIN_TEMPLATES = [
       scenes: [
         { blocks: [{ type: 'title', kicker: '几何 · 第 3 讲', text: '勾股定理', subtitle: '直角三角形三边之间的关系' }], narration: '今天我们来认识勾股定理。' },
         { blocks: [{ type: 'title', text: '一个直角三角形' }, { type: 'geometry', points: { A: [0, 0], B: [4, 0], C: [0, 3] }, shapes: [{ type: 'polygon', points: ['A', 'B', 'C'] }, { type: 'right-angle', at: 'A', from: 'B', to: 'C' }, { type: 'label', between: ['A', 'B'], text: 'a' }, { type: 'label', between: ['A', 'C'], text: 'b' }, { type: 'label', between: ['B', 'C'], text: 'c' }] }], narration: '设两条直角边为 a 和 b，斜边为 c。' },
-        { blocks: [{ type: 'title', text: '定理' }, { type: 'equation', latex: 'a^2 + b^2 = c^2', label: '两直角边的平方和等于斜边的平方' }], narration: '那么 a 方加 b 方等于 c 方。' },
+        { blocks: [{ type: 'title', text: '定理' }, { type: 'equation', latex: 'a^2 + b^2 = c^2', label: '两直角边的平方和等于斜边的平方' }], narration: '那么 a 方加 b 方等于 c 方。', guide: { steps: [{ target: 'equation', part: 'a^2', do: 'underline', say: '一条直角边的平方' }, { target: 'equation', part: 'b^2', do: 'underline', say: '加上另一条直角边的平方' }, { target: 'equation', part: 'c^2', do: 'circle', note: '斜边', say: '等于斜边的平方' }] } },
         { blocks: [{ type: 'title', text: '代入验证' }, { type: 'equation', latex: '3^2 + 4^2', steps: ['9 + 16', '25', '5^2'] }], narration: '以 3、4、5 为例。' },
         { blocks: [{ type: 'title', text: '小结' }, { type: 'bullets', style: 'checks', items: ['只适用于直角三角形', '已知两边可求第三边', '逆定理可判定直角'] }] },
       ],

@@ -32,6 +32,7 @@ export function Editor({ projectId, onHome, onCommand }) {
   useEffect(() => {
     const offs = [
       ['motif:open-ai', () => setRightTab('ai')],
+      ['motif:show-guide', () => { setRightTab('scene'); setTimeout(() => document.getElementById('guide-editor')?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 80); }],
       ['motif:save-component', (e) => saveComponentFlow(e.detail)],
       ['motif:add-block', (e) => editor.addBlock(blockPreset(e.detail.type))],
     ].map(([n, f]) => { addEventListener(n, f); return () => removeEventListener(n, f); });

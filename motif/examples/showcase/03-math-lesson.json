@@ -2,58 +2,303 @@
   "title": "从勾股定理到傅里叶",
   "theme": "lumen",
   "aspect": "16:9",
-  "meta": { "description": "公式书写与推导、几何作图、函数与积分面积、傅里叶级数、物理模拟" },
-  "style": { "energy": 0.5, "captions": true },
+  "meta": {
+    "description": "公式书写与推导、几何作图、函数与积分面积、傅里叶级数、物理模拟"
+  },
+  "style": {
+    "energy": 0.5,
+    "captions": true
+  },
   "scenes": [
-    { "layout": "cover", "blocks": [{ "type": "title", "kicker": "数学之美 · 第 1 讲", "text": "从勾股定理到傅里叶", "subtitle": "用动画看懂三个改变世界的想法" }], "narration": "今天用三个想法，走一遍两千五百年的数学。" },
     {
+      "layout": "cover",
       "blocks": [
-        { "type": "title", "text": "一个直角三角形" },
-        { "type": "geometry", "points": { "A": [0, 0], "B": [4, 0], "C": [0, 3] }, "shapes": [{ "type": "polygon", "points": ["A", "B", "C"] }, { "type": "right-angle", "at": "A", "from": "B", "to": "C" }, { "type": "label", "between": ["A", "B"], "text": "a = 4" }, { "type": "label", "between": ["A", "C"], "text": "b = 3" }, { "type": "label", "between": ["B", "C"], "text": "c = ?" }] }
+        {
+          "type": "title",
+          "kicker": "数学之美 · 第 1 讲",
+          "text": "从勾股定理到傅里叶",
+          "subtitle": "用动画看懂三个改变世界的想法"
+        }
       ],
-      "narration": "两条直角边分别是 4 和 3，斜边是多少？"
+      "narration": "今天用三个想法，走一遍两千五百年的数学。"
     },
     {
       "blocks": [
-        { "type": "title", "text": "勾股定理" },
-        { "type": "equation", "latex": "a^2 + b^2 = c^2", "steps": ["4^2 + 3^2 = c^2", "16 + 9 = c^2", "c = \\sqrt{25} = 5"], "label": "两直角边的平方和，等于斜边的平方" }
+        {
+          "type": "title",
+          "text": "一个直角三角形"
+        },
+        {
+          "type": "geometry",
+          "points": {
+            "A": [
+              0,
+              0
+            ],
+            "B": [
+              4,
+              0
+            ],
+            "C": [
+              0,
+              3
+            ]
+          },
+          "shapes": [
+            {
+              "type": "polygon",
+              "points": [
+                "A",
+                "B",
+                "C"
+              ]
+            },
+            {
+              "type": "right-angle",
+              "at": "A",
+              "from": "B",
+              "to": "C"
+            },
+            {
+              "type": "label",
+              "between": [
+                "A",
+                "B"
+              ],
+              "text": "a = 4"
+            },
+            {
+              "type": "label",
+              "between": [
+                "A",
+                "C"
+              ],
+              "text": "b = 3"
+            },
+            {
+              "type": "label",
+              "between": [
+                "B",
+                "C"
+              ],
+              "text": "c = ?"
+            }
+          ],
+          "id": "b_tri"
+        }
       ],
-      "narration": "代入计算，斜边等于 5。"
+      "narration": "两条直角边分别是 4 和 3，斜边是多少？",
+      "guide": {
+        "cursor": "pen",
+        "steps": [
+          {
+            "target": "b_tri",
+            "part": "AB",
+            "do": "highlight",
+            "say": "底边 AB 长 4"
+          },
+          {
+            "target": "b_tri",
+            "part": "AC",
+            "do": "highlight",
+            "say": "竖直的边 AC 长 3"
+          },
+          {
+            "target": "b_tri",
+            "part": "BC",
+            "do": "circle",
+            "note": "斜边 = ?",
+            "say": "那么斜边 BC 有多长？"
+          }
+        ]
+      }
+    },
+    {
+      "blocks": [
+        {
+          "type": "title",
+          "text": "勾股定理"
+        },
+        {
+          "type": "equation",
+          "latex": "a^2 + b^2 = c^2",
+          "steps": [
+            "4^2 + 3^2 = c^2",
+            "16 + 9 = c^2",
+            "c = \\sqrt{25} = 5"
+          ],
+          "label": "两直角边的平方和，等于斜边的平方",
+          "id": "b_pyth"
+        }
+      ],
+      "narration": "代入计算，斜边等于 5。",
+      "guide": {
+        "steps": [
+          {
+            "target": "b_pyth",
+            "part": "\\sqrt{25}",
+            "do": "underline",
+            "say": "把 16 和 9 加起来，再开平方"
+          },
+          {
+            "target": "b_pyth",
+            "part": "5",
+            "nth": 2,
+            "do": "circle",
+            "note": "斜边",
+            "say": "斜边正好是 5"
+          },
+          {
+            "target": "b_pyth",
+            "part": "斜边的平方",
+            "do": "highlight",
+            "say": "对任何直角三角形都成立"
+          }
+        ]
+      }
     },
     {
       "layout": "focus",
       "blocks": [
-        { "type": "title", "text": "曲线下的面积" },
-        { "type": "plot", "functions": [{ "expr": "0.5*x^2", "label": "f(x)=\\tfrac{1}{2}x^2" }], "x": [-0.5, 3.2], "y": [-0.3, 5], "area": { "expr": "0.5*x^2", "from": 0, "to": 2.5, "label": "\\int_0^{2.5} f(x)\\,dx" }, "tangent": { "expr": "0.5*x^2", "from": 0.4, "to": 2.8 } }
+        {
+          "type": "title",
+          "text": "曲线下的面积"
+        },
+        {
+          "type": "plot",
+          "functions": [
+            {
+              "expr": "0.5*x^2",
+              "label": "f(x)=\\tfrac{1}{2}x^2"
+            }
+          ],
+          "x": [
+            -0.5,
+            3.2
+          ],
+          "y": [
+            -0.3,
+            5
+          ],
+          "area": {
+            "expr": "0.5*x^2",
+            "from": 0,
+            "to": 2.5,
+            "label": "\\int_0^{2.5} f(x)\\,dx"
+          },
+          "tangent": {
+            "expr": "0.5*x^2",
+            "from": 0.4,
+            "to": 2.8
+          },
+          "id": "b_area"
+        }
       ],
-      "narration": "积分就是把曲线下的面积切成无数细条再加起来。"
+      "narration": "积分就是把曲线下的面积切成无数细条再加起来。",
+      "guide": {
+        "cursor": "laser",
+        "steps": [
+          {
+            "target": "b_area",
+            "part": [
+              2.5,
+              3.125
+            ],
+            "do": "point",
+            "note": "x = 2.5",
+            "say": "面积从 0 一直累积到 2.5"
+          },
+          {
+            "target": "b_area",
+            "part": "x轴",
+            "do": "highlight",
+            "say": "下边界是 x 轴"
+          }
+        ]
+      }
     },
     {
       "blocks": [
-        { "type": "title", "text": "微积分基本定理" },
-        { "type": "equation", "latex": "\\int_a^b f(x)\\,dx = F(b) - F(a)", "label": "求面积，只需要找到原函数" }
-      ]
+        {
+          "type": "title",
+          "text": "微积分基本定理"
+        },
+        {
+          "type": "equation",
+          "latex": "\\int_a^b f(x)\\,dx = F(b) - F(a)",
+          "label": "求面积，只需要找到原函数",
+          "id": "b_ftc"
+        }
+      ],
+      "guide": {
+        "steps": [
+          {
+            "target": "b_ftc",
+            "part": "\\int_a^b f(x)\\,dx",
+            "do": "underline",
+            "say": "左边：曲线下从 a 到 b 的面积"
+          },
+          {
+            "target": "b_ftc",
+            "part": "F(b) - F(a)",
+            "do": "circle",
+            "note": "原函数之差",
+            "say": "右边：只要原函数在两端的差"
+          },
+          {
+            "target": "b_ftc",
+            "part": "原函数",
+            "do": "highlight",
+            "say": "求面积，变成了找原函数"
+          }
+        ]
+      }
     },
     {
       "layout": "focus",
       "tone": "inverse",
       "blocks": [
-        { "type": "title", "text": "任何形状，都是圆的叠加" },
-        { "type": "fourier", "shape": "heart", "terms": 60 }
+        {
+          "type": "title",
+          "text": "任何形状，都是圆的叠加"
+        },
+        {
+          "type": "fourier",
+          "shape": "heart",
+          "terms": 60
+        }
       ],
       "narration": "傅里叶告诉我们：再复杂的曲线，也能由一圈圈旋转的圆合成。"
     },
     {
       "layout": "split",
       "blocks": [
-        { "type": "title", "text": "确定的方程，不可预测的运动", "subtitle": "双摆：初始条件的微小差别会被迅速放大" },
-        { "type": "simulation", "preset": "double-pendulum" }
+        {
+          "type": "title",
+          "text": "确定的方程，不可预测的运动",
+          "subtitle": "双摆：初始条件的微小差别会被迅速放大"
+        },
+        {
+          "type": "simulation",
+          "preset": "double-pendulum"
+        }
       ]
     },
     {
       "blocks": [
-        { "type": "title", "text": "小结" },
-        { "type": "bullets", "style": "checks", "items": ["勾股定理连接了长度与面积", "积分把无限细分变成可计算", "傅里叶把复杂拆成简单的叠加"] }
+        {
+          "type": "title",
+          "text": "小结"
+        },
+        {
+          "type": "bullets",
+          "style": "checks",
+          "items": [
+            "勾股定理连接了长度与面积",
+            "积分把无限细分变成可计算",
+            "傅里叶把复杂拆成简单的叠加"
+          ]
+        }
       ]
     }
   ]

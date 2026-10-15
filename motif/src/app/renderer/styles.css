@@ -334,7 +334,21 @@ kbd { font: 11px var(--mono); background: var(--bg3); border: 1px solid var(--li
 .tl-scene .lbl { position: relative; overflow: hidden; text-overflow: ellipsis; }
 .tl-scene .edge { position: absolute; right: 0; top: 0; bottom: 0; width: 7px; cursor: ew-resize; }
 .tl-scene .edge:hover { background: rgba(255, 255, 255, .25); }
-.tl-trans { position: absolute; top: 3px; bottom: 3px; border-radius: 5px; background: repeating-linear-gradient(135deg, rgba(208, 139, 255, .35) 0 4px, rgba(208, 139, 255, .12) 4px 8px); border: 1px solid rgba(208, 139, 255, .5); pointer-events: none; z-index: 1; }
+.tl-guided { position: relative; margin-left: auto; display: inline-flex; align-items: center; gap: 3px; font-size: 10.5px; color: var(--acc-hi); background: rgba(124, 109, 255, .16); border-radius: 9px; padding: 1px 6px 1px 5px; flex: none; }
+/* transition at the seam between two scenes: a thin span for its length + a round chip on the cut */
+.tl-cut { position: absolute; top: 0; bottom: 0; width: 0; z-index: 2; cursor: pointer; }
+.tl-cut-span { position: absolute; top: 50%; height: 2px; margin-top: -1px; transform: translateX(-50%); border-radius: 2px; background: linear-gradient(90deg, rgba(160, 150, 255, 0), rgba(160, 150, 255, .75) 30%, rgba(160, 150, 255, .75) 70%, rgba(160, 150, 255, 0)); pointer-events: none; }
+.tl-cut-dot { position: absolute; top: 50%; left: 0; width: 18px; height: 18px; transform: translate(-50%, -50%); border-radius: 50%; display: grid; place-items: center; background: var(--bg1); border: 1px solid #4a4f63; color: var(--fg2); box-shadow: 0 0 0 3px var(--bg1); transition: transform .12s, border-color .12s, color .12s; }
+.tl-cut:hover .tl-cut-dot { transform: translate(-50%, -50%) scale(1.15); border-color: var(--acc); color: var(--fg0); }
+.tl-cut.hard .tl-cut-dot { width: 8px; height: 8px; background: #4a4f63; border: none; box-shadow: 0 0 0 2px var(--bg1); }
+.tl-cut.hard .tl-cut-dot svg { display: none; }
+.tl-cut.hard:hover .tl-cut-dot { background: var(--acc); }
+/* explanation pointer steps */
+.tl-guide { position: absolute; top: 6px; bottom: 6px; border-radius: 5px; display: flex; align-items: center; gap: 5px; padding: 0 6px; font-size: 11px; color: #ffe6b0; background: rgba(245, 184, 75, .16); border: 1px solid rgba(245, 184, 75, .45); cursor: grab; white-space: nowrap; overflow: visible; }
+.tl-guide .ellipsis { overflow: hidden; text-overflow: ellipsis; }
+.tl-guide.fixed { border-style: solid; border-color: rgba(245, 184, 75, .85); }
+.tl-guide:hover { background: rgba(245, 184, 75, .26); }
+.tl-guide-travel { position: absolute; top: 50%; height: 0; border-top: 1px dashed rgba(245, 184, 75, .5); pointer-events: none; }
 .tl-block { position: absolute; top: 5px; bottom: 5px; border-radius: 5px; display: flex; align-items: center; cursor: grab; min-width: 6px; }
 .tl-block .build { height: 100%; border-radius: 5px; background: linear-gradient(90deg, rgba(124, 109, 255, .85), rgba(124, 109, 255, .55)); border: 1px solid rgba(160, 150, 255, .7); display: flex; align-items: center; padding: 0 6px; color: #fff; font-size: 11px; overflow: hidden; white-space: nowrap; flex: none; }
 .tl-block .hold { height: 2px; background: rgba(124, 109, 255, .4); flex: 1; }
@@ -490,3 +504,20 @@ kbd { font: 11px var(--mono); background: var(--bg3); border: 1px solid var(--li
 .issue .lv.warning { color: var(--warn); }
 .issue .lv.info { color: var(--ai2); }
 .issue .h { color: var(--fg2); font-size: 11.5px; }
+
+/* explanation pointer (guide) editor */
+.guide-ed h4 { display: flex; align-items: center; gap: 6px; }
+.guide-empty { font-size: 12px; line-height: 1.6; color: var(--fg2); background: var(--bg2); border: 1px dashed var(--line2); border-radius: 8px; padding: 10px 12px; }
+.guide-steps { display: flex; flex-direction: column; gap: 8px; margin-top: 6px; }
+.guide-step { border: 1px solid var(--line); background: var(--bg2); border-radius: 9px; padding: 8px; display: flex; flex-direction: column; gap: 6px; cursor: pointer; transition: border-color .15s; }
+.guide-step:hover { border-color: var(--line2); }
+.guide-step:focus-within { border-color: var(--acc); }
+.gs-head { display: flex; align-items: center; gap: 6px; }
+.gs-n { flex: none; width: 20px; height: 20px; border-radius: 50%; background: var(--acc); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+.gs-tools { display: flex; gap: 0; flex: none; }
+.gs-row { display: flex; align-items: center; gap: 6px; color: var(--fg3); }
+.gs-row > .input, .gs-row > input { flex: 1; min-width: 0; }
+.gs-meta .num { width: 84px; flex: none; }
+.gs-time { flex: none; }
+.gs-keep { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--fg2); flex: none; cursor: pointer; }
+.gs-warn { display: flex; align-items: center; gap: 5px; font-size: 11.5px; color: #f5b84b; }

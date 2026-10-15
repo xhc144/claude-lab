@@ -5,7 +5,8 @@ import { composite } from './transitions.js';
 import { EASE, clamp01 } from './motion/easing.js';
 import { toCss } from '../core/util/color.js';
 import { fontString } from './text/text.js';
-import { roundRect } from './components/kit.js';
+import { roundRect, REC } from './components/kit.js';
+import { drawGuide, guideSay } from './guide.js';
 
 const layers = [];
 function layer(i, w, h) {
@@ -110,6 +111,9 @@ function drawScene(ctx, C, S, lt, o) {
   ctx.save();
   if (!o.noCamera) cameraTransform(ctx, env, S.camera, lt, S.duration);
   const ds = { sceneT: lt, sceneDur: S.duration, frame: o.frame };
+  // While an explanation track is live, components report where they drew text and items.
+  const guided = !!(S.guide && lt >= S.guide.start - 0.05);
+  if (guided) { REC.on = true; REC.texts = []; REC.items = []; REC.base = ctx.getTransform(); }
   let scrimDrawn = false;
   for (const it of S.items) {
     if (!it.bleed && !scrimDrawn) {
@@ -119,12 +123,15 @@ function drawScene(ctx, C, S, lt, o) {
     if (o.skip && o.skip.has(it.block.id)) continue;
     const local = lt - it.start;
     if (local < -0.0001 && !it.bleed) continue;
+    REC.block = it.block.id; REC.item = null;
     ctx.save();
     try { it.inst.draw(ctx, local, ds); } catch (err) { if (!it._err) { it._err = true; console.error(err); } }
     ctx.restore();
   }
   if (!scrimDrawn) for (const d of S.decor) if (d.kind === 'scrim') drawDecor(ctx, C, S, d, lt);
+  REC.on = false;
   for (const d of S.decor) if (d.kind !== 'scrim') drawDecor(ctx, C, S, d, lt);
+  if (guided) { try { drawGuide(ctx, C, S, lt); } catch (err) { if (!S._guideErr) { S._guideErr = true; console.error(err); } } }
   ctx.restore();
   if (ownBg && !C.persistent) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'over', env.assets);
 }
@@ -156,25 +163,33 @@ function drawChrome(ctx, C, t, S) {
     ctx.fillText([doc.brand.name, doc.brand.footer].filter(Boolean).join('  ·  '), env.grid.mx, H - env.grid.my * 0.42);
   }
   if (st.captions) {
-    const text = S.scene.narration?.text;
-    if (text) {
+    const say = guideSay(S, t - S.start);
+    const text = say || S.scene.narration?.text;
+    if (say) {
+      drawCaption(ctx, env, say);
+    } else if (text) {
       const sentences = text.split(/(?<=[。！？!?；;.])\s*/).filter(Boolean);
       const total = sentences.reduce((s, x) => s + x.length, 0);
       const lt = (t - S.start) / S.duration;
       let acc = 0, cur = sentences[sentences.length - 1];
       for (const s of sentences) { acc += s.length / total; if (lt <= acc) { cur = s; break; } }
-      const size = env.sizes.small * 1.05;
-      ctx.font = fontString(env.fonts.text, size);
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-      const w = Math.min(ctx.measureText(cur).width, W * 0.8);
-      const bx = W / 2 - w / 2 - size * 0.8, by = H - env.grid.my * 0.95 - size * 1.6;
-      ctx.fillStyle = 'rgba(0,0,0,0.62)';
-      roundRect(ctx, bx, by, w + size * 1.6, size * 1.9, size * 0.4); ctx.fill();
-      ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-      ctx.fillText(cur, W / 2, by + size * 1.32, W * 0.8);
-      ctx.textAlign = 'left';
+      drawCaption(ctx, env, cur);
     }
   }
+}
+
+function drawCaption(ctx, env, cur) {
+  const { W, H } = env;
+  const size = env.sizes.small * 1.05;
+  ctx.font = fontString(env.fonts.text, size);
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+  const w = Math.min(ctx.measureText(cur).width, W * 0.8);
+  const bx = W / 2 - w / 2 - size * 0.8, by = H - env.grid.my * 0.95 - size * 1.6;
+  ctx.fillStyle = 'rgba(0,0,0,0.62)';
+  roundRect(ctx, bx, by, w + size * 1.6, size * 1.9, size * 0.4); ctx.fill();
+  ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
+  ctx.fillText(cur, W / 2, by + size * 1.32, W * 0.8);
+  ctx.textAlign = 'left';
 }
 
 /**

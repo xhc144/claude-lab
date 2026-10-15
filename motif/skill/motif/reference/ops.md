@@ -62,7 +62,7 @@
 
 ### `update_scene`
 
-修改场景属性（深度合并）。set 可含 layout/duration/transition/background/camera/tone/variant/notes/narration/name；若含 blocks 则整体替换块列表。
+修改场景属性（深度合并）。set 可含 layout/duration/transition/background/camera/tone/variant/notes/narration/name/guide（讲解指针，整体替换；null 删除）；若含 blocks 则整体替换块列表。
 
 - `scene`：场景 ID 或序号
 - `set`：要修改的字段

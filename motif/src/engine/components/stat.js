@@ -2,6 +2,7 @@
 import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon,
   roundRect, toCss, EASE, clamp01, colorOf, formatNumber, decimalsOf, numberWidth, drawTabular, blockPreset, mix,
+  recItem,
 } from './kit.js';
 import { fontString, familyList } from '../text/text.js';
 import { parseNumberish } from '../../core/util/misc.js';
@@ -257,6 +258,7 @@ const stats = {
           const box = { x: rect.x + col * (cw + gap), y: y0 + row * (cellH + gap), w: cw, h: cellH };
           const ti = t - i * stagger;
           if (ti <= 0) return;
+          recItem(i, box, ctx);
           if (style === 'cards') withState(ctx, blockState(c, ti, preset, { size: env.sizes.h2 }), box, () => drawCard(ctx, c, box));
           if (style === 'divided' && col > 0) {
             const e = env.motion.ease(clamp01(ti / env.motion.duration));

@@ -3,6 +3,7 @@
 import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon, pickIcon,
   roundRect, toCss, EASE, clamp01, colorOf, blockPreset, mix,
+  recItem,
 } from './kit.js';
 import { fontString } from '../text/text.js';
 import { parseNumberish } from '../../core/util/misc.js';
@@ -101,6 +102,7 @@ const table = {
           if (ti <= 0) return;
           const a = clamp01(ti / 0.45);
           const y = y0 + M.headH + i * M.rowH;
+          recItem(i, { x: rect.x, y, w: rect.w, h: M.rowH }, ctx);
           ctx.save(); ctx.globalAlpha *= a; ctx.translate(0, (1 - env.motion.ease(clamp01(ti / 0.6))) * M.fs * 0.6);
           for (let j = 0; j < M.ncol; j++) {
             const v = String(r[j] ?? '');
@@ -160,6 +162,7 @@ const timeline = {
             const ti = t - 0.1 - reach * lineDur;
             if (ti <= 0) return;
             const k = popE(env, ti);
+            recItem(i, { x: x - dotR, y: lineY - dotR, w: dotR * 2, h: dotR * 2 }, ctx);
             const isH = hl === i, past = hl != null && i < hl;
             const col = isH || hl == null ? p.accent : past ? p.accent : p.mutedText;
             ctx.save();
@@ -209,6 +212,7 @@ const timeline = {
           if (ti <= 0) return;
           const k = popE(env, ti);
           const isH = hl === i;
+          recItem(i, { x: lx - dotR, y: y - dotR, w: dotR * 2, h: dotR * 2 }, ctx);
           ctx.save(); ctx.translate(lx, y); ctx.scale(k, k);
           ctx.beginPath(); ctx.arc(0, 0, dotR * (isH ? 1.3 : 1), 0, TAU); ctx.fillStyle = isH || hl == null ? p.accent : p.bg; ctx.fill();
           ctx.lineWidth = Math.max(2, env.unit * 3); ctx.strokeStyle = p.accent; ctx.stroke(); ctx.restore();
@@ -265,6 +269,7 @@ const steps = {
             if (ti <= 0) return;
             const cy = rect.y + rowH * (i + 0.5);
             const k = popE(env, ti);
+            recItem(i, { x: rect.x, y: cy - R, w: R * 2, h: R * 2 }, ctx);
             if (i < n - 1) { ctx.fillStyle = p.softLine; ctx.fillRect(rect.x + R - env.unit, cy + R * 1.2, env.unit * 2, (rowH - R * 2.4) * clamp01((ti - 0.3) / 0.4)); }
             ctx.save(); ctx.translate(rect.x + R, cy); ctx.scale(k, k);
             ctx.beginPath(); ctx.arc(0, 0, R, 0, TAU); ctx.fillStyle = hl == null || hl === i ? p.accent : toCss(p.accent, 0.2); ctx.fill();
@@ -304,6 +309,7 @@ const steps = {
           const k = popE(env, ti);
           const isH = hl === i;
           const m = models[i];
+          recItem(i, style === 'cards' ? { x, y: y0 - env.sizes.body * 0.8, w: cw, h: blockH + env.sizes.body * 1.6 } : { x: x, y: y0, w: R * 2, h: R * 2 }, ctx);
           if (style === 'cards') {
             withState(ctx, blockState(c, ti, blockPreset(env), { size: env.sizes.h2 }), { x, y: y0 - env.sizes.body * 0.8, w: cw, h: blockH + env.sizes.body * 1.6 }, () => {
               drawCard(ctx, c, { x, y: y0 - env.sizes.body * 0.8, w: cw, h: blockH + env.sizes.body * 1.6 });
@@ -378,6 +384,7 @@ function cycle(block, c, rect, items, per) {
         const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
         const ti = t - i * per;
         if (ti <= 0) return;
+        recItem(i, { x: x - nr, y: y - nr, w: nr * 2, h: nr * 2 }, ctx);
         const k = popE(env, ti);
         ctx.save(); ctx.translate(x, y); ctx.scale(k, k);
         ctx.beginPath(); ctx.arc(0, 0, nr, 0, TAU); ctx.fillStyle = p.data[i % p.data.length]; ctx.fill();
@@ -444,6 +451,7 @@ const features = {
           const ti = t - i * per;
           if (ti <= 0) return;
           const m = models[i];
+          recItem(i, box, ctx);
           withState(ctx, blockState(c, ti, blockPreset(env), { size: env.sizes.h2 }), box, () => {
             if (style === 'cards') drawCard(ctx, c, box);
             else if (col > 0) { ctx.fillStyle = p.softLine; ctx.fillRect(box.x - gap / 2, box.y, Math.max(1, env.unit), box.h * clamp01(ti / 0.6)); }
@@ -501,6 +509,7 @@ const compare = {
           const box = { x: rect.x + j * (cw + gap), y: y0, w: cw, h };
           const tj = t - j * per;
           if (tj <= 0) return;
+          recItem(j, box, ctx);
           const isW = win === j, isL = win != null && win !== j;
           const hm = win != null ? EASE.inOutCubic(clamp01((t - per * n - 0.6) / 0.5)) : 0;
           withState(ctx, blockState(c, tj, j === 0 ? 'slide-right' : 'slide-left', { size: env.sizes.h2 }), box, () => {
@@ -680,6 +689,7 @@ const flow = {
           if (ti <= 0) continue;
           const k = popE(env, ti, 0.5);
           const tone = P.n.tone && P.n.tone !== 'auto' ? colorOf(p, P.n.tone) : P.li === 0 ? p.accent : null;
+          recItem(nodes.indexOf(P.n), P, ctx, P.n.id);
           ctx.save();
           ctx.translate(P.cx, P.cy); ctx.scale(k, k); ctx.translate(-P.cx, -P.cy);
           ctx.globalAlpha *= clamp01(ti / 0.25);
