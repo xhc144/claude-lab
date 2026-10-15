@@ -47,8 +47,13 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版与英文版（含模拟面试、难词音标、中英对照讲稿） | 仓库内 `windmill-theorem/output/`（暂未上线 Pages） | [windmill-theorem/](windmill-theorem/)；Manim、TeX、FFmpeg；`bash build.sh` |
 | 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | 成片在 [fermat-windmill/output/](fermat-windmill/output/) | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
 | 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | 仓库内 [output/](fixed-point-film/output/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
+| 《最优化的本质》 | 约 19 分钟的中文数学讲解视频：不等式与极值、凸优化、梯度下降、线性规划，带配音与字幕 | 成片见 [optimization-film/output/](optimization-film/output/) | [optimization-film/](optimization-film/)；Manim、离线中文语音合成、FFmpeg；`python tools/build.py` |
 
 站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。
+
+## 视频讲解稿
+
+[video-scripts/](video-scripts/) 收录数学专题的视频讲解稿。目前有《最优化》一份：6 集，覆盖不等式与极值问题、凸优化、梯度下降法和线性规划，附带核对全部数值例子的 Python 脚本。稿件只在仓库中维护，不发布到 Pages。
 
 ## 桌面项目与隔离内容
 
