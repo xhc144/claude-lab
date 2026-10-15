@@ -1,0 +1,28 @@
+# electron-builder produces the unpacked Windows app; scripts/dist-win.mjs stamps icon/version
+# info into the executable and packs a portable zip (no installer, no admin rights needed).
+appId: com.particleuniverse.app
+productName: ParticleUniverse
+executableName: ParticleUniverse
+copyright: MIT License
+directories:
+  output: release
+  buildResources: build
+files:
+  - dist/renderer/**/*
+  - src/main/**/*
+  - build/icon.ico
+  - build/icon.png
+  - package.json
+  - "!**/*.map"
+asar: true
+electronLanguages:
+  - zh-CN
+  - en-US
+npmRebuild: false
+nodeGypRebuild: false
+win:
+  target:
+    - target: dir
+      arch: [x64]
+  icon: build/icon.ico
+  signAndEditExecutable: false

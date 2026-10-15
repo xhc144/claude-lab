@@ -1,0 +1,18 @@
+import { chromium } from 'playwright-core';
+import { createServer } from 'vite';
+const scene = process.argv[2] || 'attractor';
+const server = await createServer({ configFile: '/home/user/claude-lab/particle-universe/vite.config.mjs', server: { port: 5199 }, logLevel: 'error' });
+await server.listen();
+const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+const page = await browser.newPage({ viewport: { width: 480, height: 270 } });
+page.on('pageerror', (e) => console.log('[pageerror]', e.message));
+await page.goto(`http://localhost:5199/dev/engine-test.html?scene=${scene}&tier=0&w=480&h=270`);
+await page.waitForFunction(() => window.__ready || window.__error);
+console.log(await page.evaluate(() => window.__error));
+const stat = (arr) => { const m = [0,0,0,0], mn=[1e9,1e9,1e9,1e9], mx=[-1e9,-1e9,-1e9,-1e9]; let nan=0; for (const p of arr) { if (p.some(Number.isNaN)) { nan++; continue; } p.forEach((v,i)=>{m[i]+=v/arr.length; mn[i]=Math.min(mn[i],v); mx[i]=Math.max(mx[i],v);}); } return { mean: m.map(v=>v.toFixed(2)), min: mn.map(v=>v.toFixed(2)), max: mx.map(v=>v.toFixed(2)), nan }; };
+for (const w of ['pos','home','vel']) console.log('t0', w, JSON.stringify(stat(await page.evaluate((w) => window.__read(w), w))));
+let t = 0;
+t = await page.evaluate((t) => window.__step(60, t), t);
+for (const w of ['pos','home','vel']) console.log('t1', w, JSON.stringify(stat(await page.evaluate((w) => window.__read(w), w))));
+console.log(JSON.stringify((await page.evaluate(() => window.__read('home'))).slice(0, 8)));
+await browser.close(); await server.close();
