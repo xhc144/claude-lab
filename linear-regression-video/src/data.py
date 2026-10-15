@@ -27,7 +27,7 @@ def sse(a, b, x=X, y=Y):
 
 # 三个点的小例子：在三维里看投影
 X3 = np.array([0.0, 1.0, 2.0])
-Y3 = np.array([1.0, 3.0, 2.0])
+Y3 = np.array([0.0, 4.0, 2.0])
 ONE3 = np.ones(3)
 M3 = np.column_stack([ONE3, X3])
 A3, B3 = np.linalg.solve(M3.T @ M3, M3.T @ Y3)

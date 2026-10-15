@@ -64,20 +64,20 @@ class Space(VThreeDScene):
     header = "三 · 换个角度"
 
     def construct(self):
-        THETA = 8 * DEGREES
-        PHI = 68 * DEGREES
-        ax = ThreeDAxes(x_range=[-0.5, 3.5, 1], y_range=[-0.5, 3.5, 1], z_range=[-0.5, 3.2, 1],
-                        x_length=4.4, y_length=4.4, z_length=4.0,
+        THETA = -135 * DEGREES
+        PHI = 75 * DEGREES
+        ax = ThreeDAxes(x_range=[-0.5, 3.0, 1], y_range=[-0.5, 4.5, 1], z_range=[-0.5, 4.0, 1],
+                        x_length=3.5, y_length=5.0, z_length=4.5,
                         axis_config={"color": LINE, "stroke_width": 2, "include_tip": False, "tick_size": 0.04})
+        # 把三维内容挪到画面左边，右边留给公式（只移动内容，不移动镜头，固定在画面上的文字才不会跟着偏）
+        right_dir = np.array([-np.sin(THETA), np.cos(THETA), 0])
+        ax.shift(-ax.c2p(1.0, 2.0, 1.8) - 3.0 * right_dir)
         P = ax.c2p
         o = P(0, 0, 0)
-        # 让三维内容偏左，右边留给公式
-        right_dir = np.array([-np.sin(THETA), np.cos(THETA), 0])
-        center = P(1.2, 1.4, 1.1) + 2.6 * right_dir
-        self.set_camera_orientation(phi=PHI, theta=-40 * DEGREES, frame_center=center, zoom=1.0)
+        self.set_camera_orientation(phi=PHI, theta=THETA - 40 * DEGREES, zoom=0.95)
 
         def arrow(v, color, width=5):
-            return Arrow3D(o, P(*v), color=color, thickness=0.018, height=0.22, base_radius=0.06)
+            return Arrow3D(o, P(*v), color=color, thickness=0.018, height=0.22, base_radius=0.06, resolution=8)
 
         def label(text, pos, color=INK, size=36, is_tex=True):
             m = tex(text, size=size, color=color) if is_tex else zh(text, size - 10, color)
@@ -86,12 +86,12 @@ class Space(VThreeDScene):
             return m
 
         def side(m, y):
-            m.move_to([RX + 0.6, y, 0])
+            m.move_to([RX + 0.35, y, 0])
             self.add_fixed_in_frame_mobjects(m)
             return m
 
         axl = VGroup(*[zh(f"同学{k}", 20, SOFT) for k in (1, 2, 3)])
-        axl[0].move_to(P(3.8, 0, 0)); axl[1].move_to(P(0, 3.8, 0)); axl[2].move_to(P(0, 0, 3.5))
+        axl[0].move_to(P(3.3, 0, 0)); axl[1].move_to(P(0, 4.8, 0)); axl[2].move_to(P(0, 0, 4.3))
         ya = arrow(Y3, INK)
         with self.say("g06") as d:
             self.play(Create(ax), run_time=1.0)
@@ -99,7 +99,7 @@ class Space(VThreeDScene):
             self.play(FadeIn(axl), run_time=0.4)
             self.play(FadeIn(ya), run_time=0.8)
             yl = label(r"\mathbf y", P(*Y3) + OUT * 0.3 + RIGHT * 0.1)
-            yv = side(tex(r"\mathbf y=(1,\,3,\,2)", size=40), 2.3)
+            yv = side(tex(r"\mathbf y=(0,\,4,\,2)", size=40), 2.3)
             self.play(FadeIn(yl), FadeIn(yv), run_time=0.6)
         self.move_camera(theta=THETA, run_time=2.4)
 
@@ -116,16 +116,16 @@ class Space(VThreeDScene):
             self.wait(d * 0.2)
             self.play(FadeIn(comb), run_time=0.8)
 
-        s0, s1, t0, t1 = -0.1, 3.0, -0.75, 1.35
-        corners = [P(*(s * np.ones(3) + t * X3)) for s, t in [(s0, t0), (s1, t0), (s1, t1), (s0, t1)]]
+        u1, u2 = np.ones(3) / np.sqrt(3), np.array([-1.0, 0.0, 1.0]) / np.sqrt(2)
+        corners = [P(*(FIT3 + al * u1 + be * u2)) for al, be in [(-3.9, -1.9), (0.7, -1.9), (0.7, 1.0), (-3.9, 1.0)]]
         plane = Polygon(*corners, stroke_width=1, stroke_color=BLUE, fill_color=BLUE, fill_opacity=0.16)
-        span = label(r"\operatorname{span}\{\mathbf 1,\mathbf x\}", P(*(2.75 * np.ones(3) - 0.6 * X3)) + IN * 0.2, BLUE, 30)
+        span = label(r"\operatorname{span}\{\mathbf 1,\mathbf x\}", P(*(FIT3 + 0.3 * u1 - 1.6 * u2)), BLUE, 30)
         sa, tb = ValueTracker(0.6), ValueTracker(1.0)
 
         def cur():
             return sa.get_value() * np.ones(3) + tb.get_value() * X3
 
-        mv = always_redraw(lambda: Dot3D(P(*cur()), radius=0.06, color=BLUE))
+        mv = Dot(P(*cur()), radius=0.07, color=BLUE).add_updater(lambda m: m.move_to(P(*cur())))
         with self.say("g08") as d:
             self.play(FadeIn(plane), FadeIn(span), run_time=1.0)
             self.add(mv)
@@ -152,8 +152,8 @@ class Space(VThreeDScene):
             self.play(sa.animate.set_value(A3), tb.animate.set_value(B3), run_time=min(2.0, d * 0.45))
             self.play(Create(ra), FadeIn(foot_lab), FadeIn(proj_t), run_time=0.8)
 
-        other = FIT3 + 1.0 * np.ones(3) - 0.5 * X3
-        po = Dot3D(P(*other), radius=0.06, color=GRAY)
+        other = FIT3 - 1.2 * u1 - 1.2 * u2
+        po = Dot(P(*other), radius=0.07, color=GRAY)
         hyp = DashedLine(P(*other), P(*Y3), color=GRAY, stroke_width=3)
         leg = DashedLine(P(*other), hat, color=GRAY, stroke_width=3)
         why = side(VGroup(zh("斜边 > 直角边", 26, SOFT)), -2.5)
@@ -189,12 +189,12 @@ class Space(VThreeDScene):
             self.play(FadeIn(ne), Create(ne_box), run_time=1.0)
             self.play(FadeIn(ne_lab), run_time=0.6)
 
-        sol = side(tex(r"a=1.5,\quad b=0.5", size=38), -1.2)
-        ev = side(tex(r"\mathbf e=(-0.5,\ 1,\ -0.5)", size=38, color=ORANGE), -1.9)
+        sol = side(tex(r"a=1,\quad b=1", size=38), -1.2)
+        ev = side(tex(r"\mathbf e=(-1,\ 2,\ -1)", size=38, color=ORANGE), -1.9)
         with self.say("g17") as d:
             self.play(FadeIn(sol), run_time=0.7)
             self.play(FadeIn(ev), run_time=0.7)
-        chk = side(VGroup(tex(r"-0.5+1-0.5=0", size=32), tex(r"0(-0.5)+1(1)+2(-0.5)=0", size=32))
+        chk = side(VGroup(tex(r"-1+2-1=0", size=32), tex(r"0\cdot(-1)+1\cdot 2+2\cdot(-1)=0", size=32))
                    .arrange(DOWN, buff=0.15, aligned_edge=LEFT), -2.85)
         with self.say("g18") as d:
             self.play(FadeIn(chk[0]), run_time=0.7)
@@ -203,14 +203,14 @@ class Space(VThreeDScene):
 
         # 对象与坐标
         old2 = VGroup(xm, xte, ne, ne_box, ne_lab, sol, ev, chk)
-        obj = side(VGroup(tex(r"\hat{\mathbf y}=(1.5,\ 2,\ 2.5)", size=38, color=BLUE),
+        obj = side(VGroup(tex(r"\hat{\mathbf y}=(1,\ 2,\ 3)", size=38, color=BLUE),
                           zh("平面上的一个点：由 y 和平面决定", 24, SOFT)).arrange(DOWN, buff=0.18), 2.0)
         ring = Circle(radius=0.16, color=BLUE, stroke_width=3).move_to(hat)
         self.add_fixed_orientation_mobjects(ring)
         with self.say("g19") as d:
             self.play(FadeOut(old2), run_time=0.6)
             self.play(FadeIn(obj), Create(ring), run_time=0.9)
-        crd = side(VGroup(tex(r"\hat{\mathbf y}=1.5\,\mathbf 1+0.5\,\mathbf x", size=38),
+        crd = side(VGroup(tex(r"\hat{\mathbf y}=1\cdot\mathbf 1+1\cdot\mathbf x", size=38),
                           zh("(a, b) 是它在基 {1, x} 下的坐标", 24, SOFT)).arrange(DOWN, buff=0.18), 0.5)
         with self.say("g20") as d:
             self.play(FadeIn(crd), run_time=0.9)
@@ -218,8 +218,8 @@ class Space(VThreeDScene):
         xc = np.array([-1.0, 0.0, 1.0])  # x − x̄·1
         xc_a = arrow(xc, GOLD)
         xcl = label(r"\mathbf x-\bar x\mathbf 1", P(*xc) + OUT * 0.3 + LEFT * 0.2, GOLD, 30)
-        crd2 = side(VGroup(tex(r"\hat{\mathbf y}=2\,\mathbf 1+0.5\,(\mathbf x-\bar x\mathbf 1)", size=36),
-                           zh("坐标变成 (2, 0.5)，投影点不变", 24, BLUE)).arrange(DOWN, buff=0.18), -1.1)
+        crd2 = side(VGroup(tex(r"\hat{\mathbf y}=2\cdot\mathbf 1+1\cdot(\mathbf x-\bar x\mathbf 1)", size=36),
+                           zh("坐标变成 (2, 1)，投影点不变", 24, BLUE)).arrange(DOWN, buff=0.18), -1.1)
         with self.say("g21") as d:
             self.play(FadeIn(xc_a), FadeIn(xcl), run_time=0.9)
             self.play(FadeIn(crd2), run_time=0.9)
