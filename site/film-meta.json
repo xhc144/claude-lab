@@ -1,0 +1,201 @@
+{
+ "fermat-windmill/output/fermat_windmill_en.mp4": {
+  "size": 59408270,
+  "duration": 1576.333333,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "01 Opening"
+   },
+   {
+    "t": 64,
+    "title": "02 Statement and history"
+   },
+   {
+    "t": 159.866,
+    "title": "03 The easy direction"
+   },
+   {
+    "t": 254.832,
+    "title": "04 Parity and involutions"
+   },
+   {
+    "t": 347.698,
+    "title": "05 Creating a symmetry"
+   },
+   {
+    "t": 460.63,
+    "title": "06 Windmills"
+   },
+   {
+    "t": 519.93,
+    "title": "07 Zagier's re-cutting"
+   },
+   {
+    "t": 679.862,
+    "title": "08 Why this proof"
+   },
+   {
+    "t": 768.762,
+    "title": "09 From existence to an algorithm"
+   },
+   {
+    "t": 862.927,
+    "title": "10 Generalizations"
+   },
+   {
+    "t": 987.627,
+    "title": "11 Applications"
+   },
+   {
+    "t": 1088.661,
+    "title": "12 Mock interview"
+   },
+   {
+    "t": 1519.55,
+    "title": "13 What I learned"
+   }
+  ]
+ },
+ "fermat-windmill/output/fermat_windmill_zh.mp4": {
+  "size": 53241219,
+  "duration": 1355.366667,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "01 引子"
+   },
+   {
+    "t": 54.333,
+    "title": "02 定理与历史"
+   },
+   {
+    "t": 139.533,
+    "title": "03 容易的方向"
+   },
+   {
+    "t": 228.966,
+    "title": "04 奇偶与对合"
+   },
+   {
+    "t": 322.833,
+    "title": "05 制造对称"
+   },
+   {
+    "t": 426.7,
+    "title": "06 风车"
+   },
+   {
+    "t": 491.066,
+    "title": "07 扎吉尔的重新切割"
+   },
+   {
+    "t": 647.298,
+    "title": "08 为什么会想到它"
+   },
+   {
+    "t": 740.431,
+    "title": "09 从存在到算法"
+   },
+   {
+    "t": 834.897,
+    "title": "10 推广"
+   },
+   {
+    "t": 946.063,
+    "title": "11 应用"
+   },
+   {
+    "t": 1039.396,
+    "title": "12 模拟面试"
+   },
+   {
+    "t": 1300.947,
+    "title": "13 我的思考"
+   }
+  ]
+ },
+ "fixed-point-film/output/fixed_point_en.mp4": {
+  "size": 33781214,
+  "duration": 288.233333,
+  "height": 1080,
+  "chapters": []
+ },
+ "fixed-point-film/output/fixed_point_zh.mp4": {
+  "size": 33968984,
+  "duration": 309.5,
+  "height": 1080,
+  "chapters": []
+ },
+ "optimization-film/output/optimization_essence_1080p.mp4": {
+  "size": 63866095,
+  "duration": 1136,
+  "height": 1080,
+  "chapters": []
+ },
+ "sea-above/out/the_sea_above.mp4": {
+  "size": 83561613,
+  "duration": 71.018,
+  "height": 1080,
+  "chapters": []
+ },
+ "symmetry-film/output/abstract_algebra_promo_web.mp4": {
+  "size": 94941117,
+  "duration": 219.6,
+  "height": 1080,
+  "chapters": []
+ },
+ "two-sample-test-video/output/two-sample-test.mp4": {
+  "size": 33553766,
+  "duration": 847.499,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "开场：差了 3.3 分"
+   },
+   {
+    "t": 107.966,
+    "title": "相减，抖得更厉害"
+   },
+   {
+    "t": 209.332,
+    "title": "σ 不知道的时候"
+   },
+   {
+    "t": 398.066,
+    "title": "方差能不能合并"
+   },
+   {
+    "t": 495.099,
+    "title": "两个方差不一样"
+   },
+   {
+    "t": 550.066,
+    "title": "同一个人，考两次"
+   },
+   {
+    "t": 694.299,
+    "title": "数人头"
+   },
+   {
+    "t": 787.599,
+    "title": "一棵树"
+   }
+  ]
+ },
+ "windmill-theorem/output/windmill_theorem_en.mp4": {
+  "size": 84601897,
+  "duration": 1704.733,
+  "height": 1080,
+  "chapters": []
+ },
+ "windmill-theorem/output/windmill_theorem_zh.mp4": {
+  "size": 67334381,
+  "duration": 1096.3,
+  "height": 1080,
+  "chapters": []
+ }
+}

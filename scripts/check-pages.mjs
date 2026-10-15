@@ -4,16 +4,20 @@ import { resolve, dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root=resolve(fileURLToPath(new URL('../docs',import.meta.url)));
 const files=[];function walk(d){for(const n of readdirSync(d)){const p=join(d,n);if(statSync(p).isDirectory())walk(p);else files.push(p)}}walk(root);
-const allowed=new Set(['.html','.css','.js','.woff2','.svg','.jpg','.mp4','.txt','.md','.pdf','.png','.zip']);
+const allowed=new Set(['.html','.css','.js','.woff2','.svg','.jpg','.mp4','.srt','.txt','.md','.pdf','.png','.zip']);
 const templateNames='notes|exercise|exam|paper|book|translation';
 const previewNames='notes|exercise|exercise-student|exercise-key|exam|exam-answers|paper|book|translation|translation-columns';
 const mojingAsset=new RegExp(`^mojing/(?:previews/(?:${previewNames})\\.pdf|previews/png/(?:${previewNames})\\.png|dist/mojing-(?:${templateNames})\\.zip)$`);
+// Films: one directory per film with its player, MP4 versions, subtitles and optional transcripts.
+const filmAsset=/^films\/[a-z0-9-]+\/(?:index\.html|film(?:-[a-z]{2})?\.(?:mp4|srt)|transcript\.(?:html|pdf))$/;
 const failures=[];let refs=0;
 for(const file of files){
  const rel=relative(root,file);if(rel==='.nojekyll')continue;
  const ext=/\.[^.]+$/.exec(file)?.[0];
  if(!allowed.has(ext)||/hongyan|node_modules|\.env|\.exe|\.eml|\.sqlite|\.key/i.test(rel))failures.push('Forbidden output: '+rel);
- if(['.pdf','.png','.zip'].includes(ext)&&!mojingAsset.test(rel))failures.push('Outside template asset whitelist: '+rel);
+ if(rel.startsWith('films/')&&!filmAsset.test(rel))failures.push('Outside film asset whitelist: '+rel);
+ if(['.mp4','.srt'].includes(ext)&&!filmAsset.test(rel))failures.push('Media outside films/: '+rel);
+ if(['.pdf','.png','.zip'].includes(ext)&&!mojingAsset.test(rel)&&!filmAsset.test(rel))failures.push('Outside template asset whitelist: '+rel);
  if(ext==='.pdf'&&!readFileSync(file).subarray(0,5).equals(Buffer.from('%PDF-')))failures.push('Invalid PDF: '+rel);
  if(ext==='.zip'&&!readFileSync(file).subarray(0,2).equals(Buffer.from('PK')))failures.push('Invalid ZIP: '+rel);
  if(!['.html','.css','.js'].includes(ext))continue;

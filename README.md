@@ -4,7 +4,7 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页提供五个交互项目、一个产品界面原型、墨经模板目录与两个影片播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的全部 21 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；七部影片都有带版本切换、章节跳转和下载链接的在线播放器。
 
 ## 浏览器交互项目
 
@@ -50,13 +50,13 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | --- | --- | --- | --- |
 | 《对称的语言》 | 约 3 分 40 秒的抽象代数主题影片 | [播放器](https://xhc144.github.io/claude-lab/films/symmetry-film/) | [symmetry-film/](symmetry-film/)；Python、Skia、Numba、FFmpeg；`bash build.sh preview` |
 | 《倒悬之海》The Sea Above | 约 71 秒的三维短片 | [播放器](https://xhc144.github.io/claude-lab/films/sea-above/) | [sea-above/](sea-above/)；Python、OpenGL/EGL、FFmpeg；`./make_film.sh` |
-| 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版与英文版（含模拟面试、难词音标、中英对照讲稿） | 仓库内 `windmill-theorem/output/`（暂未上线 Pages） | [windmill-theorem/](windmill-theorem/)；Manim、TeX、FFmpeg；`bash build.sh` |
-| 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | 成片在 [fermat-windmill/output/](fermat-windmill/output/) | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
-| 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | 仓库内 [output/](fixed-point-film/output/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
-| 《最优化的本质》 | 约 19 分钟的中文数学讲解视频：不等式与极值、凸优化、梯度下降、线性规划，带配音与字幕 | 成片见 [optimization-film/output/](optimization-film/output/) | [optimization-film/](optimization-film/)；Manim、离线中文语音合成、FFmpeg；`python tools/build.py` |
-| 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [仓库内成片](two-sample-test-video/output/two-sample-test.mp4) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
+| 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版与英文版（含模拟面试、难词音标、中英对照讲稿） | [播放器](https://xhc144.github.io/claude-lab/films/windmill-theorem/) | [windmill-theorem/](windmill-theorem/)；Manim、TeX、FFmpeg；`bash build.sh` |
+| 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | [播放器](https://xhc144.github.io/claude-lab/films/fermat-windmill/)（含中英对照讲稿） | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
+| 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | [播放器](https://xhc144.github.io/claude-lab/films/fixed-point-film/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
+| 《最优化的本质》 | 约 19 分钟的中文数学讲解视频：不等式与极值、凸优化、梯度下降、线性规划，带配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/optimization-film/) | [optimization-film/](optimization-film/)；Manim、离线中文语音合成、FFmpeg；`python tools/build.py` |
+| 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/two-sample-test-video/) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
 
-站点播放器使用已经生成的 H.264/AAC 成片；影片制作脚本需要本地依赖与计算资源。两个播放器都使用原生成片，不在浏览器执行 Python 渲染。表中后五部数学讲解视频暂未接入站点播放器，成片直接放在各自的 `output/` 目录。《一架风车》（windmill-theorem）与《风车里的素数》（fermat-windmill）是同一主题的两个独立版本，均保留。
+站点播放器使用已经生成的 H.264/AAC 成片（与仓库内 `output/` 中的文件相同），不在浏览器执行 Python 渲染；影片制作脚本需要本地依赖与计算资源。双语影片可在播放器里切换中文版 / 英文版，带章节标记的影片可点击章节跳转，字幕 SRT 与讲稿可直接下载。《一架风车》（windmill-theorem）与《风车里的素数》（fermat-windmill）是同一主题的两个独立版本，均保留。
 
 ## 视频讲解稿
 
@@ -80,7 +80,13 @@ node scripts/build-pages.mjs
 python3 -m http.server 8080 --directory docs
 ```
 
-`site/` 保存导航模板；构建脚本重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack 与星枢 Tensora 的静态文件，并将白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；两个影片只复制成片与播放器。绝不把整个仓库作为发布目录。
+`site/projects.mjs` 是站点上所有项目的唯一数据源（分类、简介、标签、搜索关键词、访问链接、影片版本）；`site/site.css`、`site/site.js` 是共享样式与交互，`site/covers/` 是项目封面，`site/film-meta.json` 缓存 ffprobe 读出的影片时长与章节。新增或修改项目时只改这些文件，然后运行：
+
+```sh
+node scripts/build-site.mjs   # 只重新生成主页、影片播放器、封面与墨经页面，不需要各项目的构建依赖
+```
+
+`build-pages.mjs` 先重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack 与星枢 Tensora 的静态文件，再调用 `build-site.mjs`，最后运行检查；只把白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；影片只复制成片、字幕、讲稿与播放器（成片与仓库内文件内容相同，Git 中不额外占用空间）。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 
