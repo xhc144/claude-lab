@@ -141,6 +141,13 @@ const MIGRATIONS: string[] = [
     attempts INTEGER NOT NULL DEFAULT 0,
     created_at INTEGER NOT NULL
   );
+  `,
+  // v2: senders whose mail goes straight to the junk folder (an address, or a whole domain as "@example.com")
+  `
+  CREATE TABLE blocked_senders (
+    pattern TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL
+  );
   `
 ];
 

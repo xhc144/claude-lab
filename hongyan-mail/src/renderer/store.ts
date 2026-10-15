@@ -32,6 +32,7 @@ export type Modal =
   | { type: 'palette' }
   | { type: 'move'; ids: number[]; accountId: number }
   | { type: 'shortcuts' }
+  | { type: 'block'; address: string }
   | { type: 'source'; messageId: number }
   | { type: 'image'; src: string; name: string; messageId: number; index: number }
   | { type: 'confirm'; title: string; message: string; confirmLabel: string; danger?: boolean; onConfirm: () => void }
@@ -64,6 +65,8 @@ export interface AppState {
   accountFilter: number | null;
   list: ListState;
   selection: number[];
+  /** "Select all" extends to every message of the view, including pages not loaded yet. */
+  allSelected: boolean;
   anchor: number | null;
   openId: number | null;
   readerVersion: number;
@@ -92,7 +95,12 @@ export interface AppState {
   open(id: number | null): void;
   select(id: number, mode: 'single' | 'toggle' | 'range'): void;
   selectAll(): void;
+  selectAllMatching(): void;
   clearSelection(): void;
+  /** The messages an action applies to: the selection (all of the view when allSelected) or the open message. */
+  targetIds(): Promise<number[]>;
+  markAllRead(): Promise<void>;
+  bulkSeen(seen: boolean): Promise<void>;
   moveFocus(delta: number): void;
   refreshFolders(): Promise<void>;
   refreshCounts(): Promise<void>;
@@ -130,7 +138,10 @@ export const emptyPrefill = (accountId: number | null): ComposePrefill => ({
   replyToMessageId: null, forwardOfMessageId: null, draftId: null, serverDraftMessageId: null
 });
 
-export const useApp = create<AppState>((set, get) => ({
+export const useApp = create<AppState>((rawSet, get) => {
+// Any change of the selection that does not say otherwise ends a "select all in view".
+const set = (p: Partial<AppState>) => rawSet('selection' in p && !('allSelected' in p) ? { ...p, allSelected: false } : p);
+return {
   booted: false,
   onboarding: false,
   info: null,
@@ -146,6 +157,7 @@ export const useApp = create<AppState>((set, get) => ({
   accountFilter: null,
   list: { key: '', total: 0, pages: {}, loaded: false },
   selection: [],
+  allSelected: false,
   anchor: null,
   openId: null,
   readerVersion: 0,
@@ -255,9 +267,15 @@ export const useApp = create<AppState>((set, get) => ({
       const total = results[0]?.total ?? 0;
       set({ list: { key, total, pages: next, loaded: true } });
       // Drop selections that disappeared (moved or deleted elsewhere).
-      const visible = new Set(Object.values(next).flat().map((m) => m.id));
-      const sel = get().selection.filter((id) => visible.has(id));
-      if (sel.length !== get().selection.length) set({ selection: sel });
+      const loadedIds = Object.values(next).flat().map((m) => m.id);
+      if (get().allSelected) {
+        if (total === 0) set({ selection: [], allSelected: false, openId: null });
+        else set({ selection: loadedIds, allSelected: true });
+      } else {
+        const visible = new Set(loadedIds);
+        const sel = get().selection.filter((id) => visible.has(id));
+        if (sel.length !== get().selection.length) set({ selection: sel });
+      }
       requestPreviews(results.flatMap((r) => r.items));
     } catch (e) {
       console.error(e);
@@ -304,11 +322,45 @@ export const useApp = create<AppState>((set, get) => ({
 
   selectAll() {
     const ids = Object.values(get().list.pages).flat().map((m) => m.id);
-    set({ selection: ids });
+    // When every message of the view is already loaded, this is the whole view.
+    set({ selection: ids, allSelected: ids.length > 0 && ids.length >= get().list.total, openId: ids.length === 1 ? ids[0] : null });
+  },
+
+  selectAllMatching() {
+    const ids = Object.values(get().list.pages).flat().map((m) => m.id);
+    if (!ids.length) return;
+    set({ selection: ids, allSelected: true, openId: null });
   },
 
   clearSelection() {
     set({ selection: [], openId: null });
+  },
+
+  async targetIds() {
+    const s = get();
+    if (s.allSelected && s.selection.length) return api.queryIds(listQuery(s));
+    return s.selection.length ? s.selection : s.openId != null ? [s.openId] : [];
+  },
+
+  async markAllRead() {
+    const s = get();
+    try {
+      const n = await api.markViewRead(listQuery(s));
+      patchLoaded(Object.values(get().list.pages).flat().filter((m) => !m.seen).map((m) => m.id), { seen: true });
+      get().toast({ kind: 'success', message: n ? `已将 ${n} 封邮件标为已读` : '这里没有未读邮件' });
+    } catch (e) {
+      const m = errorMessage(e);
+      get().toast({ kind: 'error', message: '无法全部标为已读', detail: m.title });
+    }
+  },
+
+  async bulkSeen(seen) {
+    const s = get();
+    if (s.allSelected && seen) { await s.markAllRead(); return; }
+    const ids = await s.targetIds();
+    if (!ids.length) return;
+    s.setSeen(ids, seen);
+    if (ids.length > 1) get().toast({ kind: 'info', message: `已将 ${ids.length} 封邮件标为${seen ? '已读' : '未读'}` });
   },
 
   moveFocus(delta) {
@@ -389,9 +441,10 @@ export const useApp = create<AppState>((set, get) => ({
 
   async act(kind, ids) {
     const s = get();
-    const target = ids ?? (s.selection.length ? s.selection : s.openId != null ? [s.openId] : []);
+    const whole = !ids && s.allSelected;
+    const target = ids ?? await s.targetIds();
     if (!target.length) return;
-    const nextId = neighbourAfterRemoval(target);
+    const nextId = whole ? null : neighbourAfterRemoval(target);
     const labels = { archive: '已归档', trash: '已删除', spam: '已移入垃圾邮件', notspam: '已移回收件箱', delete: '已永久删除' } as const;
     const doIt = async () => {
       try {
@@ -416,11 +469,10 @@ export const useApp = create<AppState>((set, get) => ({
         get().toast({ kind: 'error', message: m.title, detail: m.detail });
       }
     };
-    const inTrash = target.every((id) => {
-      const m = findLoaded(id);
-      const f = m && get().folders.find((x) => x.id === m.folderId);
-      return f?.specialUse === 'trash';
-    });
+    const loaded = new Map(Object.values(get().list.pages).flat().map((m) => [m.id, m]));
+    const trashFolders = new Set(get().folders.filter((f) => f.specialUse === 'trash').map((f) => f.id));
+    const inTrash = target.every((id) => { const m = loaded.get(id); return !!m && trashFolders.has(m.folderId); });
+    // Deleting from the trash is permanent; so is a very large batch that is better confirmed first.
     if ((kind === 'delete' || (kind === 'trash' && inTrash)) && s.settings?.confirmDelete !== false) {
       s.openModal({
         type: 'confirm',
@@ -430,6 +482,12 @@ export const useApp = create<AppState>((set, get) => ({
         danger: true,
         onConfirm: () => void doIt()
       });
+      return;
+    }
+    if (target.length >= 200 && (kind === 'trash' || kind === 'archive' || kind === 'spam')) {
+      const n = target.length;
+      const t = { trash: [`删除这 ${n} 封邮件？`, '移到「已删除」', '删除'], archive: [`归档这 ${n} 封邮件？`, '归档', '归档'], spam: [`将这 ${n} 封邮件标记为垃圾邮件？`, '移到「垃圾邮件」', '移到垃圾邮件'] }[kind];
+      s.openModal({ type: 'confirm', title: t[0], message: `将在邮件服务器上把 ${n} 封邮件${t[1]}，之后仍可撤销，或从对应文件夹中找回。`, confirmLabel: t[2], danger: kind === 'trash', onConfirm: () => void doIt() });
       return;
     }
     await doIt();
@@ -474,17 +532,10 @@ export const useApp = create<AppState>((set, get) => ({
       get().toast({ kind: 'error', message: m.title, detail: m.detail });
     }
   }
-}));
+};
+});
 
 const pendingPages = new Set<string>();
-
-function findLoaded(id: number): MessageSummary | undefined {
-  for (const items of Object.values(useApp.getState().list.pages)) {
-    const m = items.find((x) => x.id === id);
-    if (m) return m;
-  }
-  return undefined;
-}
 
 function patchLoaded(ids: number[], patch: Partial<MessageSummary>) {
   const s = useApp.getState();
@@ -497,13 +548,24 @@ function patchLoaded(ids: number[], patch: Partial<MessageSummary>) {
 function neighbourAfterRemoval(ids: number[]): number | null {
   const s = useApp.getState();
   const removed = new Set(ids);
-  const idx = Math.max(...ids.map((id) => s.indexOf(id)));
-  for (let i = idx + 1; i < s.list.total; i++) {
+  // One pass over the loaded pages (ids can be thousands long after "select all").
+  let lo = Infinity;
+  let hi = -1;
+  for (const [p, items] of Object.entries(s.list.pages)) {
+    items.forEach((m, i) => {
+      if (!removed.has(m.id)) return;
+      const idx = Number(p) * PAGE + i;
+      if (idx < lo) lo = idx;
+      if (idx > hi) hi = idx;
+    });
+  }
+  if (hi < 0) return null;
+  for (let i = hi + 1; i < s.list.total; i++) {
     const m = s.itemAt(i);
     if (!m) break;
     if (!removed.has(m.id)) return m.id;
   }
-  for (let i = Math.min(...ids.map((id) => s.indexOf(id))) - 1; i >= 0; i--) {
+  for (let i = lo - 1; i >= 0; i--) {
     const m = s.itemAt(i);
     if (m && !removed.has(m.id)) return m.id;
   }
@@ -576,6 +638,7 @@ function handleEvent(e: AppEvent) {
       break;
     case 'settings-changed':
       useApp.setState({ settings: e.settings, dark: applyTheme(e.settings) });
+      scheduleCounts();
       break;
     case 'diagnose-progress':
       useApp.setState({ diagRuns: { ...s.diagRuns, [e.runId]: e.steps } });
@@ -588,7 +651,7 @@ function handleEvent(e: AppEvent) {
       break;
     case 'open-message':
       if (s.view.kind !== 'unified' || s.view.box !== 'inbox') s.setView({ kind: 'unified', box: 'inbox' });
-      useApp.setState({ panel: 'mail', openId: e.messageId, selection: [e.messageId], anchor: e.messageId });
+      useApp.setState({ panel: 'mail', openId: e.messageId, selection: [e.messageId], allSelected: false, anchor: e.messageId });
       break;
     case 'navigate':
       s.setView(e.view);

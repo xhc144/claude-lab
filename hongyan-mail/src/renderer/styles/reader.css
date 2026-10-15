@@ -27,6 +27,10 @@
   border-bottom: 1px solid var(--line);
   flex-shrink: 0;
 }
+/* The last toolbar button (close) sits centred under the window's own close button (a third of the controls). */
+:root:not([data-platform='darwin']) .reader-inner > .reader-toolbar {
+  padding-right: max(2px, calc(var(--controls-w) / 6 - 16px));
+}
 .rt-group {
   display: flex;
   gap: 2px;
@@ -145,6 +149,18 @@
   display: flex;
   gap: 12px;
   text-align: left;
+  border-radius: 10px;
+  outline: none;
+}
+.mc-head-main:focus-visible {
+  box-shadow: 0 0 0 2px var(--focus);
+}
+.mc-avatar {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.mc-head-main.is-collapsible .mc-avatar {
+  cursor: pointer;
 }
 .mc-who {
   min-width: 0;
@@ -160,6 +176,8 @@
   font-weight: 680;
   font-size: var(--fs-base);
   white-space: nowrap;
+  user-select: text;
+  cursor: text;
 }
 .mc-addr {
   font-size: var(--fs-s);
@@ -168,20 +186,33 @@
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: text;
+  cursor: text;
 }
 .mc-to {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  margin-top: 2px;
+  margin: 2px 0 0 -4px;
+  padding: 1px 4px;
   font-size: var(--fs-s);
   color: var(--text-3);
   border-radius: 5px;
   cursor: pointer;
   max-width: 100%;
+  text-align: left;
+}
+.mc-to-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mc-to svg {
+  flex-shrink: 0;
 }
 .mc-to:hover {
   color: var(--text);
+  background: var(--hover);
 }
 .mc-side {
   display: flex;
@@ -216,7 +247,15 @@
 .recipients .rv {
   color: var(--text-2);
   user-select: text;
+  cursor: text;
   word-break: break-all;
+}
+.addr {
+  border-radius: 3px;
+}
+.addr:hover {
+  color: var(--text);
+  background: var(--hover);
 }
 
 .mc-body {
@@ -400,25 +439,41 @@
   color: var(--text-3);
 }
 
+/* URL of the hovered link: a small tooltip next to the link (it used to sit fixed over the bottom of the message). */
 .link-peek {
   position: fixed;
-  left: calc(var(--sidebar-w) + var(--list-w, 400px) + 24px);
-  bottom: 18px;
-  z-index: 40;
-  max-width: 560px;
+  z-index: 60;
+  max-width: min(470px, calc(100vw - 16px));
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 10px;
-  border-radius: 8px;
-  background: rgba(28, 25, 22, 0.92);
+  padding: 5px 9px;
+  border-radius: 7px;
+  background: rgba(28, 25, 22, 0.94);
   color: #f1ede6;
   font-size: var(--fs-xs);
   font-family: var(--font-mono);
-  white-space: nowrap;
+  line-height: 1.4;
+  box-shadow: 0 6px 18px -6px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  animation: peek-in 120ms var(--ease-out);
+}
+.link-peek span {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-  pointer-events: none;
+  white-space: nowrap;
+}
+.link-peek svg {
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+:root[data-theme='dark'] .link-peek {
+  background: #3a352f;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 6px 18px -6px rgba(0, 0, 0, 0.6);
+}
+@keyframes peek-in {
+  from { opacity: 0; transform: translateY(2px); }
 }
 
 .reply-bar {
@@ -498,6 +553,10 @@
 }
 .bulk-panel h2 {
   font-size: var(--fs-xl);
+  text-align: center;
+}
+.bulk-all {
+  margin-top: -10px;
 }
 .bulk-actions {
   display: flex;

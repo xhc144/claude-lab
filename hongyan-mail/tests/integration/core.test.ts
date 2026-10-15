@@ -344,8 +344,10 @@ describe('folders, drafts, server search and send failures', () => {
   it('marks a whole folder as read', async () => {
     const a = alice();
     const inboxId = core.listFolders().find((f) => f.accountId === a.id && f.specialUse === 'inbox')!.id;
-    core.markFolderRead(inboxId);
+    const done = core.markFolderRead(inboxId);
+    // local state changes at once (optimistic), the server gets one STORE 1:* +FLAGS (\Seen)
     expect(core.listFolders().find((f) => f.id === inboxId)!.unread).toBe(0);
+    await done;
     const c = await serverClient('alice@hy.test', 'alice-pass');
     try {
       await waitFor(async () => (await c.status('INBOX', { unseen: true })).unseen === 0, 'server unseen 0');
@@ -393,5 +395,62 @@ describe('folders, drafts, server search and send failures', () => {
 
   it('suggests contacts from synced mail', () => {
     expect(core.suggestContacts('bo').map((c) => c.address)).toContain('bob@hy.test');
+  });
+});
+
+describe('junk management: blocking, bulk actions, emptying', () => {
+  const alice = () => core.listAccounts().find((a) => a.email === 'alice@hy.test')!;
+  const inboxQuery = () => ({ view: { kind: 'folder' as const, accountId: alice().id, folderId: inbox(alice().id).id }, filter: 'all' as const, category: 'all' as const });
+  const serverCount = async (mailbox: string, what: 'messages' | 'unseen' = 'messages') => {
+    const c = await serverClient('alice@hy.test', 'alice-pass');
+    try { return ((await c.status(mailbox, { [what]: true })) as any)[what] as number; } finally { await c.logout(); }
+  };
+
+  it('blocks a whole domain: existing mail moves to Junk on the server, new mail follows', async () => {
+    for (let i = 0; i < 3; i++) srv.deliver('alice@hy.test', buildRaw({ from: `Ads <promo${i}@ads.example>`, to: 'alice@hy.test', subject: `广告 ${i}`, text: '买买买' }));
+    await waitFor(() => core.listMessages(inboxQuery(), 0, 100).items.filter((m) => m.subject.startsWith('广告')).length === 3, 'ads arrived');
+    const junkBefore = await serverCount('Junk');
+    const r = await core.blockSenders(['Ads <PROMO0@ads.example>', '*@ads.example']);
+    expect(r.moved).toBe(3);
+    expect(core.listBlockedSenders().map((b) => b.pattern).sort()).toEqual(['@ads.example', 'promo0@ads.example']);
+    // gone from the inbox at once, and really moved on the server
+    expect(core.listMessages(inboxQuery(), 0, 100).items.some((m) => m.subject.startsWith('广告'))).toBe(false);
+    await waitFor(async () => (await serverCount('Junk')) === junkBefore + 3, 'moved to Junk on the server');
+    // junk never counts as unread mail
+    // (with categories on, the inbox counter is primary + notifications, as in the category tabs)
+    const unreadIn = (category: 'primary' | 'notifications') => core.listMessages({ view: { kind: 'unified', box: 'inbox' }, filter: 'unread', category }, 0, 5000).total;
+    expect(core.unifiedCounts().inboxUnread).toBe(unreadIn('primary') + unreadIn('notifications'));
+
+    notified.length = 0;
+    srv.deliver('alice@hy.test', buildRaw({ from: 'Ads <new@ads.example>', to: 'alice@hy.test', subject: '新广告', text: '又来了' }));
+    await waitFor(async () => (await serverCount('Junk')) === junkBefore + 4, 'new mail from a blocked domain moved to Junk', 20000);
+    const junk = folder(alice().id, 'junk');
+    await waitFor(() => core.listMessages({ view: { kind: 'folder', accountId: alice().id, folderId: junk.id }, filter: 'all', category: 'all' }, 0, 50).items.some((m) => m.subject === '新广告'), 'visible in junk');
+    expect(notified.some((n) => n.subject === '新广告')).toBe(false);
+    await expect(core.blockSenders(['alice@hy.test'])).rejects.toThrow('自己');
+    await expect(core.blockSenders(['not an address'])).rejects.toThrow();
+    core.unblockSender('promo0@ads.example');
+    expect(core.listBlockedSenders().map((b) => b.pattern)).toEqual(['@ads.example']);
+  });
+
+  it('selects every message of a view and marks it all read on the server', async () => {
+    for (let i = 0; i < 3; i++) srv.deliver('alice@hy.test', buildRaw({ from: `Team <team${i}@hy.test>`, to: 'alice@hy.test', subject: `周报 ${i}`, text: '本周进展' }));
+    await waitFor(() => core.listMessages({ ...inboxQuery(), filter: 'unread' }, 0, 100).total >= 3, 'unread arrived');
+    const ids = core.queryIds(inboxQuery());
+    expect(ids.length).toBe(core.listMessages(inboxQuery(), 0, 500).total);
+    expect(ids).toEqual(core.listMessages(inboxQuery(), 0, 500).items.map((m) => m.id));
+    const n = await core.markViewRead({ view: { kind: 'unified', box: 'inbox' }, filter: 'all', category: 'all', accountId: alice().id });
+    expect(n).toBeGreaterThanOrEqual(3);
+    expect(core.listMessages({ ...inboxQuery(), filter: 'unread' }, 0, 100).total).toBe(0);
+    await waitFor(async () => (await serverCount('INBOX', 'unseen')) === 0, 'server unseen 0');
+  });
+
+  it('empties the junk folder permanently, and refuses to empty other folders', async () => {
+    const junk = folder(alice().id, 'junk');
+    const removed = await core.emptyFolder(junk.id);
+    expect(removed).toBeGreaterThanOrEqual(4);
+    expect(core.listMessages({ view: { kind: 'folder', accountId: alice().id, folderId: junk.id }, filter: 'all', category: 'all' }, 0, 10).total).toBe(0);
+    await waitFor(async () => (await serverCount('Junk')) === 0, 'junk empty on the server');
+    await expect(core.emptyFolder(inbox(alice().id).id)).rejects.toThrow('只能清空');
   });
 });

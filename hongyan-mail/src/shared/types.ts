@@ -406,6 +406,12 @@ export interface SearchServerResult {
   errors: string[];
 }
 
+export interface BlockedSender {
+  /** "name@example.com", or "@example.com" for a whole domain. */
+  pattern: string;
+  createdAt: number;
+}
+
 export interface ContactSuggestion extends Address {
   count: number;
 }

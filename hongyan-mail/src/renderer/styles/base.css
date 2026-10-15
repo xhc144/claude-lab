@@ -87,6 +87,18 @@ mark {
 .drag a {
   -webkit-app-region: no-drag;
 }
+/* Layers drawn over the title-bar strip must stay interactive: a drag region underneath otherwise wins, so hover
+   effects never show and a click starts moving the window instead of pressing the button. */
+.modal-layer,
+.menu-layer,
+.menu,
+.composer,
+.composer-layer.is-max,
+.toast,
+.lightbox,
+.search-help {
+  -webkit-app-region: no-drag;
+}
 
 .muted {
   color: var(--text-3);

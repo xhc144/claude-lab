@@ -1,8 +1,17 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { buildEmailDoc, type EmailDocOptions } from '../lib/sanitize';
+import { attachFrameContextMenu } from '../lib/contextmenu';
 
 /** Renders sanitised e-mail HTML in a sandboxed iframe that grows to fit its content. */
-export function EmailFrame(props: EmailDocOptions & { onRemoteCount?: (n: number) => void; onLinkHover?: (url: string | null) => void }) {
+export interface LinkHover {
+  url: string;
+  /** The link's box in app-window coordinates. */
+  left: number;
+  top: number;
+  bottom: number;
+}
+
+export function EmailFrame(props: EmailDocOptions & { onRemoteCount?: (n: number) => void; onLinkHover?: (link: LinkHover | null) => void }) {
   const ref = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState(120);
   const { doc, remoteCount, themed } = React.useMemo(() => buildEmailDoc(props), [props.html, props.text, props.allowRemote, props.dark, props.darkMode, props.messageId, props.collapseQuotes, props.attachmentToken]);
@@ -36,9 +45,16 @@ export function EmailFrame(props: EmailDocOptions & { onRemoteCount?: (n: number
       d.addEventListener('toggle', () => requestAnimationFrame(fit), true);
       d.addEventListener('mouseover', (e) => {
         const a = (e.target as Element)?.closest?.('a[href]') as HTMLAnchorElement | null;
-        props.onLinkHover?.(a ? a.href : null);
+        if (!a) { props.onLinkHover?.(null); return; }
+        const f = iframe.getBoundingClientRect();
+        // The link may wrap over several lines: anchor the hint to the line under the pointer.
+        const rects = [...a.getClientRects()];
+        const r = rects.find((x) => e.clientY >= x.top && e.clientY <= x.bottom) || a.getBoundingClientRect();
+        props.onLinkHover?.({ url: a.href, left: f.left + Math.max(r.left, e.clientX - 40), top: f.top + r.top, bottom: f.top + r.bottom });
       });
       d.addEventListener('mouseout', () => props.onLinkHover?.(null));
+      // Right-click: copy, copy link address, open link, copy image…
+      attachFrameContextMenu(iframe);
       // Images load late and change the height.
       d.querySelectorAll('img').forEach((img) => img.addEventListener('load', () => requestAnimationFrame(fit)));
     };

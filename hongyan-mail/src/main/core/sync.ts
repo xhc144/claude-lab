@@ -553,9 +553,13 @@ export class AccountSync {
     const store = this.deps.store;
     let f = store.getFolder(folderId);
     if (!f || !f.selectable || !f.sync_enabled) return;
+    const wasSelected = !!c.mailbox && (c.mailbox as MailboxObject).path === f.path;
     const lock = await c.getMailboxLock(f.path);
     const changedFolders = new Set<number>();
     try {
+      // A mailbox that stays selected (e.g. right after moving mail out of it) only learns about new mail through
+      // untagged EXISTS: its UIDNEXT and HIGHESTMODSEQ go stale and new messages would be skipped. Re-select it.
+      if (wasSelected) await c.mailboxOpen(f.path);
       const mb = c.mailbox as MailboxObject;
       const uidValidity = String(mb.uidValidity);
       if (f.uid_validity && f.uid_validity !== uidValidity) {
@@ -886,6 +890,37 @@ export class AccountSync {
           lock.release();
         }
       }
+    });
+  }
+
+  /** Sets \\Seen on every message of a folder on the server, including mail not yet downloaded. */
+  markAllSeen(folderId: number): Promise<void> {
+    return this.enqueue(null, 0, '全部标为已读', async (c) => {
+      const f = this.deps.store.getFolder(folderId);
+      if (!f) return;
+      const lock = await c.getMailboxLock(f.path);
+      try {
+        if ((c.mailbox as MailboxObject).exists > 0) await c.messageFlagsAdd('1:*', ['\\Seen']);
+      } finally {
+        lock.release();
+      }
+      this.deps.store.updateFolder(f.id, { server_unseen: 0 });
+    });
+  }
+
+  /** Permanently removes every message of a folder on the server (used to empty trash / junk). */
+  emptyFolder(folderId: number): Promise<void> {
+    return this.enqueue(null, 0, '清空文件夹', async (c) => {
+      const f = this.deps.store.getFolder(folderId);
+      if (!f) return;
+      const lock = await c.getMailboxLock(f.path);
+      try {
+        if ((c.mailbox as MailboxObject).exists > 0) await c.messageDelete('1:*');
+      } finally {
+        lock.release();
+      }
+      this.uidCache.delete(f.id);
+      this.enqueue(`quick:${f.id}`, 2, `同步 ${f.name}`, (cc) => this.quickSync(cc, f.id)).catch(() => {});
     });
   }
 

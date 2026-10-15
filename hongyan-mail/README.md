@@ -20,13 +20,13 @@
 
 ## 下载与安装
 
-**安装包：[`release/HongyanMail-Setup-1.0.0.exe`](release/HongyanMail-Setup-1.0.0.exe)**（约 92 MB，Windows 10 / 11 64 位）
+**安装包：[`release/HongyanMail-Setup-1.1.0.exe`](release/HongyanMail-Setup-1.1.0.exe)**（约 92 MB，Windows 10 / 11 64 位）
 
 1. 下载后双击运行。安装到当前用户目录，**不需要管理员权限**，几秒即可完成；会创建开始菜单与桌面快捷方式。
 2. 安装包没有购买代码签名证书，Windows SmartScreen 可能提示「Windows 已保护你的电脑」：点击 **更多信息 → 仍要运行** 即可。
 3. 卸载：Windows 设置 → 应用 → 鸿雁邮箱 → 卸载。卸载时会询问是否同时删除本机的邮件缓存与设置（服务器上的邮件不受影响）。
 
-想要免安装的**便携版**：在本目录执行 `npm run dist:win`，会额外生成 `release/HongyanMail-1.0.0-win-x64-portable.zip`（因超过 GitHub 单文件大小限制未提交）。解压后直接运行 `Hongyan Mail.exe`，所有数据保存在同目录的 `data` 文件夹。
+想要免安装的**便携版**：在本目录执行 `npm run dist:win`，会额外生成 `release/HongyanMail-1.1.0-win-x64-portable.zip`（因超过 GitHub 单文件大小限制未提交）。解压后直接运行 `Hongyan Mail.exe`，所有数据保存在同目录的 `data` 文件夹。
 
 ## 功能
 
@@ -43,11 +43,19 @@
 - 引用的历史内容自动折叠；超宽的营销邮件自动缩放适配；悬停链接时显示真实地址（防钓鱼）
 - 附件卡片：图片缩略图与大图预览、打开、另存为、全部保存；打开可执行文件前会提示风险
 - 一键退订（List-Unsubscribe）、查看原始邮件、导出 .eml、打印
+- 正文、主题、发件人姓名与地址、收件人都可以**自由选中复制**；右键菜单与主流邮箱一致：复制、复制链接地址、在浏览器中打开、复制图片 / 图片地址、复制邮箱地址、写邮件、搜索往来邮件；输入框有剪切 / 复制 / 粘贴菜单
 
 **整理与搜索**
 - 智能分类：收件箱按 **主要 / 通知 / 推广 / 社交** 分组（完全在本机根据邮件头判断），可把某个发件人固定归类
 - 归档、删除、垃圾邮件、移动到文件夹，均可**撤销**；支持拖拽邮件到侧栏文件夹、多选批量操作
-- 新建 / 重命名 / 删除文件夹；整个文件夹标为已读
+- 新建 / 重命名 / 删除文件夹；整个文件夹标为已读（在服务器上一次完成，未下载的邮件也包括在内）
+- **全选整个视图**（<kbd>Ctrl</kbd>+<kbd>A</kbd> 再按一次，或列表「更多」菜单）后批量删除、归档、标为已读、移动，作用于该视图的全部邮件而不只是已加载的部分
+
+**垃圾邮件**
+- **屏蔽发件人**（单个地址或整个域名）：现有邮件和今后的新邮件都在**邮件服务器上**移到「垃圾邮件」，不只是界面隐藏；在 设置 → 垃圾邮件 中管理名单
+- 标记 / 取消垃圾邮件、「删除此发件人的所有邮件」、清空「垃圾邮件」与「已删除」
+- 「垃圾邮件」「已删除」不计入未读数；开启智能分类时，收件箱未读数只统计「主要」和「通知」，推广邮件不再把未读堆到 9999+
+- 删除总是先移到「已删除」（可撤销），只有在「已删除」里再删或清空时才永久删除，并会先确认
 - 本地全文搜索（SQLite FTS5 trigram，中文任意长度可搜），支持 `from:` `to:` `subject:` `has:attachment` `is:unread` `is:starred` `in:sent` `after:2024-01-01` `before:` `newer_than:7d` `category:` 等条件，也支持中文写法如 `发件人：张伟`；还可以一键**在服务器上搜索正文**
 
 **撰写**
@@ -71,6 +79,7 @@
 | <kbd>R</kbd> / <kbd>A</kbd> / <kbd>F</kbd> | 回复 / 全部回复 / 转发 | <kbd>/</kbd> | 搜索 |
 | <kbd>E</kbd> | 归档 | <kbd>Del</kbd> | 删除 |
 | <kbd>S</kbd> | 星标 | <kbd>U</kbd> | 已读 / 未读 |
+| <kbd>Shift</kbd>+<kbd>Del</kbd> | 永久删除 | <kbd>Ctrl</kbd>+<kbd>A</kbd> | 全选（再按一次选择整个视图） |
 | <kbd>V</kbd> | 移动到文件夹 | <kbd>!</kbd> | 垃圾邮件 |
 | <kbd>G</kbd> <kbd>I</kbd> | 前往收件箱 | <kbd>Ctrl</kbd>+<kbd>Enter</kbd> | 发送 |
 | <kbd>Ctrl</kbd>+<kbd>K</kbd> | 命令面板 | <kbd>F5</kbd> | 立即收取 |
@@ -154,17 +163,19 @@ cd hongyan-mail
 npm install
 npm run dev          # Vite 热更新 + Electron
 npm run typecheck
-npm test             # 单元测试（90 个）
+npm test             # 单元测试（94 个）
 npm run dist:win     # 生成 release/ 下的安装包与便携版（需要 makensis 与 zip）
 ```
 
 **集成测试与端到端测试**使用本地的 Dovecot IMAP 服务器和 SMTP 服务器（`scripts/test-server/`，需要 `apt install dovecot-imapd`，以 root 运行）：
 
 ```bash
-npm run test:integration          # 25 个：诊断各类错误、同步、标记、移动/撤销、IDLE 推送、
-                                  # 发信与已发送、撤销发送、搜索、历史补齐、文件夹、草稿、发件箱重试
-xvfb-run -a npm run test:e2e      # 17 步：驱动真正的 Electron 程序完成添加账户、阅读、搜索、
-                                  # 发信、撤销、推送、深色模式、设置、诊断、多账户，并截图
+npm run test:integration          # 28 个：诊断各类错误、同步、标记、移动/撤销、IDLE 推送、
+                                  # 发信与已发送、撤销发送、搜索、历史补齐、文件夹、草稿、发件箱重试、
+                                  # 屏蔽发件人、全选与整视图已读、清空垃圾邮件（均核对服务器状态）
+xvfb-run -a npm run test:e2e      # 27 步：驱动真正的 Electron 程序完成添加账户、阅读、搜索、发信、
+                                  # 撤销、推送、复制与右键菜单、屏蔽、全选删除、清空，并截图
+xvfb-run -a npm run test:hover    # 悬停与点击区域检查：关闭按钮、窗口按钮对齐、弹层不落在标题栏按钮下
 npm run mail-server               # 只启动测试邮件服务器，方便手动体验
 ```
 

@@ -8,16 +8,19 @@ export const SHORTCUTS: Array<{ keys: string; label: string }> = [
   { keys: 'A', label: '全部回复' },
   { keys: 'F', label: '转发' },
   { keys: 'E', label: '归档' },
-  { keys: 'Del', label: '删除' },
+  { keys: 'Del', label: '删除（移到「已删除」）' },
+  { keys: 'Shift Del', label: '永久删除' },
   { keys: '!', label: '标记为垃圾邮件' },
   { keys: 'S', label: '加星标 / 取消星标' },
   { keys: 'U', label: '标为已读 / 未读' },
+  { keys: 'Shift I', label: '标为已读' },
+  { keys: 'Shift U', label: '标为未读' },
   { keys: 'V', label: '移动到文件夹' },
   { keys: 'J', label: '下一封' },
   { keys: 'K', label: '上一封' },
   { keys: '/', label: '搜索' },
   { keys: 'Ctrl K', label: '命令面板' },
-  { keys: 'Ctrl A', label: '全选列表' },
+  { keys: 'Ctrl A', label: '全选列表（再按一次选择整个视图）' },
   { keys: 'Ctrl Enter', label: '发送邮件' },
   { keys: 'Ctrl ,', label: '设置' },
   { keys: 'G I', label: '前往收件箱' },
@@ -47,11 +50,27 @@ export function useShortcuts(focusSearch: () => void) {
       if (e.key === 'F5') { e.preventDefault(); api.syncNow(null); s.toast({ kind: 'info', message: '正在收取所有账户…', duration: 1800 }); return; }
       if (mod && e.key.toLowerCase() === 'n') { e.preventDefault(); s.compose(); return; }
       if (s.modal || isTyping(e) || s.composers.some((c) => !c.minimized)) return;
-      if (mod && e.key.toLowerCase() === 'a') { e.preventDefault(); s.selectAll(); return; }
+      if (mod && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        // While reading (text selected in the reader), Ctrl+A selects the message text instead of the list.
+        const sel = window.getSelection();
+        const anchor = sel?.anchorNode;
+        const paper = sel?.toString() ? (anchor instanceof Element ? anchor : anchor?.parentElement)?.closest('.reader-paper') : null;
+        if (paper) { sel!.selectAllChildren(paper); return; }
+        const loaded = Object.values(s.list.pages).reduce((n, p) => n + p.length, 0);
+        if (s.selection.length >= loaded && loaded > 0 && s.list.total > loaded) s.selectAllMatching();
+        else s.selectAll();
+        return;
+      }
       if (mod || e.altKey) return;
       const key = e.key;
       const target = s.selection.length ? s.selection : s.openId != null ? [s.openId] : [];
       const cur = s.openId != null ? s.itemAt(s.indexOf(s.openId)) : undefined;
+      // For several selected messages, U / S toggle like the bulk panel: read if any is unread, etc.
+      const picked = new Set(target);
+      const loadedSel = Object.values(s.list.pages).flat().filter((m) => picked.has(m.id));
+      const anyUnread = cur ? !cur.seen : loadedSel.some((m) => !m.seen);
+      const allFlagged = cur ? cur.flagged : loadedSel.length > 0 && loadedSel.every((m) => m.flagged);
       if (Date.now() - gPending < 1200) {
         gPending = 0;
         const go = { i: 'inbox', s: 'starred', t: 'sent', d: 'drafts', u: 'unread' } as const;
@@ -69,10 +88,11 @@ export function useShortcuts(focusSearch: () => void) {
         case 'a': case 'A': if (s.openId != null) { e.preventDefault(); void s.reply('replyAll', s.openId); } break;
         case 'f': case 'F': if (s.openId != null) { e.preventDefault(); void s.reply('forward', s.openId); } break;
         case 'e': case 'E': if (target.length) { e.preventDefault(); void s.act('archive'); } break;
-        case 'Delete': case '#': if (target.length) { e.preventDefault(); void s.act('trash'); } break;
+        case 'Delete': case '#': if (target.length) { e.preventDefault(); void s.act(e.shiftKey && key === 'Delete' ? 'delete' : 'trash'); } break;
+        case 'I': if (e.shiftKey && target.length) { e.preventDefault(); void s.bulkSeen(true); } break;
         case '!': if (target.length) { e.preventDefault(); void s.act('spam'); } break;
-        case 's': case 'S': if (target.length) { e.preventDefault(); s.setFlagged(target, !(cur?.flagged)); } break;
-        case 'u': case 'U': if (target.length) { e.preventDefault(); s.setSeen(target, !(cur?.seen ?? true)); } break;
+        case 's': case 'S': if (target.length) { e.preventDefault(); void s.targetIds().then((ids) => s.setFlagged(ids, !allFlagged)); } break;
+        case 'u': case 'U': if (target.length) { e.preventDefault(); void s.bulkSeen(e.shiftKey ? false : anyUnread); } break;
         case 'v': case 'V': if (target.length && cur) { e.preventDefault(); s.openModal({ type: 'move', ids: target, accountId: cur.accountId }); } break;
         case 'Escape': if (s.selection.length > 1 || s.openId != null) { e.preventDefault(); s.clearSelection(); } break;
         case '?': e.preventDefault(); s.openModal({ type: 'shortcuts' }); break;

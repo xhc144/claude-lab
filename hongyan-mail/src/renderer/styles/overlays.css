@@ -5,14 +5,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px;
+  /* keep dialogs clear of the native window buttons in the top strip */
+  padding: calc(var(--titlebar-h) + 6px) 32px 32px;
   background: var(--overlay);
   backdrop-filter: blur(3px) saturate(1.1);
 }
 .modal {
   position: relative;
   max-width: 100%;
-  max-height: calc(100vh - 64px);
+  max-height: calc(100vh - var(--titlebar-h) - 38px);
   display: flex;
   flex-direction: column;
   border-radius: 18px;
@@ -60,6 +61,53 @@
 .dialog-text {
   color: var(--text-2);
   line-height: 1.7;
+}
+
+.choice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: 10px;
+  box-shadow: 0 0 0 1px var(--line-strong) inset;
+  cursor: pointer;
+  transition: background var(--t-fast), box-shadow var(--t-fast);
+}
+.choice:hover {
+  background: var(--hover);
+}
+.choice.is-on {
+  background: var(--accent-soft);
+  box-shadow: 0 0 0 1.5px var(--accent) inset;
+}
+.choice.is-disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.choice input {
+  margin: 3px 0 0;
+  accent-color: var(--accent);
+}
+.choice span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.choice strong {
+  font-size: var(--fs-m);
+}
+.choice em {
+  font-style: normal;
+  font-size: var(--fs-s);
+  color: var(--text-3);
+  word-break: break-all;
 }
 
 /* ------------------------------------------------------------ toasts */
@@ -161,6 +209,13 @@
 .toast-close:hover {
   opacity: 1;
   background: rgba(255, 255, 255, 0.1);
+}
+/* the toast is light in dark mode: hover tints must darken, not lighten */
+:root[data-theme='dark'] .toast-close:hover {
+  background: rgba(0, 0, 0, 0.08);
+}
+:root[data-theme='dark'] .toast-action:hover {
+  background: rgba(0, 0, 0, 0.12);
 }
 .toast-progress {
   position: absolute;

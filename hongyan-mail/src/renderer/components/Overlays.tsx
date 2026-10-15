@@ -153,6 +153,65 @@ function PromptDialog({ title, label, initial, confirmLabel, onSubmit, onClose }
   );
 }
 
+// Public mailbox providers: blocking their whole domain would block everyone using them.
+const SHARED_DOMAINS = /^(gmail|googlemail|outlook|hotmail|live|msn|yahoo|ymail|icloud|me|mac|aol|gmx|web|mail|qq|foxmail|163|126|yeah|sina|sohu|aliyun|139|proton|protonmail|pm|zoho|yandex)\.[a-z.]+$/i;
+
+function BlockDialog({ address, onClose }: { address: string; onClose: () => void }) {
+  const s = useApp();
+  const domain = address.split('@')[1] || '';
+  const domainOk = !!domain && !SHARED_DOMAINS.test(domain);
+  const [scope, setScope] = useState<'address' | 'domain'>('address');
+  const [busy, setBusy] = useState(false);
+  const pattern = scope === 'domain' ? '@' + domain : address;
+  const submit = async () => {
+    setBusy(true);
+    try {
+      const r = await api.blockSenders([pattern]);
+      onClose();
+      // The open message (and others from the sender) just left the view: move on like after a delete.
+      const st = useApp.getState();
+      const hit = (a?: string) => !!a && (pattern.startsWith('@') ? a.endsWith(pattern) : a === pattern);
+      const loaded = Object.values(st.list.pages).flat();
+      const idx = loaded.findIndex((m) => m.id === st.openId);
+      if (idx >= 0 && hit(loaded[idx].from?.address)) {
+        const next = loaded.slice(idx + 1).find((m) => !hit(m.from?.address)) || loaded.slice(0, idx).reverse().find((m) => !hit(m.from?.address));
+        if (next) st.select(next.id, 'single');
+        else st.clearSelection();
+      }
+      s.toast({
+        kind: 'success',
+        message: `已屏蔽 ${pattern}`,
+        detail: r.moved ? `${r.moved} 封邮件已移到「垃圾邮件」，今后的来信也会自动移入。` : '今后的来信会自动移到「垃圾邮件」。',
+        action: { label: '撤销', run: () => { void api.unblockSender(pattern); if (r.undoToken) void api.undo(r.undoToken).catch(() => {}); } },
+        duration: 8000
+      });
+    } catch (e) {
+      s.toast({ kind: 'error', message: '屏蔽失败', detail: errorMessage(e).title });
+      setBusy(false);
+    }
+  };
+  return (
+    <Modal open onClose={onClose} width={460} title="屏蔽发件人" footer={
+      <>
+        <Button variant="ghost" onClick={onClose}>取消</Button>
+        <Button variant="danger" loading={busy} autoFocus onClick={submit}>屏蔽</Button>
+      </>
+    }>
+      <p className="dialog-text">屏蔽后，来自对方的现有邮件和今后的新邮件都会在邮件服务器上移到「垃圾邮件」，不再计入未读，也不会通知。可随时在 设置 → 垃圾邮件 中解除。</p>
+      <div className="choice-list">
+        <label className={cx('choice', scope === 'address' && 'is-on')}>
+          <input type="radio" name="block-scope" checked={scope === 'address'} onChange={() => setScope('address')} />
+          <span><strong>仅此地址</strong><em>{address}</em></span>
+        </label>
+        <label className={cx('choice', scope === 'domain' && 'is-on', !domainOk && 'is-disabled')} title={domainOk ? undefined : '这是公共邮箱服务的域名，屏蔽会影响所有使用它的人'}>
+          <input type="radio" name="block-scope" disabled={!domainOk} checked={scope === 'domain'} onChange={() => setScope('domain')} />
+          <span><strong>整个域名</strong><em>@{domain}{domainOk ? '' : '（公共邮箱，不能整体屏蔽）'}</em></span>
+        </label>
+      </div>
+    </Modal>
+  );
+}
+
 function ScheduleDialog({ onPick, onClose }: { onPick: (t: number) => void; onClose: () => void }) {
   const def = new Date(Date.now() + 24 * 3600_000);
   def.setHours(9, 0, 0, 0);
@@ -290,6 +349,7 @@ export function ModalHost() {
     case 'image': return <ImageDialog {...modal} onClose={close} />;
     case 'diagnose': return <DiagnoseDialog accountId={modal.accountId} onClose={close} />;
     case 'shortcuts': return <ShortcutsDialog onClose={close} />;
+    case 'block': return <BlockDialog address={modal.address} onClose={close} />;
   }
   return null;
 }

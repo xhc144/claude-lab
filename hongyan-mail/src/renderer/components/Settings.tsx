@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Bell, Info, KeyRound, Keyboard, Palette, RefreshCw, Shield, SlidersHorizontal, Trash2, Users, ArrowUp, ArrowDown, Stethoscope,
-  FolderOpen, FileText, ExternalLink, Check, Monitor, Moon, Sun
+  FolderOpen, FileText, ExternalLink, Check, Monitor, Moon, Sun, OctagonAlert, Ban
 } from 'lucide-react';
-import type { AccentId, AccountSummary, Settings as SettingsT } from '@shared/types';
+import type { AccentId, AccountSummary, BlockedSender, Settings as SettingsT } from '@shared/types';
 import { useApp } from '../store';
 import { api, errorMessage } from '../api';
 import { Button, cx, Field, LogoMark, Modal, Segmented, Switch } from './ui';
@@ -16,6 +16,7 @@ const SECTIONS = [
   { id: 'accounts', label: '账户', icon: Users },
   { id: 'sync', label: '同步与通知', icon: Bell },
   { id: 'privacy', label: '隐私与安全', icon: Shield },
+  { id: 'junk', label: '垃圾邮件', icon: OctagonAlert },
   { id: 'oauth', label: 'OAuth 登录', icon: KeyRound },
   { id: 'shortcuts', label: '快捷键', icon: Keyboard },
   { id: 'about', label: '关于', icon: Info }
@@ -298,6 +299,9 @@ export function SettingsModal({ section: initialSection, accountId }: { section?
     case 'oauth':
       body = <OAuthSection />;
       break;
+    case 'junk':
+      body = <JunkSection />;
+      break;
     case 'shortcuts':
       body = (
         <Group>
@@ -342,6 +346,53 @@ export function SettingsModal({ section: initialSection, accountId }: { section?
         </div>
       </div>
     </Modal>
+  );
+}
+
+function JunkSection() {
+  const s = useApp();
+  const [list, setList] = useState<BlockedSender[] | null>(null);
+  const [input, setInput] = useState('');
+  const [busy, setBusy] = useState(false);
+  const load = () => api.listBlockedSenders().then(setList).catch(() => setList([]));
+  useEffect(() => { void load(); }, []);
+  const add = async () => {
+    if (!input.trim()) return;
+    setBusy(true);
+    try {
+      const r = await api.blockSenders(input.split(/[,;，；\s]+/).filter(Boolean));
+      setInput('');
+      s.toast({ kind: 'success', message: '已屏蔽', detail: r.moved ? `${r.moved} 封邮件已移到「垃圾邮件」` : undefined });
+      void load();
+    } catch (e) {
+      s.toast({ kind: 'error', message: '无法屏蔽', detail: errorMessage(e).title });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <Group title="已屏蔽的发件人">
+        <div className="block-add">
+          <input className="input" value={input} placeholder="name@example.com 或 @example.com（整个域名）" spellCheck={false}
+            onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') void add(); }} />
+          <Button variant="primary" icon={<Ban size={14} />} loading={busy} disabled={!input.trim()} onClick={add}>屏蔽</Button>
+        </div>
+        {list && !list.length && <div className="block-empty">还没有屏蔽任何发件人。在邮件上点右键 →「屏蔽此发件人」即可添加。</div>}
+        {list?.map((b) => (
+          <Row key={b.pattern} title={<span className="mono">{b.pattern}</span>} desc={b.pattern.startsWith('@') ? '整个域名' : undefined}>
+            <Button size="s" variant="ghost" onClick={() => api.unblockSender(b.pattern).then(load)}>解除屏蔽</Button>
+          </Row>
+        ))}
+      </Group>
+      <Group title="说明">
+        <div className="set-note">
+          <p>屏蔽后，对方现有的邮件和今后的新邮件都会在<strong>邮件服务器上</strong>移到「垃圾邮件」文件夹（不是只在本机隐藏），在手机等其他设备上也能看到同样的结果，也有助于服务器的垃圾邮件过滤学习。</p>
+          <p>「垃圾邮件」和「已删除」中的邮件不计入未读数。开启智能分类后，收件箱的未读数只统计「主要」和「通知」，推广与社交邮件在各自的标签里单独计数。</p>
+          <p>删除邮件时总是先移到「已删除」，可以撤销或从中恢复；只有在「已删除」里再次删除或清空时，才会永久删除。</p>
+        </div>
+      </Group>
+    </>
   );
 }
 

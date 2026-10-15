@@ -10,6 +10,7 @@ import { Composers } from './components/Composer';
 import { ModalHost, Toasts } from './components/Overlays';
 import { ContextMenuHost, cx, LogoMark, TooltipHost } from './components/ui';
 import { Welcome } from './components/AddAccount';
+import { installGlobalContextMenu } from './lib/contextmenu';
 
 const SEARCH_HELP = ['from:', 'to:', 'subject:', 'has:attachment', 'is:unread', 'is:starred', 'after:2024-01-01', 'in:sent'];
 
@@ -22,6 +23,8 @@ function TopBar({ searchRef }: { searchRef: React.RefObject<HTMLInputElement | n
 
   useEffect(() => {
     if (s.view.kind !== 'search') { prevView.current = s.view; if (!focused) setText(''); }
+    // Searches started elsewhere (context menu "搜索…", palette) show their query in the box.
+    else if (!focused) setText(s.view.query);
   }, [s.view]);
 
   const run = (q: string) => {
@@ -133,6 +136,7 @@ export function App() {
 
   useEffect(() => {
     useApp.getState().boot().catch((e) => setError(String(e?.message || e)));
+    return installGlobalContextMenu();
   }, []);
   useShortcuts(() => { searchRef.current?.focus(); searchRef.current?.select(); });
 
@@ -144,6 +148,7 @@ export function App() {
         <Welcome />
         <ModalHost />
         <Toasts />
+        <ContextMenuHost />
         <TooltipHost />
       </>
     );

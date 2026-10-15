@@ -284,12 +284,14 @@ export class MailStore {
     return ids;
   }
 
-  folderInfos(): FolderInfo[] {
+  /** With categories enabled, an inbox's unread counter leaves out promotions and social (they have their own tabs). */
+  folderInfos(categoriesEnabled = false): FolderInfo[] {
     const rows = this.db.all<FolderRow & { unread: number; cnt: number }>(`
-      SELECT f.*, COALESCE(u.unread, 0) AS unread, COALESCE(u.cnt, 0) AS cnt
+      SELECT f.*, COALESCE(CASE WHEN f.special_use = 'inbox' AND ? THEN u.unread_main ELSE u.unread END, 0) AS unread, COALESCE(u.cnt, 0) AS cnt
       FROM folders f
-      LEFT JOIN (SELECT folder_id, SUM(seen = 0) AS unread, COUNT(*) AS cnt FROM messages GROUP BY folder_id) u ON u.folder_id = f.id
-      ORDER BY f.account_id, f.id`);
+      LEFT JOIN (SELECT folder_id, SUM(seen = 0) AS unread, SUM(seen = 0 AND category NOT IN ('promotions', 'social')) AS unread_main, COUNT(*) AS cnt
+                 FROM messages GROUP BY folder_id) u ON u.folder_id = f.id
+      ORDER BY f.account_id, f.id`, b(categoriesEnabled));
     return rows.map((r) => ({
       id: r.id,
       accountId: r.account_id,
@@ -420,6 +422,13 @@ export class MailStore {
     return this.db.raw.prepare(`SELECT * FROM messages WHERE id IN (${ids.map(() => '?').join(',')})`).all(...ids) as unknown as MessageRow[];
   }
 
+  /** Marks every message of a folder read locally; returns the ids that changed. */
+  markFolderSeenLocal(folderId: number): number[] {
+    const ids = this.db.all<{ id: number }>('SELECT id FROM messages WHERE folder_id = ? AND seen = 0', folderId).map((r) => r.id);
+    if (ids.length) this.db.run('UPDATE messages SET seen = 1 WHERE folder_id = ? AND seen = 0', folderId);
+    return ids;
+  }
+
   setLocalFlag(ids: number[], column: 'seen' | 'flagged' | 'answered' | 'forwarded', value: boolean) {
     this.db.transaction(() => { for (const id of ids) this.db.run(`UPDATE messages SET ${column} = ? WHERE id = ?`, b(value), id); });
   }
@@ -463,6 +472,50 @@ export class MailStore {
 
   trust(address: string) {
     this.db.run('INSERT OR IGNORE INTO trusted_senders (address) VALUES (?)', address.toLowerCase());
+  }
+
+  // ---------------- blocked senders ----------------
+
+  listBlocked(): Array<{ pattern: string; createdAt: number }> {
+    return this.db.all<{ pattern: string; created_at: number }>('SELECT pattern, created_at FROM blocked_senders ORDER BY created_at DESC')
+      .map((r) => ({ pattern: r.pattern, createdAt: r.created_at }));
+  }
+
+  addBlocked(pattern: string) {
+    this.db.run('INSERT OR IGNORE INTO blocked_senders (pattern, created_at) VALUES (?, ?)', pattern, Date.now());
+  }
+
+  removeBlocked(pattern: string) {
+    this.db.run('DELETE FROM blocked_senders WHERE pattern = ?', pattern);
+  }
+
+  /** True if the address, or its whole domain ("@example.com"), is blocked. */
+  isBlocked(address: string): boolean {
+    const a = address.toLowerCase();
+    const at = a.lastIndexOf('@');
+    if (at < 0) return false;
+    return !!this.db.get('SELECT 1 AS x FROM blocked_senders WHERE pattern = ? OR pattern = ?', a, a.slice(at));
+  }
+
+  /**
+   * Messages from the given senders ("a@b.com" or "@b.com") outside trash/junk/sent/drafts, one row per message
+   * (Gmail label copies collapse to the copy in the most relevant folder).
+   */
+  idsFromSenders(patterns: string[]): number[] {
+    if (!patterns.length) return [];
+    const conds: string[] = [];
+    const params: any[] = [];
+    for (const p of patterns) {
+      if (p.startsWith('@')) { conds.push("m.from_addr LIKE ? ESCAPE '\\'"); params.push('%' + escapeLike(p)); }
+      else { conds.push('m.from_addr = ?'); params.push(p); }
+    }
+    const rows = this.db.raw.prepare(`
+      SELECT id FROM (
+        SELECT m.id, ROW_NUMBER() OVER (PARTITION BY m.account_id, m.msg_key ORDER BY ${FOLDER_PRIORITY}, m.id) AS rn
+        FROM messages m JOIN folders f ON f.id = m.folder_id
+        WHERE m.uid > 0 AND (${conds.join(' OR ')}) AND COALESCE(f.special_use, '') NOT IN ('trash', 'junk', 'sent', 'drafts')
+      ) WHERE rn = 1`).all(...params) as Array<{ id: number }>;
+    return rows.map((r) => r.id);
   }
 
   threadIds(accountId: number, threadKey: string): number[] {
@@ -587,6 +640,21 @@ export class MailStore {
     return { items: items.map(rowToSummary), total };
   }
 
+  /** Ids of every message a list query matches (what "select all" refers to), in list order. */
+  queryIds(q: ListQuery, unreadOnly = false): number[] {
+    const params: any[] = [];
+    const { where, dedupe, inboxLike } = this.viewCondition(q, params);
+    if (q.category !== 'all' && inboxLike) { where.push('m.category = ?'); params.push(q.category); }
+    if (unreadOnly) where.push('m.seen = 0');
+    where.push('m.uid > 0');
+    const from = 'FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id';
+    const cond = where.join(' AND ');
+    const sql = dedupe
+      ? `SELECT id FROM (SELECT m.id, m.date, ROW_NUMBER() OVER (PARTITION BY m.account_id, m.msg_key ORDER BY ${FOLDER_PRIORITY}, m.id) AS rn ${from} WHERE ${cond}) WHERE rn = 1 ORDER BY date DESC, id DESC`
+      : `SELECT m.id ${from} WHERE ${cond} ORDER BY m.date DESC, m.id DESC`;
+    return (this.db.raw.prepare(sql).all(...params) as Array<{ id: number }>).map((r) => r.id);
+  }
+
   categoryCounts(q: ListQuery): CategoryCounts {
     const params: any[] = [];
     const { where } = this.viewCondition({ ...q, filter: 'all' }, params);
@@ -597,14 +665,19 @@ export class MailStore {
     return out;
   }
 
-  unifiedCounts(outbox: number): UnifiedCounts {
+  /**
+   * Counters for the sidebar and the taskbar badge. Junk and trash never count. With categories enabled the inbox
+   * counter, like Gmail's, only counts the tabs people read (promotions and social have their own tab counters).
+   */
+  unifiedCounts(outbox: number, categoriesEnabled = false): UnifiedCounts {
     const one = (sql: string) => (this.db.get<{ c: number }>(sql)?.c ?? 0);
+    const catCond = categoriesEnabled ? " AND m.category NOT IN ('promotions', 'social')" : '';
     return {
-      inboxUnread: one("SELECT COUNT(*) AS c FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id WHERE a.enabled = 1 AND f.special_use = 'inbox' AND m.seen = 0"),
+      inboxUnread: one(`SELECT COUNT(*) AS c FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id WHERE a.enabled = 1 AND f.special_use = 'inbox' AND m.seen = 0 AND m.uid != 0${catCond}`),
       starred: one("SELECT COUNT(*) AS c FROM (SELECT DISTINCT m.account_id, m.msg_key FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id WHERE a.enabled = 1 AND m.flagged = 1 AND COALESCE(f.special_use, '') NOT IN ('trash', 'junk'))"),
       drafts: one('SELECT COUNT(*) AS c FROM drafts'),
       outbox,
-      unreadTotal: one("SELECT COUNT(*) AS c FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id WHERE a.enabled = 1 AND m.seen = 0 AND COALESCE(f.special_use, '') NOT IN ('trash', 'junk', 'sent', 'drafts', 'all')")
+      unreadTotal: one("SELECT COUNT(*) AS c FROM (SELECT DISTINCT m.account_id, m.msg_key FROM messages m JOIN folders f ON f.id = m.folder_id JOIN accounts a ON a.id = m.account_id WHERE a.enabled = 1 AND m.seen = 0 AND m.uid != 0 AND COALESCE(f.special_use, '') NOT IN ('trash', 'junk', 'sent', 'drafts', 'all'))")
     };
   }
 }

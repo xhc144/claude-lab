@@ -427,3 +427,29 @@
   letter-spacing: 0.2em;
   color: var(--text-3) !important;
 }
+
+/* ------------------------------------------------------------ junk / blocked senders */
+
+.block-add {
+  display: flex;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.block-add .input {
+  flex: 1;
+}
+.block-empty {
+  padding: 16px 0;
+  color: var(--text-3);
+  font-size: var(--fs-s);
+}
+.set-note {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 0;
+  color: var(--text-2);
+  font-size: var(--fs-s);
+  line-height: 1.7;
+}
