@@ -794,6 +794,17 @@ select.select { appearance: none; padding-right: 30px; cursor: pointer;
 .feigen-table td.mono { font-family: var(--mono); font-size: 11px; overflow-wrap: anywhere; }
 .feigen-table b.good, .readout dd b.good { color: var(--ok); font-weight: 600; }
 
+/* elementary cellular automaton rule editor */
+
+.rule-bits { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; }
+.rule-bit { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 5px 0; border: 1px solid var(--border); border-radius: 7px; background: var(--bg-2); cursor: pointer; }
+.rule-bit:hover { border-color: var(--border-strong); }
+.rule-bit .nbhd, .rule-bit .out { display: flex; gap: 1px; }
+.rule-bit i { display: block; width: 8px; height: 8px; border-radius: 1.5px; background: var(--surface-3); }
+.rule-bit i.on { background: #a5d8ff; }
+.rule-bit.on { border-color: rgba(122, 162, 255, 0.45); }
+.rule-bit .out i { width: 10px; height: 10px; }
+
 /* ------------------------------------------------------------------ modal & toast */
 
 .modal-backdrop {
