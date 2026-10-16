@@ -19,9 +19,9 @@ export const projects = [
   // ─── 浏览器交互 ───
   {
     id: 'mathscape', category: 'play', title: '数境', en: 'MathScape', cover: 'mathscape', status: { kind: 'online', label: '在线体验' },
-    summary: '拖动矩阵与复函数的参数，实时观察线性变换、定义域着色、常微分方程相轨线和三体运动；可开启高精度：精确分数、根式与最高 1000 位小数。',
-    tags: ['数学可视化', '复变函数', 'ODE', '三体', '任意精度', '离线单文件'],
-    keywords: 'matrix linear transform complex ode lorenz three body high precision arbitrary precision 矩阵 线性代数 微分方程 洛伦茨 高精度 任意精度',
+    summary: '12 个实时计算的数学实验室：矩阵、复变、微分方程、三体、可放大到 10⁻²⁸⁰ 的分形、傅里叶本轮、混沌、生命游戏、对称、概率、水波槽与素数；可开启高精度：精确分数、根式与最高 1000 位小数。',
+    tags: ['12 个模块', '数学可视化', '分形深度放大', '任意精度', '离线单文件'],
+    keywords: 'matrix linear transform complex ode lorenz three body mandelbrot fractal deep zoom perturbation fourier epicycles chaos bifurcation feigenbaum game of life cellular automaton wallpaper group symmetry probability galton buffon wave equation interference chladni primes ulam spiral riemann zeta high precision arbitrary precision 矩阵 线性代数 微分方程 洛伦茨 三体 分形 曼德博 傅里叶 本轮 混沌 分岔 生命游戏 元胞自动机 壁纸群 对称 概率 高尔顿 蒲丰 波动 干涉 克拉尼 素数 乌拉姆 黎曼 高精度 任意精度',
     links: [
       { label: '打开数境', href: 'mathscape/', primary: true },
       { label: '下载单文件', href: 'mathscape/index.html', download: 'mathscape.html' },

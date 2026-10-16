@@ -2,14 +2,14 @@ import { test, expect } from '@playwright/test';
 import { watchErrors, open, canvasStats, APP } from './helpers.mjs';
 
 test.describe('start page and settings', () => {
-  test('start page: hero, four live previews, gallery, and navigation', async ({ page }) => {
+  test('start page: hero, twelve live previews, gallery, and navigation', async ({ page }) => {
     const check = watchErrors(page);
     await open(page, '');
     await expect(page.locator('.hero-title')).toContainText('MathScape');
-    await expect(page.locator('#home-modules .mcard')).toHaveCount(4);
-    await expect(page.locator('#home-gallery .gitem')).toHaveCount(9);
+    await expect(page.locator('#home-modules .mcard')).toHaveCount(12);
+    await expect(page.locator('#home-gallery .gitem')).toHaveCount(21);
     // every preview is computed and drawn (not blank)
-    for (let k = 1; k <= 4; k++) {
+    for (let k = 1; k <= 12; k++) {
       await expect.poll(async () => (await canvasStats(page, `#home-modules .mcard:nth-child(${k}) canvas`)).distinct, { timeout: 10000 })
         .toBeGreaterThan(8);
     }

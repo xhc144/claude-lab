@@ -1,6 +1,6 @@
 {
   "name": "mathscape",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "数境 MathScape：矩阵线性变换、复变函数映射、常微分方程轨线与三体运动的交互式可视化",
   "private": true,
   "type": "module",
