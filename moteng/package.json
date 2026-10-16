@@ -1,7 +1,7 @@
 {
   "name": "moteng",
   "productName": "Moteng",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "墨誊 Moteng：把 ChatGPT、Claude、Gemini、DeepSeek 等 AI 对话网页转换成 LaTeX 源码与 PDF",
   "author": {
     "name": "claude-lab"
