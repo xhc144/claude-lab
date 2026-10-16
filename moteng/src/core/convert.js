@@ -228,6 +228,7 @@ export async function convert(input, options = {}) {
       if (!texOpts.safeFonts) {
         texOpts.safeFonts = true;
         warnings.push('本机字体在 TeX 中加载失败，改用 TeX 自带字体');
+        result.fontError = (last.errors[0] && `${last.errors[0].file}:${last.errors[0].line}: ${last.errors[0].message}`) || last.out.slice(-600);
         rendered = write();
         continue;
       }

@@ -220,7 +220,7 @@ async function selfTest() {
           const count = pdf ? pdf.toString('latin1').match(/\/Type\s*\/Pages\b[^>]*?\/Count\s+(\d+)|\/Count\s+(\d+)[^>]*?\/Type\s*\/Pages\b/) : null;
           const pages = count ? +(count[1] || count[2]) : null;
           const valid = !!pdf && pdf.subarray(0, 5).toString() === '%PDF-' && tail.includes('%%EOF') && pdf.length > 8000;
-          Object.assign(c, { ok: valid, pages, bytes: pdf ? pdf.length : 0, engine: r.engine, warnings: r.warnings, repaired: r.repaired, turns: r.turns, styleUsed: r.style, cjkFont: r.cjkFont, pdfPath: r.pdfPath });
+          Object.assign(c, { ok: valid, pages, bytes: pdf ? pdf.length : 0, engine: r.engine, warnings: r.warnings, repaired: r.repaired, turns: r.turns, styleUsed: r.style, cjkFont: r.cjkFont, fontError: r.fontError, pdfPath: r.pdfPath });
           // On Windows the system fonts (SimSun / YaHei) must load; Fandol means the font block failed.
           if (process.platform === 'win32' && report.fonts.serif && !/sim|msyh|yahei|deng|source|noto/i.test(r.cjkFont || '')) { c.ok = false; c.error = `CJK font fell back to ${r.cjkFont || 'unknown'}`; }
           // The ChatGPT fixture has no deliberately broken TeX; nothing may fall back there.
