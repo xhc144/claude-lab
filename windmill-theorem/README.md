@@ -24,14 +24,14 @@
 
 | 文件 | 内容 |
 | --- | --- |
-| `output/windmill_theorem_zh.mp4` | 中文版，18 分 16 秒，1080p，中文字幕（烧录） |
-| `output/windmill_theorem_en.mp4` | 英文版，28 分 25 秒，1080p，英文字幕 + 逐句中文释义；难词在右上角标注音标与中文；面试章节为三人对话（旁白 / 考官 / 考生） |
+| `output/windmill_theorem_zh.mp4` | 中文版，19 分 40 秒，1080p，中文配音（龙安鲁风），中文字幕（烧录） |
+| `output/windmill_theorem_en.mp4` | 英文版，24 分 54 秒，1080p，英文配音（约 125 词 / 分钟），英文字幕 + 逐句中文释义；难词在右上角标注音标与中文；面试章节为三人对话（旁白 / 考官 / 考生三个声音） |
 | `output/*.srt` | 外挂字幕：中文、英文、英中双语 |
 | `docs/讲稿_中英对照.md` | 逐段中英对照讲稿、英文逐句释义、101 个词汇（音标 + 中文） |
 | `docs/面试问答手册.md` | 12 道视频中的追问 + 8 道附加追问：英文参考回答、中文对照、考察点、常用表达、人名发音 |
 | `anim/`、`content/`、`tools/`、`tts/` | 可编辑的动画工程（见下文） |
 
-> **配音状态**：当前两部成片带有字幕和背景音乐，**尚未加入旁白配音**。本环境的网络策略屏蔽了在线语音服务和模型下载站点，离线语音模型需要单独获得运行许可。工程已经写好配音步骤：放入模型后运行一条命令即可生成配音，动画节奏会按真实语音时长自动重排（见“加入配音”）。
+配音用阿里云百炼的通义千问语音合成 `qwen-audio-3.0-tts-plus`：中文旁白为系统音色龙安鲁风；英文旁白、考官、考生分别是基础音色 Adrian Gao（沉稳叙述）、Ivy Hu（从容的年长考官）、Nora Hu（明快的考生）。动画节奏按真实语音时长重排，字幕按语音的逐字时间戳出现（见“配音”）。
 
 ## 章节
 
@@ -57,13 +57,15 @@ content/script.py   旁白唯一来源：中文旁白、英文逐句 + 中文释
 anim/geometry.py    风车几何（纯 Python，可单独运行自检）：集合 S、ζ、τ、轮廓、凹角、两种切法、路径
 anim/base.py        NarratedScene：按旁白时长推进动画、记录字幕时间点；风车 Mobject、文字与卡片组件
 anim/scenes_a.py    00–05 章        anim/scenes_b.py  06–08 章        anim/scenes_c.py  09–11 章
-tts/synth.py        离线配音（sherpa-onnx：中文 MeloTTS，英文 Kokoro，英文默认 0.86 倍速）
+tts/qwen.py         配音（百炼 qwen-audio-3.0-tts-plus，逐句合成，带逐字时间戳）
+tts/check_voice.py  用语音识别（qwen3-asr-flash）回听配音，与稿子逐句对照
+tts/synth.py        离线配音备选（sherpa-onnx：中文 MeloTTS，英文 Kokoro）
 tools/              subtitles.py（ASS/SRT + 词汇卡）· music.py（程序化背景音乐，人声处自动压低）
                     assemble.py（拼接、混音、烧录字幕）· make_docs.py（生成对照讲稿）· make_bg.py
 build.sh            一键构建
 ```
 
-**时间同步方式**：每句旁白都有 id。场景里写 `with self.say("w6"):`，动画就在这句话的时长内播放；`self.at(k)` 等到第 k 句开始再出下一个动作。时长来自配音清单 `build/audio/<lang>/manifest.json`，没有配音时按语速估算。场景渲染时把每句话的起始时间写进 `build/cues/`，字幕和配音都按这份记录放置，所以修改讲稿或换配音后重新构建即可，无需手动对轴。
+**时间同步方式**：每句旁白都有 id。场景里写 `with self.say("w6"):`，动画就在这句话的时长内播放；`self.at(k)` 等到第 k 句开始再出下一个动作。时长来自配音清单 `build/audio/<lang>/manifest.json`，没有配音时按语速估算。场景渲染时把每句话的起始时间写进 `build/cues/`，字幕和配音都按这份记录放置，所以修改讲稿或换配音后重新构建即可，无需手动对轴。一句之内的字幕分段按配音的逐字时间戳定：数到对应的标点，再数到对应的字，取它的开口时间，所以 `(p − 1)/4` 这种写起来短、念起来长的公式也不会让字幕提前或落后。
 
 ## 构建
 
@@ -78,17 +80,32 @@ PY=.venv/bin/python MANIM=.venv/bin/manim bash build.sh all          # 两个语
 
 单独渲染一章：`WT_LANG=en manim -ql anim/scenes_b.py S06_Windmill`。
 
-### 加入配音
+### 配音
 
-1. 获取 sherpa-onnx 的两个官方模型，放到 `models/`：
-   - 中文：`vits-melo-tts-zh_en`（MeloTTS 中英混读）
-   - 英文：`kokoro-en-v0_19`（或 `kokoro-multi-lang-v1_0`；旁白 am_michael、考官 bm_george、考生 af_sarah，可用 `--voices` 改）
-2. 运行
-   ```bash
-   TTS_ZH=models/vits-melo-tts-zh_en TTS_EN=models/kokoro-en-v0_19 \
-   PY=.venv/bin/python MANIM=.venv/bin/manim bash build.sh all
-   ```
-   英文默认 0.86 倍速，便于跟读；可用 `python tts/synth.py --lang en --model-dir ... --speed 0.9` 调整。
+密钥放在本目录的 `.env`（已被 `.gitignore` 排除，不要提交）：
+
+```bash
+echo 'QWEN_TTS_API_KEY=sk-...' > .env      # 百炼中国内地的 API Key；也认 DASHSCOPE_API_KEY 环境变量
+TTS=qwen PY=.venv/bin/python MANIM=.venv/bin/manim bash build.sh all   # 合成配音 → 渲染 → 成片
+.venv/bin/python tts/check_voice.py --lang zh                          # 回听核对（en 同理）
+```
+
+`tts/qwen.py` 调用 SpeechSynthesizer 流式接口，音频以 base64 直接放在流式事件里，不需要访问 OSS；运行环境只要能访问 `dashscope.aliyuncs.com`。每句单独合成，文字、音色、语速都没变的句子复用缓存（`build/audio/<lang>/manifest.json`）。按每万字符 1.4 元计，中文版约 9300 字符、英文版约 18200 字符，两版合成一遍约 4 元。
+
+朗读文字的约定（都写在 `content/script.py` 的 `[[显示||朗读]]` 里）：
+
+- 语音接口会丢掉上下标、把括号和斜杠念乱，所以公式一律写出念法：`[[(p − 1)/4||p 减一的差除以四]]`、`[[p = (y + z)²||p 等于 y 加 z 之和的平方]]`；英文同理，`p minus one, all over four`、`y plus z, all squared`，避免听成 p − 1/4 或 y + z²。
+- 三元组逐个念并带停顿：`[[(3, 2, 4)||三、二、四]]`。
+- 2026、2027 在这里是数，不是年份：两千零二十六、two thousand twenty-seven；1640、1990 是年份，照年份念。
+- 英文句子要带 `language_hints: en`，否则 1640 会被念成中文“一六四零”。
+- 人名直接写原文（Fermat、Euler、Sperner）；旧的离线引擎需要的拼读写法（Fair-mah、Oiler）已去掉。
+- 多音字由 `tts/qwen.py` 的 `PINYIN` 固定读音（模四余一的“模”、只差的“差”、凹角处的“处”、长什么样的“长”……），只写带声调的音节。
+
+`[[显示||朗读]]` 里不要放句号、问号：中文按句末标点分句（分句会跳过标记内部，但标点放在标记外最稳妥）。英文的中文释义（gloss）原样显示，里面不要写标记。
+
+当前回听结果：中文 83 句平均字错误率约 1.2%，英文 95 句平均词错误率约 2.2%，剩下的差异是同音字、数字写法（13 / thirteen）和识别器对 Zagier 的拼写。
+
+离线备选：把 sherpa-onnx 的 `vits-melo-tts-zh_en` 和 `kokoro-en-v0_19` 放到 `models/`，用 `TTS_ZH=... TTS_EN=... bash build.sh all`（见 `tts/synth.py`）。
 
 ### 修改内容
 
