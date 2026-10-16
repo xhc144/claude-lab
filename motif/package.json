@@ -1,7 +1,7 @@
 {
   "name": "motif",
   "productName": "Motif",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "律影 Motif — 动态视觉创作软件：人类可视化编辑与 AI Skill/CLI/MCP 共用同一套项目、设计系统与渲染引擎",
   "main": "dist/main.cjs",
   "author": "Motif",
