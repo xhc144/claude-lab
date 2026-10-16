@@ -6,6 +6,7 @@ import { protocol, net } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { pathToFileURL } from 'node:url';
+import { Readable } from 'node:stream';
 
 const allowedRoots = new Set();
 export function allowRoot(dir) { if (dir) allowedRoots.add(path.resolve(dir)); }
@@ -31,12 +32,27 @@ export function handleProtocol(distDir) {
       if (!file.startsWith(distDir)) return new Response('forbidden', { status: 403 });
     }
     if (!fs.existsSync(file) || !fs.statSync(file).isFile()) return new Response('not found', { status: 404 });
+    // Media elements seek with byte ranges; without 206 answers a long video never leaves frame 0.
+    const range = /^bytes=(\d*)-(\d*)$/.exec(req.headers.get('range') || '');
+    if (range) {
+      const size = fs.statSync(file).size;
+      let start = range[1] === '' ? Math.max(0, size - Number(range[2] || 0)) : Number(range[1]);
+      let end = range[1] !== '' && range[2] !== '' ? Math.min(Number(range[2]), size - 1) : size - 1;
+      if (start >= size || start > end) return new Response(null, { status: 416, headers: { 'content-range': `bytes */${size}` } });
+      const headers = new Headers({
+        'content-type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
+        'content-length': String(end - start + 1), 'content-range': `bytes ${start}-${end}/${size}`,
+        'accept-ranges': 'bytes', 'access-control-allow-origin': '*', 'cache-control': 'no-store',
+      });
+      return new Response(Readable.toWeb(fs.createReadStream(file, { start, end })), { status: 206, headers });
+    }
     const res = await net.fetch(pathToFileURL(file).toString(), { headers: req.headers });
     const headers = new Headers(res.headers);
     const t = TYPES[path.extname(file).toLowerCase()];
     if (t) headers.set('content-type', t);
     headers.set('access-control-allow-origin', '*');
     headers.set('cache-control', 'no-store');
+    headers.set('accept-ranges', 'bytes');
     return new Response(res.body, { status: res.status, headers });
   });
 }

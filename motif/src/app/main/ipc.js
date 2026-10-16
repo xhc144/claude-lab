@@ -1,7 +1,7 @@
 // IPC surface of the editor. One request channel ("motif:call", method + args) keeps the preload
 // tiny; errors travel back as {error, hint, code} so the UI can show the same friendly messages the
 // CLI prints. Events (export progress, AI steps, external project changes) use "motif:event".
-import { ipcMain, dialog, shell, app, BrowserWindow } from 'electron';
+import { ipcMain, dialog, shell, app, BrowserWindow, nativeTheme } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -16,6 +16,7 @@ import { allowRoot, fileUrl } from './protocol.js';
 import { runRenderJob } from './render-job.js';
 import * as ai from './ai.js';
 import { updateStatus, checkForUpdates, installNow } from './updater.js';
+import { recorderApi } from './recorder.js';
 
 export function registerIpc({ distDir, getWindow, takePendingOpen }) {
   const send = (channel, payload) => { for (const w of BrowserWindow.getAllWindows()) if (!w.isDestroyed() && w.webContents.getURL().includes('editor.html')) w.webContents.send('motif:event', channel, payload); };
@@ -71,6 +72,7 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
       const { ai: _a, ...safe } = patch || {};
       const r = store.writeConfig(safe);
       if (safe.library) allowRoot(store.libraryRoot());
+      if (safe.appearance) nativeTheme.themeSource = ['light', 'system'].includes(safe.appearance) ? safe.appearance : 'dark';
       return r;
     },
 
@@ -203,6 +205,8 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
     'integrations.info': () => integrationInfo(),
     'integrations.installSkill': (target) => installSkill(target),
   };
+
+  Object.assign(api, recorderApi({ getWindow, send, preload: path.join(distDir, 'preload.cjs') }));
 
   ipcMain.handle('motif:call', async (_e, method, args) => {
     const fn = api[method];

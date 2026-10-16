@@ -485,6 +485,40 @@ asset 为视频资源 ID。trim: [开始秒, 结束秒]。导出时逐帧解码�
 {"type":"video","asset":"ast_demo","trim":[2,8],"mount":"laptop"}
 ```
 
+### `screen` — 录屏
+
+屏幕录像：自动运镜、光标美化、点击特效、背景与外框、摄像头画中画，逐帧精确导出。
+
+由录屏功能生成，也可以把已有的屏幕录像设为 asset。clips 是对源视频的剪辑（源时间秒，可变速）；zooms 是缩放片段（源时间秒）：mode=auto 时镜头跟随光标，manual 时看向 focus。pointer 为录制时的光标轨迹（JSON 资源），没有它时光标特效与自动运镜不可用。通常让它独占一个场景并铺满画面（frame {x:0,y:0,w:1,h:1}）。
+
+类别：媒体；性质：visual；别名：`recording` `screencast` `screenrecord`
+
+| 参数 | 类型 | 默认 | 说明 |
+| --- | --- | --- | --- |
+| `asset` **必填** | asset |  | 屏幕录像资源 ID |
+| `pointer` | asset |  | 光标轨迹资源 ID（JSON：位置、点击、光标形状） |
+| `camera` | asset |  | 摄像头录像资源 ID |
+| `mic` | asset |  | 麦克风录音资源 ID |
+| `system` | asset |  | 系统声音资源 ID |
+| `source` | { width, height, duration, fps, cursorInVideo, cameraOffset } |  | 源录像信息（录制时写入） |
+| `clips` | { from, to, speed, muted }[] |  | 剪辑片段，按播放顺序；空表示整段 |
+| `zooms` | { start, end, scale, focus, mode, easing, enter, exit }[] |  | 缩放片段（自动运镜） |
+| `background` | { type, preset, color, image, blur } |  | 背景 |
+| `padding` | number |  | 留白，占画面短边比例 0–0.3 |
+| `radius` | number |  | 圆角（1080p 下的像素） |
+| `shadow` | number |  | 阴影 0–1 |
+| `window` | "none" / "mac" / "browser" | `"none"` | 窗口外框 |
+| `cursor` | { show, size, smooth, hideIdle, idleDelay, click, clickColor, highlight, tilt } |  | 光标 |
+| `camera_layout` | { show, position, size, shape, border, shadow, mirror, shrinkOnZoom } |  | 摄像头画中画 |
+| `audio` | { mic, system } |  | 音量 |
+| `motionBlur` | { camera, cursor } |  | 动态模糊 |
+| `zoomDefaults` | { scale, easing, enter, exit } |  | 新建缩放片段的默认值 |
+
+示例：
+```json
+{"type":"screen","asset":"ast_rec","pointer":"ast_ptr","frame":{"x":0,"y":0,"w":1,"h":1},"zooms":[{"start":3.2,"end":6,"scale":1.8,"mode":"auto"}],"background":{"type":"gradient","preset":"ocean"}}
+```
+
 ### `shape` — 形状
 
 装饰与标注形状：矩形、圆、线、箭头、高亮框。

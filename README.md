@@ -32,7 +32,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 仓库只保存源码；安装包不提交到仓库，也不发布到 Pages。五个 Windows 软件（Motif、音乐粒子宇宙、声准、墨誊、鸿雁邮箱）由「Ship · 自动合并与发布」流水线统一处理：AI 推送到 `claude/**` 分支后，在 Windows 上构建、测试并用仓库证书签名，通过后自动合并进 `main`，只发布有改动的软件（Releases 标签 `<软件>-v<版本>`），已安装的软件随后自动更新。流程、版本号规则、手动发布方式见 [scripts/windows-release/](scripts/windows-release/README.md)。
 
-[律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据。安装包由 GitHub Actions 的「Motif · Windows build」构建。
+[律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据；还能录屏（自动运镜、平滑光标与点击特效、背景美化、摄像头画中画）并在录屏编辑器里剪辑导出。安装包由 GitHub Actions 的「Motif · Windows build」构建。
 
 [音乐粒子宇宙 Particle Universe](particle-universe/) 是 Electron / WebGL2 的 Windows 音乐可视化程序：导入本地音乐后，离线分析频谱、鼓点、节拍网格、段落与高潮，驱动 13 万–419 万颗 GPU 粒子组成的 8 个场景（星云、黑洞、银河、能量风暴、流体丝绸、共振星球、超空间、奇异吸引子），带自动运镜、自适应画质与逐帧离线的 MP4 / WebM 视频导出。Windows 安装版与便携版 zip（约 129 MB，超过仓库单文件上限）由 `particle-universe · Windows build` 工作流构建并自检；本地可用 `npm run dist:win` 生成。
 

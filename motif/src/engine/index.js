@@ -29,7 +29,7 @@ export class MotifEngine {
     this.te = new TextEngine(mc);
     this.userThemes = userThemes;
     this.onInvalidate = onInvalidate || (() => {});
-    this.assets = new AssetStore({ resolveUrl, onLoad: () => { this.cache.clear(); this._recompile(); this.onInvalidate(); } });
+    this.assets = new AssetStore({ resolveUrl, onLoad: () => { this.cache.clear(); this._recompile(); this.onInvalidate(); }, onFrame: () => this.onInvalidate() });
     this.cache = new Map();
     this.doc = null;
     this.C = null;
@@ -107,6 +107,7 @@ export class MotifEngine {
     const jobs = [];
     for (const S of activeScenes(this.C, t)) for (const it of S.items) {
       if (it.inst.track && it.inst.videoTime) jobs.push(it.inst.track.seek(it.inst.videoTime(t - S.start - it.start)));
+      for (const m of it.inst.tracks || []) if (m.track) jobs.push(m.track.seek(m.time(t - S.start - it.start)));
     }
     if (jobs.length) await Promise.all(jobs);
   }

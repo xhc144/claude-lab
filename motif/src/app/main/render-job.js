@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { allowRoot, fileUrl } from './protocol.js';
-import { buildArgs, audioTracks, parseProgress, EXPORT_FORMATS } from './ffmpeg.js';
+import { buildArgs, audioTracks, audioFilter, shiftAudio, parseProgress, EXPORT_FORMATS } from './ffmpeg.js';
 import { findTool } from '../../core/store/media.js';
 import { readConfig, libraryRoot, listUserThemes } from '../../core/store/index.js';
 import { jpegsToPdf } from '../../core/pdfwriter.js';
@@ -66,15 +66,7 @@ async function runParallel(job, hooks, k) {
   audio.forEach((a) => args.push('-i', a.file));
   args.push('-map', '0:v', '-c:v', 'copy');
   if (audio.length) {
-    const parts = audio.map((a, i) => {
-      const f = [];
-      if (a.trim) f.push(`atrim=${a.trim[0] || 0}${a.trim[1] != null ? ':' + a.trim[1] : ''}`, 'asetpts=PTS-STARTPTS');
-      f.push(`volume=${a.volume ?? 1}`);
-      if (a.fadeIn) f.push(`afade=t=in:st=0:d=${a.fadeIn}`);
-      if (a.start) f.push(`adelay=${Math.round(a.start * 1000)}|${Math.round(a.start * 1000)}`);
-      if (a.fadeOut && a.loopToEnd !== false) f.push(`afade=t=out:st=${Math.max(0, duration - a.fadeOut)}:d=${a.fadeOut}`);
-      return `[${i + 1}:a]${f.join(',')}[a${i}]`;
-    });
+    const parts = audio.map((a, i) => `[${i + 1}:a]${audioFilter(a, duration)}[a${i}]`);
     parts.push(audio.length > 1 ? `${audio.map((_, i) => `[a${i}]`).join('')}amix=inputs=${audio.length}:normalize=0[aout]` : '[a0]anull[aout]');
     const codec = fmt === 'webm' ? ['-c:a', 'libopus', '-b:a', '160k'] : fmt === 'mov' ? ['-c:a', 'pcm_s16le'] : ['-c:a', 'aac', '-b:a', '192k'];
     args.push('-filter_complex', parts.join(';'), '-map', '[aout]', ...codec, '-t', String(duration));
@@ -128,7 +120,7 @@ async function runSingleJob(job, hooks) {
       if (data && data.begin) {
         const ff = job.ffmpeg || findTool('ffmpeg', readConfig());
         if (!ff) throw new Error('找不到 FFmpeg。请在设置中指定 ffmpeg 路径，或设置环境变量 MOTIF_FFMPEG');
-        const audio = job.mute ? [] : audioTracks(doc, projectDir || '.', data.scenes).map((a) => ({ ...a, start: Math.max(0, (a.start || 0) - (data.start || 0)) }));
+        const audio = job.mute ? [] : shiftAudio(audioTracks(doc, projectDir || '.', data.scenes), data.start || 0);
         const args = buildArgs({ out: path.resolve(job.out), format: job.format || 'mp4', width: data.width, height: data.height, fps: data.fps, duration: data.duration, quality: job.quality, audio, gifWidth: job.gifWidth, gifFps: job.gifFps });
         hooks.onLog?.(`ffmpeg ${args.join(' ')}`);
         if (job.type === 'video' && job.encodeInRenderer !== false) return { exe: ff, args };

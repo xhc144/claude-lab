@@ -279,7 +279,7 @@ const video = {
       duration: bleed ? 0.6 : dur, hold: Math.max(1, (trim[1] ?? 6) - trim[0]),
       videoTime: (localT) => trim[0] + Math.max(0, localT),
       track, asset: block.asset, trim,
-      draw(ctx, t) {
+      draw(ctx, t, ds) {
         const e = env.motion.ease(clamp01(t / dur));
         ctx.save();
         ctx.globalAlpha *= bleed ? clamp01((t + 0.2) / 0.7) : clamp01(t / 0.35);
@@ -287,6 +287,8 @@ const video = {
         const inner = chrome(ctx, c, kind, rect, 'under');
         ctx.save(); clipInner(ctx, inner);
         const el = track?.element;
+        // see videoQuality() in screen.js: a clipped video frame on a GPU canvas needs bilinear
+        if (ds?.live) ctx.imageSmoothingQuality = 'low';
         if (el && el.readyState >= 2) drawImageFit(ctx, el, inner, { fit: block.fit || 'cover' });
         else { placeholderArt(ctx, c, inner, '视频'); }
         if (c.hint?.overlay) { ctx.fillStyle = toCss(p.bg, c.hint.overlay); ctx.fillRect(inner.x, inner.y, inner.w, inner.h); }

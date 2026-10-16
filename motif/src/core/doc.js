@@ -282,7 +282,7 @@ export function validateDocument(doc) {
     if (ids.has(s.id)) issues.push({ level: 'error', path: `${p}.id`, message: `场景 ID 重复：${s.id}` });
     ids.add(s.id);
     if (!LAYOUTS[s.layout]) issues.push({ level: 'error', path: `${p}.layout`, message: `未知版式 ${s.layout}` });
-    if (s.duration !== 'auto' && !(typeof s.duration === 'number' && s.duration > 0 && s.duration < 600)) issues.push({ level: 'error', path: `${p}.duration`, message: 'duration 应为 "auto" 或 0–600 秒的数字' });
+    if (s.duration !== 'auto' && !(typeof s.duration === 'number' && s.duration > 0 && s.duration <= 7200)) issues.push({ level: 'error', path: `${p}.duration`, message: 'duration 应为 "auto" 或 0–7200 秒的数字' });
     if (isPlainObject(s.transition) && !TRANSITIONS[s.transition.type]) issues.push({ level: 'error', path: `${p}.transition`, message: `未知转场 ${s.transition.type}` });
     if (isPlainObject(s.background) && !BACKGROUNDS[s.background.type]) issues.push({ level: 'warning', path: `${p}.background`, message: `未知背景 ${s.background.type}` });
     if (isPlainObject(s.camera) && !CAMERAS[s.camera.type]) issues.push({ level: 'warning', path: `${p}.camera`, message: `未知镜头 ${s.camera.type}` });

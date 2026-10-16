@@ -2,7 +2,8 @@
 // which maps a document asset (or src path) to a URL the page can load.
 
 export class AssetStore {
-  constructor({ resolveUrl, onLoad } = {}) {
+  constructor({ resolveUrl, onLoad, onFrame } = {}) {
+    this.onFrame = onFrame || (() => {});
     this.resolveUrl = resolveUrl || ((a) => a?.file || a?.src || a);
     this.onLoad = onLoad || (() => {});
     this.images = new Map();
@@ -32,12 +33,63 @@ export class AssetStore {
           el.currentTime = target;
           setTimeout(done, 3000);
         }),
+        // Live preview (editor playback): play the element in real time, re-seek only on drift.
+        sync: (time, playing, rate = 1) => this._sync(el, time, playing, rate),
       };
       this.videos.set(url, tr);
       this.pending.set('v:' + url, ready.then(() => { this.pending.delete('v:' + url); this.onLoad(url); }));
     }
     return tr;
   }
+
+  /** Audio element for live preview of a document audio asset ({ element, sync }). */
+  audio(ref) {
+    const url = this.urlFor(ref);
+    if (!url || typeof document === 'undefined') return null;
+    const key = 'a:' + url;
+    let tr = this.videos.get(key);
+    if (!tr) {
+      const el = document.createElement('audio');
+      el.preload = 'auto'; el.src = url;
+      tr = { element: el, sync: (time, playing, rate = 1, volume = 1) => { el.volume = Math.max(0, Math.min(1, volume)); this._sync(el, time, playing, rate); } };
+      this.videos.set(key, tr);
+    }
+    return tr;
+  }
+
+  _sync(el, time, playing, rate) {
+    el._motifSync = performance.now();
+    const dur = Number.isFinite(el.duration) ? el.duration : Infinity;
+    const target = Math.max(0, Math.min(time, dur - 0.02));
+    if (playing && time < dur) {
+      const r = Math.max(0.25, Math.min(8, rate || 1));
+      if (Math.abs(el.playbackRate - r) > 1e-3) el.playbackRate = r;
+      if (Math.abs(el.currentTime - target) > 0.25 * Math.max(1, r) && !el.seeking) el.currentTime = target;
+      if (el.paused) el.play().catch(() => {});
+    } else {
+      if (!el.paused) el.pause();
+      if (Math.abs(el.currentTime - target) > 0.01 && !el.seeking) {
+        el.currentTime = target;
+        // Paused scrubbing: redraw once the new frame is decoded.
+        el.addEventListener('seeked', () => this.onFrame(), { once: true });
+      }
+    }
+    if (!this._watch) {
+      // Elements that stop being drawn (scene left, playback stopped elsewhere) go quiet.
+      this._watch = setInterval(() => {
+        let live = 0;
+        for (const tr of this.videos.values()) {
+          const e = tr.element;
+          if (!e.paused && performance.now() - (e._motifSync || 0) > 300) e.pause();
+          if (!e.paused) live++;
+        }
+        if (!live) { clearInterval(this._watch); this._watch = null; }
+      }, 200);
+    }
+  }
+
+  /** Pause every live-preview media element. */
+  pauseAll() { for (const tr of this.videos.values()) if (!tr.element.paused) tr.element.pause(); }
 
   setDocument(doc) { this.doc = doc; }
 
