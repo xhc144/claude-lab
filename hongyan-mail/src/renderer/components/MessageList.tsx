@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import {
-  Archive, Check, CheckCheck, Filter, Forward, FolderInput, MailOpen, Mail, Paperclip, Reply, ReplyAll, Search, Server,
-  ShieldAlert, Star, Tag, Trash2, CornerUpLeft
+  Archive, Ban, Check, CheckCheck, Copy, Filter, Forward, FolderInput, ListChecks, MailOpen, Mail, MoreHorizontal, Paperclip, Reply, ReplyAll,
+  Search, Server, ShieldAlert, Star, Tag, Trash2, CornerUpLeft, BrushCleaning
 } from 'lucide-react';
 import type { Category, CategoryCounts, MessageSummary } from '@shared/types';
 import { PAGE, useApp, listQuery } from '../store';
@@ -10,8 +10,9 @@ import { api, errorMessage } from '../api';
 import { UNIFIED_NAMES, folderName, viewKey } from '../lib/folders';
 import { addressLine, dateBucket, displayName, listTime, number } from '../lib/format';
 import { parseQuery } from '@shared/search';
-import { Avatar, cx, Dropdown, IconButton, Spinner, showContextMenu, type MenuItem } from './ui';
+import { Avatar, cx, Dropdown, IconButton, Spinner, showContextMenu, showContextMenuAt, type MenuItem } from './ui';
 import { EmptyState } from './EmptyState';
+import { confirmBlock, deleteAllFrom } from '../lib/contextmenu';
 
 const CATEGORIES: Array<{ id: Category | 'all'; label: string }> = [
   { id: 'all', label: '全部' },
@@ -49,6 +50,17 @@ export function messageMenu(m: MessageSummary, ids: number[]): MenuItem[] {
   const accountFolders = s.folders.filter((f) => f.accountId === m.accountId && f.id !== m.folderId);
   const folder = s.folders.find((f) => f.id === m.folderId);
   const multi = ids.length > 1;
+  const mine = !!m.from && s.accounts.some((a) => a.email.toLowerCase() === m.from!.address);
+  const junk = folder?.specialUse === 'junk';
+  const sender: MenuItem[] = m.from && !multi ? [
+    { separator: true },
+    { heading: m.from.address },
+    { label: '复制发件人地址', icon: <Copy size={15} />, onSelect: () => { void api.copyText(m.from!.address); s.toast({ kind: 'success', message: '邮箱地址已复制', duration: 1600 }); } },
+    ...(!mine ? [
+      { label: '删除此发件人的所有邮件', icon: <Trash2 size={15} />, onSelect: () => void deleteAllFrom(m.from!.address) },
+      ...(!junk ? [{ label: '屏蔽此发件人', icon: <Ban size={15} />, danger: true, onSelect: () => confirmBlock(m.from!.address) }] : [])
+    ] : [])
+  ] : [];
   return [
     ...(!multi ? [
       { label: '回复', icon: <Reply size={15} />, kbd: 'R', onSelect: () => s.reply('reply', m.id) },
@@ -74,7 +86,8 @@ export function messageMenu(m: MessageSummary, ids: number[]): MenuItem[] {
     folder?.specialUse === 'junk'
       ? { label: '不是垃圾邮件', icon: <CornerUpLeft size={15} />, onSelect: () => s.act('notspam', ids) }
       : { label: '标记为垃圾邮件', icon: <ShieldAlert size={15} />, kbd: '!', onSelect: () => s.act('spam', ids) },
-    { label: folder?.specialUse === 'trash' ? '永久删除' : '删除', icon: <Trash2 size={15} />, kbd: 'Del', danger: true, onSelect: () => s.act('trash', ids) }
+    { label: folder?.specialUse === 'trash' ? '永久删除' : '删除', icon: <Trash2 size={15} />, kbd: 'Del', danger: true, onSelect: () => s.act('trash', ids) },
+    ...sender
   ];
 }
 
@@ -91,13 +104,20 @@ function MessageRow({ m, selected, open, showAvatar, showSnippet, multiAccount, 
     s().select(m.id, mode);
   };
   const ids = () => (s().selection.includes(m.id) ? s().selection : [m.id]);
+  // With "select all in view" the menu acts on every matching message, not just the loaded ones.
+  const menuIds = async () => (s().allSelected && s().selection.includes(m.id) ? s().targetIds() : ids());
   return (
     <div
       className={cx('row', !m.seen && 'is-unread', selected && 'is-selected', open && 'is-open')}
       onClick={onClick}
       onContextMenu={(e) => {
         if (!s().selection.includes(m.id)) s().select(m.id, 'single');
-        showContextMenu(e, messageMenu(m, ids()));
+        if (s().allSelected) {
+          e.preventDefault();
+          e.stopPropagation();
+          const { clientX, clientY } = e;
+          void menuIds().then((list) => showContextMenuAt(messageMenu(m, list), clientX, clientY));
+        } else showContextMenu(e, messageMenu(m, ids()));
       }}
       draggable
       onDragStart={(e) => {
@@ -239,7 +259,32 @@ export function MessageList() {
 
   const selectedSet = new Set(s.selection);
   const filterLabel = { all: '全部', unread: '未读', starred: '星标', attachments: '带附件' }[s.filter];
-  const unreadInView = Object.values(s.list.pages).flat().filter((m) => !m.seen);
+  const unreadInView = Object.values(s.list.pages).flat().some((m) => !m.seen) || (inboxLike && !!catCounts?.all);
+  const junkOrTrash = viewFolderSU === 'junk' || viewFolderSU === 'trash' || (view.kind === 'unified' && (view.box === 'junk' || view.box === 'trash'));
+  const emptyTargets = s.folders.filter((f) => (view.kind === 'folder' ? f.id === view.folderId : view.kind === 'unified' && f.specialUse === view.box && (s.accountFilter == null || f.accountId === s.accountFilter)));
+  const emptyFolders = () => {
+    const what = (viewFolderSU || (view.kind === 'unified' ? view.box : '')) === 'junk' ? '垃圾邮件' : '已删除';
+    s.openModal({
+      type: 'confirm',
+      title: `清空「${what}」？`,
+      message: `将从邮件服务器上永久删除「${what}」中的全部 ${total} 封邮件${emptyTargets.length > 1 ? `（${emptyTargets.length} 个账户）` : ''}，此操作无法撤销。`,
+      confirmLabel: '永久删除',
+      danger: true,
+      onConfirm: () => {
+        Promise.all(emptyTargets.map((f) => api.emptyFolder(f.id)))
+          .then((r) => s.toast({ kind: 'success', message: `已清空「${what}」`, detail: `永久删除了 ${r.reduce((a, b) => a + b, 0)} 封邮件` }))
+          .catch((e) => s.toast({ kind: 'error', message: '清空失败', detail: errorMessage(e).title }));
+      }
+    });
+  };
+  const viewMenu: MenuItem[] = [
+    { label: '全部标为已读', icon: <CheckCheck size={15} />, disabled: !unreadInView, onSelect: () => void s.markAllRead() },
+    { label: `选择全部 ${number(total)} 封`, icon: <ListChecks size={15} />, kbd: 'Ctrl A', disabled: !total, onSelect: () => { s.selectAll(); s.selectAllMatching(); } },
+    ...(junkOrTrash ? [
+      { separator: true },
+      { label: viewFolderSU === 'junk' || (view.kind === 'unified' && view.box === 'junk') ? '清空垃圾邮件' : '清空已删除', icon: <BrushCleaning size={15} />, danger: true, disabled: !total || !emptyTargets.length, onSelect: emptyFolders }
+    ] as MenuItem[] : [])
+  ];
 
   const searchServer = async () => {
     if (s.view.kind !== 'search') return;
@@ -263,12 +308,10 @@ export function MessageList() {
           <span className="list-sub" title={sub}>{s.list.loaded ? `${number(total)} 封` : ''}{sub && s.view.kind !== 'search' ? ` · ${sub}` : ''}</span>
         </div>
         <div className="list-tools">
-          {unreadInView.length > 0 && s.view.kind !== 'search' && (
-            <IconButton tip="全部标为已读" size="s" onClick={() => {
-              if (s.view.kind === 'folder') api.markFolderRead(s.view.folderId);
-              else s.setSeen(unreadInView.map((m) => m.id), true);
-            }}><CheckCheck size={16} /></IconButton>
+          {unreadInView && (
+            <IconButton tip={s.category !== 'all' && inboxLike ? `「${CATEGORY_NAMES[s.category as Category]}」全部标为已读` : '全部标为已读'} size="s" onClick={() => void s.markAllRead()}><CheckCheck size={16} /></IconButton>
           )}
+          <Dropdown align="end" items={viewMenu} trigger={(p) => <IconButton tip="更多操作" size="s" {...p}><MoreHorizontal size={16} /></IconButton>} />
           <Dropdown align="end" items={[
             { heading: '显示' },
             ...(['all', 'unread', 'starred', 'attachments'] as const).map((f) => ({ label: { all: '全部邮件', unread: '仅未读', starred: '仅星标', attachments: '仅带附件' }[f], checked: s.filter === f, onSelect: () => s.setFilter(f) })),

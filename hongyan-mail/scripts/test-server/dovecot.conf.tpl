@@ -5,6 +5,8 @@ log_path = __ROOT__/dovecot.log
 protocols = imap
 listen = 127.0.0.1
 mail_location = maildir:__ROOT__/mail/%u
+# inotify is unreliable in containers; poll often so IDLE pushes arrive promptly in tests.
+mailbox_idle_check_interval = 1 secs
 mail_uid = __UID__
 mail_gid = __GID__
 first_valid_uid = 1

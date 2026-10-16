@@ -133,6 +133,15 @@ try {
     });
     if (blocked.ok !== 'loaded' || blocked.bad !== 'refused' || blocked.forged !== 'refused') throw new Error('attachment token check: ' + JSON.stringify(blocked));
     await shot('06b-image-attachment');
+    // right-click → copy image puts the picture on the clipboard
+    await app.evaluate(({ clipboard }) => clipboard.clear());
+    await win.locator('.att-thumb img').click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: '复制图片' }).click();
+    const t0 = Date.now();
+    while (!(await app.evaluate(({ clipboard }) => clipboard.has('image/png')))) {
+      if (Date.now() - t0 > 5000) throw new Error('image not copied');
+      await win.waitForTimeout(150);
+    }
   });
 
   await step('threads group replies with the original', async () => {
@@ -269,6 +278,99 @@ try {
     await win.keyboard.press('Escape');
   });
 
+  const clipboard = () => app.evaluate(({ clipboard: cb }) => cb.readText());
+  const doveSearch = (user, ...query) => execFileSync('doveadm', ['-c', srv.confPath, 'search', '-u', user, ...query]).toString().trim();
+  const until = async (fn, label, timeout = 20000) => {
+    const t0 = Date.now();
+    while (!(await fn())) {
+      if (Date.now() - t0 > timeout) throw new Error('timeout: ' + label);
+      await win.waitForTimeout(200);
+    }
+  };
+
+  await step('sender names, addresses and the message body can be selected and copied', async () => {
+    await win.keyboard.press('Escape');
+    await win.locator('.row', { hasText: 'GitHub' }).click();
+    await win.waitForSelector('.email-frame');
+    const frame = win.frameLocator('.email-frame');
+    await frame.locator('blockquote').waitFor();
+    if (await win.evaluate(() => getComputedStyle(document.querySelector('.mc-name')).userSelect) !== 'text') throw new Error('sender name not selectable');
+    // double-click selects the address (and must not collapse the message)
+    await win.locator('.mc-addr').dblclick({ position: { x: 12, y: 6 } });
+    const sel = await win.evaluate(() => window.getSelection().toString());
+    if (!sel.includes('notifications')) throw new Error('selection: ' + sel);
+    if (await win.locator('.msg-card.is-collapsed').count()) throw new Error('header click collapsed the message');
+    await win.locator('.mc-name').click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: '复制邮箱地址' }).click();
+    await until(async () => (await clipboard()) === 'notifications@github.com', 'address copied');
+    // right-click a link inside the e-mail
+    await frame.locator('a', { hasText: 'View it on GitHub' }).click({ button: 'right' });
+    await win.waitForSelector('.menu-item');
+    await shot('29-link-context-menu');
+    await frame.locator('body').press('Escape');
+    await win.waitForSelector('.menu', { state: 'detached' });
+    if (await win.locator('.reader-pane .msg-card').count() === 0) throw new Error('Escape in the menu also closed the message');
+    await frame.locator('a', { hasText: 'View it on GitHub' }).click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: '复制链接地址' }).click();
+    await until(async () => (await clipboard()) === 'https://github.com/hongyan/mail/pull/128', 'link copied');
+    // select body text and copy it from the context menu
+    await frame.locator('blockquote').evaluate((el) => { const d = el.ownerDocument; const r = d.createRange(); r.selectNodeContents(el); d.getSelection().removeAllRanges(); d.getSelection().addRange(r); });
+    await frame.locator('blockquote').click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: /^复制/ }).first().click();
+    await until(async () => (await clipboard()).includes('新增独立的 IDLE 连接'), 'body text copied');
+    // hovering a link shows its address next to the link, not over the bottom of the message
+    await frame.locator('a', { hasText: 'View it on GitHub' }).hover();
+    await win.waitForSelector('.link-peek');
+    const pos = await win.evaluate(() => {
+      const f = document.querySelector('.email-frame').getBoundingClientRect();
+      const a = document.querySelector('.email-frame').contentDocument.querySelector('a').getBoundingClientRect();
+      const p = document.querySelector('.link-peek').getBoundingClientRect();
+      return { linkBottom: f.top + a.bottom, peekTop: p.top, text: document.querySelector('.link-peek').textContent };
+    });
+    if (!pos.text.includes('github.com/hongyan/mail/pull/128') || pos.peekTop < pos.linkBottom || pos.peekTop - pos.linkBottom > 20) throw new Error('link peek: ' + JSON.stringify(pos));
+    await shot('30-link-peek');
+    await win.mouse.move(5, 300);
+  });
+
+  await step('text fields have a cut / copy / paste menu', async () => {
+    await app.evaluate(({ clipboard: cb }) => cb.writeText('团建'));
+    const search = win.getByPlaceholder('搜索邮件、联系人、附件…');
+    await search.click({ button: 'right' });
+    await win.waitForSelector('.menu-item');
+    await shot('31-input-context-menu');
+    await win.locator('.menu-item', { hasText: '粘贴' }).first().click();
+    await win.waitForFunction(() => document.querySelector('.search input').value === '团建');
+    await win.waitForFunction(() => document.querySelector('.list-title h1')?.textContent === '搜索结果');
+    await search.press('Escape');
+    await win.waitForFunction(() => document.querySelector('.list-title h1')?.textContent === '收件箱');
+  });
+
+  await step('blocking a sender moves their mail to Junk on the server, including new mail', async () => {
+    await win.locator('.row', { hasText: '京东' }).click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: '屏蔽此发件人' }).click();
+    await win.waitForSelector('.choice');
+    await win.locator('.choice', { hasText: '整个域名' }).click();
+    await shot('32-block-sender');
+    await win.getByRole('button', { name: '屏蔽', exact: true }).click();
+    await win.waitForFunction(() => ![...document.querySelectorAll('.row')].some((e) => e.textContent.includes('京东')));
+    await until(() => doveSearch('alice@hy.test', 'mailbox', 'Junk', 'from', 'jd.example') !== '', 'moved to Junk on the server');
+    if (doveSearch('alice@hy.test', 'mailbox', 'INBOX', 'from', 'jd.example') !== '') throw new Error('still in INBOX on the server');
+    const raw = Buffer.from(['From: 京东 <deals@jd.example>', 'To: alice@hy.test', 'Subject: =?UTF-8?B?' + Buffer.from('京东 秒杀返场').toString('base64') + '?=', `Date: ${new Date().toUTCString()}`, 'Message-ID: <jd-2@jd.example>', 'Content-Type: text/plain; charset=utf-8', '', 'buy'].join('\r\n'));
+    srv.deliver('alice@hy.test', raw);
+    await until(() => doveSearch('alice@hy.test', 'mailbox', 'Junk', 'header', 'Message-ID', 'jd-2@jd.example') !== '', 'new mail from the blocked domain moved to Junk');
+    await win.waitForTimeout(600);
+    if (await win.locator('.row', { hasText: '秒杀返场' }).count()) throw new Error('blocked mail shown in the inbox');
+    // junk never shows an unread counter
+    const junkCount = await win.locator('.acct-folders .nav-item', { hasText: '垃圾邮件' }).locator('.nav-count').count();
+    if (junkCount) throw new Error('junk folder shows an unread count');
+    await win.keyboard.press('Control+,');
+    await win.locator('.settings-nav-item', { hasText: '垃圾邮件' }).click();
+    await win.locator('.set-row-title', { hasText: '@jd.example' }).waitFor();
+    if (await win.locator('.mc-addr', { hasText: 'jd.example' }).count()) throw new Error('reader still shows the blocked message');
+    await shot('33-settings-junk');
+    await win.keyboard.press('Escape');
+  });
+
   await step('compact density, collapsed sidebar and empty states', async () => {
     await win.evaluate(() => window.hy.invoke('updateSettings', { density: 'compact', sidebarCollapsed: true }));
     await win.locator('.row', { hasText: '李娜' }).first().click();
@@ -310,6 +412,26 @@ try {
     await win.locator('.settings-nav-item', { hasText: 'OAuth' }).click();
     await shot('28-settings-oauth');
     await win.keyboard.press('Escape');
+  });
+
+  await step('mark everything read, select all and delete, then empty the trash — on the server', async () => {
+    await win.locator('.nav-item', { hasText: '收件箱' }).first().click();
+    await win.waitForSelector('.row:not(.is-skeleton)');
+    await win.locator('.list-tools .icon-btn[aria-label="全部标为已读"]').click();
+    await until(() => doveSearch('alice@hy.test', 'mailbox', 'INBOX', 'unseen') === '', 'INBOX read on the server');
+    await win.waitForFunction(() => !document.querySelector('.nav-group .nav-item .nav-count'));
+    await win.locator('.row').first().click();
+    await win.keyboard.press('Control+a');
+    await win.waitForSelector('.bulk-panel');
+    await shot('34-select-all');
+    await win.locator('.bulk-actions button', { hasText: '删除' }).click();
+    await win.waitForSelector('.empty-state', { timeout: 20000 });
+    await until(() => doveSearch('alice@hy.test', 'mailbox', 'INBOX', 'all') === '', 'INBOX empty on the server');
+    if (doveSearch('alice@hy.test', 'mailbox', 'Trash', 'all') === '') throw new Error('deleted mail did not go to Trash');
+    await win.locator('.acct-folders .nav-item', { hasText: '已删除' }).first().click({ button: 'right' });
+    await win.locator('.menu-item', { hasText: '清空已删除' }).click();
+    await win.getByRole('button', { name: '永久删除' }).click();
+    await until(() => doveSearch('alice@hy.test', 'mailbox', 'Trash', 'all') === '', 'Trash empty on the server');
   });
 } catch (e) {
   if (e.message !== 'stop') console.error('E2E aborted:', e.message);

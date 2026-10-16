@@ -136,7 +136,8 @@ function MenuList({ items, onClose, style, className }: { items: MenuItem[]; onC
   });
 
   return (
-    <motion.div ref={ref} className={cx('menu', className)} style={style} role="menu" initial={{ opacity: 0, scale: 0.97, y: -4 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.12 }}>
+    // mousedown must not move focus: edit commands (paste…) act on the focused field, and copying needs the selection.
+    <motion.div ref={ref} className={cx('menu', className)} style={style} role="menu" onMouseDown={(e) => e.preventDefault()} initial={{ opacity: 0, scale: 0.97, y: -4 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.12 }}>
       {items.map((it, i) => {
         if (it.separator) return <div key={i} className="menu-sep" />;
         if (it.heading) return <div key={i} className="menu-heading">{it.heading}</div>;
@@ -199,16 +200,13 @@ export function Dropdown({ trigger, items, align = 'start' }: { trigger: (props:
   return (
     <>
       {trigger({ onClick: (e) => setAnchor(anchor ? null : (e.currentTarget as HTMLElement).getBoundingClientRect()), 'aria-expanded': !!anchor })}
-      {createPortal(
-        <AnimatePresence>
-          {anchor && (
-            <div className="menu-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
-              <div onMouseDown={(e) => e.stopPropagation()}>
-                <FloatingMenu items={typeof items === 'function' ? items() : items} anchor={{ x: anchor.left, y: anchor.top + 4, w: anchor.width, h: anchor.height }} onClose={close} align={align} />
-              </div>
-            </div>
-          )}
-        </AnimatePresence>,
+      {/* Menus close instantly like native ones: an exit animation would leave an invisible layer catching clicks. */}
+      {anchor && createPortal(
+        <div className="menu-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
+          <div onMouseDown={(e) => e.stopPropagation()}>
+            <FloatingMenu items={typeof items === 'function' ? items() : items} anchor={{ x: anchor.left, y: anchor.top + 4, w: anchor.width, h: anchor.height }} onClose={close} align={align} />
+          </div>
+        </div>,
         document.body
       )}
     </>
@@ -217,10 +215,18 @@ export function Dropdown({ trigger, items, align = 'start' }: { trigger: (props:
 
 // Global context menu (one at a time)
 let openContext: ((items: MenuItem[], x: number, y: number) => void) | null = null;
+let contextOpen = false;
+/** True while a context menu is showing (keys typed in the e-mail iframe are then forwarded to it). */
+export const isContextMenuOpen = () => contextOpen;
 export function showContextMenu(e: React.MouseEvent | MouseEvent, items: MenuItem[]) {
   e.preventDefault();
   e.stopPropagation();
   openContext?.(items, e.clientX, e.clientY);
+}
+
+/** Opens the context menu at window coordinates (used for events coming from the e-mail iframe). */
+export function showContextMenuAt(items: MenuItem[], x: number, y: number) {
+  if (items.length) openContext?.(items, x, y);
 }
 
 export function ContextMenuHost() {
@@ -231,16 +237,16 @@ export function ContextMenuHost() {
   }, []);
   const close = () => setState(null);
   useDismiss(!!state, close);
+  contextOpen = !!state;
+  if (!state) return null;
   return createPortal(
-    <AnimatePresence>
-      {state && (
-        <div className="menu-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
-          <div onMouseDown={(e) => e.stopPropagation()}>
-            <FloatingMenu items={state.items} anchor={{ x: state.x, y: state.y }} onClose={close} />
-          </div>
-        </div>
-      )}
-    </AnimatePresence>,
+    // A right-click elsewhere closes this menu; the new target then opens its own (the event reaches it once the
+    // layer is gone), like native context menus.
+    <div className="menu-layer" onMouseDown={close} onContextMenu={(e) => { e.preventDefault(); close(); }}>
+      <div onMouseDown={(e) => e.stopPropagation()}>
+        <FloatingMenu key={`${state.x},${state.y}`} items={state.items} anchor={{ x: state.x, y: state.y }} onClose={close} />
+      </div>
+    </div>,
     document.body
   );
 }

@@ -4,6 +4,7 @@ import { OAuthManager, decodeJwtEmail } from '../../src/main/core/oauth';
 import { Database } from '../../src/main/core/db';
 import { MailStore, type NewMessage } from '../../src/main/core/store';
 import { SettingsStore, DEFAULT_SETTINGS } from '../../src/main/core/settings';
+import { normalizeBlockPattern } from '../../src/main/core/mail-core';
 
 const jwt = (payload: object) => `x.${Buffer.from(JSON.stringify(payload)).toString('base64url')}.y`;
 
@@ -146,6 +147,78 @@ describe('MailStore', () => {
     store.setSenderRule('s1@y.com', 'promotions');
     expect(store.senderCategory('s1@y.com')).toBe('promotions');
     expect(store.listMessages({ view: { kind: 'folder', accountId, folderId: inbox }, filter: 'all', category: 'promotions' }, 0, 10).total).toBe(1);
+  });
+});
+
+describe('junk management in the store', () => {
+  const setup = () => {
+    const db = new Database(':memory:');
+    const store = new MailStore(db);
+    const acc = store.insertAccount({
+      email: 'me@x.com', display_name: 'Me', label: '', color: '#000', provider_id: null, provider_name: 'x', auth_type: 'password', oauth_provider: null,
+      imap_host: 'imap.x.com', imap_port: 993, imap_security: 'tls', smtp_host: 'smtp.x.com', smtp_port: 465, smtp_security: 'tls', username: 'me@x.com',
+      smtp_username: null, allow_insecure_tls: 0, secret: null, signature: '', enabled: 1, quirks: '{}'
+    });
+    const folder = (path: string, su: any) => store.upsertFolder(acc, { path, name: path, delimiter: '/', parentPath: null, specialUse: su, selectable: true, subscribed: true, syncEnabled: true });
+    const inbox = folder('INBOX', 'inbox');
+    const junk = folder('Junk', 'junk');
+    const trash = folder('Trash', 'trash');
+    const m = (uid: number, from: string, o: Partial<NewMessage> = {}): NewMessage => ({
+      uid, messageId: `<j${uid}@x>`, msgKey: `<j${uid}@x>`, threadKey: `<j${uid}@x>`, inReplyTo: null, refs: [], subject: `S${uid}`,
+      from: { name: '', address: from }, to: [], cc: [], bcc: [], replyTo: [], date: 1_700_000_000_000 + uid, size: 1, flags: new Set(), hasAttachments: false,
+      snippet: '', previewPart: null, category: 'primary', listUnsubscribe: null, ...o
+    });
+    return { store, acc, inbox, junk, trash, m };
+  };
+
+  it('normalises block patterns', () => {
+    expect(normalizeBlockPattern(' Shop <News@Shop.Example> ')).toBe('news@shop.example');
+    expect(normalizeBlockPattern('shop.example')).toBe('@shop.example');
+    expect(normalizeBlockPattern('*@Shop.Example')).toBe('@shop.example');
+    expect(normalizeBlockPattern('@mail.shop.example')).toBe('@mail.shop.example');
+    expect(normalizeBlockPattern('hello world')).toBeNull();
+    expect(normalizeBlockPattern('')).toBeNull();
+  });
+
+  it('matches blocked addresses and domains and finds their mail outside junk / trash', () => {
+    const { store, acc, inbox, junk, trash, m } = setup();
+    store.insertMessages(acc, inbox, [m(1, 'a@ads.example'), m(2, 'b@ads.example'), m(3, 'friend@ok.example'), m(4, 'x@sub.ads.example')], false);
+    store.insertMessages(acc, junk, [m(5, 'c@ads.example')], false);
+    store.insertMessages(acc, trash, [m(6, 'd@ads.example')], false);
+    store.addBlocked('@ads.example');
+    expect(store.isBlocked('Z@ADS.example')).toBe(true);
+    expect(store.isBlocked('friend@ok.example')).toBe(false);
+    expect(store.isBlocked('x@sub.ads.example')).toBe(false);
+    const subjects = (ids: number[]) => store.getRows(ids).map((r) => r.subject).sort();
+    expect(subjects(store.idsFromSenders(['@ads.example']))).toEqual(['S1', 'S2']);
+    expect(subjects(store.idsFromSenders(['friend@ok.example']))).toEqual(['S3']);
+    // LIKE wildcards in a pattern are literal
+    expect(store.idsFromSenders(['@%.example'])).toEqual([]);
+    store.removeBlocked('@ads.example');
+    expect(store.listBlocked()).toEqual([]);
+  });
+
+  it('keeps junk out of unread counts; with categories the inbox counter skips promotions and social', () => {
+    const { store, acc, inbox, junk, m } = setup();
+    store.insertMessages(acc, inbox, [m(1, 'a@x.example'), m(2, 'b@x.example', { category: 'promotions' }), m(3, 'c@x.example', { category: 'social' }), m(4, 'd@x.example', { category: 'notifications' })], false);
+    store.insertMessages(acc, junk, Array.from({ length: 50 }, (_, i) => m(100 + i, `spam${i}@x.example`)), false);
+    expect(store.unifiedCounts(0, false).inboxUnread).toBe(4);
+    expect(store.unifiedCounts(0, true).inboxUnread).toBe(2);
+    expect(store.unifiedCounts(0, true).unreadTotal).toBe(4);
+    const infos = store.folderInfos(true);
+    expect(infos.find((f) => f.id === inbox)!.unread).toBe(2);
+    expect(store.folderInfos(false).find((f) => f.id === inbox)!.unread).toBe(4);
+  });
+
+  it('resolves "select all" to every matching id and marks folders read', () => {
+    const { store, acc, inbox, m } = setup();
+    store.insertMessages(acc, inbox, Array.from({ length: 250 }, (_, i) => m(i + 1, `s${i}@x.example`, { category: i % 2 ? 'promotions' : 'primary' })), false);
+    const q = { view: { kind: 'folder' as const, accountId: acc, folderId: inbox }, filter: 'all' as const, category: 'all' as const };
+    expect(store.queryIds(q)).toHaveLength(250);
+    expect(store.queryIds({ ...q, category: 'promotions' })).toHaveLength(125);
+    expect(store.queryIds(q)).toEqual(store.listMessages(q, 0, 500).items.map((x) => x.id));
+    expect(store.markFolderSeenLocal(inbox)).toHaveLength(250);
+    expect(store.queryIds(q, true)).toEqual([]);
   });
 });
 

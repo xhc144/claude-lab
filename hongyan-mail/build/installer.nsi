@@ -8,7 +8,7 @@ SetCompressor /SOLID lzma
 SetCompressorDictSize 64
 
 !ifndef VERSION
-  !define VERSION "1.0.0"
+  !define VERSION "1.1.0"
 !endif
 !define APPNAME "鸿雁邮箱"
 !define APPNAME_EN "Hongyan Mail"

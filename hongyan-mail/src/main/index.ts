@@ -1,6 +1,6 @@
 // Electron entry point: window, tray, notifications, protocols and the IPC bridge to MailCore.
 import {
-  app, BrowserWindow, Menu, Notification, Tray, dialog, ipcMain, nativeImage, nativeTheme, net, powerMonitor, protocol,
+  app, clipboard, BrowserWindow, Menu, Notification, Tray, dialog, ipcMain, nativeImage, nativeTheme, net, powerMonitor, protocol,
   screen, session, shell, type MenuItemConstructorOptions
 } from 'electron';
 import fs from 'node:fs';
@@ -363,6 +363,14 @@ function buildHandlers(): MailApi {
       else win.close();
     },
     async setNetworkOnline(online) { c.setOnline(online); },
+    async copyText(text) { await clipboard.writeText(String(text)); },
+    async copyImageAt(x, y) { win?.webContents.copyImageAt(Math.round(x), Math.round(y)); },
+    async editCommand(cmd) {
+      const wc = win?.webContents;
+      if (!wc) return;
+      const allowed = { undo: () => wc.undo(), redo: () => wc.redo(), cut: () => wc.cut(), copy: () => wc.copy(), paste: () => wc.paste(), pasteAndMatchStyle: () => wc.pasteAndMatchStyle(), selectAll: () => wc.selectAll(), delete: () => wc.delete() } as const;
+      allowed[cmd]?.();
+    },
     async setDefaultMailClient() {
       const ok = app.setAsDefaultProtocolClient('mailto');
       if (ok && process.platform === 'win32') await shell.openExternal('ms-settings:defaultapps');
@@ -415,7 +423,14 @@ function buildHandlers(): MailApi {
     async markSpam(ids, spam) { return c.markSpam(ids, spam); },
     async undo(token) { await c.undo(token); },
     async setCategory(ids, cat, all) { c.setCategory(ids, cat, all); },
-    async markFolderRead(id) { c.markFolderRead(id); },
+    async markFolderRead(id) { return c.markFolderRead(id); },
+    async markViewRead(q) { return c.markViewRead(q); },
+    async queryIds(q) { return c.queryIds(q); },
+    async emptyFolder(id) { return c.emptyFolder(id); },
+    async listBlockedSenders() { return c.listBlockedSenders(); },
+    async blockSenders(patterns) { return c.blockSenders(patterns); },
+    async unblockSender(pattern) { c.unblockSender(pattern); },
+    async messagesFromSender(address) { return c.messagesFromSender(address); },
     async trustSender(address) { c.trustSender(address); },
     async saveAttachment(messageId, index) {
       const a = await c.attachment(messageId, index);

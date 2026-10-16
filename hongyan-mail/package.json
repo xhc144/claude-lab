@@ -1,7 +1,7 @@
 {
   "name": "hongyan-mail",
   "productName": "Hongyan Mail",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "鸿雁邮箱 — 本地运行的 Windows 多账户邮件客户端",
   "main": "dist/main/index.js",
   "author": "Hongyan Mail",
@@ -15,6 +15,7 @@
     "test": "vitest run tests/unit",
     "test:integration": "vitest run tests/integration",
     "test:e2e": "node scripts/build.mjs && node tests/e2e/run.mjs",
+    "test:hover": "node scripts/build.mjs && node tests/e2e/hover-audit.mjs",
     "mail-server": "node scripts/test-server/mail-server.mjs",
     "icons": "node scripts/make-icons.mjs",
     "dist:win": "node scripts/dist-win.mjs"

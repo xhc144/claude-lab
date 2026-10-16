@@ -60,6 +60,18 @@ const ACCOUNT_COLORS = ['#D9472B', '#2F8F83', '#3F5BA9', '#C98A1B', '#7E4FA0', '
 const fmtAddr = (a: Address) => (a.name ? `${a.name} <${a.address}>` : a.address);
 const escapeHtml = (s: string) => s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 
+/** "Foo <A@B.com>" → "a@b.com"; "b.com" / "@b.com" / "*@b.com" → "@b.com". */
+export function normalizeBlockPattern(input: string): string | null {
+  let v = input.trim().toLowerCase();
+  const angle = v.match(/<([^<>]+)>/);
+  if (angle) v = angle[1].trim();
+  v = v.replace(/^\*/, '');
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) return v;
+  const domain = v.replace(/^@/, '');
+  if (/^[a-z0-9-]+(\.[a-z0-9-]+)+$/.test(domain)) return '@' + domain;
+  return null;
+}
+
 function addrList(v: AddressObject | AddressObject[] | undefined): Address[] {
   if (!v) return [];
   const arr = Array.isArray(v) ? v : [v];
@@ -393,7 +405,7 @@ export class MailCore {
   // ================================================================ folders
 
   listFolders(): FolderInfo[] {
-    return this.store.folderInfos();
+    return this.store.folderInfos(this.settings.get().categoriesEnabled);
   }
 
   setActiveFolder(folderId: number | null) {
@@ -441,7 +453,12 @@ export class MailCore {
 
   unifiedCounts() {
     const outbox = this.db.get<{ c: number }>("SELECT COUNT(*) AS c FROM outbox WHERE status != 'sent'")?.c ?? 0;
-    return this.store.unifiedCounts(outbox);
+    return this.store.unifiedCounts(outbox, this.settings.get().categoriesEnabled);
+  }
+
+  /** Every message id a list query matches ("select all" across pages that are not loaded yet). */
+  queryIds(q: ListQuery): number[] {
+    return this.store.queryIds(q);
   }
 
   ensurePreviews(ids: number[]) {
@@ -655,9 +672,51 @@ export class MailCore {
     this.setFlag(ids, 'flagged', '\\Flagged', flagged);
   }
 
-  markFolderRead(folderId: number) {
-    const ids = this.db.all<{ id: number }>('SELECT id FROM messages WHERE folder_id = ? AND seen = 0 AND uid > 0', folderId).map((r) => r.id);
-    if (ids.length) this.setSeen(ids, true);
+  /**
+   * Marks a whole folder read on the server (1:*), so mail that has not been downloaded yet is covered too, then
+   * mirrors it locally. Returns how many local messages changed.
+   */
+  async markFolderRead(folderId: number): Promise<number> {
+    const f = this.store.getFolder(folderId);
+    if (!f) return 0;
+    const s = this.sync(f.account_id);
+    const unread = this.db.all<{ id: number }>('SELECT id FROM messages WHERE folder_id = ? AND seen = 0', folderId).map((r) => r.id);
+    // Gmail label copies of these messages (e.g. in All Mail) become read on the server too.
+    const copies = this.related(unread).filter((r) => r.folder_id !== folderId && !r.seen).map((r) => r.id);
+    const changed = this.db.transaction(() => {
+      const ids = this.store.markFolderSeenLocal(folderId);
+      this.store.setLocalFlag(copies, 'seen', true);
+      return ids;
+    });
+    this.emitChanged([{ account_id: f.account_id, folder_id: folderId }], 'flags', this.store.getRows(copies).map((r) => r.folder_id));
+    try {
+      await s.markAllSeen(folderId);
+    } catch (e) {
+      this.store.setLocalFlag([...changed, ...copies], 'seen', false);
+      this.emitChanged([{ account_id: f.account_id, folder_id: folderId }], 'flags-revert');
+      throw e;
+    }
+    return changed.length;
+  }
+
+  /** Marks everything a list query matches as read; whole folders are marked on the server in one command. */
+  async markViewRead(q: ListQuery): Promise<number> {
+    const plain = q.filter === 'all' || q.filter === 'unread';
+    const v = q.view;
+    let folders: number[] | null = null;
+    if (plain && v.kind === 'folder' && (q.category === 'all' || this.store.getFolder(v.folderId)?.special_use !== 'inbox')) folders = [v.folderId];
+    else if (plain && v.kind === 'unified' && q.category === 'all' && ['inbox', 'archive'].includes(v.box)) {
+      folders = this.store.listFolderRows()
+        .filter((f) => f.special_use === v.box && this.syncs.has(f.account_id) && (!q.accountId || f.account_id === q.accountId))
+        .map((f) => f.id);
+    }
+    if (folders) {
+      const counts = await Promise.all(folders.map((id) => this.markFolderRead(id)));
+      return counts.reduce((a, b) => a + b, 0);
+    }
+    const ids = this.store.queryIds(q, true);
+    this.setSeen(ids, true);
+    return ids.length;
   }
 
   private toastError(e: any, title: string) {
@@ -670,7 +729,7 @@ export class MailCore {
     const movable = rows.filter((r) => r.uid > 0);
     const plan = movable.map((r) => ({ row: r, dest: destFor(r) })).filter((p) => p.dest && p.dest !== p.row.folder_id) as Array<{ row: MessageRow; dest: number }>;
     if (!plan.length) return null;
-    for (const p of plan) this.store.moveLocal(p.row.id, p.dest, -p.row.id);
+    this.db.transaction(() => { for (const p of plan) this.store.moveLocal(p.row.id, p.dest, -p.row.id); });
     this.emitChanged(plan.map((p) => p.row), 'move', plan.map((p) => p.dest));
     const pendings: Promise<unknown>[] = [];
     const groups = new Map<string, typeof plan>();
@@ -695,7 +754,7 @@ export class MailCore {
         if (missing) s.syncFolderNow(dest).catch(() => {});
         this.emitChanged([], 'move-done', [dest]);
       }).catch((e) => {
-        for (const it of items) this.store.moveLocal(it.id, it.folderId, it.uid);
+        this.db.transaction(() => { for (const it of items) this.store.moveLocal(it.id, it.folderId, it.uid); });
         this.emitChanged([], 'move-revert', [dest, ...items.map((i) => i.folderId)]);
         this.toastError(e, `${label}失败`);
         throw e;
@@ -793,6 +852,54 @@ export class MailCore {
     return { undoToken: this.moveRows(rows, (r) => dests.get(r.account_id) ?? null, spam ? '移入垃圾邮件' : '移回收件箱') };
   }
 
+  /** Permanently deletes everything in the trash or junk folder (server first: nothing else is ever emptied). */
+  async emptyFolder(folderId: number): Promise<number> {
+    const f = this.store.getFolder(folderId);
+    if (!f) return 0;
+    if (f.special_use !== 'trash' && f.special_use !== 'junk') throw new Error('只能清空「已删除」和「垃圾邮件」文件夹');
+    const s = this.sync(f.account_id);
+    await s.emptyFolder(folderId);
+    const ids = this.db.all<{ id: number }>('SELECT id FROM messages WHERE folder_id = ?', folderId).map((r) => r.id);
+    this.db.transaction(() => {
+      this.db.run('DELETE FROM messages_fts WHERE rowid IN (SELECT id FROM messages WHERE folder_id = ?)', folderId);
+      this.db.run('DELETE FROM messages WHERE folder_id = ?', folderId);
+    });
+    this.bodies.remove(f.account_id, ids);
+    for (const id of ids) this.parsedCache.delete(id);
+    this.emitChanged([{ account_id: f.account_id, folder_id: folderId }], 'delete');
+    return ids.length;
+  }
+
+  // ================================================================ blocked senders
+
+  listBlockedSenders() {
+    return this.store.listBlocked();
+  }
+
+  /**
+   * Blocks senders ("a@b.com", or a whole domain as "@b.com"): their existing mail is moved to the junk folder on
+   * the server, and new mail from them is moved there as it arrives.
+   */
+  async blockSenders(patterns: string[]): Promise<{ moved: number; undoToken: string | null }> {
+    const clean = [...new Set(patterns.map(normalizeBlockPattern).filter((p): p is string => !!p))];
+    if (!clean.length) throw new Error('请输入有效的邮箱地址或域名');
+    const mine = this.myAddresses();
+    for (const p of clean) if (mine.has(p)) throw new Error('不能屏蔽自己的邮箱地址');
+    for (const p of clean) this.store.addBlocked(p);
+    const ids = this.store.idsFromSenders(clean);
+    const { undoToken } = ids.length ? await this.markSpam(ids, true) : { undoToken: null };
+    return { moved: ids.length, undoToken };
+  }
+
+  unblockSender(pattern: string) {
+    this.store.removeBlocked(pattern);
+  }
+
+  /** Ids of messages from a sender outside trash/junk/sent/drafts (for "delete everything from this sender"). */
+  messagesFromSender(address: string): number[] {
+    return this.store.idsFromSenders([address.toLowerCase()]);
+  }
+
   setCategory(ids: number[], category: Category, applyToSender: boolean) {
     const rows = this.store.getRows(ids);
     if (applyToSender) for (const a of new Set(rows.map((r) => r.from_addr).filter(Boolean))) this.store.setSenderRule(a, category);
@@ -803,9 +910,16 @@ export class MailCore {
   // ================================================================ notifications
 
   private onNewMail(accountId: number, ids: number[]) {
+    const all = this.store.getRows(ids);
+    const blocked = all.filter((r) => r.from_addr && this.store.isBlocked(r.from_addr));
+    if (blocked.length) {
+      this.log.info(`account ${accountId}: moving ${blocked.length} message(s) from blocked senders to junk`);
+      this.markSpam(blocked.map((r) => r.id), true).catch((e) => this.log.warn(`blocked sender move failed: ${(e as Error)?.message || e}`));
+    }
     const st = this.settings.get();
     if (!st.notifications) return;
-    const rows = this.store.getRows(ids).filter((r) => !r.seen && Date.now() - r.date < 3 * 24 * 3600_000);
+    const blockedIds = new Set(blocked.map((r) => r.id));
+    const rows = all.filter((r) => !blockedIds.has(r.id) && !r.seen && Date.now() - r.date < 3 * 24 * 3600_000);
     if (!rows.length) return;
     this.platform.notifyNewMail(rows.map((r) => ({
       accountId,

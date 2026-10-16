@@ -12,7 +12,8 @@
   background: var(--overlay);
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  /* below the native window buttons, so the composer's own close / minimise buttons are never under them */
+  padding: calc(var(--titlebar-h) + 6px) 40px 40px;
   pointer-events: auto;
   backdrop-filter: blur(2px);
 }

@@ -4,8 +4,10 @@ import type {
   AccountDraftInput, AccountPatch, AccountSummary, AppInfo, CategoryCounts, ComposePayload, ComposePrefill,
   ContactSuggestion, DiagnosisReport, DiscoveryResult, DraftRecord, FolderInfo, ListQuery, ListResult,
   MessageDetail, OAuthProviderId, OAuthResult, OutboxItem, SearchServerResult, ServerConfig, Settings,
-  UnifiedCounts, ComposeAttachment, AccountCredentialInput, Category
+  UnifiedCounts, ComposeAttachment, AccountCredentialInput, Category, BlockedSender
 } from './types';
+
+export type EditCommand = 'undo' | 'redo' | 'cut' | 'copy' | 'paste' | 'pasteAndMatchStyle' | 'selectAll' | 'delete';
 
 export interface MailApi {
   // app
@@ -18,6 +20,10 @@ export interface MailApi {
   windowControl(action: 'minimize' | 'maximize' | 'close'): Promise<void>;
   setNetworkOnline(online: boolean): Promise<void>;
   setDefaultMailClient(): Promise<boolean>;
+  /** Clipboard and editing commands for the custom context menus (run on the focused frame). */
+  copyText(text: string): Promise<void>;
+  copyImageAt(x: number, y: number): Promise<void>;
+  editCommand(command: EditCommand): Promise<void>;
 
   // settings
   getSettings(): Promise<Settings>;
@@ -58,7 +64,18 @@ export interface MailApi {
   markSpam(ids: number[], spam: boolean): Promise<{ undoToken: string | null }>;
   undo(token: string): Promise<void>;
   setCategory(ids: number[], category: Category, applyToSender: boolean): Promise<void>;
-  markFolderRead(folderId: number): Promise<void>;
+  markFolderRead(folderId: number): Promise<number>;
+  /** Marks every message the list query matches as read (not only the loaded pages). Returns how many changed. */
+  markViewRead(query: ListQuery): Promise<number>;
+  /** Ids of every message the list query matches, for "select all N messages in this view". */
+  queryIds(query: ListQuery): Promise<number[]>;
+  /** Permanently deletes everything in a trash or junk folder. */
+  emptyFolder(folderId: number): Promise<number>;
+  listBlockedSenders(): Promise<BlockedSender[]>;
+  /** Blocks addresses or whole domains ("@example.com"); their mail is moved to junk on the server. */
+  blockSenders(patterns: string[]): Promise<{ moved: number; undoToken: string | null }>;
+  unblockSender(pattern: string): Promise<void>;
+  messagesFromSender(address: string): Promise<number[]>;
   trustSender(address: string): Promise<void>;
   saveAttachment(messageId: number, index: number): Promise<string | null>;
   saveAllAttachments(messageId: number): Promise<string | null>;

@@ -3,15 +3,17 @@ import { AnimatePresence, motion } from 'motion/react';
 import {
   Archive, ChevronDown, ChevronUp, Code2, Download, ExternalLink, Eye, FileArchive, FileAudio, FileImage, FileSpreadsheet,
   FileText, FileVideo, File as FileIcon, Forward, FolderInput, ImageOff, Mail, MailOpen, MoreHorizontal, Presentation,
-  Reply, ReplyAll, RotateCw, Send, ShieldAlert, Star, Trash2, UserCheck, BellOff, AlertTriangle, Clock3, Pencil, X, CornerUpLeft
+  Reply, ReplyAll, RotateCw, Send, ShieldAlert, Star, Trash2, UserCheck, BellOff, AlertTriangle, Clock3, Pencil, X, CornerUpLeft,
+  Ban, Copy
 } from 'lucide-react';
-import type { AttachmentInfo, MessageDetail, MessageSummary } from '@shared/types';
+import type { Address, AttachmentInfo, MessageDetail, MessageSummary } from '@shared/types';
 import { useApp } from '../store';
 import { api, errorMessage, ApiError } from '../api';
 import { addressLine, displayName, fileSize, formatAddress, listTime, longTime, relativeTime } from '../lib/format';
 import { folderName } from '../lib/folders';
-import { Avatar, Button, cx, Dropdown, IconButton, Spinner, type MenuItem } from './ui';
-import { EmailFrame } from './EmailFrame';
+import { Avatar, Button, cx, Dropdown, IconButton, showContextMenu, Spinner, type MenuItem } from './ui';
+import { EmailFrame, type LinkHover } from './EmailFrame';
+import { addressMenu, confirmBlock } from '../lib/contextmenu';
 import { ReaderEmpty } from './EmptyState';
 
 const CATEGORY_LABEL = { primary: '主要', notifications: '通知', promotions: '推广', social: '社交' } as const;
@@ -82,17 +84,37 @@ function Attachments({ detail }: { detail: MessageDetail }) {
   );
 }
 
-function RecipientDetails({ d, me }: { d: MessageDetail; me: Set<string> }) {
-  const rows: Array<[string, string]> = [
-    ['发件人', d.from ? formatAddress(d.from) : '—'],
-    ...(d.replyTo.length && d.replyTo[0].address !== d.from?.address ? [['回复至', d.replyTo.map(formatAddress).join(', ')] as [string, string]] : []),
-    ['收件人', d.to.map(formatAddress).join(', ') || '—'],
-    ...(d.cc.length ? [['抄送', d.cc.map(formatAddress).join(', ')] as [string, string]] : []),
-    ...(d.bcc.length ? [['密送', d.bcc.map(formatAddress).join(', ')] as [string, string]] : []),
+/** Selected text inside an element (so a right-click on a selection can still offer "copy"). */
+function selectionWithin(el: Element): string {
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed || !sel.rangeCount) return '';
+  return sel.getRangeAt(0).intersectsNode(el) ? sel.toString() : '';
+}
+
+/** An address that can be selected, copied and right-clicked (copy, write to, search, block…). */
+function AddressText({ a, sender }: { a: Address; sender?: boolean }) {
+  return (
+    <span className="addr" onContextMenu={(e) => showContextMenu(e, addressMenu(a, { sender, selection: selectionWithin(e.currentTarget) }))}>
+      {formatAddress(a)}
+    </span>
+  );
+}
+
+function AddressList({ list, sender }: { list: Address[]; sender?: boolean }) {
+  if (!list.length) return <>—</>;
+  return <>{list.map((a, i) => <React.Fragment key={a.address + i}>{i > 0 && ', '}<AddressText a={a} sender={sender} /></React.Fragment>)}</>;
+}
+
+function RecipientDetails({ d }: { d: MessageDetail }) {
+  const rows: Array<[string, React.ReactNode]> = [
+    ['发件人', d.from ? <AddressText a={d.from} sender /> : '—'],
+    ...(d.replyTo.length && d.replyTo[0].address !== d.from?.address ? [['回复至', <AddressList list={d.replyTo} />] as [string, React.ReactNode]] : []),
+    ['收件人', <AddressList list={d.to} />],
+    ...(d.cc.length ? [['抄送', <AddressList list={d.cc} />] as [string, React.ReactNode]] : []),
+    ...(d.bcc.length ? [['密送', <AddressList list={d.bcc} />] as [string, React.ReactNode]] : []),
     ['时间', longTime(d.date)],
     ['位置', d.folderPath]
   ];
-  void me;
   return (
     <div className="recipients">
       {rows.map(([k, v]) => (
@@ -102,7 +124,33 @@ function RecipientDetails({ d, me }: { d: MessageDetail; me: Set<string> }) {
   );
 }
 
-function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: number; summary?: MessageSummary; expanded: boolean; onToggle: () => void; isLast: boolean; me: Set<string> }) {
+/** The URL of the hovered link, shown next to the link (like a tooltip) instead of over the message. */
+function LinkPeek({ link }: { link: LinkHover | null }) {
+  const [shown, setShown] = useState<LinkHover | null>(null);
+  useEffect(() => {
+    if (!link) { setShown(null); return; }
+    const t = setTimeout(() => setShown(link), 250);
+    return () => clearTimeout(t);
+  }, [link]);
+  useEffect(() => {
+    if (!shown) return;
+    const hide = () => setShown(null);
+    window.addEventListener('scroll', hide, true);
+    window.addEventListener('mousedown', hide, true);
+    return () => { window.removeEventListener('scroll', hide, true); window.removeEventListener('mousedown', hide, true); };
+  }, [shown]);
+  if (!shown) return null;
+  const below = shown.bottom + 40 < window.innerHeight;
+  const left = Math.max(8, Math.min(shown.left, window.innerWidth - 480));
+  const text = shown.url.length > 160 ? shown.url.slice(0, 160) + '…' : shown.url;
+  return (
+    <div className={cx('link-peek', below ? 'is-below' : 'is-above')} style={below ? { left, top: shown.bottom + 6 } : { left, bottom: window.innerHeight - shown.top + 6 }}>
+      <ExternalLink size={12} /> <span>{text}</span>
+    </div>
+  );
+}
+
+function MessageCard({ id, summary, expanded, onToggle, isLast, me, collapsible }: { id: number; summary?: MessageSummary; expanded: boolean; onToggle: () => void; isLast: boolean; me: Set<string>; collapsible: boolean }) {
   const s = useApp();
   const [detail, setDetail] = useState<MessageDetail | null>(null);
   const [error, setError] = useState<ApiError | Error | null>(null);
@@ -110,7 +158,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
   const [allowRemote, setAllowRemote] = useState(false);
   const [remoteCount, setRemoteCount] = useState(0);
   const [showDetails, setShowDetails] = useState(false);
-  const [hoverLink, setHoverLink] = useState<string | null>(null);
+  const [hoverLink, setHoverLink] = useState<LinkHover | null>(null);
   const settings = s.settings!;
 
   const load = () => {
@@ -157,6 +205,11 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
     { separator: true },
     { label: d.seen ? '标为未读' : '标为已读', icon: d.seen ? <Mail size={15} /> : <MailOpen size={15} />, onSelect: () => { s.setSeen([id], !d.seen); setDetail({ ...d, seen: !d.seen }); } },
     ...(d.listUnsubscribe ? [{ label: '退订此邮件列表', icon: <BellOff size={15} />, onSelect: unsubscribe }] : []),
+    ...(d.from ? [
+      { label: '复制发件人地址', icon: <Copy size={15} />, onSelect: () => { void api.copyText(d.from!.address); s.toast({ kind: 'success', message: '邮箱地址已复制', duration: 1600 }); } },
+      ...(!me.has(d.from.address) ? [{ label: '屏蔽发件人', icon: <Ban size={15} />, danger: true, onSelect: () => confirmBlock(d.from!.address) }] : [])
+    ] : []),
+    { separator: true },
     { label: '查看原始邮件', icon: <Code2 size={15} />, onSelect: () => s.openModal({ type: 'source', messageId: id }) },
     { label: '导出为 .eml', icon: <Download size={15} />, onSelect: () => api.exportEml(id).then((p) => p && s.toast({ kind: 'success', message: '已导出', detail: p })) },
     { label: '打印', icon: <FileText size={15} />, onSelect: () => api.printMessage(id).catch((e) => s.toast({ kind: 'error', message: errorMessage(e).title })) }
@@ -165,20 +218,28 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
   return (
     <article className={cx('msg-card', isLast && 'is-last')}>
       <header className="mc-head">
-        <button className="mc-head-main" onClick={onToggle} title="折叠">
-          <Avatar name={from?.name || ''} address={from?.address || '?'} size={40} />
+        {/* Not a <button>: text inside buttons cannot be selected. A click that ends a text selection does not collapse. */}
+        <div className={cx('mc-head-main', collapsible && 'is-collapsible')} role={collapsible ? 'button' : undefined} tabIndex={collapsible ? 0 : undefined}
+          aria-expanded={collapsible ? true : undefined}
+          onKeyDown={(e) => { if (collapsible && e.key === 'Enter' && e.target === e.currentTarget) onToggle(); }}
+          onClick={(e) => {
+            // Clicking (or double-clicking to select) the name, address or recipients never collapses the message.
+            if (!collapsible || (e.target as Element).closest('.mc-line, .mc-to') || selectionWithin(e.currentTarget)) return;
+            onToggle();
+          }}>
+          <span className="mc-avatar" data-tip={collapsible ? '折叠' : undefined}><Avatar name={from?.name || ''} address={from?.address || '?'} size={40} /></span>
           <div className="mc-who">
-            <div className="mc-line">
+            <div className="mc-line" onContextMenu={(e) => { if (from) showContextMenu(e, addressMenu(from, { sender: true, selection: selectionWithin(e.currentTarget) })); }}>
               <span className="mc-name">{displayName(from, me)}</span>
               {from && from.name && <span className="mc-addr">{from.address}</span>}
               {base?.draft && <span className="row-tag is-draft">草稿</span>}
             </div>
-            <div className="mc-to" onClick={(e) => { e.stopPropagation(); setShowDetails(!showDetails); }}>
-              发给 {base ? addressLine(base.to, me, 3) || '（未填写）' : ''}{base && base.cc.length ? `，抄送 ${addressLine(base.cc, me, 2)}` : ''}
+            <button className="mc-to" onClick={(e) => { e.stopPropagation(); setShowDetails(!showDetails); }} aria-expanded={showDetails}>
+              <span className="mc-to-text">发给 {base ? addressLine(base.to, me, 3) || '（未填写）' : ''}{base && base.cc.length ? `，抄送 ${addressLine(base.cc, me, 2)}` : ''}</span>
               <ChevronDown size={13} style={{ transform: showDetails ? 'rotate(180deg)' : undefined, transition: 'transform .2s' }} />
-            </div>
+            </button>
           </div>
-        </button>
+        </div>
         <div className="mc-side">
           <span className="mc-date" title={base ? longTime(base.date) : ''}>{base ? relativeTime(base.date) : ''}</span>
           {d?.answered && <span className="mc-flag" data-tip="已回复"><CornerUpLeft size={14} /></span>}
@@ -190,7 +251,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
       <AnimatePresence initial={false}>
         {showDetails && d && (
           <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} style={{ overflow: 'hidden' }}>
-            <RecipientDetails d={d} me={me} />
+            <RecipientDetails d={d} />
           </motion.div>
         )}
       </AnimatePresence>
@@ -244,13 +305,7 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me }: { id: numb
           )}
         </>
       )}
-      <AnimatePresence>
-        {hoverLink && (
-          <motion.div className="link-peek" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.12 }}>
-            <ExternalLink size={12} /> {hoverLink.length > 140 ? hoverLink.slice(0, 140) + '…' : hoverLink}
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <LinkPeek link={hoverLink} />
     </article>
   );
 }
@@ -360,6 +415,7 @@ function ThreadView({ openId }: { openId: number }) {
                 summary={s.itemAt(s.indexOf(id)) || summaries[id]}
                 expanded={expanded.has(id)}
                 isLast={i === thread.length - 1}
+                collapsible={thread.length > 1}
                 me={me}
                 onToggle={() => setExpanded((cur) => { const n = new Set(cur); if (n.has(id)) n.delete(id); else n.add(id); return n; })}
               />
@@ -379,11 +435,32 @@ function ThreadView({ openId }: { openId: number }) {
 function BulkPanel() {
   const s = useApp();
   const ids = s.selection;
-  const loaded = Object.values(s.list.pages).flat().filter((m) => ids.includes(m.id));
-  const allSeen = loaded.every((m) => m.seen);
+  const idSet = new Set(ids);
+  const loaded = Object.values(s.list.pages).flat().filter((m) => idSet.has(m.id));
+  const count = s.allSelected ? s.list.total : ids.length;
+  const allSeen = !s.allSelected && loaded.every((m) => m.seen);
   const allFlagged = loaded.every((m) => m.flagged);
   const accountIds = new Set(loaded.map((m) => m.accountId));
-  const moveItems: MenuItem[] = accountIds.size === 1 ? s.folders.filter((f) => f.accountId === [...accountIds][0]).map((f) => ({ label: folderName(f), onSelect: () => s.moveTo(ids, f.id) })) : [{ label: '只能在同一账户内移动', disabled: true }];
+  const viewFolder = s.view.kind === 'folder' ? s.folders.find((f) => f.id === (s.view as { folderId: number }).folderId) : undefined;
+  const junkView = viewFolder?.specialUse === 'junk' || (s.view.kind === 'unified' && s.view.box === 'junk');
+  const trashView = viewFolder?.specialUse === 'trash' || (s.view.kind === 'unified' && s.view.box === 'trash');
+  const me = new Set(s.accounts.map((a) => a.email.toLowerCase()));
+  const senders = [...new Set(loaded.map((m) => m.from?.address).filter((a): a is string => !!a && !me.has(a)))];
+  const moveTo = async (folderId: number) => s.moveTo(await s.targetIds(), folderId);
+  const moveItems: MenuItem[] = accountIds.size === 1 && (!s.allSelected || s.view.kind === 'folder') ? s.folders.filter((f) => f.accountId === [...accountIds][0]).map((f) => ({ label: folderName(f), onSelect: () => void moveTo(f.id) })) : [{ label: '只能在同一账户内移动', disabled: true }];
+  const blockAll = () => s.openModal({
+    type: 'confirm',
+    title: `屏蔽 ${senders.length} 个发件人？`,
+    message: `${senders.slice(0, 6).join('\n')}${senders.length > 6 ? `\n…等 ${senders.length} 个地址` : ''}\n\n他们现有和今后的邮件都会在服务器上移到「垃圾邮件」。`,
+    confirmLabel: '屏蔽',
+    danger: true,
+    onConfirm: () => {
+      api.blockSenders(senders).then((r) => {
+        s.clearSelection();
+        s.toast({ kind: 'success', message: `已屏蔽 ${senders.length} 个发件人`, detail: r.moved ? `${r.moved} 封邮件已移到「垃圾邮件」` : undefined, action: r.undoToken ? { label: '撤销', run: () => { senders.forEach((a) => void api.unblockSender(a)); void api.undo(r.undoToken!).catch(() => {}); } } : undefined });
+      }).catch((e) => s.toast({ kind: 'error', message: '屏蔽失败', detail: errorMessage(e).title }));
+    }
+  });
   return (
     <div className="bulk-panel">
       <div className="bulk-stack">
@@ -394,14 +471,22 @@ function BulkPanel() {
           </motion.div>
         ))}
       </div>
-      <h2>已选择 {ids.length} 封邮件</h2>
+      <h2>{s.allSelected ? `已选择此视图中的全部 ${count} 封邮件` : `已选择 ${count} 封邮件`}</h2>
+      {!s.allSelected && s.list.total > ids.length && ids.length >= Math.min(s.list.total, 20) && (
+        <button className="link-btn bulk-all" onClick={() => s.selectAllMatching()}>选择此视图中的全部 {s.list.total} 封</button>
+      )}
       <div className="bulk-actions">
-        <Button icon={<Archive size={15} />} onClick={() => s.act('archive')}>归档</Button>
-        <Button icon={<Trash2 size={15} />} onClick={() => s.act('trash')}>删除</Button>
-        <Button icon={allSeen ? <Mail size={15} /> : <MailOpen size={15} />} onClick={() => s.setSeen(ids, !allSeen)}>{allSeen ? '标为未读' : '标为已读'}</Button>
-        <Button icon={<Star size={15} />} onClick={() => s.setFlagged(ids, !allFlagged)}>{allFlagged ? '取消星标' : '加星标'}</Button>
+        {!junkView && !trashView && <Button icon={<Archive size={15} />} onClick={() => s.act('archive')}>归档</Button>}
+        <Button icon={<Trash2 size={15} />} variant={trashView ? 'danger' : undefined} onClick={() => s.act('trash')}>{trashView ? '永久删除' : '删除'}</Button>
+        <Button icon={allSeen ? <Mail size={15} /> : <MailOpen size={15} />} onClick={() => void s.bulkSeen(!allSeen)}>{allSeen ? '标为未读' : '标为已读'}</Button>
+        {!junkView && <Button icon={<Star size={15} />} onClick={() => void s.targetIds().then((t) => s.setFlagged(t, !allFlagged))}>{allFlagged ? '取消星标' : '加星标'}</Button>}
         <Dropdown items={moveItems} trigger={(p) => <Button icon={<FolderInput size={15} />} {...p}>移动到</Button>} />
-        <Button icon={<ShieldAlert size={15} />} onClick={() => s.act('spam')}>垃圾邮件</Button>
+        {junkView
+          ? <Button icon={<CornerUpLeft size={15} />} onClick={() => s.act('notspam')}>不是垃圾邮件</Button>
+          : <Button icon={<ShieldAlert size={15} />} onClick={() => s.act('spam')}>垃圾邮件</Button>}
+        {!junkView && !trashView && !s.allSelected && senders.length > 0 && senders.length <= 50 && (
+          <Button icon={<Ban size={15} />} onClick={blockAll}>屏蔽发件人</Button>
+        )}
       </div>
       <button className="link-btn" onClick={() => s.clearSelection()}>取消选择</button>
     </div>

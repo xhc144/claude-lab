@@ -2,7 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   AlertTriangle, Archive, ChevronDown, Clock3, FileText, Folder, FolderPlus, Inbox, Mails, MailOpen, Moon, OctagonAlert,
-  Paperclip, PenLine, Plus, RefreshCw, Send, Settings as SettingsIcon, Star, Sun, Trash2, WifiOff, PanelLeftClose, PanelLeftOpen, Stethoscope
+  Paperclip, PenLine, Plus, RefreshCw, Send, Settings as SettingsIcon, Star, Sun, Trash2, WifiOff, PanelLeftClose, PanelLeftOpen, Stethoscope,
+  BrushCleaning
 } from 'lucide-react';
 import type { AccountSummary, FolderInfo, SpecialUse, UnifiedBox, ViewSpec } from '@shared/types';
 import { useApp, persistUi } from '../store';
@@ -94,6 +95,31 @@ export function Sidebar() {
 
   const moveDrop = (folder: FolderInfo) => (ids: number[]) => void s.moveTo(ids, folder.id);
 
+  const markRead = (f: FolderInfo) => api.markFolderRead(f.id)
+    .then((n) => s.toast({ kind: 'success', message: `「${folderName(f)}」已全部标为已读`, detail: n ? `${number(n)} 封邮件` : undefined, duration: 2200 }))
+    .catch((e) => s.toast({ kind: 'error', message: '无法全部标为已读', detail: errorMessage(e).title }));
+
+  /** Empties trash / junk folders (permanently, on the server) after confirmation. */
+  const emptyFolders = (folders: FolderInfo[], what: string) => s.openModal({
+    type: 'confirm',
+    title: `清空「${what}」？`,
+    message: `将从邮件服务器上永久删除其中的全部邮件${folders.length > 1 ? `（${folders.length} 个账户）` : ''}，此操作无法撤销。`,
+    confirmLabel: '永久删除',
+    danger: true,
+    onConfirm: () => {
+      Promise.all(folders.map((f) => api.emptyFolder(f.id)))
+        .then((r) => s.toast({ kind: 'success', message: `已清空「${what}」`, detail: `永久删除了 ${number(r.reduce((a, b) => a + b, 0))} 封邮件` }))
+        .catch((e) => s.toast({ kind: 'error', message: '清空失败', detail: errorMessage(e).title }));
+    }
+  });
+
+  const unifiedMenu = (box: UnifiedBox): MenuItem[] | null => {
+    if (box !== 'junk' && box !== 'trash') return null;
+    const folders = s.folders.filter((f) => f.specialUse === box);
+    const label = box === 'junk' ? '垃圾邮件' : '已删除';
+    return [{ label: `清空所有账户的「${label}」`, icon: <BrushCleaning size={15} />, danger: true, disabled: !folders.length, onSelect: () => emptyFolders(folders, label) }];
+  };
+
   const newFolder = (a: AccountSummary, parent?: FolderInfo) => s.openModal({
     type: 'prompt', title: parent ? `在「${folderName(parent)}」中新建文件夹` : `在 ${a.email} 中新建文件夹`, label: '文件夹名称', initial: '', confirmLabel: '创建',
     onSubmit: (name) => api.createFolder(a.id, name, parent?.path).then(() => s.toast({ kind: 'success', message: `已创建文件夹「${name}」` })).catch((e) => s.toast({ kind: 'error', message: '无法创建文件夹', detail: errorMessage(e).title }))
@@ -103,7 +129,7 @@ export function Sidebar() {
     const inbox = foldersByAccount.get(a.id)?.find((f) => f.specialUse === 'inbox');
     return [
       { label: '立即收取', icon: <RefreshCw size={15} />, onSelect: () => api.syncNow(a.id) },
-      { label: '收件箱全部标为已读', icon: <MailOpen size={15} />, disabled: !inbox?.unread, onSelect: () => inbox && api.markFolderRead(inbox.id) },
+      { label: '收件箱全部标为已读', icon: <MailOpen size={15} />, disabled: !inbox?.unread, onSelect: () => inbox && void markRead(inbox) },
       { label: '新建文件夹', icon: <FolderPlus size={15} />, onSelect: () => newFolder(a) },
       { separator: true },
       { label: '用此账户写邮件', icon: <PenLine size={15} />, onSelect: () => s.compose({ accountId: a.id }) },
@@ -113,7 +139,10 @@ export function Sidebar() {
   };
 
   const folderMenu = (a: AccountSummary, f: FolderInfo): MenuItem[] => [
-    { label: '全部标为已读', icon: <MailOpen size={15} />, disabled: !f.unread, onSelect: () => api.markFolderRead(f.id) },
+    { label: '全部标为已读', icon: <MailOpen size={15} />, disabled: !f.unread, onSelect: () => void markRead(f) },
+    ...(f.specialUse === 'junk' || f.specialUse === 'trash' ? [
+      { label: f.specialUse === 'junk' ? '清空垃圾邮件' : '清空已删除', icon: <BrushCleaning size={15} />, danger: true, onSelect: () => emptyFolders([f], folderName(f)) }
+    ] : []),
     { label: '立即同步', icon: <RefreshCw size={15} />, onSelect: () => api.setActiveFolder(f.id) },
     { separator: true },
     { label: '新建子文件夹', icon: <FolderPlus size={15} />, onSelect: () => newFolder(a, f) },
@@ -160,7 +189,8 @@ export function Sidebar() {
             <NavItem icon={PenLine} label="本地草稿" collapsed={collapsed} count={s.counts.drafts} active={s.panel === 'drafts'} onClick={() => s.setPanel('drafts')} />
           )}
           {(showMore || MORE.some((m) => isActive({ kind: 'unified', box: m.box }))) && MORE.map((u) => (
-            <NavItem key={u.box} icon={u.icon} label={u.label} collapsed={collapsed} active={isActive({ kind: 'unified', box: u.box })} onClick={() => s.setView({ kind: 'unified', box: u.box })} />
+            <NavItem key={u.box} icon={u.icon} label={u.label} collapsed={collapsed} active={isActive({ kind: 'unified', box: u.box })} onClick={() => s.setView({ kind: 'unified', box: u.box })}
+              onContextMenu={unifiedMenu(u.box) ? (e) => showContextMenu(e, unifiedMenu(u.box)!) : undefined} />
           ))}
           {!collapsed && (
             <button className="nav-more" onClick={() => setShowMore(!showMore)}>
@@ -202,7 +232,7 @@ export function Sidebar() {
                     </button>
                   )}
                   {specials.map((f) => (
-                    <NavItem key={f.id} icon={SPECIAL_ICONS[f.specialUse!] || Folder} label={folderName(f)} count={f.specialUse === 'drafts' || f.specialUse === 'sent' || f.specialUse === 'trash' || f.specialUse === 'all' ? 0 : f.unread}
+                    <NavItem key={f.id} icon={SPECIAL_ICONS[f.specialUse!] || Folder} label={folderName(f)} count={f.specialUse === 'drafts' || f.specialUse === 'sent' || f.specialUse === 'trash' || f.specialUse === 'junk' || f.specialUse === 'all' ? 0 : f.unread}
                       active={isActive({ kind: 'folder', accountId: a.id, folderId: f.id })} onClick={() => s.setView({ kind: 'folder', accountId: a.id, folderId: f.id })}
                       onContextMenu={(e) => showContextMenu(e, folderMenu(a, f))} onDrop={moveDrop(f)} />
                   ))}
