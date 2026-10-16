@@ -40,7 +40,8 @@ function probe(src) {
   return meta;
 }
 
-const films = projects.filter((p) => p.category === 'film');
+// Films without a finished cut (no `versions`) get an ordinary card and no player page.
+const films = projects.filter((p) => p.category === 'film' && p.versions);
 for (const f of films) {
   const multi = f.versions.length > 1;
   for (const v of f.versions) {
@@ -97,7 +98,7 @@ const footer = (base) => `<footer class="site-footer"><div class="wrap">
 
 // ─── index ───
 const filmHref = (f) => `films/${f.id}/`;
-const primaryHref = (p) => p.category === 'film' ? filmHref(p) : p.links.find((l) => l.primary).href;
+const primaryHref = (p) => p.versions ? filmHref(p) : p.links.find((l) => l.primary).href;
 const linkHtml = (l) => {
   const ext = isExternal(l.href);
   const attrs = `href="${esc(l.href)}"${l.download ? ` download="${esc(l.download)}"` : ''}${ext ? ' rel="noopener"' : ''}`;
@@ -107,7 +108,7 @@ const linkHtml = (l) => {
 
 function card(p) {
   const cat = categories.find((c) => c.id === p.category);
-  const isFilm = p.category === 'film';
+  const isFilm = Boolean(p.versions);
   const href = primaryHref(p);
   const links = isFilm
     ? [{ label: '观看影片', href, primary: true }, ...(p.versions.length > 1 ? [{ label: `${p.versions[1].label} 版`.replace('English 版', '英文版'), href: `${href}?v=${p.versions[1].id}` }] : []), { label: '制作源码', href: tree(p.versions[0].src.split('/')[0]) }]
@@ -129,7 +130,7 @@ ${cover}
 <div class="links">${links.map(linkHtml).join('')}</div></div></article>`;
 }
 
-const onlineCount = projects.filter((p) => p.category === 'film' || p.status?.kind === 'online').length;
+const onlineCount = projects.filter((p) => p.versions || p.status?.kind === 'online').length;
 const filmMinutes = Math.round(films.reduce((a, f) => a + f.runtime, 0) / 60);
 const desktopCount = projects.filter((p) => p.category === 'desktop').length;
 const byId = Object.fromEntries(projects.map((p) => [p.id, p]));
