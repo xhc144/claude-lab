@@ -39,11 +39,11 @@ function toast(msg, ms = 2200) {
 const nav = h('nav', { class: 'nav', 'aria-label': '模块' });
 MODULES.forEach((m, k) => {
   nav.append(h('a', {
-    class: 'nav-item', href: `#/${m.id}`, 'data-module': m.id, title: `${m.title}（${k + 1}）`,
+    class: 'nav-item', href: `#/${m.id}`, 'data-module': m.id, title: k < 9 ? `${m.title}（${k + 1}）` : m.title,
     // clicking the module that is already open keeps its state instead of resetting it
     onClick: (e) => { if (current?.def.id === m.id) e.preventDefault(); },
   },
-    icon(ICONS[m.icon]), h('span', null, m.short), h('span', { class: 'key' }, String(k + 1))));
+    icon(ICONS[m.icon]), h('span', null, m.short), k < 9 ? h('span', { class: 'key' }, String(k + 1)) : null));
 });
 const helpBtn = iconButton({ iconName: 'help', title: '帮助与快捷键（?）', onClick: () => openHelp(), id: 'help-btn' });
 const settingsBtn = iconButton({ iconName: 'settings', title: '设置：计算精度、开启页面', onClick: () => openSettings(), id: 'settings-btn' });
@@ -217,7 +217,7 @@ function openHelp() {
   const tips = inst?.help?.tips || [];
   const keys = [
     ['0', '开启页面'],
-    [`1 – ${MODULES.length}`, '切换模块'],
+    [`1 – ${Math.min(9, MODULES.length)}`, MODULES.length > 9 ? '切换前 9 个模块' : '切换模块'],
     ['P', '切换双精度 / 高精度'],
     ['?', '打开 / 关闭帮助'],
     ['滚轮 / 双指', '缩放视图'],
@@ -245,7 +245,10 @@ function openSettings() {
       h('li', { html: '<b>矩阵</b>：有理数元素按分数精确运算；特征值、特征向量、奇异值与条件数给出根式；小数展开到所选位数；A<sup>n</sup> 精确幂；并与双精度结果对比误差。' }),
       h('li', { html: '<b>复变</b>：探针读数显示 12 位有效数字，幅角原理沿围道加密采样。' }),
       h('li', { html: '<b>微分方程</b>：轨线与分界线的自适应积分容差从 10<sup>−8</sup> 收紧到 10<sup>−12</sup>。' }),
-      h('li', { html: '<b>三体</b>：默认误差容限从 10<sup>−10</sup> 收紧到 10<sup>−13</sup>，守恒量显示更多位数。' })),
+      h('li', { html: '<b>三体</b>：默认误差容限从 10<sup>−10</sup> 收紧到 10<sup>−13</sup>，守恒量显示更多位数。' }),
+      h('li', { html: '<b>分形</b>：坐标改用任意精度十进制，超过双精度极限（约 10<sup>−13</sup>）后自动切换为摄动理论，可放大到 10<sup>−280</sup>。' }),
+      h('li', { html: '<b>傅里叶</b>：采样点（可用的圆）从 512 增加到 1024，能量占比显示 8 位。' }),
+      h('li', { html: '<b>混沌</b>：费根鲍姆 δ 改用双双精度（约 32 位）计算到第 16 级，李雅普诺夫指数用更长的轨道。' })),
     h('div', { class: 'hint' }, '快捷键 P 可随时切换；带 ?hp=50 的链接会为打开它的人开启高精度。'));
   m.cleanup = ctl.destroy;
 }
