@@ -256,33 +256,39 @@ try {
   await shot('17-record-dialog');
   check('record dialog opens', true, `${await page.locator('.rec-src').count()} sources`);
   await page.keyboard.press('Escape');
+  const recStarted = page.evaluate(() => new Promise((res) => { const off = window.motif.on('recorder', (e) => { if (e.status === 'recording' || e.status === 'error') { off(); res(e); } }); setTimeout(() => res({ status: 'timeout' }), 30000); }));
   await call('recorder.start', { sourceId: 'test:frame', countdown: 0, keepWindow: true, fps: 30, mic: null, camera: null });
-  for (let i = 0; i < 10; i++) { await page.mouse.move(200 + i * 70, 300 + i * 25); await page.waitForTimeout(250); }
+  check('recorder starts capturing', (await recStarted).status === 'recording');
+  for (let i = 0; i < 14; i++) { await page.mouse.move(200 + i * 60, 300 + i * 20); await page.waitForTimeout(250); }
   const bar = app.windows().find((w) => w.url().includes('recorder.html'));
   if (bar) await bar.screenshot({ path: path.join(outDir, '18-recorder-bar.png') }).catch(() => {});
   check('recorder bar opens', !!bar);
+  const recDone = page.evaluate(() => new Promise((res) => { const off = window.motif.on('recorder', (e) => { if (e.status === 'done' || e.status === 'error') { off(); res(e); } }); }));
   await call('recorder.stop');
-  await page.waitForSelector('.rec-editor', { timeout: 90000 });
+  const recResult = await Promise.race([recDone, new Promise((r) => setTimeout(() => r({ status: 'timeout' }), 120000))]);
+  check('recording is processed into a project', recResult.status === 'done', recResult.error || recResult.status);
+  await page.waitForSelector('.rec-editor', { timeout: 30000 });
   await page.waitForTimeout(2500);
   await shot('19-recording-editor');
   const recPainted = await page.evaluate(() => { const c = document.querySelector(".rec-canvas canvas"); const d = c.getContext('2d').getImageData(3, 3, 1, 1).data; return d[3] > 0; });
   check("recording opens in the recording editor with a painted frame", recPainted);
   const len0 = await page.evaluate(() => window.__motifEditor.s.timing.duration);
-  check('recording has a duration', len0 > 1, `${len0.toFixed(2)} s`);
+  const srcLen = await page.evaluate(() => window.__motifEditor.s.doc.scenes[0].blocks[0].source.duration);
+  check('recording has a duration', srcLen > 1.5, `${srcLen.toFixed(2)} s recorded`);
   // zoom at the playhead, split, speed, undo
-  await page.evaluate((d) => window.__motifEditor.seek(d * 0.3), len0);
+  await page.evaluate((d) => window.__motifEditor.seek(d * 0.3), srcLen);
   await page.keyboard.press('z');
   await page.waitForTimeout(400);
   check('Z adds a zoom segment', (await page.locator('.zseg').count()) >= 1 && (await page.locator('text=所选缩放').count()) === 1);
-  await page.evaluate((d) => window.__motifEditor.seek(d * 0.6), len0);
+  await page.evaluate((d) => window.__motifEditor.seek(d * 0.6), srcLen);
   await page.keyboard.press('s');
   await page.waitForTimeout(400);
   check('S splits the clip', (await page.locator('.clip').count()) === 2);
   await page.locator('.clip').nth(1).click({ button: 'right' });
   await page.locator('.menu button', { hasText: '速度 2×' }).click();
   await page.waitForTimeout(500);
-  const len1 = await page.evaluate(() => window.__motifEditor.s.timing.duration);
-  check('2× speed shortens the recording', len1 < len0 - 0.2, `${len0.toFixed(2)} → ${len1.toFixed(2)} s`);
+  const len1 = await page.evaluate(() => window.__motifEditor.s.doc.scenes[0].blocks[0].clips.reduce((a, c) => a + (c.to - c.from) / (c.speed || 1), 0));
+  check('2× speed shortens the recording', len1 < srcLen - 0.2, `${srcLen.toFixed(2)} → ${len1.toFixed(2)} s`);
   await shot('20-recording-edited');
   for (const tab of ['运镜', '光标', '摄像头', '音频', '画面']) { await page.locator('.rec-tabs button', { hasText: tab }).click(); await page.waitForTimeout(150); }
   await page.locator('.bg-sw').nth(2).click();
@@ -308,6 +314,17 @@ try {
   await page.locator('.titlebar .btn', { hasText: '录屏编辑' }).click();
   await page.waitForSelector('.rec-editor', { timeout: 10000 });
   check('switches between recording and full editor', true);
+  // light appearance
+  await page.evaluate(() => dispatchEvent(new CustomEvent('motif:settings', { detail: { tab: 'general' } })));
+  await page.waitForSelector('.settings');
+  await page.locator('.settings .seg button', { hasText: '浅色' }).click();
+  await page.waitForTimeout(400);
+  const light = await page.evaluate(() => ({ theme: document.documentElement.dataset.theme, bg: getComputedStyle(document.body).backgroundColor }));
+  await shot('22-light-settings');
+  check('light appearance applies', light.theme === 'light' && light.bg === 'rgb(238, 240, 244)', JSON.stringify(light));
+  check('light appearance is saved', (await call('config.get')).appearance === 'light');
+  await page.locator('.settings .seg button', { hasText: '深色' }).click();
+  await page.keyboard.press('Escape');
 } catch (e) {
   check('workflow', false, e.message.split('\n')[0]);
   await shot('error').catch(() => {});

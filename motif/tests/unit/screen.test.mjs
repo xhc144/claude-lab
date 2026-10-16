@@ -119,6 +119,8 @@ test('settings, picture and camera rectangles', () => {
   assert.equal(cam.x, Math.round(1080 * 0.035));
   assert.ok(cameraRect(1920, 1080, s.camera, 2).w < cam.w, 'webcam shrinks when zoomed in');
   assert.equal(screenSettings({ cursor: { click: 'boom' } }).cursor.click, 'ripple');
+  assert.deepEqual(screenSettings({}).motionBlur, { camera: 0.6, cursor: 0.5 });
+  assert.deepEqual(screenSettings({ motionBlur: { camera: 5, cursor: 0 } }).motionBlur, { camera: 1, cursor: 0 });
 });
 
 test('a recording becomes one full-frame screen scene with planned zooms', async () => {

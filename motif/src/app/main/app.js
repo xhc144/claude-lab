@@ -38,7 +38,8 @@ function filesFromArgv(argv) {
 export function runApp({ distDir }) {
   if (!app.requestSingleInstanceLock()) { app.quit(); return; }
   app.setAppUserModelId('app.motif.studio');
-  nativeTheme.themeSource = 'dark';
+  const look = store.readConfig().appearance;
+  nativeTheme.themeSource = look === 'light' || look === 'system' ? look : 'dark';
 
   app.on('second-instance', (_e, argv) => {
     const files = filesFromArgv(argv);
@@ -69,11 +70,11 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: st.width || 1520, height: st.height || 940, x: st.x, y: st.y,
     minWidth: 1100, minHeight: 680,
-    backgroundColor: '#0f1014',
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#0f1014' : '#eef0f4',
     title: 'Motif',
     show: false,
     titleBarStyle: 'hidden',
-    ...(isMac ? { trafficLightPosition: { x: 14, y: 13 } } : { titleBarOverlay: { color: '#00000000', symbolColor: '#c9cbd6', height: 44 } }),
+    ...(isMac ? { trafficLightPosition: { x: 14, y: 13 } } : { titleBarOverlay: { color: '#00000000', symbolColor: nativeTheme.shouldUseDarkColors ? '#c9cbd6' : '#3a3f4b', height: 44 } }),
     webPreferences: {
       preload: path.join(__dirname, 'preload.cjs'),
       contextIsolation: true, sandbox: false, nodeIntegration: false,

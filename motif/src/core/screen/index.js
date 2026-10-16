@@ -32,6 +32,8 @@ export const SCREEN_DEFAULTS = Object.freeze({
   camera: { show: true, position: 'br', size: 0.2, shape: 'circle', border: 3, shadow: 0.5, mirror: true, shrinkOnZoom: true },
   audio: { mic: 1, system: 0.8 },
   zoom: { scale: 1.6, easing: 'spring', enter: 0.7, exit: 0.7 },
+  // shutter as a fraction of one output frame (0 = off, 1 = the whole frame)
+  motionBlur: { camera: 0.6, cursor: 0.5 },
 });
 
 export const CAMERA_POSITIONS = ['br', 'bl', 'tr', 'tl'];
@@ -62,6 +64,10 @@ export function screenSettings(b = {}) {
     camera: cam,
     audio: { ...d.audio, ...(b.audio || {}) },
     zoom: { ...d.zoom, ...(b.zoomDefaults || {}) },
+    motionBlur: {
+      camera: clamp(Number(b.motionBlur?.camera ?? d.motionBlur.camera) || 0, 0, 1),
+      cursor: clamp(Number(b.motionBlur?.cursor ?? d.motionBlur.cursor) || 0, 0, 1),
+    },
   };
 }
 

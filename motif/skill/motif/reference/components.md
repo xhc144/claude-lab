@@ -500,7 +500,7 @@ asset 为视频资源 ID。trim: [开始秒, 结束秒]。导出时逐帧解码�
 | `camera` | asset |  | 摄像头录像资源 ID |
 | `mic` | asset |  | 麦克风录音资源 ID |
 | `system` | asset |  | 系统声音资源 ID |
-| `source` | { width, height, duration, fps, cursorInVideo } |  | 源录像信息（录制时写入） |
+| `source` | { width, height, duration, fps, cursorInVideo, cameraOffset } |  | 源录像信息（录制时写入） |
 | `clips` | { from, to, speed, muted }[] |  | 剪辑片段，按播放顺序；空表示整段 |
 | `zooms` | { start, end, scale, focus, mode, easing, enter, exit }[] |  | 缩放片段（自动运镜） |
 | `background` | { type, preset, color, image, blur } |  | 背景 |
@@ -511,6 +511,7 @@ asset 为视频资源 ID。trim: [开始秒, 结束秒]。导出时逐帧解码�
 | `cursor` | { show, size, smooth, hideIdle, idleDelay, click, clickColor, highlight, tilt } |  | 光标 |
 | `camera_layout` | { show, position, size, shape, border, shadow, mirror, shrinkOnZoom } |  | 摄像头画中画 |
 | `audio` | { mic, system } |  | 音量 |
+| `motionBlur` | { camera, cursor } |  | 动态模糊 |
 | `zoomDefaults` | { scale, easing, enter, exit } |  | 新建缩放片段的默认值 |
 
 示例：

@@ -8,6 +8,7 @@
 // src = outToSrc(clips, t).
 import { roundRect, clamp01, toCss } from './kit.js';
 import { drawImageFit } from './media.js';
+import { makeCanvas } from '../backgrounds.js';
 import {
   BACKGROUNDS, screenSettings, screenRect, cameraRect,
   normalizeClips, outDuration, outToSrc,
@@ -16,6 +17,15 @@ import {
 } from '../../core/screen/index.js';
 
 const TAU = Math.PI * 2;
+
+const layers = [];
+/** Scratch canvases for motion-blur sub-frames (reused between frames). */
+function layerCanvas(i, w, h) {
+  let c = layers[i];
+  if (!c) c = layers[i] = makeCanvas(w, h);
+  if (c.width !== w || c.height !== h) { c.width = w; c.height = h; }
+  return c;
+}
 
 /**
  * Smoothing for video frames. Live previews draw on a GPU canvas, where a clipped video frame
@@ -257,6 +267,65 @@ const screen = {
     if (video) mediaTracks.push({ track: video, time: (lt) => srcAt(lt).src });
     if (cam) mediaTracks.push({ track: cam, time: (lt) => Math.max(0, srcAt(lt).src - camOffset) });
 
+    /** Camera viewport (composition units) at source time t. */
+    const viewportAt = (t) => {
+      const z = sampleZoom(zooms, Math.max(0, t), { sorted: true, autoFocus });
+      if (!(z.scale > 1.0001 || z.transition)) return { scale: 1, tx: 0, ty: 0 };
+      const mapped = { ...z, focus: toComp(z.focus) };
+      if (z.transition) mapped.transition = { ...z.transition, from: { ...z.transition.from, focus: toComp(z.transition.from.focus) }, to: { ...z.transition.to, focus: toComp(z.transition.to.focus) } };
+      return viewport(mapped);
+    };
+
+    /** Backdrop, window, picture and cursor under the camera viewport vp. */
+    const drawComposition = (ctx, src, curT, vp, ds) => {
+      ctx.save();
+      ctx.translate(rect.x + rect.w * (0.5 + vp.tx), rect.y + rect.h * (0.5 + vp.ty));
+      ctx.scale(vp.scale, vp.scale);
+      ctx.translate(-(rect.x + rect.w / 2), -(rect.y + rect.h / 2));
+      drawBackdrop(ctx, c, rect, s, el, ds);
+      const top = pic.y - pic.bar;
+      const fullH = pic.h + pic.bar;
+      if (s.shadow > 0 && s.background.type !== 'none') {
+        ctx.save();
+        ctx.shadowColor = `rgba(0,0,0,${0.55 * s.shadow})`;
+        ctx.shadowBlur = 60 * u * s.shadow; ctx.shadowOffsetY = 22 * u * s.shadow;
+        roundRect(ctx, pic.x, top, pic.w, fullH, rad); ctx.fillStyle = '#000'; ctx.fill();
+        ctx.restore();
+      }
+      drawWindowBar(ctx, s, pic, rad, s.background.type === 'blur' || /midnight|ocean|aurora|ember|dusk|forest/.test(s.background.preset));
+      ctx.save();
+      if (pic.bar) bottomRounded(ctx, pic.x, pic.y, pic.w, pic.h, rad);
+      else roundRect(ctx, pic.x, pic.y, pic.w, pic.h, rad);
+      ctx.clip();
+      ctx.imageSmoothingQuality = videoQuality(ds);
+      if (el && el.readyState >= 2) ctx.drawImage(el, pic.x, pic.y, pic.w, pic.h);
+      else { ctx.fillStyle = '#1b1d24'; ctx.fillRect(pic.x, pic.y, pic.w, pic.h); }
+      ctx.restore();
+      // cursor and click effects, in picture space (they zoom with the picture)
+      if (effects) {
+        const pos = P.path.at(curT);
+        if (pos) {
+          const h = pic.h * 0.03 * s.cursor.size;
+          const x = pic.x + pos[0] * pic.w, y = pic.y + pos[1] * pic.h;
+          let alpha = 1;
+          if (s.cursor.hideIdle) alpha = 1 - clamp01((P.path.idleFor(curT) - s.cursor.idleDelay) / 0.35);
+          const click = s.cursor.click !== 'none' ? P.path.clickAt(src, 0.55) : null;
+          if (click) drawClick(ctx, s.cursor.click, pic.x + click.x * pic.w, pic.y + click.y * pic.h, h, click, s.cursor.clickColor);
+          if (overlay && alpha > 0.001) {
+            if (s.cursor.highlight) {
+              const g = ctx.createRadialGradient(x, y, 0, x, y, h * 1.6);
+              g.addColorStop(0, `rgba(255,214,64,${0.45 * alpha})`); g.addColorStop(1, 'rgba(255,214,64,0)');
+              ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, h * 1.6, 0, TAU); ctx.fill();
+            }
+            // Press: the arrow dips slightly while the button is down.
+            const press = click ? 1 - 0.12 * Math.sin(Math.PI * Math.min(1, click.elapsed / 0.22)) * (click.elapsed < 0.22 ? 1 : 0) : 1;
+            drawCursorShape(ctx, P.path.shape(curT), x, y, h * press, P.path.tilt(curT, s.cursor.tilt), alpha);
+          }
+        }
+      }
+      ctx.restore();
+    };
+
     const inst = {
       duration: full ? 0 : 0.45, hold: 0, immediate: true, minDuration: playLen,
       tracks: mediaTracks,
@@ -280,63 +349,45 @@ const screen = {
           roundRect(ctx, rect.x, rect.y, rect.w, rect.h, Math.min(rect.w, rect.h) * 0.02); ctx.clip();
         } else { ctx.beginPath(); ctx.rect(rect.x, rect.y, rect.w, rect.h); ctx.clip(); }
 
-        // camera (zoom) over the whole composition
-        const z = sampleZoom(zooms, src, { sorted: true, autoFocus });
-        let vp = { scale: 1, tx: 0, ty: 0 };
-        if (z.scale > 1.0001 || z.transition) {
-          const mapped = { ...z, focus: toComp(z.focus) };
-          if (z.transition) mapped.transition = { ...z.transition, from: { ...z.transition.from, focus: toComp(z.transition.from.focus) }, to: { ...z.transition.to, focus: toComp(z.transition.to.focus) } };
-          vp = viewport(mapped);
-        }
-        ctx.save();
-        ctx.translate(rect.x + rect.w * (0.5 + vp.tx), rect.y + rect.h * (0.5 + vp.ty));
-        ctx.scale(vp.scale, vp.scale);
-        ctx.translate(-(rect.x + rect.w / 2), -(rect.y + rect.h / 2));
-
-        drawBackdrop(ctx, c, rect, s, el, ds);
-        const top = pic.y - pic.bar;
-        const fullH = pic.h + pic.bar;
-        // shadow
-        if (s.shadow > 0 && s.background.type !== 'none') {
-          ctx.save();
-          ctx.shadowColor = `rgba(0,0,0,${0.55 * s.shadow})`;
-          ctx.shadowBlur = 60 * u * s.shadow; ctx.shadowOffsetY = 22 * u * s.shadow;
-          roundRect(ctx, pic.x, top, pic.w, fullH, rad); ctx.fillStyle = '#000'; ctx.fill();
-          ctx.restore();
-        }
-        drawWindowBar(ctx, s, pic, rad, s.background.type === 'blur' || /midnight|ocean|aurora|ember|dusk|forest/.test(s.background.preset));
-        ctx.save();
-        if (pic.bar) bottomRounded(ctx, pic.x, pic.y, pic.w, pic.h, rad);
-        else roundRect(ctx, pic.x, pic.y, pic.w, pic.h, rad);
-        ctx.clip();
-        ctx.imageSmoothingQuality = videoQuality(ds);
-        if (el && el.readyState >= 2) ctx.drawImage(el, pic.x, pic.y, pic.w, pic.h);
-        else { ctx.fillStyle = '#1b1d24'; ctx.fillRect(pic.x, pic.y, pic.w, pic.h); }
-        ctx.restore();
-
-        // cursor and click effects, in picture space (they zoom with the picture)
-        if (effects) {
-          const pos = P.path.at(src);
-          if (pos) {
-            const h = pic.h * 0.03 * s.cursor.size;
-            const x = pic.x + pos[0] * pic.w, y = pic.y + pos[1] * pic.h;
-            let alpha = 1;
-            if (s.cursor.hideIdle) alpha = 1 - clamp01((P.path.idleFor(src) - s.cursor.idleDelay) / 0.35);
-            const click = s.cursor.click !== 'none' ? P.path.clickAt(src, 0.55) : null;
-            if (click) drawClick(ctx, s.cursor.click, pic.x + click.x * pic.w, pic.y + click.y * pic.h, h, click, s.cursor.clickColor);
-            if (overlay && alpha > 0.001) {
-              if (s.cursor.highlight) {
-                const g = ctx.createRadialGradient(x, y, 0, x, y, h * 1.6);
-                g.addColorStop(0, `rgba(255,214,64,${0.45 * alpha})`); g.addColorStop(1, 'rgba(255,214,64,0)');
-                ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, h * 1.6, 0, TAU); ctx.fill();
-              }
-              // Press: the arrow dips slightly while the button is down.
-              const press = click ? 1 - 0.12 * Math.sin(Math.PI * Math.min(1, click.elapsed / 0.22)) * (click.elapsed < 0.22 ? 1 : 0) : 1;
-              drawCursorShape(ctx, P.path.shape(src), x, y, h * press, P.path.tilt(src, s.cursor.tilt), alpha);
-            }
+        const vp = viewportAt(src);
+        // Motion blur: average several positions of the camera and the cursor across the shutter
+        // (DogSC samples its camera many times per output frame the same way). Only frames that
+        // actually move pay for it; the decoded video frame is shared by all sub-frames.
+        const mb = s.motionBlur;
+        const fps = Number(env.doc?.format?.fps) || 30;
+        const camSpan = (mb.camera * m.speed) / fps, curSpan = (mb.cursor * m.speed) / fps;
+        const T = ctx.getTransform();
+        const px = Math.hypot(T.a, T.b) || 1;
+        let n = 1;
+        if (camSpan > 0 || curSpan > 0) {
+          const v0 = viewportAt(src - camSpan / 2), v1 = viewportAt(src + camSpan / 2);
+          const camMove = (Math.abs(v1.tx - v0.tx) * rect.w + Math.abs(v1.ty - v0.ty) * rect.h + Math.abs(v1.scale - v0.scale) * Math.max(rect.w, rect.h) * 0.5) * px;
+          let curMove = 0;
+          if (overlay && curSpan > 0) {
+            const a0 = P.path.at(src - curSpan / 2), a1 = P.path.at(src + curSpan / 2);
+            if (a0 && a1) curMove = Math.hypot((a1[0] - a0[0]) * pic.w, (a1[1] - a0[1]) * pic.h) * vp.scale * px;
           }
+          n = Math.min(ds.live ? 4 : 24, Math.ceil(Math.max(camMove, curMove) / 1.5));
         }
-        ctx.restore(); // camera
+        if (n <= 1) drawComposition(ctx, src, src, vp, ds);
+        else {
+          const W = Math.max(1, Math.ceil(rect.w * px)), H = Math.max(1, Math.ceil(rect.h * px));
+          const tmp = layerCanvas(0, W, H), acc = layerCanvas(1, W, H);
+          const tg = tmp.getContext('2d'), ag = acc.getContext('2d');
+          ag.setTransform(1, 0, 0, 1, 0, 0); ag.globalAlpha = 1; ag.globalCompositeOperation = 'source-over'; ag.clearRect(0, 0, W, H);
+          for (let k = 0; k < n; k++) {
+            const f = (k + 0.5) / n - 0.5;
+            tg.setTransform(1, 0, 0, 1, 0, 0); tg.clearRect(0, 0, W, H);
+            tg.setTransform(px, 0, 0, px, -rect.x * px, -rect.y * px);
+            tg.imageSmoothingEnabled = true;
+            drawComposition(tg, src + f * camSpan, src + f * curSpan, viewportAt(src + f * camSpan), ds);
+            // running average: frame k weighs 1/(k+1) of what is there
+            ag.globalAlpha = 1 / (k + 1);
+            ag.drawImage(tmp, 0, 0);
+          }
+          ag.globalAlpha = 1;
+          ctx.drawImage(acc, rect.x, rect.y, W / px, H / px);
+        }
 
         // webcam bubble, outside the zoom (it shrinks while zoomed in)
         if (cam && cam.element.readyState >= 2) {

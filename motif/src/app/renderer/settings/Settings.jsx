@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { Icon } from '../icons.jsx';
 import { call, on } from '../api.js';
-import { Modal, Field, TextInput, Switch, Select, Spinner, toast, CopyBox, confirmDialog } from '../ui.jsx';
+import { Modal, Field, TextInput, Switch, Select, Spinner, toast, CopyBox, confirmDialog, Segmented } from '../ui.jsx';
+import { applyAppearance } from '../theme.js';
 
 export function Settings({ onClose, initialTab = 'general' }) {
   const [tab, setTab] = useState(initialTab);
@@ -52,6 +53,9 @@ function General() {
           <button className="btn" onClick={async () => { const [f] = await call('dialog.open', { title: '选择 ffmpeg 可执行文件' }); if (f) set({ ffmpegPath: f }); }}>指定…</button>
           {cfg.ffmpegPath ? <button className="btn" onClick={() => set({ ffmpegPath: null })}>重置</button> : null}
         </div>
+      </Field>
+      <Field label="外观" help="界面的明暗；作品画面始终按作品自己的主题渲染">
+        <Segmented value={cfg.appearance || 'dark'} options={[{ value: 'dark', label: '深色' }, { value: 'light', label: '浅色' }, { value: 'system', label: '跟随系统' }]} onChange={(v) => { applyAppearance(v); set({ appearance: v }); }} />
       </Field>
       <Field label="默认作者名" help="写入历史记录，便于区分人与 AI 的修改"><TextInput value={cfg.authorName} placeholder="你" onCommit={(v) => set({ authorName: v || null })} /></Field>
       <div className="divider" style={{ margin: '14px 0' }} />

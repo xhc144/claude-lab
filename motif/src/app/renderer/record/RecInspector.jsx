@@ -120,6 +120,9 @@ function CameraPane({ rec, sel, setSel, ops }) {
           <button className="btn sm ghost" disabled={!rec.zooms.length} onClick={() => { setBlock(rec, { zooms: [] }, { message: '清除缩放' }); setSel(null); }}>清除全部</button>
         </div>
       </Section>
+      <Section title="动态模糊">
+        <Row label="镜头" hint="镜头移动和缩放时的拖影，越大越像电影快门"><Slider value={rec.settings.motionBlur.camera} min={0} max={1} step={0.05} fmt={(v) => (v ? pct(v) : '关')} onChange={(v) => edit(rec, { motionBlur: { ...rec.settings.motionBlur, camera: v } }, 'mbc', '动态模糊')} /></Row>
+      </Section>
       {z ? (
         <Section title="所选缩放" right={<button className="ibtn sm" title="删除 Delete" onClick={ops.removeSelected}><Icon name="trash" size={13} /></button>}>
           <div className="dim" style={{ marginBottom: 6 }}>源时间 {fmtTime(z.start)} – {fmtTime(z.end)}（{(z.end - z.start).toFixed(1)} 秒）</div>
@@ -196,6 +199,7 @@ function CursorPane({ rec }) {
         <Row label="大小"><Slider value={c.size} min={0.5} max={3} step={0.05} fmt={(v) => `${v.toFixed(2)}×`} disabled={!has} onChange={(v) => set({ size: v }, 'size')} /></Row>
         <Row label="平滑移动"><Switch value={c.smooth !== false} disabled={!has} onChange={(v) => set({ smooth: v }, 'smooth')} /></Row>
         <Row label="移动倾斜"><Slider value={c.tilt} min={0} max={4} step={0.1} fmt={(v) => v.toFixed(1)} disabled={!has} onChange={(v) => set({ tilt: v }, 'tilt')} /></Row>
+        <Row label="动态模糊" hint={!has || c.show === 'recorded' ? '仅对美化光标生效' : null}><Slider value={rec.settings.motionBlur.cursor} min={0} max={1} step={0.05} fmt={(v) => (v ? pct(v) : '关')} disabled={!has} onChange={(v) => edit(rec, { motionBlur: { ...rec.settings.motionBlur, cursor: v } }, 'mbk', '光标动态模糊')} /></Row>
         <Row label="光晕"><Switch value={!!c.highlight} disabled={!has} onChange={(v) => set({ highlight: v }, 'hl')} /></Row>
         <Row label="静止时隐藏"><Switch value={!!c.hideIdle} disabled={!has} onChange={(v) => set({ hideIdle: v }, 'idle')} /></Row>
         {c.hideIdle ? <Row label="静止多久"><Slider value={c.idleDelay} min={0.3} max={6} step={0.1} fmt={(v) => `${v.toFixed(1)}s`} onChange={(v) => set({ idleDelay: v }, 'idled')} /></Row> : null}

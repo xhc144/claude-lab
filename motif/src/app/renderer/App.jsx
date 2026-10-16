@@ -6,6 +6,7 @@ import { Settings } from './settings/Settings.jsx';
 import { Toasts, Menus, Dialogs, toast } from './ui.jsx';
 import { call, on, isElectron } from './api.js';
 import { RecordingStatus } from './record/RecordDialog.jsx';
+import { applyAppearance } from './theme.js';
 
 export function App() {
   const [route, setRoute] = useState(() => { try { const r = JSON.parse(sessionStorage.getItem('motif.route') || 'null'); return r || { view: 'home' }; } catch { return { view: 'home' }; } });
@@ -24,6 +25,8 @@ export function App() {
     setRoute({ view: 'home' });
     setHomeRequest({ kind: 'import', files });
   }, []);
+
+  useEffect(() => { if (isElectron) call('config.get').then((c) => applyAppearance(c.appearance || 'dark')).catch(() => {}); }, []);
 
   useEffect(() => {
     if (!isElectron) return;

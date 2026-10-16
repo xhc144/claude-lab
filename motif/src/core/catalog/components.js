@@ -457,6 +457,7 @@ export const COMPONENTS = {
       cursor: P.obj({ show: P.enm(['auto', 'recorded', 'overlay', 'none'], 'auto', 'recorded 用录像里的系统光标，overlay 画平滑的软件光标'), size: P.num('光标大小倍率'), smooth: P.bool('平滑移动（弹簧）', true), hideIdle: P.bool('静止时隐藏', false), idleDelay: P.num('静止多久后隐藏（秒）'), click: P.enm(['ripple', 'ring', 'pulse', 'none'], 'ripple', '点击特效'), clickColor: P.color('点击特效颜色'), highlight: P.bool('光标光晕', false), tilt: P.num('移动倾斜 0–4') }, '光标'),
       camera_layout: P.obj({ show: P.bool('显示摄像头', true), position: P.enm(['br', 'bl', 'tr', 'tl'], 'br', '位置'), size: P.num('大小，占短边比例'), shape: P.enm(['circle', 'rounded', 'square'], 'circle', '形状'), border: P.num('描边（px）'), shadow: P.num('阴影 0–1'), mirror: P.bool('镜像', true), shrinkOnZoom: P.bool('放大时缩小摄像头', true) }, '摄像头画中画'),
       audio: P.obj({ mic: P.num('麦克风音量 0–2'), system: P.num('系统声音音量 0–2') }, '音量'),
+      motionBlur: P.obj({ camera: P.num('镜头移动与缩放的动态模糊 0–1（快门占一帧的比例）'), cursor: P.num('光标的动态模糊 0–1') }, '动态模糊'),
       zoomDefaults: P.obj({ scale: P.num('新缩放片段的倍数'), easing: P.str('缓动'), enter: P.num('进入（秒）'), exit: P.num('退出（秒）') }, '新建缩放片段的默认值'),
     },
     aliases: { recording: {}, screencast: {}, screenrecord: {} },

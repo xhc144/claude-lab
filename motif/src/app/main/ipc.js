@@ -1,7 +1,7 @@
 // IPC surface of the editor. One request channel ("motif:call", method + args) keeps the preload
 // tiny; errors travel back as {error, hint, code} so the UI can show the same friendly messages the
 // CLI prints. Events (export progress, AI steps, external project changes) use "motif:event".
-import { ipcMain, dialog, shell, app, BrowserWindow } from 'electron';
+import { ipcMain, dialog, shell, app, BrowserWindow, nativeTheme } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
@@ -72,6 +72,7 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
       const { ai: _a, ...safe } = patch || {};
       const r = store.writeConfig(safe);
       if (safe.library) allowRoot(store.libraryRoot());
+      if (safe.appearance) nativeTheme.themeSource = ['light', 'system'].includes(safe.appearance) ? safe.appearance : 'dark';
       return r;
     },
 
