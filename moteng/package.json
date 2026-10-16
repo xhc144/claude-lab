@@ -1,0 +1,114 @@
+{
+  "name": "moteng",
+  "productName": "Moteng",
+  "version": "1.1.0",
+  "description": "墨誊 Moteng：把 ChatGPT、Claude、Gemini、DeepSeek 等 AI 对话网页转换成 LaTeX 源码与 PDF",
+  "author": {
+    "name": "claude-lab"
+  },
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "main": "src/app/main.js",
+  "bin": {
+    "moteng": "bin/moteng.js"
+  },
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test \"tests/*.test.js\"",
+    "convert": "node bin/moteng.js",
+    "selftest": "electron . --self-test selftest.json",
+    "fetch-tectonic": "node scripts/fetch-tectonic.js",
+    "warm-tectonic": "node scripts/warm-tectonic.js",
+    "dist:win": "electron-builder --win nsis --x64 --publish never"
+  },
+  "dependencies": {
+    "electron-updater": "6.8.9",
+    "fflate": "0.8.3",
+    "highlight.js": "11.12.0",
+    "linkedom": "0.18.13"
+  },
+  "devDependencies": {
+    "electron": "44.5.1",
+    "electron-builder": "26.0.12"
+  },
+  "homepage": "https://github.com/xhc144/claude-lab/tree/main/moteng",
+  "build": {
+    "appId": "com.claudelab.moteng",
+    "productName": "Moteng",
+    "copyright": "Copyright © 2026 claude-lab",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "https://github.com/xhc144/claude-lab/releases/download/moteng-latest"
+      }
+    ],
+    "files": [
+      "src/**/*",
+      "bin/**/*",
+      "package.json",
+      "!**/*.map"
+    ],
+    "extraResources": [
+      {
+        "from": "../mojing/tex",
+        "to": "tex/mojing",
+        "filter": [
+          "*.sty",
+          "*.cls"
+        ]
+      },
+      {
+        "from": "tex",
+        "to": "tex/moteng"
+      },
+      {
+        "from": "fixtures/selftest",
+        "to": "selftest"
+      },
+      {
+        "from": "vendor/tectonic",
+        "to": "tectonic"
+      },
+      {
+        "from": "build/icon.png",
+        "to": "icon.png"
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "Moteng-Setup-${version}-x64.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "shortcutName": "墨誊 Moteng",
+      "uninstallDisplayName": "墨誊 Moteng"
+    },
+    "fileAssociations": [
+      {
+        "ext": [
+          "mhtml",
+          "mht"
+        ],
+        "name": "MHTML",
+        "description": "保存的网页（单个文件）",
+        "role": "Viewer"
+      }
+    ]
+  }
+}

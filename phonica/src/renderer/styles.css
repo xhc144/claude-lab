@@ -107,6 +107,7 @@ a { color: var(--accent-text); }
 .titlebar .brand small { color: var(--text-3); font-weight: 500; margin-left: 2px; }
 .titlebar .spacer { flex: 1; }
 .titlebar .status { -webkit-app-region: no-drag; display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-3); padding: 3px 10px; border-radius: 99px; background: var(--surface-3); }
+.titlebar .update-ready { -webkit-app-region: no-drag; }
 .titlebar .status .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--fair); }
 .titlebar .status.ok .dot { background: var(--good); }
 .titlebar .status.err .dot { background: var(--poor); }

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: file:; frame-src file:; object-src file:">
+  <title>墨誊 Moteng</title>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="seal">墨</span>
+      <div>
+        <div class="brand-name">墨誊 <span class="latin">Moteng</span></div>
+        <div class="brand-sub">AI 对话网页 → LaTeX 源码与 PDF</div>
+      </div>
+    </div>
+    <button class="btn primary update-ready" id="update-ready" hidden title="关闭软件时也会自动安装"></button>
+    <div class="engine" id="engine" title="">
+      <span class="dot"></span><span id="engine-text">正在查找排版引擎…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="left">
+      <div class="drop" id="drop" tabindex="0">
+        <div class="drop-icon" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="40" height="40"><path d="M12 6h16l10 10v26a2 2 0 0 1-2 2H12a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M28 6v10h10" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M24 22v13M18.5 29.5 24 35l5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="drop-title">把保存的对话网页拖到这里</div>
+        <div class="drop-hint">.html（连同 _files 文件夹）· .mhtml · .zip · 文件夹</div>
+        <div class="drop-actions">
+          <button class="btn" id="pick">选择文件…</button>
+          <button class="btn" id="paste" title="在聊天页面选中对话后按 Ctrl+C，再点这里">从剪贴板粘贴</button>
+        </div>
+      </div>
+
+      <div class="card options">
+        <div class="row">
+          <span class="label">版式</span>
+          <div class="seg" id="style">
+            <button data-v="chat">对话体</button>
+            <button data-v="notes">讲义体（墨经）</button>
+          </div>
+        </div>
+        <div class="row">
+          <span class="label">纸张</span>
+          <div class="seg small" id="paper">
+            <button data-v="a4">A4</button>
+            <button data-v="b5">B5</button>
+          </div>
+          <span class="label gap">字号</span>
+          <div class="seg small" id="fontSize">
+            <button data-v="normal">五号</button>
+            <button data-v="large">小四</button>
+          </div>
+        </div>
+        <div class="row checks">
+          <label><input type="checkbox" id="includeQuestions"> 包含提问</label>
+          <label><input type="checkbox" id="includeThinking"> 包含思考过程</label>
+          <label><input type="checkbox" id="fetchImages"> 联网取图片</label>
+          <label><input type="checkbox" id="openAfter"> 完成后打开 PDF</label>
+        </div>
+        <div class="row out">
+          <span class="label">输出到</span>
+          <span class="path" id="outRoot"></span>
+          <button class="btn link" id="pickOut">更改</button>
+        </div>
+        <div class="row update">
+          <span class="label">软件更新</span>
+          <span class="path" id="update-text"></span>
+          <label><input type="checkbox" id="autoUpdate"> 自动检查</label>
+          <button class="btn link" id="update-check">检查更新</button>
+        </div>
+      </div>
+
+      <div class="queue-head">
+        <span>转换列表</span>
+        <span class="spacer"></span>
+        <button class="btn link" id="clear">清除已完成</button>
+        <button class="btn primary" id="run">开始转换</button>
+      </div>
+      <ul class="queue" id="queue"></ul>
+    </section>
+
+    <section class="right">
+      <div class="preview-head" id="preview-head" hidden>
+        <div class="preview-title" id="preview-title"></div>
+        <div class="preview-actions">
+          <button class="btn" id="open-pdf">打开 PDF</button>
+          <button class="btn" id="open-tex">打开 .tex</button>
+          <button class="btn" id="open-folder">打开文件夹</button>
+        </div>
+      </div>
+      <div class="warnings" id="warnings" hidden></div>
+      <iframe id="pdf" class="pdf" hidden title="PDF 预览"></iframe>
+      <div class="guide" id="guide">
+        <h2>怎样保存对话网页</h2>
+        <ol>
+          <li>在浏览器里打开要转换的对话，<b>先滚动到最上面</b>，让整段对话都加载出来。</li>
+          <li>按 <kbd>Ctrl</kbd>+<kbd>S</kbd>，保存类型选 <b>“网页，全部”</b>（会得到 .html 和同名 _files 文件夹）或 <b>“网页，单个文件”</b>（.mhtml）。</li>
+          <li>把保存的文件（或打包成的 .zip）拖进左边的方框，点 <b>开始转换</b>。</li>
+        </ol>
+        <p class="alt">也可以在聊天页面里选中对话内容，按 <kbd>Ctrl</kbd>+<kbd>C</kbd> 复制，再点 <b>从剪贴板粘贴</b>。</p>
+        <h3>支持的网站</h3>
+        <div class="chips">
+          <span>ChatGPT</span><span>Claude</span><span>Gemini</span><span>DeepSeek</span><span>Grok</span><span>Copilot</span>
+          <span>Kimi</span><span>豆包</span><span>通义千问</span><span>腾讯元宝</span><span>智谱清言</span><span>Perplexity</span><span>Poe</span><span>Le Chat</span>
+        </div>
+        <p class="note">其他网站按通用规则提取。公式取自网页里保存的 TeX 源码；个别 LaTeX 排不出的公式会以源码形式留在 PDF 中，不会让整份文档失败。</p>
+        <h3>两种版式</h3>
+        <div class="styles">
+          <div><b>对话体</b><span>提问放在浅色框里，回答随后排出，保留原来的对话结构。</span></div>
+          <div><b>讲义体</b><span>用仓库里的墨经讲义模板：每个问题一讲，回答里的标题变成节，适合整理成学习笔记。</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+  <script src="app.js"></script>
+</body>
+</html>

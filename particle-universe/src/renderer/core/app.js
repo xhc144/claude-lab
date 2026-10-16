@@ -7,6 +7,7 @@ import { AudioEngine, analyzeBuffer } from '../audio/player.js';
 import { TrackAnalysis, createFrame } from '../audio/track.js';
 import { LiveAnalyzer } from '../audio/live.js';
 import { renderDemoTrack } from '../audio/demo.js';
+import demoAudioUrl from '../assets/demo-aurora.ogg?url';
 import { Director } from '../camera/director.js';
 import { FreeControls } from '../camera/controls.js';
 import { makePose, copyPose } from '../camera/camera.js';
@@ -120,6 +121,9 @@ export class App extends EventTarget {
     if (!this.running) return;
     requestAnimationFrame(this._raf);
     if (this.suspended) return;
+    // While a track is being synthesised/decoded and analysed, a slow (software-rendered) frame loop
+    // starves that work of CPU; on such machines draw the loading view at a few frames per second.
+    if (this.loading && this.stats.fps < 30 && this.lastFrameTs && ts - this.lastFrameTs < 250) return;
     const dt = this.lastFrameTs ? Math.min(0.1, (ts - this.lastFrameTs) / 1000) : 1 / 60;
     if (this.lastFrameTs) this.quality.update(ts - this.lastFrameTs);
     this.lastFrameTs = ts;
@@ -304,8 +308,17 @@ export class App extends EventTarget {
   async _prepare(item, onProgress) {
     if (item.analysis && item.buffer) return item;
     if (item.kind === 'demo') {
-      onProgress && onProgress(0.05, '正在合成演示曲目');
-      item.buffer = await renderDemoTrack(this.audio.sampleRate);
+      // pre-rendered by scripts/make-demo-audio.mjs; synthesising it here takes far longer
+      try {
+        onProgress && onProgress(0.05, '正在载入演示曲目');
+        const res = await fetch(demoAudioUrl);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        item.buffer = await this.audio.decode(await res.arrayBuffer());
+      } catch (e) {
+        console.warn('demo audio file unavailable, synthesising', e);
+        onProgress && onProgress(0.05, '正在合成演示曲目');
+        item.buffer = await renderDemoTrack(this.audio.sampleRate);
+      }
     } else {
       onProgress && onProgress(0.02, '读取文件');
       const bytes = await platform.read(item);

@@ -123,16 +123,23 @@ function TemplateCard({ t, on, onClick, onDouble }) {
     if (t.builtin) renderThumb(BUILTIN_TEMPLATES.find((x) => x.id === t.id).doc, ref.current, { width: 300 });
     else call('templates.get', t.id).then((r) => renderThumb(r.doc, ref.current, { assetBase: r.assetBase, width: 300 })).catch(() => {});
   }, [t.id]);
-  const enter = async () => {
-    if (!ref.current) return;
-    const doc = t.builtin ? BUILTIN_TEMPLATES.find((x) => x.id === t.id).doc : (await call('templates.get', t.id)).doc;
-    stop.current?.();
-    stop.current = playPreview(doc, ref.current);
+  // The animated preview starts only once the pointer rests on the card, so moving across the
+  // gallery or clicking a card never kicks off (and then waits on) a full playback.
+  const hoverTimer = useRef(0);
+  const enter = () => {
+    clearTimeout(hoverTimer.current);
+    hoverTimer.current = setTimeout(async () => {
+      if (!ref.current) return;
+      const doc = t.builtin ? BUILTIN_TEMPLATES.find((x) => x.id === t.id).doc : (await call('templates.get', t.id)).doc;
+      stop.current?.();
+      stop.current = playPreview(doc, ref.current);
+    }, 350);
   };
-  const leave = () => { stop.current?.(); stop.current = null; if (ref.current && t.builtin) renderThumb(BUILTIN_TEMPLATES.find((x) => x.id === t.id).doc, ref.current, { width: 300 }); };
-  useEffect(() => () => stop.current?.(), []);
+  const halt = () => { clearTimeout(hoverTimer.current); const was = !!stop.current; stop.current?.(); stop.current = null; return was; };
+  const leave = () => { if (halt() && ref.current && t.builtin) renderThumb(BUILTIN_TEMPLATES.find((x) => x.id === t.id).doc, ref.current, { width: 300 }); };
+  useEffect(() => () => { clearTimeout(hoverTimer.current); stop.current?.(); }, []);
   return (
-    <button className={`tpl ${on ? 'on' : ''}`} onClick={onClick} onDoubleClick={onDouble} onMouseEnter={enter} onMouseLeave={leave}>
+    <button className={`tpl ${on ? 'on' : ''}`} onClick={onClick} onDoubleClick={onDouble} onMouseEnter={enter} onMouseLeave={leave} onMouseDown={halt}>
       <div className="pv" style={portrait ? { aspectRatio: '16/9', display: 'grid', placeItems: 'center' } : null}><canvas ref={ref} style={portrait ? { height: '100%', width: 'auto' } : null} /></div>
       <div className="tx">
         <b>{t.name}{!t.builtin ? <span className="badge" style={{ marginLeft: 6 }}>我的</span> : null}</b>

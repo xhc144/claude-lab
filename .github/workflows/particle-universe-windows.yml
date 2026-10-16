@@ -1,5 +1,8 @@
 # Builds 音乐粒子宇宙 for Windows on a real Windows runner, runs the built-in end-to-end smoke
-# test (demo track → analysis → all scenes → MP4 export) and publishes the portable zip.
+# test (demo track → analysis → all scenes → MP4 export) and publishes the installer and the
+# portable zip. With the WIN_CSC_LINK / WIN_CSC_KEY_PASSWORD secrets set
+# (scripts/windows-release/new-signing-cert.ps1) the installer is signed; a release also
+# refreshes the auto-update feed in the particle-universe-latest release.
 name: particle-universe · Windows build
 
 on:
@@ -10,7 +13,7 @@ on:
   workflow_dispatch:
     inputs:
       release:
-        description: 'Publish a GitHub Release with the portable zip'
+        description: 'Publish a GitHub Release (installer + portable zip) and update the auto-update feed'
         type: boolean
         default: true
 
@@ -40,8 +43,31 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Package (electron-builder dir + icon/version stamping + portable zip)
+      - name: Package (electron-builder nsis + icon/version stamping + portable zip)
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
         run: node scripts/dist-win.mjs
+
+      - name: Check signature and update files
+        shell: pwsh
+        env:
+          SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
+        run: |
+          Get-ChildItem release -File | Format-Table Name, Length
+          foreach ($f in 'release/latest.yml', 'release/win-unpacked/resources/app-update.yml') {
+            if (-not (Test-Path $f)) { throw "$f missing: auto-update would not work" }
+            Write-Host "--- $f"; Get-Content $f
+          }
+          $setup = Get-ChildItem release/ParticleUniverse-Setup-*.exe | Select-Object -First 1
+          $sig = Get-AuthenticodeSignature -LiteralPath $setup.FullName
+          Write-Host "$($setup.Name): $($sig.Status) $($sig.SignerCertificate.Subject)"
+          if ($env:SIGNING -eq 'true' -and $sig.Status -eq 'NotSigned') { throw "installer is not signed although WIN_CSC_LINK is set" }
+          if ($env:SIGNING -ne 'true') { Write-Host '::warning::WIN_CSC_LINK not set: this build is unsigned (see scripts/windows-release/README.md)' }
+          $zip = Get-ChildItem release/*-portable.zip | Select-Object -First 1
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $entries = [IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
+          if ($entries -match 'app-update\.yml') { throw 'the portable zip must not carry an update feed' }
 
       - name: End-to-end smoke test of the packaged exe
         shell: pwsh
@@ -56,11 +82,28 @@ jobs:
           if (Test-Path $env:PU_SMOKE_OUT) { Get-Content $env:PU_SMOKE_OUT } else { Write-Host 'no smoke result written' }
           if ($p.ExitCode -ne 0) { exit 1 }
 
-      - name: Upload portable zip
+      - name: Install silently and check the installed copy
+        shell: pwsh
+        run: |
+          $setup = Get-ChildItem release/ParticleUniverse-Setup-*.exe | Select-Object -First 1
+          $i = Start-Process -FilePath $setup.FullName -ArgumentList '/S' -PassThru -Wait
+          Write-Host "installer exit code: $($i.ExitCode)"
+          $dir = "$env:LOCALAPPDATA\Programs\ParticleUniverse"
+          foreach ($f in 'ParticleUniverse.exe', 'resources\app-update.yml', 'Uninstall ParticleUniverse.exe') {
+            if (-not (Test-Path "$dir\$f")) { Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 1 | Select-Object FullName; throw "$f not installed" }
+          }
+          Start-Process -FilePath "$dir\Uninstall ParticleUniverse.exe" -ArgumentList '/S' -Wait
+          Write-Host 'installed and uninstalled'
+
+      - name: Upload installer and portable zip
         uses: actions/upload-artifact@v4
         with:
-          name: ParticleUniverse-win-x64-portable
-          path: particle-universe/release/*-portable.zip
+          name: ParticleUniverse-win-x64
+          path: |
+            particle-universe/release/*-portable.zip
+            particle-universe/release/ParticleUniverse-Setup-*.exe
+            particle-universe/release/ParticleUniverse-Setup-*.exe.blockmap
+            particle-universe/release/latest.yml
           compression-level: 0
           retention-days: 30
 
@@ -74,14 +117,31 @@ jobs:
             ${{ runner.temp }}\particle-universe-smoke.*
           if-no-files-found: ignore
 
-      - name: Publish release
+      - name: Publish release and update feed
         if: github.event_name == 'workflow_dispatch' && inputs.release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: particle-universe-v1.0.0
-          name: 音乐粒子宇宙 v1.0.0（Windows 便携版）
-          body: |
-            音乐粒子宇宙 · GPU 百万粒子音乐可视化。下载 zip，解压后运行 `ParticleUniverse.exe`。
-            源码与说明：https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}/particle-universe
-          files: particle-universe/release/*-portable.zip
-          prerelease: false
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="particle-universe-v$VERSION"
+          NOTES="音乐粒子宇宙 · GPU 百万粒子音乐可视化（Windows 64 位）。
+
+          - \`ParticleUniverse-Setup-$VERSION-x64.exe\`：安装版，无需管理员权限；装好后会自己检查并安装新版本。
+          - \`ParticleUniverse-$VERSION-win-x64-portable.zip\`：便携版，解压后运行 \`ParticleUniverse.exe\`，不会自动更新。
+
+          源码与说明：https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}/particle-universe"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "音乐粒子宇宙 v$VERSION（Windows）" --notes "$NOTES"
+          else
+            gh release create "$TAG" --target "${{ github.sha }}" --title "音乐粒子宇宙 v$VERSION（Windows）" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" release/ParticleUniverse-Setup-*.exe release/ParticleUniverse-Setup-*.exe.blockmap release/*-portable.zip --clobber
+
+          node ../scripts/windows-release/update-feed.mjs release "${{ github.repository }}" "$TAG" feed/latest.yml
+          FEED=particle-universe-latest
+          if ! gh release view "$FEED" >/dev/null 2>&1; then
+            gh release create "$FEED" --prerelease --target "${{ github.sha }}" --title "音乐粒子宇宙 · 自动更新信息" \
+              --notes "已安装的音乐粒子宇宙从这里读取最新版本信息（latest.yml），安装包在对应的 particle-universe-v* 发布里。请不要删除这个发布。"
+          fi
+          gh release upload "$FEED" feed/latest.yml --clobber

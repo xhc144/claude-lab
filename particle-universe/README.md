@@ -10,14 +10,15 @@ Windows 桌面程序（Electron 44 + WebGL2），完全本地运行：不需要�
 
 | 文件 | 说明 |
 | --- | --- |
-| `ParticleUniverse-1.0.0-win-x64-portable.zip` | Windows 10 / 11 64 位便携版，约 129 MB。解压后双击 `ParticleUniverse.exe`，无需安装、无需管理员权限 |
+| `ParticleUniverse-Setup-<版本>-x64.exe` | Windows 10 / 11 64 位安装版，无需管理员权限。装好后会自己检查并安装新版本 |
+| `ParticleUniverse-<版本>-win-x64-portable.zip` | 便携版，约 129 MB。解压后双击 `ParticleUniverse.exe`，无需安装；不会自动更新 |
 
 获取方式：
 
-1. **GitHub Actions**：仓库的 `particle-universe · Windows build` 工作流在 Windows 运行器上打包并运行端到端自检，产物名为 `ParticleUniverse-win-x64-portable`；手动触发（`workflow_dispatch`）时还会发布 Release。
-2. **本地构建**：见下文「从源码构建」，一条命令生成同样的 zip。
+1. **GitHub Actions**：仓库的 `particle-universe · Windows build` 工作流在 Windows 运行器上打包并运行端到端自检，产物名为 `ParticleUniverse-win-x64`；手动触发（`workflow_dispatch`）时还会发布 Release（`particle-universe-v*`），并刷新 `particle-universe-latest` 里的自动更新信息。
+2. **本地构建**：见下文「从源码构建」，一条命令生成同样的 zip；安装版默认只在 Windows 上生成（NSIS 在其他系统上需要 Wine）。
 
-> zip 超过 GitHub 单文件 100 MB 限制，因此不直接提交到仓库。程序未做代码签名：首次运行若出现 SmartScreen「未知发布者」提示，可点「更多信息 → 仍要运行」。没有使用 NSIS 自解压安装器或加壳。
+> zip 超过 GitHub 单文件 100 MB 限制，因此不直接提交到仓库。默认未做代码签名：首次运行若出现 SmartScreen「未知发布者」提示，可点「更多信息 → 仍要运行」。设置 `WIN_CSC_LINK` 后工作流会给安装包签名，做法见 [scripts/windows-release/](../scripts/windows-release/README.md)。1.1.0 起为了自动更新加入了 NSIS 安装版（electron-builder 生成，没有加壳）；便携版 zip 保持不变。
 
 系统要求：支持 DirectX 11 / WebGL2 的显卡（近十年的独显或核显）。笔记本双显卡会自动请求高性能显卡。
 
@@ -46,7 +47,7 @@ Windows 桌面程序（Electron 44 + WebGL2），完全本地运行：不需要�
 - **节拍网格**：自相关估计速度 + Ellis 动态规划节拍跟踪；用「底鼓+军鼓−镲片」显著性判断正拍相位，再用和声与低频变化推断小节线。
 - **段落与高潮**：小节级特征的新颖度给出段落边界；低频（30–110 Hz）持续上跳并伴随鼓点的位置判为高潮（drop），并生成高潮前的蓄力曲线。
 
-内置的演示曲《极光 Aurora》是用 Web Audio 程序化合成的 124 BPM 电子乐，分析结果可与乐谱核对：速度 123.9 BPM、第一个小节线 0.00 s、两处高潮分别检出于第 20 小节（误差 10 ms）和第 48 小节。
+内置的演示曲《极光 Aurora》是用 Web Audio 程序化合成的 124 BPM 电子乐。合成一遍在快的电脑上也要二三十秒，没有显卡时要好几分钟，所以合成结果预先保存成 `src/renderer/assets/demo-aurora.ogg`（Opus，约 2.6 MB，由 `node scripts/make-demo-audio.mjs` 生成，需要 ffmpeg），打开时直接解码；文件缺失时才现场合成。分析结果可与乐谱核对：速度 123.9 BPM、第一个小节线 0.00 s、两处高潮分别检出于第 20 小节（误差 10 ms）和第 48 小节。
 
 另外可以直接**捕获系统声音**（Windows 回环录音）或麦克风，实时可视化任何播放器正在播放的音乐，此时使用因果的在线分析器。
 

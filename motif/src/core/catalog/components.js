@@ -33,7 +33,7 @@ export const COMPONENTS = {
   title: {
     label: '标题', category: 'text', nature: 'headline',
     summary: '场景主标题，可带眉题（kicker）与副标题。',
-    description: '每个场景通常以一个 title 开头。text 支持轻量标记：**加粗**、==强调色==、*斜体*、`代码`、~~删除~~。标题宜短（中文 ≤ 20 字、英文 ≤ 8 词），系统会自动平衡换行、避头尾、按空间缩放字号。',
+    description: '每个场景通常以一个 title 开头。text 支持轻量标记：**加粗**、==强调色==、*斜体*、`代码`、~~删除~~，以及行内公式 $a^2+b^2=c^2$（或 \\(…\\)）。标题宜短（中文 ≤ 20 字、英文 ≤ 8 词），系统会自动平衡换行、避头尾、按空间缩放字号。',
     params: {
       text: P.rich('标题文本', { required: true }),
       kicker: P.str('眉题：标题上方的小号分类/章节标签，如 "第一部分" "2025 Q3"'),

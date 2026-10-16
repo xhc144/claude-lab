@@ -10,6 +10,7 @@ import { buildExport, estimateMp3Bytes, encodeMp3 } from './exporter.ts';
 import { analyse, testProvider, providerAcceptsAudio } from './ai/index.ts';
 import { decodeWav, encodeWav } from '../engine/wav.ts';
 import { textReport } from '../shared/report.ts';
+import { updateStatus, checkForUpdates, installNow } from './updater.ts';
 import { BUILTIN_MATERIALS } from '../shared/materials.ts';
 import type { AssessmentResult, ExportOptions, Settings, AiAnalysis, Material } from '../shared/types.ts';
 
@@ -178,6 +179,9 @@ export function registerIpc(ctx: AppContext) {
     return r.filePaths[0];
   });
   h('settings:openDataDir', () => shell.openPath(ctx.store().dir));
+  h('update:status', () => updateStatus());
+  h('update:check', () => checkForUpdates());
+  h('update:install', () => installNow());
   h('app:info', () => ({ version: app.getVersion(), dataDir: ctx.store().dir, engine: ctx.engine.status }));
   h('shell:openExternal', (url: string) => {
     if (/^https?:\/\//.test(url)) return shell.openExternal(url);

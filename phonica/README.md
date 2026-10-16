@@ -2,7 +2,7 @@
 
 Windows 桌面软件：朗读单词、句子或文章，在本机完成**音素级**发音评测（准确度、完整度、流利度、语速、停顿、重音、语调），给出带时间位置的单词/音素纠错、波形 / 音高 / 语谱 / 元音图，以及英音、美音标准发音。AI 深度分析是可选的附加功能；不配置任何 AI 接口时，录音、评测、历史与导出都完整可用。
 
-**下载：** [Releases → 声准 Phonica（Windows 安装包）](https://github.com/xhc144/claude-lab/releases)，运行 `Phonica-Setup-<版本>-x64.exe` 安装（无需管理员权限，可选安装目录）。所有模型随安装包离线提供，评测不需要联网。
+**下载：** [Releases → 声准 Phonica（Windows 安装包）](https://github.com/xhc144/claude-lab/releases)，运行 `Phonica-Setup-<版本>-x64.exe` 安装（无需管理员权限，可选安装目录）。所有模型随安装包离线提供，评测不需要联网。从 1.1.0 起，装好的软件会自己检查并安装新版本（设置 → 软件更新，可以关掉）；更新只连接本仓库的 GitHub 发布页。签名与更新的做法见 [scripts/windows-release/](../scripts/windows-release/README.md)。
 
 ## 功能
 
@@ -75,7 +75,7 @@ npm run dist:win           # 生成 Windows 安装包（在 Windows 上运行）
 - `src/renderer/`：React 界面；`src/shared/`：类型、报告与提示词、练习素材
 - `tools/dump-so762.ts` → `tools/features-so762.ts` → `tools/calibrate.py`：在 speechocean762 上提取特征、训练并评估评分模型，输出 `resources/scoring/scoring.json`
 - `tools/models/export_models.py` 与 `.github/workflows/phonica-models.yml`：把 Hugging Face 上的 wav2vec2 模型导出为 ONNX（fp32 / INT8），逐一与 PyTorch 输出比对后发布到 `phonica-models-v1`
-- `.github/workflows/phonica-windows.yml`：在 Windows 上测试、打包 NSIS 安装包，静默安装后运行内置自检（`Phonica.exe --self-test out.json`：加载模型、评测正确与故意读错的录音、语音合成、MP3/ZIP 导出、界面截图）；提交信息含 `[release]` 时发布 Release
+- `.github/workflows/phonica-windows.yml`：在 Windows 上测试、打包 NSIS 安装包，静默安装后运行内置自检（`Phonica.exe --self-test out.json`：加载模型、评测正确与故意读错的录音、语音合成、MP3/ZIP 导出、界面截图）；提交信息含 `[release]` 或手动运行时发布 Release，并刷新 `phonica-latest` 里的自动更新信息
 
 ## 许可证
 

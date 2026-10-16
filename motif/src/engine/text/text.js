@@ -1,11 +1,43 @@
 // Typography engine: rich-text parsing, CJK-aware line breaking (kinsoku), CJK/Latin spacing,
 // balanced headings, orphan control, auto-fit and per-unit animated drawing on canvas.
+// Inline TeX ($…$ or \(…\)) works in every text: it is typeset by MathJax and laid out as one
+// unbreakable unit on the text baseline.
+import { texGlyphs, glyphPath } from '../math/tex.js';
+
+// ───────────────────────────── inline math ─────────────────────────────
+// $…$ follows the pandoc rule so prices stay text: the opening $ is followed by a non-space, the
+// closing $ follows a non-space and is not followed by a digit ("$5 and $10", "$5–$10" are text).
+const MATH_RE = /\\\((.+?)\\\)|\$(?=[^\s$])((?:\\.|[^$\\\n])+?)(?<=[^\s\\])\$(?!\d)/g;
+const PUA = 0xe000;
+
+/** Split a string into [{text}|{math}] segments. */
+export function splitMath(input) {
+  const s = String(input ?? '');
+  const out = [];
+  let last = 0;
+  for (const m of s.matchAll(MATH_RE)) {
+    if (m.index > last) out.push({ text: s.slice(last, m.index) });
+    out.push({ math: m[1] ?? m[2] });
+    last = m.index + m[0].length;
+  }
+  if (last < s.length) out.push({ text: s.slice(last) });
+  return out;
+}
+export const hasMath = (s) => typeof s === 'string' && (s.includes('$') || s.includes('\\(')) && splitMath(s).some((x) => x.math != null);
 
 // ───────────────────────────── rich text ─────────────────────────────
 const RICH_RE = /`([^`]+)`|\*\*(.+?)\*\*|==(.+?)==|\{\{(.+?)\}\}|~~(.+?)~~|(?<![\p{L}\p{N}*])\*(?!\s)(.+?)(?<!\s)\*(?![\p{L}\p{N}*])/gu;
 
-export function parseRich(input, style = {}) {
-  const s = String(input ?? '').replace(/\r\n?/g, '\n').replace(/\\n/g, '\n');
+export function parseRich(input, style = {}, maths = null) {
+  let s = String(input ?? '').replace(/\r\n?/g, '\n');
+  if (!maths) {
+    // Lift math out first: TeX must not see the markup rules or the literal "\n" → newline rule
+    // (which would turn \nabla, \neq, \nu into a line break).
+    maths = [];
+    s = s.replace(MATH_RE, (m, a, b) => (maths.length < 6000 ? String.fromCharCode(PUA + maths.push(a ?? b) - 1) : m));
+    s = s.replace(/\\n/g, '\n');
+    return parseRich(s, style, maths).flatMap((r) => restoreMath(r, maths));
+  }
   const out = [];
   let last = 0;
   const re = new RegExp(RICH_RE.source, 'gu');
@@ -13,18 +45,36 @@ export function parseRich(input, style = {}) {
   while ((m = re.exec(s))) {
     if (m.index > last) out.push({ text: s.slice(last, m.index), ...style });
     if (m[1] != null) out.push({ text: m[1], ...style, code: true });
-    else if (m[2] != null) out.push(...parseRich(m[2], { ...style, b: true }));
-    else if (m[3] != null) out.push(...parseRich(m[3], { ...style, accent: true }));
-    else if (m[4] != null) out.push(...parseRich(m[4], { ...style, mark: true }));
-    else if (m[5] != null) out.push(...parseRich(m[5], { ...style, strike: true }));
-    else if (m[6] != null) out.push(...parseRich(m[6], { ...style, i: true }));
+    else if (m[2] != null) out.push(...parseRich(m[2], { ...style, b: true }, maths));
+    else if (m[3] != null) out.push(...parseRich(m[3], { ...style, accent: true }, maths));
+    else if (m[4] != null) out.push(...parseRich(m[4], { ...style, mark: true }, maths));
+    else if (m[5] != null) out.push(...parseRich(m[5], { ...style, strike: true }, maths));
+    else if (m[6] != null) out.push(...parseRich(m[6], { ...style, i: true }, maths));
     last = re.lastIndex;
   }
   if (last < s.length) out.push({ text: s.slice(last), ...style });
   return out.filter((r) => r.text.length);
 }
 
-export const plainText = (s) => parseRich(s).map((r) => r.text).join('');
+function restoreMath(run, maths) {
+  if (!/[\ue000-\uf8ff]/.test(run.text)) return [run];
+  const back = (c) => { const i = c.charCodeAt(0) - PUA; return i >= 0 && i < maths.length ? maths[i] : null; };
+  // inside `code` math stays literal
+  if (run.code) return [{ ...run, text: run.text.replace(/[\ue000-\uf8ff]/g, (c) => (back(c) != null ? `$${back(c)}$` : c)) }];
+  const out = [];
+  let buf = '';
+  for (const c of run.text) {
+    const tex = back(c);
+    if (tex == null) { buf += c; continue; }
+    if (buf) { out.push({ ...run, text: buf }); buf = ''; }
+    out.push({ ...run, text: tex, math: true });
+  }
+  if (buf) out.push({ ...run, text: buf });
+  return out;
+}
+
+/** Text without markup; inline math keeps its $…$ source. */
+export const plainText = (s) => parseRich(s).map((r) => (r.math ? `$${r.text}$` : r.text)).join('');
 
 // ───────────────────────────── classification ─────────────────────────────
 const CJK_RE = /[⺀-⿟　-〿぀-ヿ㄀-ㄯ㆐-ㇿ㐀-䶿一-鿿가-힯豈-﫿︰-﹏＀-￯]/;
@@ -48,9 +98,10 @@ export function tokenize(runs, opts = {}) {
   const units = [];
   for (const run of runs) {
     let text = run.text;
-    if (opts.upper) text = text.toUpperCase();
     const style = { ...run };
     delete style.text;
+    if (run.math) { delete style.math; units.push({ t: text, k: 'math', s: style }); continue; }
+    if (opts.upper) text = text.toUpperCase();
     const starts = opts.words ? wordStarts(text) : null;
     let i = 0;
     while (i < text.length) {
@@ -155,12 +206,19 @@ export class TextEngine {
     for (const u of units) {
       if (u.k === 'nl') { u.w = 0; continue; }
       u.font = fontString(role, size, u.s);
+      if (u.k === 'math') {
+        const T = mathGlyphs(u.t);
+        if (T) { u.tex = T; u.w = (T.width * size) / 1000; continue; }
+        // not valid TeX (or no DOM, e.g. in Node): show the source as written
+        u.k = 'w'; u.t = `$${u.t}$`;
+      }
       u.w = this.width(u.t, u.font, u.s.code ? 0 : tracking, stretch);
     }
-    // CJK ↔ Latin spacing (盘古之白): add a gap where an ideograph meets a word without a space.
+    // CJK ↔ Latin spacing (盘古之白): add a gap where an ideograph meets a word or formula without a space.
+    const latin = (k) => k === 'w' || k === 'math';
     for (let i = 1; i < units.length; i++) {
       const a = units[i - 1], b = units[i];
-      if ((a.k === 'cjk' && b.k === 'w') || (a.k === 'w' && b.k === 'cjk')) b.gap = cjkGap;
+      if ((a.k === 'cjk' && latin(b.k)) || (latin(a.k) && b.k === 'cjk')) b.gap = cjkGap;
     }
     const maxWidth = o.maxWidth ?? Infinity;
     let lines = breakLines(units, maxWidth);
@@ -186,7 +244,7 @@ export class TextEngine {
       }
     } else if (o.orphans !== false && lines.length > 1 && Number.isFinite(maxWidth)) {
       // Orphan control: never leave 1–2 characters (or one short word) alone on the last line.
-      const weight = (L) => L.units.reduce((n, u) => n + (u.k === 'cjk' ? [...u.t].length : u.k === 'w' ? 2 : 0), 0);
+      const weight = (L) => L.units.reduce((n, u) => n + (u.k === 'cjk' ? [...u.t].length : u.k === 'w' || u.k === 'math' ? 2 : 0), 0);
       if (weight(lines[lines.length - 1]) <= 2) {
         const n = lines.length;
         for (let k = 1; k <= 10; k++) {
@@ -262,7 +320,8 @@ function breakLines(unitsIn, maxWidth) {
     }
     const prev = cur[cur.length - 1];
     const glued = prev && ((prev.k === 'sp' && prev.nb) || prev.glueNext || (prev.k === 'w' && u.k === 'cjk' && NUMERIC_END.test(prev.t)));
-    const canBreakHere = cur.length > 0 && !glued && !NO_START.has(u.t[0]) && !(prev && NO_END.has(prev.t[prev.t.length - 1])) && (prev.k === 'sp' || u.k === 'cjk' || u.k === 'cp' || prev.k === 'cjk' || prev.k === 'cp');
+    const first = u.k === 'math' ? '' : u.t[0], lastCh = prev && prev.k !== 'math' ? prev.t[prev.t.length - 1] : '';
+    const canBreakHere = cur.length > 0 && !glued && !NO_START.has(first) && !NO_END.has(lastCh) && (prev.k === 'sp' || u.k === 'cjk' || u.k === 'cp' || prev.k === 'cjk' || prev.k === 'cp');
     if (canBreakHere) lastBreak = cur.length;
     const add = u.w + (cur.length ? u.gap || 0 : 0);
     if (w + add > maxWidth && cur.length) {
@@ -355,7 +414,10 @@ export function drawLayout(ctx, L, x, y, w, paint, unitState, applyState) {
       if (u.s.code) fill = paint.code || paint.color;
       ctx.fillStyle = fill;
       if (u.s.accent && paint.glow) { ctx.shadowColor = paint.glow; ctx.shadowBlur = L.size * 0.5; }
-      if (st?.typeChars != null && st.typeChars < u.t.length) {
+      if (u.k === 'math') {
+        const prog = st?.typeChars != null && st.typeChars < u.t.length ? st.typeChars / Math.max(1, u.t.length) : 1;
+        if (prog > 0) drawMathGlyphs(ctx, u.tex, ux, by, L.size, fill, prog);
+      } else if (st?.typeChars != null && st.typeChars < u.t.length) {
         const part = [...u.t].slice(0, st.typeChars).join('');
         if (part) ctx.fillText(part, ux, by);
       } else {
@@ -367,6 +429,74 @@ export function drawLayout(ctx, L, x, y, w, paint, unitState, applyState) {
       ctx.restore();
     }
   }
+}
+
+// ───────────────────────────── math units ─────────────────────────────
+function mathGlyphs(tex) {
+  const T = texGlyphs(tex, false);
+  return T && !T.error && T.glyphs.length ? T : null;
+}
+
+/** Draw inline TeX with its baseline at y. `prog` < 1 shows the first glyphs only (typewriter). */
+function drawMathGlyphs(ctx, T, x, y, size, color, prog = 1) {
+  const s = size / 1000;
+  const n = prog >= 1 ? T.glyphs.length : Math.ceil(T.glyphs.length * prog);
+  ctx.save();
+  ctx.translate(x, y + T.minY * s);
+  ctx.scale(s, s);
+  for (let i = 0; i < n; i++) {
+    const g = T.glyphs[i];
+    ctx.save();
+    ctx.transform(...g.m);
+    ctx.fillStyle = g.color || color;
+    if (g.kind === 'rect') { const [rx, ry, rw, rh] = g.rect; ctx.fillRect(rx, ry, rw, rh); } else ctx.fill(glyphPath(g.d));
+    ctx.restore();
+  }
+  ctx.restore();
+}
+
+function fontPx(font) { const m = /(\d+(?:\.\d+)?)px/.exec(font || ''); return m ? +m[1] : 16; }
+
+/** Width of a one-line label drawn with drawInline, using the context's current font. */
+export function measureInline(ctx, text) {
+  if (!hasMath(text)) return ctx.measureText(String(text ?? '')).width;
+  const fs = fontPx(ctx.font);
+  return splitMath(text).reduce((w, seg) => {
+    if (seg.text != null) return w + ctx.measureText(seg.text).width;
+    const T = mathGlyphs(seg.math);
+    return w + (T ? (T.width * fs) / 1000 : ctx.measureText(`$${seg.math}$`).width);
+  }, 0);
+}
+
+/**
+ * fillText for one-line labels (chart axes, diagram labels, captions…) that may contain inline TeX.
+ * Uses the context's font, fillStyle, textAlign and textBaseline; plain strings go straight to fillText.
+ */
+export function drawInline(ctx, text, x, y, maxWidth) {
+  const str = String(text ?? '');
+  if (!hasMath(str)) { if (maxWidth == null) ctx.fillText(str, x, y); else ctx.fillText(str, x, y, maxWidth); return; }
+  const fs = fontPx(ctx.font);
+  const segs = splitMath(str).map((seg) => {
+    if (seg.text != null) return { text: seg.text, w: ctx.measureText(seg.text).width };
+    const T = mathGlyphs(seg.math);
+    return T ? { T, w: (T.width * fs) / 1000 } : { text: `$${seg.math}$`, w: ctx.measureText(`$${seg.math}$`).width };
+  });
+  const total = segs.reduce((a, b) => a + b.w, 0);
+  const k = maxWidth != null && total > maxWidth ? maxWidth / total : 1;
+  const align = ctx.textAlign, base = ctx.textBaseline;
+  let cx = align === 'center' ? x - (total * k) / 2 : align === 'right' || align === 'end' ? x - total * k : x;
+  // the TeX is placed on the alphabetic baseline the label would use
+  const by = base === 'middle' ? y + fs * 0.35 : base === 'top' || base === 'hanging' ? y + fs * 0.8 : base === 'bottom' || base === 'ideographic' ? y - fs * 0.22 : y;
+  ctx.save();
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'alphabetic';
+  if (k < 1) { ctx.translate(cx, by); ctx.scale(k, 1); ctx.translate(-cx, -by); }
+  for (const seg of segs) {
+    if (seg.T) drawMathGlyphs(ctx, seg.T, cx, by, fs, ctx.fillStyle);
+    else ctx.fillText(seg.text, cx, by);
+    cx += seg.w;
+  }
+  ctx.restore();
 }
 
 export function roundRect(ctx, x, y, w, h, r) {

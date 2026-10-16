@@ -1,7 +1,7 @@
 // App-wide state: settings, engine status, navigation and toasts.
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { api, type EngineStatus } from './api.ts';
-import type { Settings } from '../../shared/types.ts';
+import type { Settings, UpdateStatus } from '../../shared/types.ts';
 
 export type Page = 'practice' | 'history' | 'weak' | 'materials' | 'settings';
 
@@ -36,6 +36,7 @@ interface Ctx {
   historyVersion: number;
   bumpHistory: () => void;
   theme: 'light' | 'dark';
+  update: UpdateStatus | null;
 }
 
 const C = createContext<Ctx>(null as unknown as Ctx);
@@ -56,12 +57,15 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [historyVersion, setHistoryVersion] = useState(0);
   const [dark, setDark] = useState(systemDark());
+  const [update, setUpdate] = useState<UpdateStatus | null>(null);
   const seq = useRef(1);
 
   useEffect(() => {
     api.getSettings().then(setSettings).catch(() => undefined);
     api.engineStatus().then(setEngine).catch(() => undefined);
     const off = api.onEngineStatus(setEngine);
+    api.updateStatus().then(setUpdate).catch(() => undefined);
+    const offUpdate = api.onUpdateStatus(setUpdate);
     // used by the self-test to visit pages for screenshots
     const offNav = api.onNavigate((r) => setRoute({ page: r.page as Page, recordId: r.recordId }));
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
@@ -69,7 +73,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     mq.addEventListener('change', onMq);
     // poll until the engine reports ready (initial model load takes a few seconds)
     const t = setInterval(() => api.engineStatus().then((s) => { setEngine(s); if (s.ready || s.error) clearInterval(t); }).catch(() => undefined), 1000);
-    return () => { off(); offNav(); mq.removeEventListener('change', onMq); clearInterval(t); };
+    return () => { off(); offUpdate(); offNav(); mq.removeEventListener('change', onMq); clearInterval(t); };
   }, []);
 
   const theme: 'light' | 'dark' = settings?.theme === 'dark' ? 'dark' : settings?.theme === 'light' ? 'light' : dark ? 'dark' : 'light';
@@ -112,7 +116,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     historyVersion,
     bumpHistory: () => setHistoryVersion((v) => v + 1),
     theme,
-  }), [settings, updateSettings, engine, route, practice, toast, toasts, historyVersion, theme]);
+    update,
+  }), [settings, updateSettings, engine, route, practice, toast, toasts, historyVersion, theme, update]);
 
   return <C.Provider value={value}>{children}</C.Provider>;
 }

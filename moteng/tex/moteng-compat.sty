@@ -1,0 +1,24 @@
+%% moteng-compat.sty — 让墨经模板在较早的 LaTeX 内核上也能编译
+%% （例如 Tectonic 内置的 TeX Live 2022 文件：LaTeX 2021-11-15，L3 2022-02-24）。
+%% 在 \documentclass 之前载入；每一项都只在缺失时补上，新内核上什么也不做。
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{moteng-compat}[2026/10/16 v1.0 Moteng compatibility shims]
+\ExplSyntaxOn
+%% e 型定义与变体（L3 2023 起才齐全）
+\cs_if_exist:NF \cs_set:Npe { \cs_new_eq:NN \cs_set:Npe \cs_set:Npx }
+\cs_if_exist:NF \cs_gset:Npe { \cs_new_eq:NN \cs_gset:Npe \cs_gset:Npx }
+\cs_if_exist:NF \cs_new:Npe { \cs_new_eq:NN \cs_new:Npe \cs_new:Npx }
+\cs_if_exist:NF \tl_set:Ne { \cs_generate_variant:Nn \tl_set:Nn { Ne } }
+\cs_if_exist:NF \tl_gset:Ne { \cs_generate_variant:Nn \tl_gset:Nn { Ne } }
+\cs_if_exist:NF \msg_info:nnV { \cs_generate_variant:Nn \msg_info:nnn { nnV } }
+\cs_if_exist:NF \msg_warning:nnV { \cs_generate_variant:Nn \msg_warning:nnn { nnV } }
+\cs_if_exist:NF \msg_error:nnV { \cs_generate_variant:Nn \msg_error:nnn { nnV } }
+%% \ProcessKeyOptions（LaTeX 2022-06）：用 l3keys2e 的 \ProcessKeysOptions 代替
+\cs_if_exist:NF \ProcessKeyOptions
+  {
+    \RequirePackage { l3keys2e }
+    \NewDocumentCommand \ProcessKeyOptions { o }
+      { \IfNoValueTF {#1} { \ProcessKeysOptions { \@currname } } { \ProcessKeysOptions {#1} } }
+  }
+\ExplSyntaxOff
+\endinput

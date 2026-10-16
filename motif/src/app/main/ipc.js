@@ -15,6 +15,7 @@ import { uid } from '../../core/util/misc.js';
 import { allowRoot, fileUrl } from './protocol.js';
 import { runRenderJob } from './render-job.js';
 import * as ai from './ai.js';
+import { updateStatus, checkForUpdates, installNow } from './updater.js';
 
 export function registerIpc({ distDir, getWindow, takePendingOpen }) {
   const send = (channel, payload) => { for (const w of BrowserWindow.getAllWindows()) if (!w.isDestroyed() && w.webContents.getURL().includes('editor.html')) w.webContents.send('motif:event', channel, payload); };
@@ -60,6 +61,9 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
     }),
     'app.pendingOpen': () => takePendingOpen(),
     'app.quit': () => app.quit(),
+    'update.status': () => updateStatus(),
+    'update.check': () => checkForUpdates(),
+    'update.install': () => installNow(),
     'window.fullscreen': (on) => { const w = getWindow(); if (w) w.setFullScreen(on == null ? !w.isFullScreen() : !!on); return w?.isFullScreen(); },
     'window.titleBarOverlay': (o) => { try { getWindow()?.setTitleBarOverlay?.(o); } catch { /* mac */ } },
     'config.get': () => { const { ai: _a, ...rest } = store.readConfig(); return { ...rest, library: store.libraryRoot() }; },

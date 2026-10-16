@@ -1,6 +1,6 @@
 // Typed access to the preload API.
 import type { PhonicaApi } from '../../preload/preload.ts';
-import type { AssessmentResult, HistoryEntry, Material, Settings, AiAnalysis, WeakStats, ExportOptions } from '../../shared/types.ts';
+import type { AssessmentResult, HistoryEntry, Material, Settings, AiAnalysis, WeakStats, ExportOptions, UpdateStatus } from '../../shared/types.ts';
 
 declare global {
   interface Window {
@@ -61,6 +61,10 @@ export const api = {
   chooseDataDir: () => p().chooseDataDir() as Promise<string | null>,
   openDataDir: () => p().openDataDir(),
   appInfo: () => p().appInfo() as Promise<{ version: string; dataDir: string; engine: EngineStatus }>,
+  updateStatus: () => p().updateStatus() as Promise<UpdateStatus>,
+  checkUpdate: () => p().checkUpdate() as Promise<UpdateStatus>,
+  installUpdate: () => p().installUpdate() as Promise<boolean>,
+  onUpdateStatus: (cb: (s: UpdateStatus) => void) => p().onUpdateStatus(cb as (s: unknown) => void),
   openExternal: (url: string) => p().openExternal(url),
   setTheme: (m: string) => p().setTheme(m),
   ready: () => p().ready(),

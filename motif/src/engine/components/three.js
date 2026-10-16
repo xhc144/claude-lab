@@ -5,7 +5,7 @@ import { THREE, renderInto, project, environment, dotTexture, isSoftwareGL } fro
 import { landDots, toLatLon } from '../three/geo.js';
 import { moleculePreset, ELEMENTS } from '../three/molecules.js';
 import { role, toCss, EASE, clamp01, colorOf, mix, drawIcon, roundRect } from './kit.js';
-import { fontString } from '../text/text.js';
+import { fontString, drawInline, measureInline } from '../text/text.js';
 import { compileExpr } from '../../core/expr.js';
 import { rng } from '../../core/util/misc.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -31,13 +31,13 @@ function label2d(ctx, c, text, x, y, o = {}) {
   if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
   ctx.textAlign = o.align || 'left'; ctx.textBaseline = 'middle';
   if (o.plate) {
-    const w = ctx.measureText(text).width;
+    const w = measureInline(ctx, text);
     const bx = o.align === 'center' ? x - w / 2 - fs * 0.5 : x - fs * 0.5;
     ctx.fillStyle = toCss(p.bg, 0.72); roundRect(ctx, bx, y - fs * 0.8, w + fs, fs * 1.6, fs * 0.4); ctx.fill();
   }
   ctx.globalAlpha *= o.alpha ?? 1;
   ctx.fillStyle = o.color || p.ink;
-  ctx.fillText(text, x, y);
+  drawInline(ctx, text, x, y);
   ctx.restore();
 }
 

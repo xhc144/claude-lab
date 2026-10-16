@@ -1,5 +1,6 @@
-# electron-builder produces the unpacked Windows app; scripts/dist-win.mjs stamps icon/version
-# info into the executable and packs a portable zip (no installer, no admin rights needed).
+# electron-builder produces the unpacked Windows app and the NSIS installer; scripts/after-pack.cjs
+# stamps icon/version info into the executable first, and scripts/dist-win.mjs also packs a
+# portable zip. Installed copies update themselves from the particle-universe-latest release.
 appId: com.particleuniverse.app
 productName: ParticleUniverse
 executableName: ParticleUniverse
@@ -19,6 +20,10 @@ electronLanguages:
   - zh-CN
   - en-US
 npmRebuild: false
+afterPack: scripts/after-pack.cjs
+publish:
+  - provider: generic
+    url: https://github.com/xhc144/claude-lab/releases/download/particle-universe-latest
 nodeGypRebuild: false
 win:
   target:
@@ -26,3 +31,17 @@ win:
       arch: [x64]
   icon: build/icon.ico
   signAndEditExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 音乐粒子宇宙
+  uninstallDisplayName: 音乐粒子宇宙 ${version}
+  artifactName: ParticleUniverse-Setup-${version}-x64.${ext}
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  language: '2052'
+  unicode: true
+  deleteAppDataOnUninstall: false

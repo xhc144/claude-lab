@@ -1,6 +1,6 @@
 // Math & science components: equation, plot, geometry, transform, vectorfield, fourier, simulation.
 import { role, paintFor, textAnimator, drawText, roundRect, toCss, EASE, clamp01, colorOf, mix } from './kit.js';
-import { fontString } from '../text/text.js';
+import { fontString, drawInline } from '../text/text.js';
 import { texGlyphs, glyphPath } from '../math/tex.js';
 import { compileExpr } from '../../core/expr.js';
 import { niceScale } from './chart.js';
@@ -224,8 +224,8 @@ function drawAxes(ctx, c, P, t, o = {}) {
   for (const v of xs.ticks) if (v > P.x0 && v < P.x1 && Math.abs(v) > 1e-9) { ctx.fillRect(P.X(v) - 0.5, yA - 4, 1.5, 8); ctx.fillText(o.piX ? piLabel(v) : fmt(v, xs.step), P.X(v), yA + env.sizes.caption * 0.45); }
   ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
   for (const v of ys.ticks) if (v > P.y0 && v < P.y1 && Math.abs(v) > 1e-9) { ctx.fillRect(xA - 4, P.Y(v) - 0.5, 8, 1.5); ctx.fillText(fmt(v, ys.step), xA - env.sizes.caption * 0.5, P.Y(v)); }
-  if (o.axes?.x) { ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; ctx.fillText(o.axes.x, P.r.x + P.r.w, yA - env.sizes.caption * 0.4); }
-  if (o.axes?.y) { ctx.textAlign = 'left'; ctx.textBaseline = 'top'; ctx.fillText(o.axes.y, xA + env.sizes.caption * 0.6, P.r.y); }
+  if (o.axes?.x) { ctx.textAlign = 'right'; ctx.textBaseline = 'bottom'; drawInline(ctx, o.axes.x, P.r.x + P.r.w, yA - env.sizes.caption * 0.4); }
+  if (o.axes?.y) { ctx.textAlign = 'left'; ctx.textBaseline = 'top'; drawInline(ctx, o.axes.y, xA + env.sizes.caption * 0.6, P.r.y); }
   ctx.restore();
 }
 function piLabel(v) {
@@ -358,7 +358,7 @@ const plot = {
           ctx.setLineDash([]);
           ctx.beginPath(); ctx.arc(X, Y, r, 0, TAU); ctx.fillStyle = colorOf(p, pt.color, p.accent); ctx.fill();
           ctx.lineWidth = Math.max(2, env.unit * 2.5); ctx.strokeStyle = p.bg; ctx.stroke();
-          if (pt.label) { ctx.globalAlpha *= pr; ctx.font = fontString(role(env, 'text', { weight: 600 }), env.sizes.small); ctx.fillStyle = p.ink; ctx.textBaseline = 'bottom'; ctx.fillText(pt.label, X + r * 1.4, Y - r * 0.6); }
+          if (pt.label) { ctx.globalAlpha *= pr; ctx.font = fontString(role(env, 'text', { weight: 600 }), env.sizes.small); ctx.fillStyle = p.ink; ctx.textBaseline = 'bottom'; drawInline(ctx, pt.label, X + r * 1.4, Y - r * 0.6); }
           ctx.restore();
         });
         // tangent line sweeping along the curve

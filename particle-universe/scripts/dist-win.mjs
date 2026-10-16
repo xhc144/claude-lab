@@ -1,12 +1,16 @@
-// Builds the Windows deliverable from any OS (no Wine):
-//   release/win-unpacked/                                 unpacked app (electron-builder "dir" target)
-//   release/ParticleUniverse-<v>-win-x64-portable.zip     unzip anywhere, run ParticleUniverse.exe
+// Builds the Windows deliverables (electron-builder "nsis" target; scripts/after-pack.cjs trims and
+// stamps the exe, so no Wine is needed for that):
+//   release/win-unpacked/                                 unpacked app
+//   release/ParticleUniverse-Setup-<v>-x64.exe            installer; installed copies update themselves
+//   release/latest.yml (+ .blockmap)                      update information for the installer
+//   release/ParticleUniverse-<v>-win-x64-portable.zip     unzip anywhere, run ParticleUniverse.exe (no auto-update)
+//   node scripts/dist-win.mjs [--installer | --no-installer]
+// The installer is built by default on Windows; elsewhere NSIS needs Wine, so pass --installer to try.
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import * as ResEdit from 'resedit';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -36,46 +40,16 @@ console.log('› building renderer');
 run(process.execPath, [path.join(root, 'node_modules/vite/bin/vite.js'), 'build']);
 if (!fs.existsSync(path.join(root, 'build/icon.ico'))) run(process.execPath, ['scripts/make-icons.mjs']);
 
-console.log('› packaging Windows app (electron-builder, dir target)');
+const installer = process.argv.includes('--installer') || (isWin && !process.argv.includes('--no-installer'));
+if (!installer) console.log('› skipping the NSIS installer (Windows builds it by default; --installer to force)');
+const setup = path.join(release, `ParticleUniverse-Setup-${version}-x64.exe`);
+console.log(`› packaging Windows app (electron-builder, ${installer ? 'nsis' : 'dir'} target)`);
 fs.rmSync(unpacked, { recursive: true, force: true });
-run(process.execPath, [path.join(root, 'node_modules/electron-builder/cli.js'), '--win', 'dir', '--x64', '--publish', 'never', `-c.electronVersion=${electronVersion}`, ...(electronDist ? [`-c.electronDist=${electronDist}`] : [])]);
+for (const f of [setup, setup + '.blockmap', path.join(release, 'latest.yml')]) fs.rmSync(f, { force: true });
+run(process.execPath, [path.join(root, 'node_modules/electron-builder/cli.js'), '--win', installer ? 'nsis' : 'dir', '--x64', '--publish', 'never', `-c.electronVersion=${electronVersion}`, ...(electronDist ? [`-c.electronDist=${electronDist}`] : [])]);
 const exe = path.join(unpacked, exeName);
 if (!fs.existsSync(exe)) throw new Error('electron-builder did not produce ' + exe);
-
-// DirectX Shader Compiler is only used by WebGPU (Dawn); the app renders with WebGL2 (ANGLE/D3D11,
-// which uses d3dcompiler_47.dll and is kept).
-for (const f of ['dxcompiler.dll', 'dxil.dll', 'resources/default_app.asar']) fs.rmSync(path.join(unpacked, f), { force: true });
-
-console.log('› stamping icon and version information');
-{
-  const data = fs.readFileSync(exe);
-  const ntExe = ResEdit.NtExecutable.from(data, { ignoreCert: true });
-  const res = ResEdit.NtExecutableResource.from(ntExe);
-  const iconFile = ResEdit.Data.IconFile.from(fs.readFileSync(path.join(root, 'build/icon.ico')));
-  const groups = ResEdit.Resource.IconGroupEntry.fromEntries(res.entries);
-  const groupId = groups.length ? groups[0].id : 1;
-  const groupLang = groups.length ? groups[0].lang : 1033;
-  ResEdit.Resource.IconGroupEntry.replaceIconsForResource(res.entries, groupId, groupLang, iconFile.icons.map((i) => i.data));
-  const vi = ResEdit.Resource.VersionInfo.fromEntries(res.entries)[0] || ResEdit.Resource.VersionInfo.createEmpty();
-  const [ma, mi, pa] = version.split('.').map(Number);
-  vi.setFileVersion(ma, mi, pa, 0, 1033);
-  vi.setProductVersion(ma, mi, pa, 0, 1033);
-  const strings = {
-    ProductName: '音乐粒子宇宙',
-    FileDescription: '音乐粒子宇宙 · GPU 音乐可视化',
-    CompanyName: 'Particle Universe',
-    LegalCopyright: 'MIT License',
-    OriginalFilename: exeName,
-    InternalName: 'ParticleUniverse',
-    FileVersion: version,
-    ProductVersion: version
-  };
-  const langs = vi.getAllLanguagesForStringValues();
-  for (const l of langs.length ? langs : [{ lang: 1033, codepage: 1200 }]) vi.setStringValues(l, strings);
-  vi.outputToResourceEntries(res.entries);
-  res.outputResource(ntExe);
-  fs.writeFileSync(exe, Buffer.from(ntExe.generate()));
-}
+if (installer) for (const f of [setup, path.join(release, 'latest.yml'), path.join(unpacked, 'resources', 'app-update.yml')]) if (!fs.existsSync(f)) throw new Error('electron-builder did not produce ' + f);
 
 console.log('› writing portable zip');
 const folder = `ParticleUniverse-${version}-win-x64`;
@@ -84,6 +58,8 @@ const zipFile = path.join(release, `${folder}-portable.zip`);
 fs.rmSync(stage, { recursive: true, force: true });
 fs.rmSync(zipFile, { force: true });
 fs.cpSync(unpacked, stage, { recursive: true });
+// the portable copy has no update feed: updating it would install a second copy elsewhere
+fs.rmSync(path.join(stage, 'resources', 'app-update.yml'), { force: true });
 const readme = fs.readFileSync(path.join(root, 'scripts/README-win.txt'), 'utf8').replace(/\r?\n/g, '\r\n').replace('{VERSION}', version);
 fs.writeFileSync(path.join(stage, 'README.txt'), '\ufeff' + readme);
 if (!isWin && has('zip')) run('zip', ['-q', '-r', '-9', '-X', zipFile, folder], { cwd: release });
@@ -93,4 +69,6 @@ fs.rmSync(stage, { recursive: true, force: true });
 
 const sha = (f) => crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex');
 const mb = (f) => (fs.statSync(f).size / 1024 / 1024).toFixed(1) + ' MB';
-console.log(`\nDone:\n  ${path.relative(root, zipFile)}  ${mb(zipFile)}\n  sha256 ${sha(zipFile)}\n  exe sha256 ${sha(exe)}`);
+console.log(`\nDone:\n  ${path.relative(root, zipFile)}  ${mb(zipFile)}\n  sha256 ${sha(zipFile)}`);
+if (installer) console.log(`  ${path.relative(root, setup)}  ${mb(setup)}\n  sha256 ${sha(setup)}`);
+console.log(`  exe sha256 ${sha(exe)}`);

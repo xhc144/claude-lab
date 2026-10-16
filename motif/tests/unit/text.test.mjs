@@ -38,3 +38,22 @@ test('rich text markup', () => {
   assert.ok(runs.some((r) => r.accent && r.text === '强调'));
   assert.ok(runs.some((r) => r.i && r.text === '斜体'));
 });
+
+test('inline TeX is lifted out of rich text', () => {
+  const runs = parseRich('函数 $f(x)=x^2$ 和 **重点 $\\nabla f$** 与 \\(a\\neq b\\)');
+  assert.deepEqual(runs.filter((r) => r.math).map((r) => r.text), ['f(x)=x^2', '\\nabla f', 'a\\neq b']);
+  assert.ok(runs.find((r) => r.text === '\\nabla f').b, 'markup around a formula still applies');
+  // "\n" means a line break in text, but never inside TeX (\nabla, \neq, \nu)
+  assert.ok(!runs.some((r) => r.text.includes('\n')));
+});
+
+test('dollar amounts are not formulas', () => {
+  for (const s of ['价格从 $5 涨到 $10', '$5–$10 区间', 'costs $3.50 or $4']) assert.ok(!parseRich(s).some((r) => r.math), s);
+  assert.ok(parseRich('代码 `$x$` 原样').some((r) => r.code && r.text === '$x$'));
+});
+
+test('a formula is one unbreakable unit; without a DOM it falls back to its source', () => {
+  const L = te.layout('设 $a^2+b^2=c^2$ 成立', role, 20, { maxWidth: 1000 });
+  const units = L.lines.flatMap((l) => l.units);
+  assert.ok(units.some((u) => u.t === '$a^2+b^2=c^2$'), units.map((u) => u.t).join('|'));
+});

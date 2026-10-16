@@ -1,0 +1,69 @@
+# Runs the self-signed certificate scripts in scripts/windows-release/ on a real Windows runner:
+# generate a throwaway certificate, check the files it writes, trust it machine-wide, sign a file
+# with it and confirm Windows reports the signature as valid (the same check electron-updater
+# makes before installing an update). The certificate is created and removed inside the job.
+name: Windows signing scripts · check
+
+on:
+  push:
+    paths:
+      - 'scripts/windows-release/**'
+      - '.github/workflows/windows-signing-check.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: powershell
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate a throwaway certificate with new-signing-cert.ps1
+        run: |
+          $out = "$env:RUNNER_TEMP\cert"
+          powershell -NoProfile -ExecutionPolicy Bypass -File scripts\windows-release\new-signing-cert.ps1 -Name 'CI Test' -OutDir $out -SkipTrust
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Get-ChildItem $out | Format-Table Name, Length
+
+      - name: Check the exported files
+        run: |
+          $out = "$env:RUNNER_TEMP\cert"
+          $pass = [IO.File]::ReadAllText("$out\WIN_CSC_KEY_PASSWORD.txt")
+          if ($pass.Length -ne 32) { throw "unexpected password length $($pass.Length)" }
+          $b64 = [IO.File]::ReadAllText("$out\WIN_CSC_LINK.txt")
+          $bytes = [Convert]::FromBase64String($b64)
+          if (Compare-Object $bytes ([IO.File]::ReadAllBytes("$out\code-signing.pfx"))) { throw 'WIN_CSC_LINK.txt is not the base64 of code-signing.pfx' }
+          $pfx = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($bytes, $pass, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+          if (-not $pfx.HasPrivateKey) { throw 'pfx has no private key' }
+          if ($pfx.Subject -ne 'CN=CI Test') { throw "subject $($pfx.Subject)" }
+          $left = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Thumbprint -eq $pfx.Thumbprint }
+          if ($left) { throw 'private key was left in the user certificate store' }
+          Write-Host "ok: $($pfx.Subject) $($pfx.Thumbprint) until $($pfx.NotAfter)"
+
+      - name: Trust it with trust-signing-cert.ps1, sign a file, verify
+        run: |
+          $out = "$env:RUNNER_TEMP\cert"
+          powershell -NoProfile -ExecutionPolicy Bypass -File scripts\windows-release\trust-signing-cert.ps1 -CerPath "$out\code-signing.cer" -AllUsers
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          $pass = [IO.File]::ReadAllText("$out\WIN_CSC_KEY_PASSWORD.txt")
+          $pfx = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("$out\code-signing.pfx", $pass)
+          $file = "$env:RUNNER_TEMP\signed.ps1"
+          Set-Content -Path $file -Value "Write-Host 'signed'" -Encoding UTF8
+          Set-AuthenticodeSignature -FilePath $file -Certificate $pfx -HashAlgorithm SHA256 | Out-Null
+          $sig = Get-AuthenticodeSignature -LiteralPath $file
+          Write-Host "status: $($sig.Status) signer: $($sig.SignerCertificate.Subject)"
+          if ($sig.Status -ne 'Valid') { throw "expected Valid, got $($sig.Status): $($sig.StatusMessage)" }
+          if ($sig.SignerCertificate.Subject -ne 'CN=CI Test') { throw 'wrong signer' }
+
+      - name: Remove the throwaway certificate
+        if: always()
+        run: |
+          Get-ChildItem Cert:\LocalMachine\Root, Cert:\LocalMachine\TrustedPublisher, Cert:\CurrentUser\Root, Cert:\CurrentUser\TrustedPublisher |
+            Where-Object { $_.Subject -eq 'CN=CI Test' } | Remove-Item
+          Remove-Item -Recurse -Force "$env:RUNNER_TEMP\cert" -ErrorAction SilentlyContinue
