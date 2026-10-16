@@ -12,8 +12,9 @@ import complexMap from './modules/complex.js';
 import ode from './modules/ode.js';
 import threebody from './modules/threebody.js';
 import fractal from './modules/fractal.js';
+import fourier from './modules/fourier.js';
 
-const MODULES = [matrix, complexMap, ode, threebody, fractal];
+const MODULES = [matrix, complexMap, ode, threebody, fractal, fourier];
 const byId = Object.fromEntries(MODULES.map((m) => [m.id, m]));
 
 const root = document.getElementById('app');
