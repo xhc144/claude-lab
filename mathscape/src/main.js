@@ -11,8 +11,9 @@ import matrix from './modules/matrix.js';
 import complexMap from './modules/complex.js';
 import ode from './modules/ode.js';
 import threebody from './modules/threebody.js';
+import fractal from './modules/fractal.js';
 
-const MODULES = [matrix, complexMap, ode, threebody];
+const MODULES = [matrix, complexMap, ode, threebody, fractal];
 const byId = Object.fromEntries(MODULES.map((m) => [m.id, m]));
 
 const root = document.getElementById('app');
@@ -209,7 +210,7 @@ function openHelp() {
   const tips = inst?.help?.tips || [];
   const keys = [
     ['0', '开启页面'],
-    ['1 – 4', '切换模块'],
+    [`1 – ${MODULES.length}`, '切换模块'],
     ['P', '切换双精度 / 高精度'],
     ['?', '打开 / 关闭帮助'],
     ['滚轮 / 双指', '缩放视图'],

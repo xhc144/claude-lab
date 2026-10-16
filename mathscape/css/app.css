@@ -749,6 +749,39 @@ select.select { appearance: none; padding-right: 30px; cursor: pointer;
 .tooltip .t-title { font-weight: 600; margin-bottom: 3px; }
 .tooltip .t-mono { font-family: var(--mono); color: var(--text-2); }
 
+/* progressive rendering, banners and insets on the stage */
+
+.render-progress { position: absolute; z-index: 4; left: 0; right: 0; top: 0; height: 2px; pointer-events: none; transition: opacity 0.5s; }
+.render-progress .bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), var(--accent-2)); box-shadow: 0 0 10px var(--accent-glow); transition: width 0.15s linear; }
+.stage-banner {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  bottom: 78px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  max-width: calc(100% - 24px);
+  padding: 9px 10px 9px 14px;
+  border-radius: 12px;
+  background: rgba(40, 24, 12, 0.88);
+  border: 1px solid rgba(251, 191, 36, 0.45);
+  color: #fde68a;
+  font-size: 12.5px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+.stage-banner .btn { flex: none; }
+.overlay-card.inset { padding: 6px; pointer-events: none; }
+.inset-canvas { display: block; width: 210px; height: 140px; border-radius: 8px; }
+.inset-label { margin-top: 5px; color: var(--text-2); font-size: 11px; text-align: center; }
+.julia-c { gap: 6px; }
+.julia-c .num-input { flex: 1; min-width: 0; }
+.julia-c .num-input.invalid { border-color: var(--danger); }
+.label.math, .field-row .math { font-family: var(--math); font-style: italic; }
+
 /* ------------------------------------------------------------------ modal & toast */
 
 .modal-backdrop {
