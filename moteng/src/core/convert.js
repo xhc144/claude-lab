@@ -138,11 +138,15 @@ function copyTexSupport(outDir, style, res) {
 
 // Which Chinese body font XeTeX actually loaded (fontspec reports the file it opened).
 export function cjkFontFromLog(log) {
-  const flat = String(log || '').replace(/\r?\n/g, '');
-  const files = [...flat.matchAll(/<->"\[?([^"\]:]+?\.(?:ttc|ttf|otf))/gi)].map((m) => m[1].split(/[\\/]/).pop());
+  // TeX wraps log lines at 79 columns; fontspec continues them with "(fontspec)   ".
+  // (fontspec breaks at a space, TeX itself mid-word).
+  const flat = String(log || '').replace(/\r?\n\(fontspec\)\s+/g, ' ').replace(/\r?\n/g, '');
+  // fontspec reports every face it opens as <->"[file.ttc:2]/OT…" or <->"Family Name/OT…".
+  const faces = [...flat.matchAll(/<->"(?:\[([^\]]+)\]|([^"[\/]+))\//g)]
+    .map((m) => (m[1] || m[2]).split(/[\\/]/).pop().replace(/:\d+$/, '').replace(/\.(ttc|ttf|otf)$/i, '').trim());
   // The class loads Fandol first and our font block overrides it, so the last
   // serif CJK face opened is the body font.
-  const serif = files.filter((f) => /sim|songti|sourcehanserif|noto.*serif|fandolsong/i.test(f) && !/hei|sans|msyh|yahei|kai|fang|mono|deng|bold/i.test(f));
+  const serif = faces.filter((f) => /sim|songti|serif|fandolsong|^stsong/i.test(f) && !/hei|sans|msyh|yahei|kai|fang|mono|deng|bold/i.test(f));
   return serif.at(-1) || null;
 }
 

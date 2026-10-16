@@ -78,7 +78,9 @@ test('fragment map points an error line at the right formula', () => {
 
 test('font block is guarded so the .tex compiles elsewhere', () => {
   const tex = cjkFontTeX({ serif: { dir: 'C:/Windows/Fonts/', file: 'simsun.ttc', index: 0 }, serifBold: { dir: 'C:/Windows/Fonts/', file: 'simhei.ttf', index: 0 }, sans: null, kai: null, fang: null });
-  assert.match(tex, /^\\IfFileExists\{C:\/Windows\/Fonts\/simsun\.ttc\}/);
+  // By family name first (Tectonic cannot open fonts by absolute path), then by file.
+  assert.match(tex, /^\\IfFontExistsTF\{SimSun\}\{%\n {2}\\setCJKmainfont\{SimSun\}\[BoldFont=SimHei, AutoFakeSlant=0\.2\]/);
+  assert.match(tex, /\\IfFileExists\{C:\/Windows\/Fonts\/simsun\.ttc\}/);
   assert.match(tex, /\\setCJKmainfont\{simsun\.ttc\}\[Path=C:\/Windows\/Fonts\/, FontIndex=0, BoldFont=simhei\.ttf/);
 });
 

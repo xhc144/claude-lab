@@ -75,35 +75,79 @@ function sameDir(a, b) {
   return a && b && a.dir === b.dir;
 }
 
+// Family names for the files above. Tectonic's XeTeX cannot open a font by
+// absolute path on Windows (fontspec: 'The font "simsun" cannot be found'),
+// but finds the same font by name; TeX Live and MiKTeX accept both.
+const FAMILY = {
+  'simsun.ttc': 'SimSun', 'simhei.ttf': 'SimHei', 'simkai.ttf': 'KaiTi', 'simfang.ttf': 'FangSong',
+  'stkaiti.ttf': 'STKaiti', 'stfangso.ttf': 'STFangsong', 'msyh.ttc': 'Microsoft YaHei', 'msyhbd.ttc': 'Microsoft YaHei',
+  'sourcehanserifsc-regular.otf': 'Source Han Serif SC', 'sourcehanserifsc-bold.otf': 'Source Han Serif SC',
+  'sourcehanserifcn-regular.otf': 'Source Han Serif CN', 'sourcehanserifcn-bold.otf': 'Source Han Serif CN',
+  'sourcehansanssc-regular.otf': 'Source Han Sans SC', 'sourcehansanssc-bold.otf': 'Source Han Sans SC',
+  'notoserifcjksc-regular.otf': 'Noto Serif CJK SC', 'notoserifcjksc-bold.otf': 'Noto Serif CJK SC',
+  'notoserifcjk-regular.ttc': 'Noto Serif CJK SC', 'notoserifcjk-bold.ttc': 'Noto Serif CJK SC',
+  'notosanscjksc-regular.otf': 'Noto Sans CJK SC', 'notosanscjksc-bold.otf': 'Noto Sans CJK SC',
+  'notosanscjk-regular.ttc': 'Noto Sans CJK SC', 'notosanscjk-bold.ttc': 'Noto Sans CJK SC',
+  'notoserifsc-regular.otf': 'Noto Serif SC', 'notoserifsc-bold.otf': 'Noto Serif SC',
+  'notosanssc-regular.otf': 'Noto Sans SC', 'notosanssc-bold.otf': 'Noto Sans SC',
+  'songti.ttc': 'Songti SC', 'pingfang.ttc': 'PingFang SC', 'kaiti.ttc': 'Kaiti SC', 'lxgwwenkai-regular.ttf': 'LXGW WenKai',
+  'consola.ttf': 'Consolas', 'consolab.ttf': 'Consolas', 'cascadiamono.ttf': 'Cascadia Mono', 'menlo.ttc': 'Menlo',
+  'dejavusansmono.ttf': 'DejaVu Sans Mono', 'dejavusansmono-bold.ttf': 'DejaVu Sans Mono',
+};
+
+export function familyName(f) {
+  return f ? FAMILY[f.file.toLowerCase()] || null : null;
+}
+
+// "By name if the engine can find it, else by file if the file is there."
+function either(name, byName, byPath, f) {
+  const pathBlock = f.dir.includes(' ') ? byPath : `\\IfFileExists{${f.dir}${f.file}}{%\n${byPath}%\n}{}`;
+  if (!name) return pathBlock;
+  return `\\IfFontExistsTF{${name}}{%\n${byName}%\n}{%\n${pathBlock}%\n}`;
+}
+
 /**
- * TeX that installs the detected fonts, each guarded by \IfFileExists so the
- * same .tex still compiles on another machine (falls back to Fandol there).
+ * TeX that installs the detected fonts. Each face is tried by family name
+ * first, then by file, so the same .tex still compiles on another machine
+ * (where neither exists, the class's Fandol fonts stay in place).
  */
 export function cjkFontTeX(plan) {
   const lines = [];
-  const guard = (f, then) => (f.dir.includes(' ') ? then : `\\IfFileExists{${f.dir}${f.file}}{%\n${then}%\n}{}`);
   const s = plan.serif;
   if (s) {
-    const b = plan.serifBold && sameDir(s, plan.serifBold) ? plan.serifBold : null;
-    const k = plan.kai && sameDir(s, plan.kai) ? plan.kai : null;
-    const extra = [b ? boldSpec(b) : 'AutoFakeBold=2.5', k ? `ItalicFont=${k.file}` : 'AutoFakeSlant=0.2'].join(', ');
-    const sp = spec(s, extra);
-    lines.push(guard(s, `  \\setCJKmainfont{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhsong}{${sp.name}}[${sp.opts}]`));
+    const n = familyName(s);
+    const b = plan.serifBold;
+    const nb = familyName(b);
+    const k = plan.kai;
+    const nk = familyName(k);
+    const nameOpts = [b ? (nb && nb !== n ? `BoldFont=${nb}` : '') : 'AutoFakeBold=2.5', nk ? `ItalicFont=${nk}` : 'AutoFakeSlant=0.2'].filter(Boolean).join(', ');
+    const bp = b && sameDir(s, b) ? b : null;
+    const kp = k && sameDir(s, k) ? k : null;
+    const sp = spec(s, [bp ? boldSpec(bp) : 'AutoFakeBold=2.5', kp ? `ItalicFont=${kp.file}` : 'AutoFakeSlant=0.2'].join(', '));
+    lines.push(either(n,
+      `  \\setCJKmainfont{${n}}[${nameOpts}]\n  \\setCJKfamilyfont{zhsong}{${n}}[${nameOpts}]`,
+      `  \\setCJKmainfont{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhsong}{${sp.name}}[${sp.opts}]`, s));
   }
   const ss = plan.sans;
   if (ss) {
-    const b = plan.sansBold && sameDir(ss, plan.sansBold) ? plan.sansBold : null;
-    const sp = spec(ss, b ? boldSpec(b) : 'AutoFakeBold=2.5');
-    const md = spec(ss, b ? boldSpec(b) : 'AutoFakeBold=1.5');
-    lines.push(guard(ss, `  \\setCJKsansfont{${sp.name}}[${sp.opts}]\n  \\setCJKmonofont{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhhei}{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhheimd}{${md.name}}[${md.opts}]`));
+    const n = familyName(ss);
+    const b = plan.sansBold;
+    const nb = familyName(b);
+    const nameOpts = b ? (nb && nb !== n ? `BoldFont=${nb}` : '') : 'AutoFakeBold=2.5';
+    const bp = b && sameDir(ss, b) ? b : null;
+    const sp = spec(ss, bp ? boldSpec(bp) : 'AutoFakeBold=2.5');
+    const md = spec(ss, bp ? boldSpec(bp) : 'AutoFakeBold=1.5');
+    const o = nameOpts ? `[${nameOpts}]` : '';
+    lines.push(either(n,
+      `  \\setCJKsansfont{${n}}${o}\n  \\setCJKmonofont{${n}}${o}\n  \\setCJKfamilyfont{zhhei}{${n}}${o}\n  \\setCJKfamilyfont{zhheimd}{${n}}${o}`,
+      `  \\setCJKsansfont{${sp.name}}[${sp.opts}]\n  \\setCJKmonofont{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhhei}{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhheimd}{${md.name}}[${md.opts}]`, ss));
   }
-  if (plan.kai) {
-    const sp = spec(plan.kai, 'AutoFakeBold=2.5');
-    lines.push(guard(plan.kai, `  \\setCJKfamilyfont{zhkai}{${sp.name}}[${sp.opts}]`));
-  }
-  if (plan.fang) {
-    const sp = spec(plan.fang, 'AutoFakeBold=2.5');
-    lines.push(guard(plan.fang, `  \\setCJKfamilyfont{zhfs}{${sp.name}}[${sp.opts}]`));
+  for (const [role, family] of [['kai', 'zhkai'], ['fang', 'zhfs']]) {
+    const f = plan[role];
+    if (!f) continue;
+    const n = familyName(f);
+    const sp = spec(f, 'AutoFakeBold=2.5');
+    lines.push(either(n, `  \\setCJKfamilyfont{${family}}{${n}}[AutoFakeBold=2.5]`, `  \\setCJKfamilyfont{${family}}{${sp.name}}[${sp.opts}]`, f));
   }
   return lines.join('\n');
 }
@@ -111,8 +155,8 @@ export function cjkFontTeX(plan) {
 export function monoFontTeX(plan) {
   const m = plan.mono;
   if (!m) return '';
+  const n = familyName(m);
   const b = plan.monoBold && sameDir(m, plan.monoBold) ? plan.monoBold : null;
   const sp = spec(m, [b ? boldSpec(b) : '', 'Scale=MatchLowercase'].filter(Boolean).join(', '));
-  const set = `  \\setmonofont{${sp.name}}[${sp.opts}]`;
-  return m.dir.includes(' ') ? set : `\\IfFileExists{${m.dir}${m.file}}{%\n${set}%\n}{}`;
+  return either(n, `  \\setmonofont{${n}}[Scale=MatchLowercase]`, `  \\setmonofont{${sp.name}}[${sp.opts}]`, m);
 }

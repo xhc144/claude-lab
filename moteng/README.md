@@ -82,7 +82,7 @@
 
 导言区出错时（通常是字体问题），先改用 TeX 自带的 Latin Modern 和 Fandol 字体重试；讲义体仍然失败时，改用对话体。
 
-中文字体按文件路径加载，Windows 上依次尝试：
+软件先在本机字体目录里找到中文字体文件，Windows 上依次尝试：
 
 - 宋体：思源宋体，然后是 SimSun；
 - 黑体：微软雅黑；
@@ -90,7 +90,7 @@
 - 仿宋：FangSong；
 - 等宽：Consolas。
 
-字体路径都包在 `\IfFileExists` 里。`main.tex` 拿到别的电脑上编译时，找不到这些字体会自动改用 Fandol。
+生成的 `main.tex` 先按字体名加载（`\IfFontExistsTF{SimSun}`），找不到再按文件路径加载（`\IfFileExists`）。内置的 Tectonic 在 Windows 上只能按字体名找到系统字体，TeX Live 和 MiKTeX 两种方式都可以。`main.tex` 拿到别的电脑上编译时，两种方式都找不到就保留 Fandol。
 
 ## 开发
 
