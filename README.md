@@ -34,9 +34,11 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 [律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据。安装包由 GitHub Actions 的「Motif · Windows build」构建。
 
-[音乐粒子宇宙 Particle Universe](particle-universe/) 是 Electron / WebGL2 的 Windows 音乐可视化程序：导入本地音乐后，离线分析频谱、鼓点、节拍网格、段落与高潮，驱动 13 万–419 万颗 GPU 粒子组成的 8 个场景（星云、黑洞、银河、能量风暴、流体丝绸、共振星球、超空间、奇异吸引子），带自动运镜、自适应画质与逐帧离线的 MP4 / WebM 视频导出。Windows 便携版 zip（约 129 MB，超过仓库单文件上限）由 `particle-universe · Windows build` 工作流构建并自检；本地可用 `npm run dist:win` 生成。
+[音乐粒子宇宙 Particle Universe](particle-universe/) 是 Electron / WebGL2 的 Windows 音乐可视化程序：导入本地音乐后，离线分析频谱、鼓点、节拍网格、段落与高潮，驱动 13 万–419 万颗 GPU 粒子组成的 8 个场景（星云、黑洞、银河、能量风暴、流体丝绸、共振星球、超空间、奇异吸引子），带自动运镜、自适应画质与逐帧离线的 MP4 / WebM 视频导出。Windows 安装版与便携版 zip（约 129 MB，超过仓库单文件上限）由 `particle-universe · Windows build` 工作流构建并自检；本地可用 `npm run dist:win` 生成。
 
-[声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`），未做代码签名。
+[声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`）。
+
+Phonica、Motif 与音乐粒子宇宙的安装版会自动更新：工作流发布新版本时刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对后在重启或关闭时安装（便携版 zip 不自动更新）。默认不做代码签名；可以用免费的自签名证书签名，步骤、限制与报毒处理见 [scripts/windows-release/](scripts/windows-release/README.md)。
 
 ## 数学排版模板
 
