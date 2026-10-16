@@ -42,4 +42,7 @@ exports.default = async function afterPack(ctx) {
   res.outputResource(ntExe);
   fs.writeFileSync(exe, Buffer.from(ntExe.generate()));
   console.log('  • trimmed unused DLLs and stamped icon + version info into', exeName);
+  // signAndEditExecutable is off (the stamping above replaces rcedit), so electron-builder would not
+  // sign the program; sign it here, after stamping. Without a certificate (WIN_CSC_LINK) this does nothing.
+  if (typeof ctx.packager.signIf === 'function') await ctx.packager.signIf(exe);
 };

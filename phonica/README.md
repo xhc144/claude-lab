@@ -75,7 +75,7 @@ npm run dist:win           # 生成 Windows 安装包（在 Windows 上运行）
 - `src/renderer/`：React 界面；`src/shared/`：类型、报告与提示词、练习素材
 - `tools/dump-so762.ts` → `tools/features-so762.ts` → `tools/calibrate.py`：在 speechocean762 上提取特征、训练并评估评分模型，输出 `resources/scoring/scoring.json`
 - `tools/models/export_models.py` 与 `.github/workflows/phonica-models.yml`：把 Hugging Face 上的 wav2vec2 模型导出为 ONNX（fp32 / INT8），逐一与 PyTorch 输出比对后发布到 `phonica-models-v1`
-- `.github/workflows/phonica-windows.yml`：在 Windows 上测试、打包 NSIS 安装包，静默安装后运行内置自检（`Phonica.exe --self-test out.json`：加载模型、评测正确与故意读错的录音、语音合成、MP3/ZIP 导出、界面截图）；提交信息含 `[release]` 或手动运行时发布 Release，并刷新 `phonica-latest` 里的自动更新信息
+- `.github/workflows/phonica-windows.yml`：在 Windows 上测试、打包 NSIS 安装包，静默安装后运行内置自检（`Phonica.exe --self-test out.json`：加载模型、评测正确与故意读错的录音、语音合成、MP3/ZIP 导出、界面截图），并签名；由 `ship.yml`（自动合并与发布）调用，通过后发布 Release（`phonica-v*`）并刷新 `phonica-latest` 里的自动更新信息
 
 ## 许可证
 

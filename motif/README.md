@@ -72,7 +72,7 @@ AI 的修改以「操作」（ops）的形式提交，整组要么全部生效�
 
 ## 安装与构建
 
-**安装**：在 GitHub Actions 的「Motif · Windows build」里下载 `Motif-Setup-<版本>.exe`（安装版）或 `Motif-<版本>-x64-win.zip`（绿色版）。安装包内置 FFmpeg 和 Skill。从 0.10.0 起，手动运行该工作流并勾选 `release` 会发布到 Releases（`motif-v*`）；安装版会自己检查并安装新版本（设置 → 关于），绿色版不自动更新。签名与更新的做法见 [scripts/windows-release/](../scripts/windows-release/README.md)。
+**安装**：在 GitHub Actions 的「Motif · Windows build」里下载 `Motif-Setup-<版本>.exe`（安装版）或 `Motif-<版本>-x64-win.zip`（绿色版）。安装包内置 FFmpeg 和 Skill。从 0.10.0 起，改动合并进 `main` 后由「Ship · 自动合并与发布」流水线签名并发布到 Releases（`motif-v*`）；安装版会自己检查并安装新版本（设置 → 关于），绿色版不自动更新。见 [scripts/windows-release/](../scripts/windows-release/README.md)。
 
 **开发**（需要 Node 22+）：
 

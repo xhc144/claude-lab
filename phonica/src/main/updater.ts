@@ -2,12 +2,15 @@
 // provider configured in package.json → resources/app-update.yml). Updates are
 // downloaded in the background and installed when the app quits or when the
 // user clicks "restart". A build signed with a certificate records its
-// publisher in app-update.yml; electron-updater then refuses any installer
-// that is not signed by a certificate this computer trusts with that name.
+// publisher in app-update.yml; electron-updater then accepts an installer
+// signed by a certificate this computer trusts with that name, and
+// update-signer.cjs also accepts one signed by exactly the same certificate as
+// the running program (self-signed certificates are not trusted elsewhere).
 import { app, BrowserWindow } from 'electron';
 import { appendFileSync, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { UpdateStatus } from '../shared/types.ts';
+import { installSameSignerFallback } from './update-signer.cjs';
 
 const CHECK_DELAY_MS = 15_000;
 const CHECK_EVERY_MS = 6 * 3600_000;
@@ -73,6 +76,7 @@ export function initUpdater(opts: { win: () => BrowserWindow | null; enabled: ()
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.allowDowngrade = false;
   autoUpdater.allowPrerelease = false;
+  installSameSignerFallback(autoUpdater, log);
 
   autoUpdater.on('checking-for-update', () => set({ state: 'checking', error: undefined }));
   autoUpdater.on('update-not-available', () => set({ state: 'none', checkedAt: new Date().toISOString(), version: undefined, percent: undefined }));

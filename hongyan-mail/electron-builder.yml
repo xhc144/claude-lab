@@ -1,5 +1,7 @@
-# electron-builder produces the unpacked Windows app; scripts/dist-win.mjs then stamps
-# the executable (icon, version info) and wraps it in an NSIS installer and a portable zip.
+# electron-builder produces the unpacked Windows app and the NSIS installer; scripts/after-pack.cjs
+# trims unused DLLs, stamps icon/version info into the executable and signs it first, so the
+# installer and the portable zip (scripts/dist-win.mjs) carry the same exe. Installed copies update
+# themselves from the hongyan-mail-latest release.
 appId: com.hongyan.mail
 productName: Hongyan Mail
 copyright: MIT License
@@ -25,9 +27,32 @@ extraResources:
     to: tray.png
 npmRebuild: false
 nodeGypRebuild: false
+afterPack: scripts/after-pack.cjs
+publish:
+  - provider: generic
+    url: https://github.com/xhc144/claude-lab/releases/download/hongyan-mail-latest
 win:
   target:
     - target: dir
       arch: [x64]
   icon: build/icon.ico
+  # after-pack.cjs stamps the exe with resedit (works on any OS) and signs it
   signAndEditExecutable: false
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 鸿雁邮箱
+  uninstallDisplayName: 鸿雁邮箱 ${version}
+  artifactName: HongyanMail-Setup-${version}.${ext}
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerSidebar: build/installer-sidebar.bmp
+  uninstallerSidebar: build/installer-sidebar.bmp
+  installerHeader: build/installer-header.bmp
+  include: build/installer.nsh
+  language: '2052'
+  unicode: true
+  deleteAppDataOnUninstall: false

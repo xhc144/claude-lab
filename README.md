@@ -4,7 +4,7 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的全部 21 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；七部影片都有带版本切换、章节跳转和下载链接的在线播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 22 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；七部影片都有带版本切换、章节跳转和下载链接的在线播放器。
 
 ## 浏览器交互项目
 
@@ -30,7 +30,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 ## Windows 桌面软件
 
-仓库只保存源码；安装包或便携版由 `.github/workflows/` 中对应的 Windows 工作流构建，不提交到仓库，也不发布到 Pages。
+仓库只保存源码；安装包不提交到仓库，也不发布到 Pages。五个 Windows 软件（Motif、音乐粒子宇宙、声准、墨誊、鸿雁邮箱）由「Ship · 自动合并与发布」流水线统一处理：AI 推送到 `claude/**` 分支后，在 Windows 上构建、测试并用仓库证书签名，通过后自动合并进 `main`，只发布有改动的软件（Releases 标签 `<软件>-v<版本>`），已安装的软件随后自动更新。流程、版本号规则、手动发布方式见 [scripts/windows-release/](scripts/windows-release/README.md)。
 
 [律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据。安装包由 GitHub Actions 的「Motif · Windows build」构建。
 
@@ -38,7 +38,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 [声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`）。
 
-Phonica、Motif、音乐粒子宇宙与墨誊的安装版会自动更新：工作流发布新版本时刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对后在重启或关闭时安装（便携版 zip 不自动更新）。默认不做代码签名；可以用免费的自签名证书签名，步骤、限制与报毒处理见 [scripts/windows-release/](scripts/windows-release/README.md)。
+五个软件的安装版都会自动更新：每次发布都会刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对校验码与签名后，在重启或关闭时安装（便携版 zip 不自动更新）。安装包与程序都用仓库 Secrets 里的证书签名；没有导入这张自签名证书的电脑也能自动更新，因为软件会确认新版本与自己出自同一张证书。
 
 [墨誊 Moteng](moteng/) 是 Windows 上的 AI 对话转 LaTeX 软件（Electron）：把浏览器保存的 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝等对话网页（.html / .mhtml / .zip，或直接从剪贴板粘贴），转换成 `main.tex` 和 PDF。公式取自网页里保存的 TeX 源码；表格、高亮代码、列表和图片一并转换。版式可选对话体或[墨经](mojing/)讲义体。编译出错时，按行号找到出错的那一处，只把它改为源码显示，其余内容照常排版。安装包内置 Tectonic 排版引擎和离线 TeX 缓存，也可以改用本机的 TeX Live / MiKTeX。安装包由「moteng · Windows build」工作流构建并自检，发布标签为 `moteng-v*`。
 
@@ -71,11 +71,11 @@ Phonica、Motif、音乐粒子宇宙与墨誊的安装版会自动更新：工�
 
 [.claude/skills/](.claude/skills/) 收录六个数学教学相关的 Claude Code 技能：数学讲义写作（math-lecture-writing）、题目难度评估（assess-math-difficulty）、数学 LaTeX 排版（math-latex-typesetting）、墨经模板排版（mojing-latex）、概念讲解（explain-concepts-clearly）与新领军面试专家（xinlingjun-exam-expert）。在本仓库打开 Claude Code 时自动可用。
 
-## 隔离内容
+## 鸿雁邮箱与隔离记录
 
 [鸿雁邮箱 Hongyan Mail](hongyan-mail/) 是 Electron / Node.js 的本地多账户邮件客户端，需要本地程序、SQLite 与 IMAP / SMTP，无法在 Pages 上运行。
 
-用户报告历史安装包被 Defender 检出 `Trojan:Win32/Sabsik.FL.A!ml`，真伪未确认。当前主树移除安装包、保留源码与合并历史；没有运行安装包或关闭防护。详情见 [隔离记录](hongyan-mail/QUARANTINE.md)。源码审查也发现本地凭据/缓存存储限制，详见项目 README。Pages 不包含邮件界面、测试截图、安装包或用户邮件数据。
+早先提交在分支里的历史安装包曾被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`（未签名 Electron 程序常见的机器学习误报类型，真伪未确认），它仍然隔离、不提供下载，详情见 [隔离记录](hongyan-mail/QUARANTINE.md)。现在的安装包改由「hongyan-mail · Windows build」从源码在 GitHub Actions 上重新构建、测试并签名，与其他软件一样通过流水线发布（`hongyan-mail-v*`）。源码审查发现的本地凭据/缓存存储限制仍然有效，详见项目 README。Pages 不包含邮件界面、测试截图、安装包或用户邮件数据。
 
 ## 构建公开站点
 

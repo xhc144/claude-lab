@@ -3,11 +3,14 @@
 // electron-builder.yml → resources/app-update.yml). Only the installed copy updates; the portable
 // zip has no feed. New versions download in the background; when one is ready the user is asked
 // once whether to restart now, otherwise it installs when the app quits.
-// A signed build records its publisher in app-update.yml, and electron-updater then refuses any
-// installer that is not signed by a certificate this computer trusts with that name.
+// A signed build records its publisher in app-update.yml; electron-updater then accepts an installer
+// signed by a certificate this computer trusts with that name, and update-signer.cjs also accepts one
+// signed by exactly the same certificate as the running program (self-signed certificates are not
+// trusted on other computers).
 const { app, dialog } = require('electron');
 const fs = require('node:fs');
 const path = require('node:path');
+const { installSameSignerFallback } = require('./update-signer.cjs');
 
 const CHECK_DELAY_MS = 20_000;
 const CHECK_EVERY_MS = 6 * 3600_000;
@@ -61,6 +64,7 @@ function initUpdater({ getWindow: gw, disabled }) {
   autoUpdater.autoInstallOnAppQuit = true;
   autoUpdater.allowDowngrade = false;
   autoUpdater.allowPrerelease = false;
+  installSameSignerFallback(autoUpdater, log);
   autoUpdater.on('checking-for-update', () => set({ state: 'checking', error: undefined }));
   autoUpdater.on('update-not-available', () => set({ state: 'none', version: undefined, percent: undefined, checkedAt: new Date().toISOString() }));
   autoUpdater.on('update-available', (i) => set({ state: 'downloading', version: i.version, percent: 0, checkedAt: new Date().toISOString() }));

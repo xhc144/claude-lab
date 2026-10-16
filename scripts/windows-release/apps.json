@@ -1,0 +1,94 @@
+{
+  "phonica": {
+    "title": "声准 Phonica",
+    "dir": "phonica",
+    "paths": [
+      "phonica/"
+    ],
+    "ignore": [
+      "phonica/tools/",
+      "phonica/README.md"
+    ],
+    "workflow": "phonica-windows.yml",
+    "signerCopy": "phonica/src/main/update-signer.cjs",
+    "assets": [
+      "Phonica-Setup-*.exe",
+      "Phonica-Setup-*.exe.blockmap",
+      "SHA256SUMS.txt"
+    ]
+  },
+  "motif": {
+    "title": "律影 Motif",
+    "dir": "motif",
+    "paths": [
+      "motif/"
+    ],
+    "ignore": [
+      "motif/README.md"
+    ],
+    "workflow": "motif-windows.yml",
+    "signerCopy": "motif/src/app/main/update-signer.cjs",
+    "assets": [
+      "Motif-Setup-*.exe",
+      "Motif-Setup-*.exe.blockmap",
+      "Motif-*-x64-win.zip",
+      "SHA256SUMS.txt"
+    ]
+  },
+  "particle-universe": {
+    "title": "音乐粒子宇宙 Particle Universe",
+    "dir": "particle-universe",
+    "paths": [
+      "particle-universe/"
+    ],
+    "ignore": [
+      "particle-universe/README.md"
+    ],
+    "workflow": "particle-universe-windows.yml",
+    "signerCopy": "particle-universe/src/main/update-signer.cjs",
+    "assets": [
+      "ParticleUniverse-Setup-*.exe",
+      "ParticleUniverse-Setup-*.exe.blockmap",
+      "*-portable.zip",
+      "SHA256SUMS.txt"
+    ]
+  },
+  "moteng": {
+    "title": "墨誊 Moteng",
+    "dir": "moteng",
+    "paths": [
+      "moteng/",
+      "mojing/tex/"
+    ],
+    "ignore": [
+      "moteng/README.md"
+    ],
+    "workflow": "moteng-windows.yml",
+    "signerCopy": "moteng/src/app/update-signer.cjs",
+    "assets": [
+      "Moteng-Setup-*.exe",
+      "Moteng-Setup-*.exe.blockmap",
+      "SHA256SUMS.txt"
+    ]
+  },
+  "hongyan-mail": {
+    "title": "鸿雁邮箱 Hongyan Mail",
+    "dir": "hongyan-mail",
+    "paths": [
+      "hongyan-mail/"
+    ],
+    "ignore": [
+      "hongyan-mail/README.md",
+      "hongyan-mail/QUARANTINE.md",
+      "hongyan-mail/docs/"
+    ],
+    "workflow": "hongyan-mail-windows.yml",
+    "signerCopy": "hongyan-mail/src/main/update-signer.cjs",
+    "assets": [
+      "HongyanMail-Setup-*.exe",
+      "HongyanMail-Setup-*.exe.blockmap",
+      "*-portable.zip",
+      "SHA256SUMS.txt"
+    ]
+  }
+}

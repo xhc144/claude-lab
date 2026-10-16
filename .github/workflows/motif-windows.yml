@@ -1,32 +1,34 @@
-# Builds and smoke-tests the Motif installer and portable zip on Windows. With the WIN_CSC_LINK /
-# WIN_CSC_KEY_PASSWORD secrets set (scripts/windows-release/new-signing-cert.ps1) the app and
-# installer are signed. A manual run with "release" publishes motif-v<version> and refreshes the
-# auto-update feed in the motif-latest release.
+# Builds and tests the Motif installer and portable zip on Windows: unit tests, a smoke test of the
+# packaged CLI / render worker / import / export, a silent install, and the editor end-to-end tests.
+# The app and installer are signed with the WIN_CSC_LINK / WIN_CSC_KEY_PASSWORD secrets.
+#
+# Called by ship.yml (自动合并与发布), which releases the uploaded build only when every step here
+# passed. Run it by hand to get a test build without releasing.
 name: Motif · Windows build
 
 on:
-  push:
-    branches: [main, 'claude/**']
-    paths: ['motif/**', '.github/workflows/motif-windows.yml']
-  pull_request:
-    paths: ['motif/**', '.github/workflows/motif-windows.yml']
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      release:
-        description: 'Publish a GitHub Release and update the auto-update feed'
+      ref:
+        description: Commit to build
+        type: string
+        required: true
+      require-signing:
         type: boolean
         default: false
+    outputs:
+      signed:
+        value: ${{ jobs.windows.outputs.signed }}
+  workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: motif-windows-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
 
 jobs:
   windows:
     runs-on: windows-latest
+    outputs:
+      signed: ${{ steps.check.outputs.signed }}
     timeout-minutes: 60
     defaults:
       run:
@@ -34,6 +36,8 @@ jobs:
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -55,22 +59,12 @@ jobs:
           WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
         run: node scripts/dist-win.mjs
 
-      - name: Check signature and update files
+      - name: Check signature, update files and the update signature check
+        id: check
         env:
-          SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
-        run: |
-          Get-ChildItem release -File | Format-Table Name, Length
-          foreach ($f in 'release/latest.yml', 'release/win-unpacked/resources/app-update.yml') {
-            if (-not (Test-Path $f)) { throw "$f missing: auto-update would not work" }
-            Write-Host "--- $f"; Get-Content $f
-          }
-          $setup = Get-ChildItem release/Motif-Setup-*.exe | Select-Object -First 1
-          foreach ($exe in $setup.FullName, (Resolve-Path release/win-unpacked/Motif.exe).Path) {
-            $sig = Get-AuthenticodeSignature -LiteralPath $exe
-            Write-Host "$([IO.Path]::GetFileName($exe)): $($sig.Status) $($sig.SignerCertificate.Subject)"
-            if ($env:SIGNING -eq 'true' -and $sig.Status -eq 'NotSigned') { throw "$exe is not signed although WIN_CSC_LINK is set" }
-          }
-          if ($env:SIGNING -ne 'true') { Write-Host '::warning::WIN_CSC_LINK not set: this build is unsigned (see scripts/windows-release/README.md)' }
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: ../scripts/windows-release/check-build.ps1 -Release release -Setup 'Motif-Setup-*.exe' -Exe 'win-unpacked\Motif.exe' -RequireSigning:$${{ inputs.require-signing || false }}
 
       - name: Smoke test the packaged app (CLI + render worker + import + export)
         env:
@@ -137,13 +131,16 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: Motif-windows-x64
+          name: motif-windows
           path: |
-            motif/release/*.exe
-            motif/release/*.exe.blockmap
-            motif/release/*.zip
+            motif/release/Motif-Setup-*.exe
+            motif/release/Motif-Setup-*.exe.blockmap
+            motif/release/Motif-*-x64-win.zip
             motif/release/latest.yml
+            motif/release/SHA256SUMS.txt
           if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -153,27 +150,3 @@ jobs:
             ${{ runner.temp }}/smoke
             motif/out/e2e
           if-no-files-found: ignore
-
-      - name: Publish release and update feed
-        if: github.event_name == 'workflow_dispatch' && inputs.release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          TAG="motif-v$VERSION"
-          NOTES="**Motif 律影 $VERSION**（Windows 64 位）。下载 \`Motif-Setup-$VERSION.exe\` 安装；装好后 Motif 会自己检查并安装新版本（设置 → 关于）。\`Motif-$VERSION-x64-win.zip\` 是便携版，解压即用，但不会自动更新。源码：https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}/motif"
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "Motif 律影 $VERSION（Windows）" --notes "$NOTES"
-          else
-            gh release create "$TAG" --target "${{ github.sha }}" --title "Motif 律影 $VERSION（Windows）" --notes "$NOTES"
-          fi
-          gh release upload "$TAG" release/Motif-Setup-*.exe release/Motif-Setup-*.exe.blockmap release/*.zip --clobber
-
-          node ../scripts/windows-release/update-feed.mjs release "${{ github.repository }}" "$TAG" feed/latest.yml
-          FEED=motif-latest
-          if ! gh release view "$FEED" >/dev/null 2>&1; then
-            gh release create "$FEED" --prerelease --target "${{ github.sha }}" --title "Motif · 自动更新信息" \
-              --notes "已安装的 Motif 从这里读取最新版本信息（latest.yml），安装包在对应的 motif-v* 发布里。请不要删除这个发布。"
-          fi
-          gh release upload "$FEED" feed/latest.yml --clobber

@@ -13,6 +13,7 @@ import type { AppEvent, AppInfo, IpcError, Settings } from '../shared/types';
 import { MailCore } from './core/mail-core';
 import { createFileLogger, type Logger } from './core/logger';
 import { createSecretBox } from './secrets';
+import { initUpdater, installPendingUpdateOnExit } from './updater';
 
 const APP_ID = 'com.hongyan.mail';
 const IS_DEV = !!process.env.HY_DEV;
@@ -601,6 +602,7 @@ app.whenReady().then(async () => {
   const hidden = process.argv.includes('--hidden') || settings().startMinimized;
   createTray();
   createWindow(!hidden);
+  initUpdater({ log, window: () => win });
   const mailto = process.argv.find((a) => /^mailto:/i.test(a));
   if (mailto) setTimeout(() => handleMailto(mailto), 1500);
   powerMonitor.on('resume', () => { log.info('system resumed'); core?.syncNow(); });
@@ -620,5 +622,8 @@ app.on('will-quit', (e) => {
   tray?.destroy();
   const c = core;
   core = null;
-  Promise.race([c.shutdown(), new Promise((r) => setTimeout(r, 3000))]).finally(() => app.exit(0));
+  Promise.race([c.shutdown(), new Promise((r) => setTimeout(r, 3000))]).finally(() => {
+    installPendingUpdateOnExit();
+    app.exit(0);
+  });
 });

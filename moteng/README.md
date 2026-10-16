@@ -120,7 +120,7 @@ GitHub Actions 的「moteng · Windows build」在 Windows 上完成全部步骤
 3. 生成安装包；
 4. 对未安装版和静默安装后的程序各运行一次 `--self-test`，检查两种版式、中文输出路径、PDF 结构、中文字体是否用上了系统字体，并截取窗口。
 
-手动触发工作流时勾选 release，或在提交信息里写 `[release]`，会把安装包发布到 Releases（标签 `moteng-v*`），并刷新 `moteng-latest` 里的自动更新信息。从 1.1.0 起，装好的软件会自己检查并安装新版本（左侧“软件更新”，可以关掉）。默认不做代码签名；设置 `WIN_CSC_LINK` 后工作流会给软件签名，做法见 [scripts/windows-release/](../scripts/windows-release/README.md)。
+改动合并进 `main` 后，「Ship · 自动合并与发布」流水线用这个工作流构建、测试、签名，通过后把安装包发布到 Releases（标签 `moteng-v*`），并刷新 `moteng-latest` 里的自动更新信息，见 [scripts/windows-release/](../scripts/windows-release/README.md)。从 1.1.0 起，装好的软件会自己检查并安装新版本（左侧“软件更新”，可以关掉）。
 
 ### 目录
 

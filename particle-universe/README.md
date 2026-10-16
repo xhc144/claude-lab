@@ -18,7 +18,7 @@ Windows 桌面程序（Electron 44 + WebGL2），完全本地运行：不需要�
 1. **GitHub Actions**：仓库的 `particle-universe · Windows build` 工作流在 Windows 运行器上打包并运行端到端自检，产物名为 `ParticleUniverse-win-x64`；手动触发（`workflow_dispatch`）时还会发布 Release（`particle-universe-v*`），并刷新 `particle-universe-latest` 里的自动更新信息。
 2. **本地构建**：见下文「从源码构建」，一条命令生成同样的 zip；安装版默认只在 Windows 上生成（NSIS 在其他系统上需要 Wine）。
 
-> zip 超过 GitHub 单文件 100 MB 限制，因此不直接提交到仓库。默认未做代码签名：首次运行若出现 SmartScreen「未知发布者」提示，可点「更多信息 → 仍要运行」。设置 `WIN_CSC_LINK` 后工作流会给安装包签名，做法见 [scripts/windows-release/](../scripts/windows-release/README.md)。1.1.0 起为了自动更新加入了 NSIS 安装版（electron-builder 生成，没有加壳）；便携版 zip 保持不变。
+> zip 超过 GitHub 单文件 100 MB 限制，因此不直接提交到仓库。程序与安装包用仓库证书（自签名）签名，发布与自动更新由「Ship · 自动合并与发布」流水线完成，见 [scripts/windows-release/](../scripts/windows-release/README.md)；没有导入这张证书的电脑首次运行仍可能出现 SmartScreen「未知发布者」提示，可点「更多信息 → 仍要运行」。1.1.0 起为了自动更新加入了 NSIS 安装版（electron-builder 生成，没有加壳）；便携版 zip 保持不变。
 
 系统要求：支持 DirectX 11 / WebGL2 的显卡（近十年的独显或核显）。笔记本双显卡会自动请求高性能显卡。
 
@@ -138,4 +138,4 @@ tests/               分析、界面与渲染测试
 - 单首曲目最长 90 分钟（整首解码进内存后再分析）。
 - 视频编码依赖系统提供的 WebCodecs 编码器；若某个分辨率下没有可用的 H.264 编码器，导出对话框会自动提供 WebM (VP9)。系统缺少 AAC 编码器时（如 Windows N 版、Windows Server），MP4 的音轨改用 Opus，个别老旧播放器可能无法播放其声音。
 - 「捕获系统声音」使用 Windows 的回环录音；在 macOS / Linux 上只能使用麦克风输入。
-- 未签名的 Electron 程序可能被个别杀毒软件的机器学习规则误报；源码与构建脚本均在本目录，可自行构建核对。
+- 自签名的 Electron 程序仍可能被个别杀毒软件的机器学习规则误报；源码与构建脚本均在本目录，可自行构建核对。

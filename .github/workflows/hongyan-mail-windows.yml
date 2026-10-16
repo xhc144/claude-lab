@@ -1,0 +1,117 @@
+# Builds 鸿雁邮箱 Hongyan Mail for Windows on a real Windows runner from source: type check, unit
+# tests, the NSIS installer and portable zip, then a smoke test of the packaged program and of a
+# silently installed copy. The program and installer are signed with the WIN_CSC_LINK /
+# WIN_CSC_KEY_PASSWORD secrets. (The IMAP/SMTP integration and end-to-end tests need a Dovecot test
+# server and run on Linux: npm run test:integration / test:e2e.)
+#
+# Called by ship.yml (自动合并与发布), which releases the uploaded build only when every step here
+# passed. Run it by hand to get a test build without releasing.
+name: hongyan-mail · Windows build
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Commit to build
+        type: string
+        required: true
+      require-signing:
+        type: boolean
+        default: false
+    outputs:
+      signed:
+        value: ${{ jobs.build.outputs.signed }}
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    outputs:
+      signed: ${{ steps.check.outputs.signed }}
+    defaults:
+      run:
+        working-directory: hongyan-mail
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hongyan-mail/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Package installer and portable zip
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: node scripts/dist-win.mjs
+
+      - name: Check signature, update files and the update signature check
+        id: check
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: |
+          ../scripts/windows-release/check-build.ps1 -Release release -Setup 'HongyanMail-Setup-*.exe' -Exe 'win-unpacked\Hongyan Mail.exe' -RequireSigning:$${{ inputs.require-signing || false }}
+          $zip = Get-ChildItem release/*-portable.zip | Select-Object -First 1
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $entries = [IO.Compression.ZipFile]::OpenRead($zip.FullName).Entries.FullName
+          if ($entries -match 'app-update\.yml') { throw 'the portable zip must not carry an update feed' }
+          if (-not ($entries -match 'portable\.txt')) { throw 'the portable zip lacks portable.txt' }
+
+      - name: Smoke test the packaged program
+        run: node tests/e2e/smoke-packaged.mjs "$PWD\release\win-unpacked\Hongyan Mail.exe" "$env:RUNNER_TEMP\shots\unpacked.png"
+
+      - name: Install silently and smoke test the installed copy
+        run: |
+          $setup = Get-ChildItem release/HongyanMail-Setup-*.exe | Select-Object -First 1
+          $i = Start-Process -FilePath $setup.FullName -ArgumentList '/S' -PassThru -Wait
+          Write-Host "installer exit code: $($i.ExitCode)"
+          $dir = "$env:LOCALAPPDATA\Programs\Hongyan Mail"
+          foreach ($f in 'Hongyan Mail.exe', 'resources\app-update.yml', 'Uninstall Hongyan Mail.exe') {
+            if (-not (Test-Path "$dir\$f")) { Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 1 | Select-Object FullName; throw "$f not installed" }
+          }
+          node tests/e2e/smoke-packaged.mjs "$dir\Hongyan Mail.exe" "$env:RUNNER_TEMP\shots\installed.png"
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          Start-Process -FilePath "$dir\Uninstall Hongyan Mail.exe" -ArgumentList '/S' -Wait
+          Start-Sleep -Seconds 3
+          if (Test-Path "$dir\Hongyan Mail.exe") { throw 'uninstall left the program behind' }
+          Write-Host 'installed, started and uninstalled'
+
+      - name: Upload installer and portable zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: hongyan-mail-windows
+          path: |
+            hongyan-mail/release/HongyanMail-Setup-*.exe
+            hongyan-mail/release/HongyanMail-Setup-*.exe.blockmap
+            hongyan-mail/release/*-portable.zip
+            hongyan-mail/release/latest.yml
+            hongyan-mail/release/SHA256SUMS.txt
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload smoke-test screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hongyan-mail-smoke
+          path: ${{ runner.temp }}\shots
+          if-no-files-found: ignore

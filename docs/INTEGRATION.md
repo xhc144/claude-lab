@@ -197,3 +197,18 @@ git push origin recovered-project
 - 影片播放器从 2 个扩展为 7 个，双语影片可切换版本，带章节的影片可点击跳转，提供 MP4、SRT 与讲稿下载。发布的成片与各项目 `output/` 中的文件逐字节相同，Git 复用同一 blob，仓库体积不增加；Pages 发布目录约 600 MB，低于 1 GB 上限。
 - `check-pages.mjs` 新增影片目录白名单：`films/<id>/` 下只允许 `index.html`、`film[-xx].mp4|srt`、`transcript.html|pdf`；MP4 与 SRT 不得出现在其他目录。
 - 桌面软件只提供介绍与链接：Phonica 指向 Releases，Motif 与 Particle Universe 指向各自的 Windows 构建工作流；鸿雁邮箱仍只链接源码与隔离说明，不发布任何截图或安装包。
+
+## 2026-10-16 分支合并与自动发布流水线
+
+六个未合并分支全部合入 main（合并提交保留原历史，没有强推、没有删除分支）：
+
+| 分支 | 原 tip | 内容 | 处理 |
+| --- | --- | --- | --- |
+| `claude/vibrant-goldberg-gdxsg6` | `11a509329e69e48d2693f49bbd7217fddd61b9b1` | Phonica / Motif / 粒子宇宙 / 墨誊自动更新与签名脚本；包含墨誊分支 | 直接合并 |
+| `claude/peaceful-brahmagupta-oaax7t` | `94a06aa9382a1dec96c133db2aac294ab11f616f` | 墨誊 Moteng | 经上一行合入 |
+| `claude/admiring-darwin-n77vx0` | `697469e19ee52e2612839df5c8b4aa3679830f14` | Motif 讲解指针 | 与行内 TeX 字幕改动冲突，两边都保留（字幕优先显示讲解步骤的台词，排版走文本引擎） |
+| `claude/brave-hypatia-lpegw9` | `4b683edad725a881587bc4d60759228f57da6028` | 站点改版 | 直接合并 |
+| `claude/eager-allen-qqz0pu` | `b42f85a0184d92f5cbe91bea26bfb3e5616d90db` | 线性回归讲解视频源码 | README 冲突，补入影片表 |
+| `claude/ecstatic-thompson-5wwaij` | `b290a8c0ab072ecafc51e489f625f754d6cab9de` | 鸿雁邮箱 1.1 源码 | 分支提交的 `HongyanMail-Setup-1.1.0.exe` 按隔离规则不进入主树；README 保留隔离说明 |
+
+同时加入「Ship · 自动合并与发布」（`.github/workflows/ship.yml`，说明见 `scripts/windows-release/README.md`）：五个 Windows 软件在 Windows 上构建测试、用仓库已有证书签名，`claude/**` 分支通过后自动合并进 main，有改动的软件各自发布并推进自动更新信息。鸿雁邮箱改用 electron-builder 打包并加入自动更新，安装包从源码重新构建。

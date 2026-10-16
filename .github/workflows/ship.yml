@@ -1,0 +1,300 @@
+# 自动合并与发布：AI 推送到 claude/** 分支后，Windows 构建测试通过就合并进 main，并把有改动的软件签名发布。
+#
+#   push claude/**  → 把分支合并到最新 main（候选提交）→ 给要发布的软件定版本号 → 各软件在 Windows 上构建、
+#                     测试、签名 → 分支改动的软件全部通过才合并进 main → 每个通过的软件各自发布 Release，
+#                     并把它的自动更新信息（<软件>-latest/latest.yml）推进到新版本
+#   push main       → 同上，只是不需要合并
+#   手动运行        → Actions → 「Ship · 自动合并与发布」→ Run workflow：可指定分支和软件（备用方式）
+#
+# 哪个软件要发布：apps.json 里该软件的文件与它上一次正式发布相比有改动（README 之类除外）。
+# 版本号：package.json 里的版本若已发布过（或标签已被占用），自动改为下一个补丁号并提交。
+# 防重复：版本标签通过 API 原子创建，同一版本只可能发布一次；更新信息只会前进，不会被旧版本覆盖。
+# 提交信息含 [skip ship] 时整次跳过；含 [skip release] 时只合并、不发布。
+# 详细说明：scripts/windows-release/README.md
+name: Ship · 自动合并与发布
+
+on:
+  push:
+    branches: [main, 'claude/**']
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: '分支：main = 只发布；claude/... = 测试通过后合并进 main 再发布'
+        default: main
+      apps:
+        description: 'auto = 有改动的软件；all = 全部；或列出软件，如 phonica,motif（手动发布，没有改动也会发一个新补丁版本）'
+        default: auto
+      release:
+        description: '测试通过后发布'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: ship-${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
+  # a newer push to the same claude/** branch replaces the running one; runs for main queue up
+  cancel-in-progress: ${{ (github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name) != 'main' }}
+
+env:
+  BRANCH: ${{ github.event_name == 'workflow_dispatch' && inputs.branch || github.ref_name }}
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      skip: ${{ steps.candidate.outputs.skip }}
+      blocked: ${{ steps.candidate.outputs.blocked }}
+      sha: ${{ steps.candidate.outputs.sha }}
+      temp: ${{ steps.candidate.outputs.temp }}
+      gate: ${{ steps.plan.outputs.gate }}
+      release: ${{ steps.plan.outputs.release }}
+      build_phonica: ${{ steps.plan.outputs.build_phonica }}
+      build_motif: ${{ steps.plan.outputs.build_motif }}
+      build_particle_universe: ${{ steps.plan.outputs.build_particle_universe }}
+      build_moteng: ${{ steps.plan.outputs.build_moteng }}
+      build_hongyan_mail: ${{ steps.plan.outputs.build_hongyan_mail }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SHIP_TOKEN || github.token }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Release scripts self-check
+        run: |
+          node --test scripts/windows-release/tests/*.test.mjs
+          node scripts/windows-release/check-copies.mjs
+
+      - name: Build the candidate commit
+        id: candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          HEAD_MSG: ${{ github.event.head_commit.message }}
+          EVENT: ${{ github.event_name }}
+          PUSHED_SHA: ${{ github.sha }}
+          APPS_INPUT: ${{ inputs.apps || 'auto' }}
+          RELEASE_INPUT: ${{ github.event_name != 'workflow_dispatch' || inputs.release }}
+          HAS_SHIP_TOKEN: ${{ secrets.SHIP_TOKEN != '' }}
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          skip() { echo "skip=true" >> "$GITHUB_OUTPUT"; echo "::notice::$1"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; exit 0; }
+
+          if [ "$EVENT" = push ]; then
+            case "$HEAD_MSG" in *'[skip ship]'*) skip '提交信息含 [skip ship]，跳过。';; esac
+            # commits that this workflow landed itself (only possible with SHIP_TOKEN) are already handled
+            if [ "$BRANCH" = main ]; then case "$HEAD_MSG" in *'[ship]'*) skip '这次 main 的更新来自流水线本身，已在原来的运行里处理。';; esac; fi
+          fi
+          git fetch --quiet --tags --force origin
+          MAIN=$(git rev-parse origin/main)
+          if [ "$BRANCH" = main ]; then
+            HEAD=$MAIN
+          else
+            HEAD=$([ "$EVENT" = push ] && echo "$PUSHED_SHA" || git rev-parse "origin/$BRANCH")
+            if [ "$EVENT" = push ] && git merge-base --is-ancestor "$HEAD" "$MAIN"; then
+              skip "$BRANCH 已经在 main 里了，发布由 main 的运行处理。"
+            fi
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+          git checkout --quiet --detach "$MAIN"
+          if [ "$BRANCH" != main ]; then
+            if ! git merge --no-ff --no-edit -m "Merge $BRANCH [ship]" "$HEAD"; then
+              git merge --abort || true
+              echo "::error::$BRANCH conflicts with main. Merge main into the branch, resolve the conflicts and push again."
+              echo "**未合并**：\`$BRANCH\` 与 main 有冲突。请在分支上合并 main、解决冲突后再推送。" >> "$GITHUB_STEP_SUMMARY"
+              exit 1
+            fi
+          fi
+
+          # what to build and release
+          gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name' > "$RUNNER_TEMP/published.txt"
+          MODE=$APPS_INPUT
+          [ "$RELEASE_INPUT" = true ] || MODE=none
+          case "${HEAD_MSG:-}" in *'[skip release]'*) MODE=none;; esac
+          BASE_ARG=()
+          [ "$BRANCH" = main ] || BASE_ARG=(--base "$MAIN")
+          node scripts/windows-release/plan.mjs "${BASE_ARG[@]}" --head HEAD --published "$RUNNER_TEMP/published.txt" --apps "$MODE" > "$RUNNER_TEMP/plan.json"
+          cat "$RUNNER_TEMP/plan.json"
+          RELEASE=$(node -p "require('$RUNNER_TEMP/plan.json').release.join(' ')")
+
+          # versions: never reuse a released or reserved version
+          if [ -n "$RELEASE" ]; then
+            git tag -l > "$RUNNER_TEMP/tags.txt"
+            node scripts/windows-release/bump.mjs "$RUNNER_TEMP/tags.txt" $RELEASE | tee "$RUNNER_TEMP/bump.txt"
+            if ! git diff --quiet; then
+              MSG=$(awk '$2 != $3 { printf "%s%s %s", (n++ ? ", " : ""), $1, $3 }' "$RUNNER_TEMP/bump.txt")
+              git commit --quiet -am "Release $MSG [ship]"
+            fi
+            awk '{ printf "| %s | %s | %s |\n", $1, $2, $3 }' "$RUNNER_TEMP/bump.txt" | sed '1i | 软件 | package.json | 发布版本 |\n| --- | --- | --- |' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          SHA=$(git rev-parse HEAD)
+          if [ "$BRANCH" != main ] && [ "$HAS_SHIP_TOKEN" != true ] && [ -n "$(git diff --name-only "$MAIN" "$SHA" -- .github/workflows)" ]; then
+            # The built-in token may not push workflow files, so this branch cannot land by itself.
+            # Still build and test the branch as pushed, so the change gets its Windows results.
+            echo "::warning::$BRANCH changes .github/workflows; without a SHIP_TOKEN secret it cannot be merged automatically"
+            echo "**不会自动合并**：\`$BRANCH\` 修改了 \`.github/workflows/\`，内置令牌无权推送工作流文件。仍会运行测试；合并需要 \`SHIP_TOKEN\`（见 scripts/windows-release/README.md）或手动合并。" >> "$GITHUB_STEP_SUMMARY"
+            node scripts/windows-release/plan.mjs --base "$(git merge-base "$MAIN" "$HEAD")" --head "$HEAD" --apps none > "$RUNNER_TEMP/plan.json"
+            echo "sha=$HEAD" >> "$GITHUB_OUTPUT"
+            echo "blocked=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          if [ "$SHA" != "$MAIN" ] && [ "$SHA" != "$HEAD" ]; then
+            # builds check out this commit by SHA, so it must exist on GitHub until the run ends
+            TEMP="ship/run-$GITHUB_RUN_ID"
+            git push --quiet origin "$SHA:refs/heads/$TEMP"
+            echo "temp=$TEMP" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Plan outputs
+        id: plan
+        if: steps.candidate.outputs.skip == 'false'
+        run: |
+          node -e "
+            const p = require('$RUNNER_TEMP/plan.json'), fs = require('fs');
+            const o = [['gate', JSON.stringify(p.gate)], ['release', JSON.stringify(p.release)]];
+            for (const a of Object.keys(require('./scripts/windows-release/apps.json'))) o.push(['build_' + a.replace(/-/g, '_'), p.build.includes(a)]);
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, o.map(([k, v]) => k + '=' + v).join('\n') + '\n');
+          "
+
+  # One job per app (reusable workflows cannot be chosen by a matrix). Each builds, tests and signs
+  # the candidate on Windows and uploads <app>-windows.
+  phonica:
+    needs: plan
+    if: needs.plan.outputs.build_phonica == 'true'
+    uses: ./.github/workflows/phonica-windows.yml
+    with:
+      ref: ${{ needs.plan.outputs.sha }}
+      require-signing: ${{ contains(fromJSON(needs.plan.outputs.release), 'phonica') }}
+    secrets: inherit
+
+  motif:
+    needs: plan
+    if: needs.plan.outputs.build_motif == 'true'
+    uses: ./.github/workflows/motif-windows.yml
+    with:
+      ref: ${{ needs.plan.outputs.sha }}
+      require-signing: ${{ contains(fromJSON(needs.plan.outputs.release), 'motif') }}
+    secrets: inherit
+
+  particle-universe:
+    needs: plan
+    if: needs.plan.outputs.build_particle_universe == 'true'
+    uses: ./.github/workflows/particle-universe-windows.yml
+    with:
+      ref: ${{ needs.plan.outputs.sha }}
+      require-signing: ${{ contains(fromJSON(needs.plan.outputs.release), 'particle-universe') }}
+    secrets: inherit
+
+  moteng:
+    needs: plan
+    if: needs.plan.outputs.build_moteng == 'true'
+    uses: ./.github/workflows/moteng-windows.yml
+    with:
+      ref: ${{ needs.plan.outputs.sha }}
+      require-signing: ${{ contains(fromJSON(needs.plan.outputs.release), 'moteng') }}
+    secrets: inherit
+
+  hongyan-mail:
+    needs: plan
+    if: needs.plan.outputs.build_hongyan_mail == 'true'
+    uses: ./.github/workflows/hongyan-mail-windows.yml
+    with:
+      ref: ${{ needs.plan.outputs.sha }}
+      require-signing: ${{ contains(fromJSON(needs.plan.outputs.release), 'hongyan-mail') }}
+    secrets: inherit
+
+  land:
+    needs: [plan, phonica, motif, particle-universe, moteng, hongyan-mail]
+    if: always() && needs.plan.result == 'success' && needs.plan.outputs.skip == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      landed: ${{ steps.land.outputs.landed }}
+      releasable: ${{ steps.land.outputs.releasable }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SHIP_TOKEN || github.token }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Merge into main when the changed apps passed
+        id: land
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CAND: ${{ needs.plan.outputs.sha }}
+          GATE: ${{ needs.plan.outputs.gate }}
+          RELEASE: ${{ needs.plan.outputs.release }}
+          NEEDS: ${{ toJSON(needs) }}
+          BLOCKED: ${{ needs.plan.outputs.blocked }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          node scripts/windows-release/land.mjs
+
+  release:
+    needs: [plan, land, phonica, motif, particle-universe, moteng, hongyan-mail]
+    if: always() && needs.land.result == 'success' && needs.land.outputs.releasable != '[]' && needs.land.outputs.releasable != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.land.outputs.releasable) }}
+    steps:
+      - name: Check the build passed and is signed
+        env:
+          RESULT: ${{ needs[matrix.app].result }}
+          SIGNED: ${{ needs[matrix.app].outputs.signed }}
+        run: |
+          echo "build: $RESULT, signed: $SIGNED"
+          [ "$RESULT" = success ] && [ "$SIGNED" = true ]
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.plan.outputs.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ matrix.app }}-windows
+          path: ${{ runner.temp }}/dist
+      - name: Publish the release and move the update feed forward
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set +e
+          node scripts/windows-release/publish.mjs release "${{ matrix.app }}" "$RUNNER_TEMP/dist" "${{ needs.plan.outputs.sha }}"
+          code=$?
+          if [ $code -eq 3 ]; then
+            # another run took this version: start a fresh run on main so remaining changes get their own version
+            echo "::warning::version already taken by another run; starting a new run on main"
+            gh workflow run ship.yml --repo "$GITHUB_REPOSITORY" --ref main -f branch=main -f apps=auto
+            exit 0
+          fi
+          exit $code
+
+  cleanup:
+    needs: [plan, land, release]
+    if: always() && needs.plan.outputs.temp != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github
+          token: ${{ secrets.SHIP_TOKEN || github.token }}
+      - name: Delete the temporary candidate branch
+        run: git push origin --delete "${{ needs.plan.outputs.temp }}" || true

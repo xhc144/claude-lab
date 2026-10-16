@@ -18,13 +18,15 @@
 
 ---
 
-## 当前状态：源码保留，安装包隔离
+## 下载与安装
 
-原分支安装包被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`，真伪尚未确认。本次没有运行安装包，也没有关闭防护。当前主分支移除了 EXE；Git 历史保留原 tip 供追溯，详见 [隔离记录](QUARANTINE.md)。这里不提供安装包下载或绕过安全提示的指导。
+安装包由 GitHub Actions 从本目录源码构建，跑过类型检查、单元测试和打包后的启动测试，并用仓库证书签名，发布在 Releases 的 `hongyan-mail-v*`（下载 `HongyanMail-Setup-<版本>.exe`）。安装到当前用户目录，不需要管理员权限；装好后会自己下载并安装新版本（下载好后弹窗询问是否重启，不理会则在下次退出时安装）。便携版 zip 解压即用，数据保存在同目录的 `data` 文件夹，不自动更新。流程见 [scripts/windows-release/](../scripts/windows-release/README.md)。
+
+早先提交在分支里的历史安装包曾被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`，真伪未确认；它仍然隔离、不提供下载，与现在从源码重新构建的签名安装包无关，详见 [隔离记录](QUARANTINE.md)。
 
 本项目是 Electron / Node.js 桌面客户端，需要本地运行环境和 IMAP / SMTP 邮件连接；GitHub Pages 不能运行邮件后端。截图来自仓库测试服务器的虚构数据。
 
-源码只读审查发现：OAuth 设置中的 `clientSecret` 会写入本地明文设置，邮件正文缓存为 `.eml`；系统密钥库不可用时，备用密钥和密文位于同一数据目录。源代码与二进制安全性仍需独立评估，当前版本不作为处理真实账号凭据的推荐发布版。
+源码只读审查发现：OAuth 设置中的 `clientSecret` 会写入本地明文设置，邮件正文缓存为 `.eml`；系统密钥库不可用时，备用密钥和密文位于同一数据目录。处理重要账号前请先了解这些限制。
 
 ## 功能
 
@@ -153,7 +155,7 @@ npm install
 npm run dev          # Vite 热更新 + Electron
 npm run typecheck
 npm test             # 单元测试（90 个）
-npm run dist:win     # 生成 release/ 下的安装包与便携版（需要 makensis 与 zip）
+npm run dist:win     # 生成 release/ 下的安装包（Windows 上；其他系统加 --installer 并需要 Wine）与便携版
 ```
 
 **集成测试与端到端测试**使用本地的 Dovecot IMAP 服务器和 SMTP 服务器（`scripts/test-server/`，需要 `apt install dovecot-imapd`，以 root 运行）：
@@ -166,11 +168,11 @@ xvfb-run -a npm run test:e2e      # 17 步：驱动真正的 Electron 程序完�
 npm run mail-server               # 只启动测试邮件服务器，方便手动体验
 ```
 
-Windows 构建产物在 Linux 上通过 Wine 验证过：安装包静默安装 / 卸载（文件、中文快捷方式、卸载注册表项）、Windows 版 Electron 内置的 `node:sqlite`（含 FTS5 与中文路径）以及主进程启动。
+每次发布前，「hongyan-mail · Windows build」工作流在 Windows 上构建并检查：签名、自动更新文件、打包程序与静默安装后的程序都能启动到欢迎界面，卸载干净。
 
 ## 已知限制
 
 - 仅支持 IMAP / SMTP（不支持 POP3、Exchange EWS / ActiveSync），不含日历与通讯录同步。
 - Outlook 个人账户必须使用 OAuth2，需要先配置客户端 ID（见上文）。
-- 安装包未做代码签名，首次运行会出现 SmartScreen 提示。
+- 安装包使用自签名证书签名；没有导入这张证书的电脑首次运行仍可能出现 SmartScreen 提示。
 - 便携版不会在开始菜单创建快捷方式，Windows 可能因此不显示新邮件通知。

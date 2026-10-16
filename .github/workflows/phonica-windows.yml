@@ -1,35 +1,36 @@
 # Builds the 声准 Phonica Windows installer on a real Windows runner, runs the
 # unit tests, then installs the app silently and runs its built-in end-to-end
 # self-test (model loading, assessment, TTS, MP3/ZIP export, UI screenshots)
-# against both the unpacked build and the installed copy. With the WIN_CSC_LINK /
-# WIN_CSC_KEY_PASSWORD secrets set (scripts/windows-release/new-signing-cert.ps1), the
-# app and installer are signed; a release also refreshes the auto-update feed in the
-# phonica-latest release.
+# against both the unpacked build and the installed copy. The app and installer
+# are signed with the WIN_CSC_LINK / WIN_CSC_KEY_PASSWORD secrets.
+#
+# Called by ship.yml (自动合并与发布), which releases the uploaded build only when
+# every step here passed. Run it by hand to get a test build without releasing.
 name: phonica · Windows build
 
 on:
-  push:
-    paths:
-      - 'phonica/**'
-      - '!phonica/tools/**'
-      - '.github/workflows/phonica-windows.yml'
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      release:
-        description: 'Publish a GitHub Release with the installer'
+      ref:
+        description: Commit to build
+        type: string
+        required: true
+      require-signing:
         type: boolean
-        default: true
+        default: false
+    outputs:
+      signed:
+        value: ${{ jobs.build.outputs.signed }}
+  workflow_dispatch:
 
 permissions:
-  contents: write
-
-concurrency:
-  group: phonica-windows-${{ github.ref }}
-  cancel-in-progress: true
+  contents: read
 
 jobs:
   build:
     runs-on: windows-latest
+    outputs:
+      signed: ${{ steps.check.outputs.signed }}
     timeout-minutes: 120
     defaults:
       run:
@@ -38,6 +39,8 @@ jobs:
       ONNXRUNTIME_NODE_INSTALL: skip
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -84,23 +87,13 @@ jobs:
           WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
         run: npx electron-builder --win nsis --x64 --publish never
 
-      - name: Check signature and update files
+      - name: Check signature, update files and the update signature check
+        id: check
         shell: pwsh
         env:
-          SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
-        run: |
-          Get-ChildItem release -File | Format-Table Name, Length
-          foreach ($f in 'release/latest.yml', 'release/win-unpacked/resources/app-update.yml') {
-            if (-not (Test-Path $f)) { throw "$f missing: auto-update would not work" }
-            Write-Host "--- $f"; Get-Content $f
-          }
-          $setup = Get-ChildItem release/Phonica-Setup-*.exe | Select-Object -First 1
-          foreach ($exe in $setup.FullName, (Resolve-Path release/win-unpacked/Phonica.exe).Path) {
-            $sig = Get-AuthenticodeSignature -LiteralPath $exe
-            Write-Host "$([IO.Path]::GetFileName($exe)): $($sig.Status) $($sig.SignerCertificate.Subject)"
-            if ($env:SIGNING -eq 'true' -and $sig.Status -eq 'NotSigned') { throw "$exe is not signed although WIN_CSC_LINK is set" }
-          }
-          if ($env:SIGNING -ne 'true') { Write-Host '::warning::WIN_CSC_LINK not set: this build is unsigned (see scripts/windows-release/README.md)' }
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+        run: ../scripts/windows-release/check-build.ps1 -Release release -Setup 'Phonica-Setup-*.exe' -Exe 'win-unpacked\Phonica.exe' -RequireSigning:$${{ inputs.require-signing || false }}
 
       - name: Self-test the unpacked app
         shell: pwsh
@@ -134,20 +127,16 @@ jobs:
           $u = "$env:LOCALAPPDATA\Programs\Phonica\Uninstall Phonica.exe"
           if (Test-Path $u) { Start-Process -FilePath $u -ArgumentList '/S' -Wait; Write-Host 'uninstalled' }
 
-      - name: Checksums
-        shell: pwsh
-        run: |
-          Get-ChildItem release/Phonica-Setup-*.exe, release/latest.yml | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } | Tee-Object -FilePath release/SHA256SUMS.txt
-
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: Phonica-Setup-win-x64
+          name: phonica-windows
           path: |
             phonica/release/Phonica-Setup-*.exe
             phonica/release/Phonica-Setup-*.exe.blockmap
             phonica/release/latest.yml
             phonica/release/SHA256SUMS.txt
+          if-no-files-found: error
           compression-level: 0
           retention-days: 30
 
@@ -160,45 +149,3 @@ jobs:
             ${{ runner.temp }}\selftest-*.json
             ${{ runner.temp }}\shots-*\*.png
           if-no-files-found: ignore
-
-      - name: Publish release
-        if: (github.event_name == 'workflow_dispatch' && inputs.release) || contains(github.event.head_commit.message, '[release]')
-        env:
-          GH_TOKEN: ${{ github.token }}
-        shell: bash
-        run: |
-          VERSION=$(node -p "require('./package.json').version")
-          TAG="phonica-v$VERSION"
-          NOTES=$(cat <<EOF
-          **声准 Phonica $VERSION** — Windows 英语口语训练与发音评测软件（64 位安装包）。
-
-          下载下方的 \`Phonica-Setup-$VERSION-x64.exe\` 并运行即可安装（无需管理员权限，可自选安装目录）。首次运行会在“文档\\Phonica”中保存录音与评测数据。从 1.1.0 起，装好后软件会自己检查并安装新版本（设置 → 软件更新）。
-
-          - 本地音素级发音评测：准确度、完整度、流利度、语速、停顿、重音与语调，单词与音素级纠错并标注时间位置
-          - 波形、音高曲线、语谱图、元音共振峰图；英音 / 美音标准发音与变速播放
-          - 历史记录、进步趋势、两次录音对比，自动整理薄弱音素与单词并生成专项练习
-          - 可选 AI 深度分析（OpenAI / Claude / DeepSeek / Gemini / 兼容接口），以及不依赖 AI 的一键导出（高压缩 MP3 + 报告 + 结构化 JSON + 提示词 ZIP）
-
-          所有模型随安装包离线提供；评分在 speechocean762 数据集上校准。源码与说明：https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}/phonica
-
-          SHA-256：
-          \`\`\`
-          $(cat release/SHA256SUMS.txt)
-          \`\`\`
-          EOF
-          )
-          if gh release view "$TAG" >/dev/null 2>&1; then
-            gh release edit "$TAG" --title "声准 Phonica $VERSION（Windows 安装包）" --notes "$NOTES"
-          else
-            gh release create "$TAG" --target "${{ github.sha }}" --title "声准 Phonica $VERSION（Windows 安装包）" --notes "$NOTES"
-          fi
-          gh release upload "$TAG" release/Phonica-Setup-*.exe release/Phonica-Setup-*.exe.blockmap release/SHA256SUMS.txt --clobber
-
-          # The installed app reads releases/download/phonica-latest/latest.yml; it points at the files above.
-          node ../scripts/windows-release/update-feed.mjs release "${{ github.repository }}" "$TAG" feed/latest.yml
-          FEED=phonica-latest
-          if ! gh release view "$FEED" >/dev/null 2>&1; then
-            gh release create "$FEED" --prerelease --target "${{ github.sha }}" --title "声准 Phonica · 自动更新信息" \
-              --notes "已安装的声准 Phonica 从这里读取最新版本信息（latest.yml），安装包在对应的 phonica-v* 发布里。请不要删除这个发布。"
-          fi
-          gh release upload "$FEED" feed/latest.yml --clobber
