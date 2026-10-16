@@ -188,6 +188,8 @@ export function Settings() {
           </Row>
         </Section>
 
+        <UpdateSection autoUpdate={settings.autoUpdate !== false} onAutoUpdate={(v) => set({ autoUpdate: v })} />
+
         <Section title="关于评测引擎">
           <div className="small" style={{ lineHeight: 1.8 }}>
             <div>声准 Phonica {info?.version} · 引擎状态：{engine.ready ? '就绪' : engine.error ? `错误：${engine.error}` : '加载中'}{engine.info?.verifier ? ' · 双模型校验已启用' : ''}{engine.info?.tts ? ' · 离线语音合成已启用' : ''}</div>
@@ -203,6 +205,35 @@ export function Settings() {
       </div>
       {editing && <ProviderModal p={editing} onClose={() => setEditing(null)} onSave={saveProvider} />}
     </div>
+  );
+}
+
+function UpdateSection({ autoUpdate, onAutoUpdate }: { autoUpdate: boolean; onAutoUpdate: (v: boolean) => void }) {
+  const { update, toast } = useApp();
+  const u = update;
+  const busy = u?.state === 'checking' || u?.state === 'downloading';
+  const text = !u ? '' :
+    u.state === 'disabled' ? `自动更新不可用：${u.reason ?? ''}` :
+    u.state === 'checking' ? '正在检查…' :
+    u.state === 'downloading' ? `正在下载 ${u.version ?? ''}（${u.percent ?? 0}%）` :
+    u.state === 'ready' ? `新版本 ${u.version} 已下载，重启后生效；关闭软件时也会自动安装` :
+    u.state === 'none' ? '已是最新版本' :
+    u.state === 'error' ? `检查失败：${u.error}` : '尚未检查';
+  return (
+    <Section title="软件更新" desc="新版本从本项目的 GitHub 发布页下载，后台完成，不打断练习；下载后会核对文件完整性，签名版还会核对发布者证书。">
+      <Row label="自动检查更新" hint="启动后与每隔 6 小时检查一次">
+        <Switch on={autoUpdate} onChange={onAutoUpdate} />
+      </Row>
+      <Row label={`当前版本 ${u?.current ?? ''}`}>
+        <div className="row">
+          <span className={`small ${u?.state === 'error' ? 'score-poor' : u?.state === 'ready' || u?.state === 'none' ? 'score-good' : 'muted'}`}>{text}</span>
+          <div className="grow" />
+          {u?.state === 'ready'
+            ? <button className="btn primary" onClick={() => void api.installUpdate()}>重启并更新</button>
+            : <button className="btn" disabled={!u || u.state === 'disabled' || busy} onClick={async () => { try { const s = await api.checkUpdate(); if (s.state === 'none') toast('已是最新版本', 'success'); } catch (e) { toast((e as Error).message, 'error'); } }}>{busy ? '检查中…' : '检查更新'}</button>}
+        </div>
+      </Row>
+    </Section>
   );
 }
 

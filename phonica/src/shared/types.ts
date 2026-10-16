@@ -229,6 +229,20 @@ export interface Settings {
   aiActiveProvider: string;
   aiLanguage: 'zh' | 'en';
   dataDir: string;
+  /** check the release feed on start-up and every few hours */
+  autoUpdate: boolean;
+}
+
+export interface UpdateStatus {
+  state: 'disabled' | 'idle' | 'checking' | 'none' | 'downloading' | 'ready' | 'error';
+  current: string;
+  /** version being downloaded or ready to install */
+  version?: string;
+  percent?: number;
+  error?: string;
+  /** why updates are off (development build, self-test, no feed) */
+  reason?: string;
+  checkedAt?: string;
 }
 
 export interface HistoryEntry {

@@ -11,6 +11,7 @@ import { loadSettings } from './settings.ts';
 import { resourcePaths } from './paths.ts';
 import { decodeWav } from '../engine/wav.ts';
 import { buildExport } from './exporter.ts';
+import { initUpdater, updateConfigSummary } from './updater.ts';
 
 declare const __APP_VERSION__: string;
 
@@ -129,6 +130,7 @@ app.whenReady().then(async () => {
   session.defaultSession.setPermissionRequestHandler((wc, permission, cb) => cb(allowed.has(permission) && wc.getURL().startsWith('file://')));
   session.defaultSession.setPermissionCheckHandler((wc, permission, origin) => allowed.has(permission) && ((origin ?? wc?.getURL() ?? '').startsWith('file://')));
   registerIpc({ engine, store: getStore, win: () => win });
+  initUpdater({ win: () => win, enabled: () => loadSettings().autoUpdate !== false, selfTest: SELF_TEST });
   engine.onStatus = (s) => win?.webContents.send('engine:status', s);
   if (SELF_TEST) {
     await runSelfTest();
@@ -162,6 +164,7 @@ async function runSelfTest() {
   store = new Store(tmp);
   storeDir = loadSettings().dataDir;
   await step('engine', async () => ({ info: await engine.start() }));
+  await step('updater', async () => updateConfigSummary());
   const sample = join(resourcePaths().lexicon, '..', 'selftest', 'think.wav');
   let result: any = null;
   await step('assess', async () => {

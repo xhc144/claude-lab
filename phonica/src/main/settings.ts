@@ -35,6 +35,7 @@ export function defaultSettings(): Settings {
     aiActiveProvider: 'openai',
     aiLanguage: 'zh',
     dataDir: defaultDataDir(),
+    autoUpdate: true,
   };
 }
 

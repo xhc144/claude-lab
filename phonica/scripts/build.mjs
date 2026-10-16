@@ -33,7 +33,7 @@ await esbuild({
   outdir: join(root, 'dist/main'),
   outExtension: { '.js': '.mjs' },
   format: 'esm',
-  external: ['electron', 'onnxruntime-node'],
+  external: ['electron', 'onnxruntime-node', 'electron-updater'],
   banner: { js: esmBanner },
 });
 

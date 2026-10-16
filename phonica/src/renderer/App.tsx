@@ -17,7 +17,7 @@ const NAV: Array<{ id: Page; label: string; icon: ReactElement }> = [
 ];
 
 export function App() {
-  const { route, go, engine, historyVersion } = useApp();
+  const { route, go, engine, historyVersion, update } = useApp();
   const [mini, setMini] = useState<{ n: number; avg: number } | null>(null);
   useEffect(() => {
     api.listRecords().then((l) => {
@@ -33,6 +33,11 @@ export function App() {
       <div className="titlebar">
         <div className="brand"><div className="logo">声</div>声准<small>Phonica</small></div>
         <div className="spacer" />
+        {update?.state === 'ready' && (
+          <button className="btn sm primary update-ready" title="关闭软件时也会自动安装" onClick={() => void api.installUpdate()}>
+            新版本 {update.version} 已下载 · 重启更新
+          </button>
+        )}
         <div className={`status ${status}`} title={engine.error ?? ''}>
           <span className="dot" />
           {engine.ready ? (engine.info?.calibrated ? '本地评测引擎就绪' : '评测引擎就绪（未校准）') : engine.error ? '评测引擎错误' : '正在加载评测模型…'}
