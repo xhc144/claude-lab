@@ -176,13 +176,12 @@ export const projects = [
   {
     id: 'windmill-theorem', category: 'film', title: '一句话的证明，一架风车', en: 'The Windmill Theorem', cover: 'windmill-theorem',
     summary: '同一主题的另一个独立版本：费马平方和定理、扎吉尔对合与风车图，英文版为旁白 / 考官 / 考生三人对话的面试章节。',
-    tags: ['数论', '中文版 / 英文版', '双语字幕'],
+    tags: ['数论', '中文版 / 英文版', '通义千问配音', '双语字幕'],
     keywords: 'fermat two squares zagier windmill interview 费马 平方和 风车 扎吉尔 面试',
-    tools: 'Manim · TeX · FFmpeg', build: 'bash build.sh',
-    notice: '当前成片带字幕与背景音乐，尚未加入旁白配音。',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'TTS=qwen bash build.sh',
     versions: [
-      { id: 'zh', label: '中文版', src: 'windmill-theorem/output/windmill_theorem_zh.mp4', srt: 'windmill-theorem/output/windmill_theorem_zh.srt', note: '中文字幕（烧录）' },
-      { id: 'en', label: 'English', src: 'windmill-theorem/output/windmill_theorem_en.mp4', srt: 'windmill-theorem/output/windmill_theorem_en.en-zh.srt', note: '英文字幕 + 逐句中文释义，难词标注音标' },
+      { id: 'zh', label: '中文版', src: 'windmill-theorem/output/windmill_theorem_zh.mp4', srt: 'windmill-theorem/output/windmill_theorem_zh.srt', note: '中文配音（龙安鲁风），中文字幕（烧录）' },
+      { id: 'en', label: 'English', src: 'windmill-theorem/output/windmill_theorem_en.mp4', srt: 'windmill-theorem/output/windmill_theorem_en.en-zh.srt', note: '英文配音（旁白 / 考官 / 考生三个声音），英文字幕 + 逐句中文释义，难词标注音标' },
     ],
   },
   {

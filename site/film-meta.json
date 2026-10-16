@@ -129,6 +129,49 @@
   "height": 1080,
   "chapters": []
  },
+ "linear-regression-video/output/linear-regression.mp4": {
+  "size": 27373660,
+  "duration": 708.833,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "开场：哪条线最好"
+   },
+   {
+    "t": 38.5,
+    "title": "一 · 残差与最小二乘"
+   },
+   {
+    "t": 180.133,
+    "title": "二 · 求导：两个条件"
+   },
+   {
+    "t": 293.166,
+    "title": "三 · 换个角度：数据是一个向量"
+   },
+   {
+    "t": 335.833,
+    "title": "三 · 正交投影与正规方程"
+   },
+   {
+    "t": 467.933,
+    "title": "三 · 勾股定理与 R²"
+   },
+   {
+    "t": 518.333,
+    "title": "四 · 多列与弯曲的线"
+   },
+   {
+    "t": 585.666,
+    "title": "五 · 为什么叫回归"
+   },
+   {
+    "t": 662.633,
+    "title": "尾声"
+   }
+  ]
+ },
  "optimization-film/output/optimization_essence_1080p.mp4": {
   "size": 63866095,
   "duration": 1136,
@@ -187,14 +230,14 @@
   ]
  },
  "windmill-theorem/output/windmill_theorem_en.mp4": {
-  "size": 84601897,
-  "duration": 1704.733,
+  "size": 91455331,
+  "duration": 1494.099,
   "height": 1080,
   "chapters": []
  },
  "windmill-theorem/output/windmill_theorem_zh.mp4": {
-  "size": 67334381,
-  "duration": 1096.3,
+  "size": 70969862,
+  "duration": 1180.266667,
   "height": 1080,
   "chapters": []
  }

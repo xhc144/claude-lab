@@ -4,7 +4,7 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 23 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；七部影片都有带版本切换、章节跳转和下载链接的在线播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 23 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；八部影片都有带版本切换、章节跳转和下载链接的在线播放器。
 
 ## 浏览器交互项目
 
@@ -54,12 +54,12 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | --- | --- | --- | --- |
 | 《对称的语言》 | 约 3 分 40 秒的抽象代数主题影片 | [播放器](https://xhc144.github.io/claude-lab/films/symmetry-film/) | [symmetry-film/](symmetry-film/)；Python、Skia、Numba、FFmpeg；`bash build.sh preview` |
 | 《倒悬之海》The Sea Above | 约 71 秒的三维短片 | [播放器](https://xhc144.github.io/claude-lab/films/sea-above/) | [sea-above/](sea-above/)；Python、OpenGL/EGL、FFmpeg；`./make_film.sh` |
-| 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版与英文版（含模拟面试、难词音标、中英对照讲稿） | [播放器](https://xhc144.github.io/claude-lab/films/windmill-theorem/) | [windmill-theorem/](windmill-theorem/)；Manim、TeX、FFmpeg；`bash build.sh` |
+| 《费马平方和定理：一句话的证明，一架风车》 | 清华新领军英语面试用的数学讲解，中文版（约 20 分钟）与英文版（约 25 分钟，旁白 / 考官 / 考生三个声音），通义千问语音合成配音，含模拟面试、难词音标、中英对照讲稿 | [播放器](https://xhc144.github.io/claude-lab/films/windmill-theorem/) | [windmill-theorem/](windmill-theorem/)；Manim、TeX、Qwen TTS、FFmpeg；`TTS=qwen bash build.sh` |
 | 《风车里的素数》Primes in a Windmill | 费马平方和定理与扎吉尔一句话证明的 MG 数学讲解，面向新领军英语面试；中文版、英文版各一部，附中英对照讲稿 | [播放器](https://xhc144.github.io/claude-lab/films/fermat-windmill/)（含中英对照讲稿） | [fermat-windmill/](fermat-windmill/)；Manim、sherpa-onnx（Kokoro 语音）、FFmpeg；`bash build/make.sh` |
 | 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | [播放器](https://xhc144.github.io/claude-lab/films/fixed-point-film/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
 | 《最优化的本质》 | 约 19 分钟的中文数学讲解视频：不等式与极值、凸优化、梯度下降、线性规划，带配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/optimization-film/) | [optimization-film/](optimization-film/)；Manim、离线中文语音合成、FFmpeg；`python tools/build.py` |
 | 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/two-sample-test-video/) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
-| 《线性回归：从一条直线，到一次投影》 | 约 13 分钟的中文讲解视频：残差平方和、两个偏导条件、正交投影与正规方程、R²、“线性”与“回归”的含义；通义千问语音合成配音 | 主页有介绍卡片；成片待合成配音后生成于 `linear-regression-video/output/`，暂未接入播放器 | [linear-regression-video/](linear-regression-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
+| 《线性回归：从一条直线，到一次投影》 | 约 12 分钟的中文讲解视频：残差平方和、两个偏导条件、正交投影与正规方程、R²、“线性”与“回归”的含义；通义千问语音合成配音 | [播放器](https://xhc144.github.io/claude-lab/films/linear-regression-video/) | [linear-regression-video/](linear-regression-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
 
 站点播放器使用已经生成的 H.264/AAC 成片（与仓库内 `output/` 中的文件相同），不在浏览器执行 Python 渲染；影片制作脚本需要本地依赖与计算资源。双语影片可在播放器里切换中文版 / 英文版，带章节标记的影片可点击章节跳转，字幕 SRT 与讲稿可直接下载。《一架风车》（windmill-theorem）与《风车里的素数》（fermat-windmill）是同一主题的两个独立版本，均保留。
 
