@@ -22,5 +22,12 @@ export const ICONS = {
   expand: svg('<path d="M14 4 h6 v6 M10 20 H4 v-6 M20 4 l-7 7 M4 20 l7-7"/>'),
   link: svg('<path d="M10 14 a4 4 0 0 0 5.7 0 l3-3 a4 4 0 0 0 -5.7 -5.7 l-1 1"/><path d="M14 10 a4 4 0 0 0 -5.7 0 l-3 3 a4 4 0 0 0 5.7 5.7 l1-1"/>'),
   close: svg('<path d="M6 6 l12 12 M18 6 L6 18"/>'),
+  settings: svg('<circle cx="12" cy="12" r="3"/><path d="M12 2.8 v2.4 M12 18.8 v2.4 M2.8 12 h2.4 M18.8 12 h2.4 M5.5 5.5 l1.7 1.7 M16.8 16.8 l1.7 1.7 M5.5 18.5 l1.7-1.7 M16.8 7.2 l1.7-1.7"/><circle cx="12" cy="12" r="6.6" opacity=".45"/>'),
+  chev: svg('<path d="M6 9 l6 6 6-6"/>'),
+  arrow: svg('<path d="M5 12 h14 M13 6 l6 6-6 6"/>'),
+  download: svg('<path d="M12 4 v11 M7 10 l5 5 5-5 M5 19 h14"/>'),
+  code: svg('<path d="M9 7 l-5 5 5 5 M15 7 l5 5-5 5"/>'),
+  digits: svg('<path d="M4 17 V7 l-1.5 1.5"/><path d="M8.5 9 a2.3 2.3 0 1 1 3.6 1.9 L8.5 17 h4.2"/><path d="M15.5 8 h4 l-2.4 3.2 a2.6 2.6 0 1 1 -2 4.3"/>'),
+  copy: svg('<rect x="8" y="8" width="11" height="11" rx="2"/><path d="M5 15 V6 a1 1 0 0 1 1-1 h9"/>'),
   shuffle: svg('<path d="M4 7 h3 c5 0 5 10 10 10 h3 M17 14 l3 3-3 3"/><path d="M4 17 h3 c1.5 0 2.5-.9 3.3-2 M13.7 9 c.8-1.1 1.8-2 3.3-2 h3 M17 4 l3 3-3 3"/>'),
 };

@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   mat, det, trace, mul, apply, inverse, eigen, svd, polar, interpolate, rank, classify, power,
-  transpose, IDENTITY, rotation, approxEqual,
+  transpose, IDENTITY, rotation, approxEqual, norm, logm, expm, powReal, svdPath,
 } from '../../src/core/linalg.js';
 
 const close = (a, b, tol = 1e-12) => assert.ok(Math.abs(a - b) <= tol * Math.max(1, Math.abs(b)), `${a} ≉ ${b}`);
@@ -114,4 +114,43 @@ test('rank and geometric classification', () => {
   has(mat(2, 1, 1, 2), '对称');
   has(mat(1, -1, 1, 1), '保角');
   has(mat(1, 2, 3, 4), '翻转定向');
+});
+
+test('matrix logarithm and exponential: exp(log M) = M, Mᵗ is a one-parameter group', () => {
+  const close = (A, B, tol, msg) => assert.ok(approxEqual(A, B, tol), `${msg}: ${JSON.stringify(A)} vs ${JSON.stringify(B)}`);
+  const cases = [
+    mat(2, 1, 1, 3), // real positive eigenvalues
+    mat(0.9, -0.45, 0.45, 0.9), // complex
+    mat(1, 1, 0, 1), // shear (repeated, defective)
+    mat(-2, 0, 0, -2), // −2I = 2·R(π)
+    mat(3, 0, 0, 3),
+    rotation(2.5),
+  ];
+  for (const M of cases) {
+    const L = logm(M);
+    assert.ok(L, `log exists for ${JSON.stringify(M)}`);
+    close(expm(L), M, 1e-12, 'exp(log M)');
+    close(powReal(M, 2), mul(M, M), 1e-11, 'M^2');
+    close(mul(powReal(M, 0.3), powReal(M, 0.7)), M, 1e-12, 'M^0.3 M^0.7');
+  }
+  // sqrt of the shear [[1, 1], [0, 1]] is [[1, 1/2], [0, 1]]
+  close(powReal(mat(1, 1, 0, 1), 0.5), mat(1, 0.5, 0, 1), 1e-14, 'shear^½');
+  // no real logarithm: det ≤ 0, or distinct negative eigenvalues
+  assert.equal(logm(mat(1, 2, 3, 4)), null);
+  assert.equal(logm(mat(1, 1, 1, 0)), null);
+  assert.equal(logm(mat(-1, 0, 0, -2)), null);
+  assert.equal(logm(mat(-1, 1, 0, -1)), null);
+  // exp of a generator of rotations
+  close(expm(mat(0, -Math.PI / 2, Math.PI / 2, 0)), mat(0, -1, 1, 0), 1e-15, 'exp(π/2 J)');
+  // the SVD path ends at M and passes through Vᵀ and Σ·Vᵀ; 'exp' interpolation falls back to polar
+  let seed = 3;
+  const rnd = () => { seed = (seed * 16807) % 2147483647; return (seed / 2147483647) * 6 - 3; };
+  for (let k = 0; k < 200; k++) {
+    const M = mat(rnd(), rnd(), rnd(), rnd());
+    close(svdPath(M, 1), M, 1e-9 * Math.max(1, norm(M)), 'svdPath(1)');
+    close(svdPath(M, 0), IDENTITY, 1e-15, 'svdPath(0)');
+    const { Vt } = svd(M);
+    if (det(M) > 0) close(svdPath(M, 1 / 3), Vt, 1e-12, 'svdPath(1/3) = Vᵀ');
+    assert.ok(Number.isFinite(interpolate(M, 0.5, 'exp').a));
+  }
 });

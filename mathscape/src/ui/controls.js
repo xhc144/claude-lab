@@ -4,10 +4,39 @@ import { h, icon } from './dom.js';
 import { ICONS } from './icons.js';
 import { fmt } from './format.js';
 
-export function section(title, children, { aside = null, id = null } = {}) {
-  return h('section', { class: 'section', id },
-    title ? h('h2', { class: 'section-title' }, title, aside ? h('span', { class: 'aside' }, aside) : null) : null,
-    children);
+const COLLAPSED_KEY = 'mathscape.collapsed.v1';
+function collapsedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(COLLAPSED_KEY) || '[]')); } catch { return new Set(); }
+}
+
+/**
+ * Panel section. Clicking the title folds it away; the folded state is remembered per module
+ * (in localStorage when available).
+ */
+export function section(title, children, { aside = null, id = null, collapsible = true } = {}) {
+  if (!title) return h('section', { class: 'section', id }, children);
+  const route = (/^#\/([\w-]+)/.exec(location.hash) || [])[1] || '';
+  const key = `${route}|${title}`;
+  const toggleEl = collapsible
+    ? h('button', { type: 'button', class: 'section-toggle', 'aria-expanded': 'true', title: '折叠 / 展开' }, icon(ICONS.chev), h('span', null, title))
+    : title;
+  const asideEl = aside == null ? null : typeof aside === 'string' ? h('span', { class: 'aside' }, aside) : aside;
+  const el = h('section', { class: 'section', id }, h('h2', { class: 'section-title' }, toggleEl, asideEl), children);
+  if (collapsible) {
+    const set = (folded) => {
+      el.classList.toggle('collapsed', folded);
+      toggleEl.setAttribute('aria-expanded', String(!folded));
+    };
+    set(collapsedSet().has(key));
+    toggleEl.addEventListener('click', () => {
+      const folded = !el.classList.contains('collapsed');
+      set(folded);
+      const all = collapsedSet();
+      if (folded) all.add(key); else all.delete(key);
+      try { localStorage.setItem(COLLAPSED_KEY, JSON.stringify([...all])); } catch { /* storage unavailable */ }
+    });
+  }
+  return el;
 }
 
 export function slider({ label, min, max, step = 0.01, value, format = (v) => fmt(v, 3), onInput, id, title }) {

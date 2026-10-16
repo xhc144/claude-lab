@@ -10,6 +10,7 @@ import { fmt, fmtVec, fmtComplex } from '../ui/format.js';
 import { C, FONT, MONO, rampCss } from '../ui/theme.js';
 import { realFunction } from '../core/expr.js';
 import { integrate, densify, findEquilibria, contourZero, rk4Step, rk4Work } from '../core/ode.js';
+import { tolerances } from '../ui/settings.js';
 
 const VARS = ['x', 'y', 't', 'a', 'b', 'c', 'd'];
 const TRAJ_COLORS = ['#fbbf24', '#22d3ee', '#f472b6', '#a3e635', '#c084fc', '#fb923c', '#60a5fa', '#34d399'];
@@ -57,6 +58,9 @@ export const PRESETS_2D = [
 ];
 
 export function createPhase2D({ stage, panel, toast, query, setQuery, active }) {
+  // precision mode (read once: a change of setting re-creates the module)
+  const tol = tolerances();
+  const eqDigits = tol.hp ? 10 : 4;
   const st = {
     preset: PRESETS_2D[0],
     fSrc: '', gSrc: '',
@@ -110,7 +114,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   // ------------------------------------------------------------------ trajectories
   function solve(x0, y0, span, box) {
     const stop = (Y) => !(Number.isFinite(Y[0]) && Number.isFinite(Y[1])) || Math.abs(Y[0] - box.cx) > box.r || Math.abs(Y[1] - box.cy) > box.r;
-    const opts = { duration: st.T, rtol: 1e-8, atol: 1e-10 * span, maxSteps: 12000, stop };
+    const opts = { duration: st.T, rtol: tol.odeRtol, atol: tol.odeAtol * span, maxSteps: tol.odeMaxSteps, stop };
     const fw = integrate(sys, [x0, y0], { ...opts, direction: 1 });
     const bw = integrate(sys, [x0, y0], { ...opts, direction: -1 });
     const seg = span / 600;
@@ -151,7 +155,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
   // ------------------------------------------------------------------ equilibria & separatrices
   function recomputeStructure() {
     const b = vp.bounds;
-    st.eq = findEquilibria((x, y) => F(x, y), b, { seeds: 12 }).slice(0, 40);
+    st.eq = findEquilibria((x, y) => F(x, y), b, { seeds: 12, tol: tol.hp ? 1e-14 : 1e-10 }).slice(0, 40);
     st.seps = [];
     const span = Math.max(b.xmax - b.xmin, b.ymax - b.ymin);
     if (st.show.separatrices) {
@@ -164,7 +168,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
           const dir = lam > 0 ? 1 : -1; // unstable manifold forward, stable manifold backward in time
           for (const s of [1, -1]) {
             const eps = 1e-5 * span;
-            const sol = integrate(sys, [e.x + s * eps * v[0], e.y + s * eps * v[1]], { duration: 60, direction: dir, rtol: 1e-9, atol: 1e-12 * span, maxSteps: 12000, stop });
+            const sol = integrate(sys, [e.x + s * eps * v[0], e.y + s * eps * v[1]], { duration: 60, direction: dir, rtol: tol.sepRtol, atol: tol.sepAtol * span, maxSteps: tol.odeMaxSteps, stop });
             st.seps.push({ unstable: lam > 0, pts: densify(sol, span / 600) });
           }
         });
@@ -595,7 +599,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
     tip.innerHTML = '';
     tip.append(
       h('div', { class: 't-title', style: { color: (EQ_STYLE[e.type] || EQ_STYLE.degenerate).color } }, e.label),
-      h('div', { class: 't-mono' }, `(${fmt(e.x, 4)}, ${fmt(e.y, 4)})`),
+      h('div', { class: 't-mono' }, `(${fmt(e.x, eqDigits)}, ${fmt(e.y, eqDigits)})`),
       h('div', { class: 't-mono' }, eigenText(e)),
       h('div', { class: 't-mono' }, `tr J = ${fmt(e.tr, 3)}, det J = ${fmt(e.det, 3)}`));
   }
@@ -735,7 +739,7 @@ export function createPhase2D({ stage, panel, toast, query, setQuery, active }) 
       eqList.append(h('div', { class: 'note', style: { padding: '8px 10px' } },
         h('div', { style: { display: 'flex', justifyContent: 'space-between', gap: '8px' } },
           h('b', { style: { color: (EQ_STYLE[e.type] || EQ_STYLE.degenerate).color, fontWeight: 600 } }, e.label),
-          h('span', { style: { fontFamily: MONO, fontSize: '12px' } }, fmtVec(e.x, e.y, 3))),
+          h('span', { style: { fontFamily: MONO, fontSize: '12px' } }, fmtVec(e.x, e.y, tol.hp ? 8 : 3))),
         h('div', { style: { fontFamily: MONO, fontSize: '11.5px', color: C.text3 } }, eigenText(e))));
     }
     if (st.eq.length > 8) eqList.append(h('div', { class: 'hint' }, `…以及另外 ${st.eq.length - 8} 个`));

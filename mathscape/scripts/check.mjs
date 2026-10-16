@@ -57,6 +57,9 @@ for (const f of files) {
     if (!existsSync(target)) { problems.push(`${relative(ROOT, f)}: cannot resolve ${m[2]}`); continue; }
     const clause = m[1];
     const wanted = [];
+    // import * as X: every X.member used in the file must be exported
+    const ns = /^\*\s+as\s+([A-Za-z_$][\w$]*)$/.exec(clause.trim());
+    if (ns) for (const u of src.matchAll(new RegExp(`\\b${ns[1]}\\.([A-Za-z_$][\\w$]*)`, 'g'))) wanted.push(u[1]);
     const named = /\{([^}]*)\}/.exec(clause);
     if (named) for (const part of named[1].split(',')) { const n = part.trim().split(/\s+as\s+/)[0]; if (n) wanted.push(n); }
     const def = /^([A-Za-z_$][\w$]*)\s*(,|$)/.exec(clause.trim());

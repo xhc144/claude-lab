@@ -11,6 +11,7 @@ import { complexFunction } from '../core/expr.js';
 import { windingNumber } from '../core/complex.js';
 import { DomainJob } from '../core/domaincolor.js';
 import { adaptiveCurve, robustBounds } from '../core/curves.js';
+import { tolerances } from '../ui/settings.js';
 
 const PRESETS = [
   { id: 'sq', label: 'z²', f: 'z^2', grid: 'cart', R: 1.5 },
@@ -36,6 +37,8 @@ const FAM_B = [[34, 211, 238], [167, 139, 250]]; // Im z = c  or  arg z = θ
 const rgb = (c, a = 1) => `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a})`;
 
 function create({ stage, panel, toast, query, setQuery }) {
+  // precision mode (read once: a change of setting re-creates the module)
+  const tol = tolerances();
   const st = {
     src: query.get('f') || 'z^2',
     F: null,
@@ -135,7 +138,7 @@ function create({ stage, panel, toast, query, setQuery }) {
       const { cx, cy, r } = st.contour;
       const P = (s, o) => morph(cx + r * Math.cos(2 * Math.PI * s), cy + r * Math.sin(2 * Math.PI * s), o);
       st.contourImg = adaptiveCurve(P, 0, 1, { samples: 400, tol, breakLen: 60 / vpW.scale, maxDepth: 12, bounds });
-      st.winding = windingNumber((s, o) => { st.F.fn(cx + r * Math.cos(2 * Math.PI * s), cy + r * Math.sin(2 * Math.PI * s), st.a[0], st.a[1], o); });
+      st.winding = windingNumber((s, o) => { st.F.fn(cx + r * Math.cos(2 * Math.PI * s), cy + r * Math.sin(2 * Math.PI * s), st.a[0], st.a[1], o); }, { samples: tol.windingSamples, maxTurn: tol.windingTurn, maxDepth: tol.hp ? 18 : 14 });
     } else {
       st.contourImg = null;
       st.winding = null;
@@ -428,31 +431,46 @@ function create({ stage, panel, toast, query, setQuery }) {
     if (!st.probe) { probeCard.style.display = 'none'; probeRead.set('z', '—'); return; }
     const [x, y] = st.probe;
     const [u, v] = f(x, y);
-    const hstep = 1e-5 * Math.max(1, Math.hypot(x, y));
-    const [u1, v1] = f(x + hstep, y), [u0, v0] = f(x - hstep, y);
-    const [u3, v3] = f(x, y + hstep), [u2, v2] = f(x, y - hstep);
-    const fx = [(u1 - u0) / (2 * hstep), (v1 - v0) / (2 * hstep)];
-    const fy = [(u3 - u2) / (2 * hstep), (v3 - v2) / (2 * hstep)];
+    let fx, fy;
+    if (tol.hp) {
+      // five-point stencil, error O(h⁴): about 13 correct digits instead of 10
+      const hs = 1e-3 * Math.max(1, Math.hypot(x, y));
+      const d = (dx, dy) => {
+        const [a2, b2] = f(x + 2 * dx, y + 2 * dy), [a1, b1] = f(x + dx, y + dy);
+        const [c1, e1] = f(x - dx, y - dy), [c2, e2] = f(x - 2 * dx, y - 2 * dy);
+        return [(-a2 + 8 * a1 - 8 * c1 + c2) / (12 * hs), (-b2 + 8 * b1 - 8 * e1 + e2) / (12 * hs)];
+      };
+      fx = d(hs, 0);
+      fy = d(0, hs);
+    } else {
+      const hstep = 1e-5 * Math.max(1, Math.hypot(x, y));
+      const [u1, v1] = f(x + hstep, y), [u0, v0] = f(x - hstep, y);
+      const [u3, v3] = f(x, y + hstep), [u2, v2] = f(x, y - hstep);
+      fx = [(u1 - u0) / (2 * hstep), (v1 - v0) / (2 * hstep)];
+      fy = [(u3 - u2) / (2 * hstep), (v3 - v2) / (2 * hstep)];
+    }
     // Wirtinger derivatives: ∂f/∂z = (f_x − i f_y)/2, ∂f/∂z̄ = (f_x + i f_y)/2
     const dz = [(fx[0] + fy[1]) / 2, (fx[1] - fy[0]) / 2];
     const dzb = [(fx[0] - fy[1]) / 2, (fx[1] + fy[0]) / 2];
     const mod = Math.hypot(u, v);
     const dzbAbs = Math.hypot(...dzb);
-    const analytic = dzbAbs < 1e-5 * Math.max(1, Math.hypot(...dz));
+    const analytic = dzbAbs < (tol.hp ? 1e-8 : 1e-5) * Math.max(1, Math.hypot(...dz));
+    const dc = tol.hp ? 8 : 4; // digits in the stage card / in the panel
+    const dp = tol.hp ? 12 : 5;
     const rows = [
-      ['z', fmtComplex(x, y, 3)],
-      ['f(z)', fmtComplex(u, v, 4)],
-      ['|f|, arg f', Number.isFinite(mod) ? `${fmt(mod, 4)}, ${deg(Math.atan2(v, u))}` : '∞'],
-      ["f′(z)", Number.isFinite(dz[0]) ? fmtComplex(dz[0], dz[1], 4) : '—'],
+      ['z', fmtComplex(x, y, dc - 1)],
+      ['f(z)', fmtComplex(u, v, dc)],
+      ['|f|, arg f', Number.isFinite(mod) ? `${fmt(mod, dc)}, ${deg(Math.atan2(v, u))}` : '∞'],
+      ["f′(z)", Number.isFinite(dz[0]) ? fmtComplex(dz[0], dz[1], dc) : '—'],
     ];
     probeCard.style.display = '';
     probeCard.innerHTML = '';
     probeCard.append(h('div', { class: 'title' }, st.pinned ? '探针（已固定 · 双击取消）' : '探针（单击固定）'),
       h('dl', { class: 'readout' }, rows.flatMap(([k, val]) => [h('dt', { style: { fontFamily: MATH, fontStyle: 'italic' } }, k), h('dd', null, val)])));
-    probeRead.set('z', fmtComplex(x, y, 4));
-    probeRead.set('w', fmtComplex(u, v, 5));
-    probeRead.set('mod', Number.isFinite(mod) ? `${fmt(mod, 5)}  ∠ ${deg(Math.atan2(v, u))}` : '∞');
-    probeRead.set('dz', Number.isFinite(dz[0]) ? fmtComplex(dz[0], dz[1], 5) : '—');
+    probeRead.set('z', fmtComplex(x, y, dp - 1));
+    probeRead.set('w', fmtComplex(u, v, dp));
+    probeRead.set('mod', Number.isFinite(mod) ? `${fmt(mod, dp)}  ∠ ${deg(Math.atan2(v, u))}` : '∞');
+    probeRead.set('dz', Number.isFinite(dz[0]) ? fmtComplex(dz[0], dz[1], dp) : '—');
     probeRead.set('scale', Number.isFinite(dz[0]) ? `放大 ${fmt(Math.hypot(...dz), 4)} 倍，旋转 ${deg(Math.atan2(dz[1], dz[0]))}` : '—');
     probeRead.set('dzb', Number.isFinite(dzbAbs) ? `${fmt(dzbAbs, 3)}  ${analytic ? '✓ 满足 C–R 方程' : '✗ 非解析'}` : '—', analytic ? 'good' : 'warn');
   }
@@ -466,7 +484,7 @@ function create({ stage, panel, toast, query, setQuery }) {
     windChip.append(h('div', { class: 'title' }, '幅角原理'),
       h('div', { class: 'big', style: { fontSize: '15px' } }, ok ? `Z − P = ${w.winding}` : '曲线经过零点或极点'));
     windRead.set('n', ok ? String(w.winding) : '无法确定（曲线过零点/极点）', ok ? 'good' : 'warn');
-    windRead.set('exact', fmt(w.exact, 6));
+    windRead.set('exact', fmt(w.exact, tol.hp ? 12 : 6));
   }
 
   // ------------------------------------------------------------------ invalidation

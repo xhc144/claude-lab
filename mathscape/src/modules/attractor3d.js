@@ -11,6 +11,7 @@ import { fmt } from '../ui/format.js';
 import { C, FONT, MONO, MATH } from '../ui/theme.js';
 import { realFunction } from '../core/expr.js';
 import { rk4Step, rk4Work, largestLyapunov } from '../core/ode.js';
+import { tolerances } from '../ui/settings.js';
 
 const VARS = ['x', 'y', 'z', 't', 'a', 'b', 'c', 'd'];
 const COLORS = ['#ffb454', '#5ccfe6', '#f472b6', '#bae67e', '#d4bfff', '#ffd580'];
@@ -49,6 +50,8 @@ export const PRESETS_3D = [
 ];
 
 export function createAttractor3D({ stage, panel, query, setQuery, active }) {
+  // high precision averages the Lyapunov exponent over a 4× longer time (half the statistical error)
+  const tol = tolerances();
   const st = {
     preset: PRESETS_3D[0],
     src: ['', '', ''],
@@ -153,7 +156,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
     st.lyap = null;
     lyapTimer = setTimeout(() => {
       const dt = st.preset.dt;
-      const lam = largestLyapunov(sys, st.preset.ic, { dt, tau: 0.5, transient: 20, duration: Math.min(150, 40000 * dt) });
+      const lam = largestLyapunov(sys, st.preset.ic, { dt, tau: 0.5, transient: 20, duration: tol.hp ? Math.min(600, 160000 * dt) : Math.min(150, 40000 * dt) });
       st.lyap = Number.isFinite(lam) ? lam : NaN;
       updateInfo();
     }, 250);
@@ -336,7 +339,7 @@ export function createAttractor3D({ stage, panel, query, setQuery, active }) {
       h('dl', { class: 'readout', style: { minWidth: '190px' } },
         h('dt', null, '时间 t'), h('dd', { id: 'attr-t' }, fmt(st.t, 2)),
         h('dt', null, '轨线间距'), h('dd', null, Number.isFinite(d) ? fmt(d, 3) : '—'),
-        h('dt', { html: 'λ<sub>max</sub> 估计' }), h('dd', { id: 'attr-lyap' }, st.lyap == null ? '计算中…' : Number.isFinite(st.lyap) ? fmt(st.lyap, 3) : '发散')));
+        h('dt', { html: 'λ<sub>max</sub> 估计' }), h('dd', { id: 'attr-lyap' }, st.lyap == null ? '计算中…' : Number.isFinite(st.lyap) ? fmt(st.lyap, tol.hp ? 4 : 3) : '发散')));
   }
 
   // ------------------------------------------------------------------ loop & interaction
