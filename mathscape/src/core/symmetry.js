@@ -68,9 +68,9 @@ export function rosette(type, n) {
   return { periodic: 0, ops, L: [1, 0, 0, 1] };
 }
 
-const matMul = (P, Q) => [P[0] * Q[0] + P[1] * Q[2], P[0] * Q[1] + P[1] * Q[3], P[2] * Q[0] + P[3] * Q[2], P[2] * Q[1] + P[3] * Q[3]];
+export const matMul = (P, Q) => [P[0] * Q[0] + P[1] * Q[2], P[0] * Q[1] + P[1] * Q[3], P[2] * Q[0] + P[3] * Q[2], P[2] * Q[1] + P[3] * Q[3]];
 const matInv = (P) => { const d = P[0] * P[3] - P[1] * P[2]; return [P[3] / d, -P[1] / d, -P[2] / d, P[0] / d]; };
-const apply = (P, v) => [P[0] * v[0] + P[1] * v[1], P[2] * v[0] + P[3] * v[1]];
+export const apply = (P, v) => [P[0] * v[0] + P[1] * v[1], P[2] * v[0] + P[3] * v[1]];
 
 /** Cartesian group: { periodic (0, 1 or 2 independent translations), L = [a b], ops: [{ M, tau }] }. */
 export function group(kind, id, { n = 6, cell = 1 } = {}) {
@@ -163,4 +163,3 @@ export function containsMod(ops, A, t) {
     && [0, 1].every((i) => { const d = o.t[i] - t[i]; return Math.abs(d - Math.round(d)) < 1e-12; }));
 }
 
-export { matMul, apply };
