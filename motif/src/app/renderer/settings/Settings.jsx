@@ -2,7 +2,7 @@
 // let external agents (Claude Code, Codex, DeepSeek/Qwen-based agents…) drive the same library.
 import { useEffect, useState } from 'react';
 import { Icon } from '../icons.jsx';
-import { call } from '../api.js';
+import { call, on } from '../api.js';
 import { Modal, Field, TextInput, Switch, Select, Spinner, toast, CopyBox, confirmDialog } from '../ui.jsx';
 
 export function Settings({ onClose, initialTab = 'general' }) {
@@ -195,6 +195,27 @@ function Shortcuts() {
   );
 }
 
+function UpdateBox() {
+  const [u, setU] = useState(null);
+  useEffect(() => { call('update.status').then(setU).catch(() => {}); return on('update', setU); }, []);
+  if (!u) return null;
+  const busy = u.state === 'checking' || u.state === 'downloading';
+  const text = u.state === 'disabled' ? `自动更新不可用：${u.reason || ''}`
+    : u.state === 'checking' ? '正在检查…'
+    : u.state === 'downloading' ? `正在下载 ${u.version || ''}（${u.percent || 0}%）`
+    : u.state === 'ready' ? `新版本 ${u.version} 已下载，重启后生效；关闭 Motif 时也会自动安装`
+    : u.state === 'none' ? '已是最新版本'
+    : u.state === 'error' ? `检查失败：${u.error}` : '启动后会自动检查';
+  return (
+    <div className="row" style={{ gap: 12, margin: '16px 0', padding: '10px 12px', borderRadius: 8, background: 'var(--bg2)' }}>
+      <div style={{ flex: 1 }}><div style={{ fontWeight: 600 }}>软件更新</div><div className="dim" style={{ fontSize: 12 }}>{text}</div></div>
+      {u.state === 'ready'
+        ? <button className="btn primary" onClick={() => call('update.install')}>重启并更新</button>
+        : <button className="btn" disabled={u.state === 'disabled' || busy} onClick={() => call('update.check').then(setU).catch(() => {})}>{busy ? '检查中…' : '检查更新'}</button>}
+    </div>
+  );
+}
+
 function About() {
   const [info, setInfo] = useState(null);
   useEffect(() => { call('app.info').then(setInfo); }, []);
@@ -210,6 +231,7 @@ function About() {
       <p style={{ lineHeight: 1.75, color: 'var(--fg1)' }}>
         人与 AI 共用同一个项目系统：作品、模板、组件、主题与历史都保存在素材库中。AI 通过 Skill / CLI / MCP 提供内容与数据，Motif 完成复杂的设计与动画；人在编辑器里随时接手。
       </p>
+      <UpdateBox />
       <div className="dim" style={{ marginTop: 16, fontSize: 11.5 }}>使用的开源项目：Electron、React、three.js、MathJax、pdf.js、Lucide、fflate、FFmpeg，以及 Inter、Noto Sans/Serif SC、Fraunces、Space Grotesk、Archivo、Outfit、JetBrains Mono、Instrument Serif、马善政楷书 等字体。</div>
     </>
   );

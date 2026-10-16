@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import { handleProtocol, allowRoot } from './protocol.js';
 import { registerIpc } from './ipc.js';
 import * as store from '../../core/store/index.js';
+import { initUpdater } from './updater.js';
 
 let mainWindow = null;
 const pendingOpen = [];
@@ -56,6 +57,7 @@ export function runApp({ distDir }) {
     registerIpc({ distDir, getWindow: () => mainWindow, takePendingOpen: () => pendingOpen.splice(0) });
     Menu.setApplicationMenu(buildMenu());
     createWindow();
+    initUpdater({ getWindow: () => mainWindow });
   });
   app.on('window-all-closed', () => app.quit());
   app.on('activate', () => { if (!BrowserWindow.getAllWindows().length) createWindow(); });

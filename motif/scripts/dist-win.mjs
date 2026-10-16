@@ -25,6 +25,7 @@ const targets = dirOnly ? ['dir'] : ['nsis', 'zip'];
 const result = await build({
   projectDir: root,
   targets: Platform.WINDOWS.createTarget(targets, Arch.x64),
+  publish: 'never', // releases are uploaded by the workflow (see .github/workflows/motif-windows.yml)
   config: {
     win: { signAndEditExecutable: !cross },
   },
