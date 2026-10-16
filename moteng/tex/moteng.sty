@@ -1,0 +1,286 @@
+%% moteng.sty — 墨誊 Moteng 生成的 TeX 共用的环境与宏
+%%   \usepackage[style=chat]{moteng}   对话体（ctexart）
+%%   \usepackage[style=notes]{moteng}  讲义体（墨经 mojing-notes）
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{moteng}[2026/10/16 v1.0 Moteng chat-to-TeX support]
+
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{family=mt, prefix=mt@}
+\DeclareStringOption[chat]{style}
+\ProcessKeyvalOptions*
+
+\RequirePackage{xcolor}
+\RequirePackage{amsmath, amssymb, mathtools}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{fvextra}
+\RequirePackage{array, booktabs, colortbl, xltabular}
+\RequirePackage[export]{adjustbox}
+\RequirePackage{enumitem}
+\RequirePackage{cancel}
+\RequirePackage[normalem]{ulem}
+\IfFileExists{mhchem.sty}{\RequirePackage[version=4]{mhchem}}{}
+
+%% ---------------------------------------------------------------------------
+%% 颜色
+%% ---------------------------------------------------------------------------
+\def\mt@notes{notes}
+\ifx\mt@style\mt@notes
+  \colorlet{mtAccent}{mjAccent}
+  \colorlet{mtInk}{mjInk}
+  \colorlet{mtGray}{mjGray}
+  \colorlet{mtRule}{mjRule}
+  \colorlet{mtPaper}{mjLight}
+  \colorlet{mtQuestionBg}{mjAccent!5!white}
+\else
+  \definecolor{mtAccent}{HTML}{2F4F8F}
+  \definecolor{mtInk}{HTML}{1C1C1C}
+  \definecolor{mtGray}{HTML}{6B6F76}
+  \definecolor{mtRule}{HTML}{C9CDD4}
+  \definecolor{mtPaper}{HTML}{F5F6F8}
+  \definecolor{mtQuestionBg}{HTML}{EEF2FA}
+\fi
+\definecolor{mtCodeBg}{HTML}{F7F7F5}
+\definecolor{mtCodeRule}{HTML}{DADAD5}
+\definecolor{mtBad}{HTML}{A33A2B}
+\definecolor{mtThink}{HTML}{8A8F98}
+
+%% 代码高亮（与 GitHub 浅色主题相近）
+\definecolor{mtHLkw}{HTML}{CF222E}
+\definecolor{mtHLbi}{HTML}{8250DF}
+\definecolor{mtHLty}{HTML}{953800}
+\definecolor{mtHLnu}{HTML}{0550AE}
+\definecolor{mtHLst}{HTML}{0A3069}
+\definecolor{mtHLco}{HTML}{6E7781}
+\definecolor{mtHLfn}{HTML}{8250DF}
+\definecolor{mtHLat}{HTML}{0550AE}
+\definecolor{mtHLpa}{HTML}{24292F}
+\definecolor{mtHLme}{HTML}{0550AE}
+\definecolor{mtHLva}{HTML}{953800}
+\definecolor{mtHLad}{HTML}{116329}
+\definecolor{mtHLde}{HTML}{82071E}
+\definecolor{mtHLop}{HTML}{CF222E}
+%% \mtHLkw{…} 等：每个高亮类别一个单参数宏（fvextra 会在参数里插入断行点）
+\newcommand\mtHLkw[1]{\textbf{\textcolor{mtHLkw}{#1}}}
+\newcommand\mtHLco[1]{\textit{\textcolor{mtHLco}{#1}}}
+\newcommand\mtHLbi[1]{\textcolor{mtHLbi}{#1}}
+\newcommand\mtHLty[1]{\textcolor{mtHLty}{#1}}
+\newcommand\mtHLnu[1]{\textcolor{mtHLnu}{#1}}
+\newcommand\mtHLst[1]{\textcolor{mtHLst}{#1}}
+\newcommand\mtHLfn[1]{\textcolor{mtHLfn}{#1}}
+\newcommand\mtHLat[1]{\textcolor{mtHLat}{#1}}
+\newcommand\mtHLpa[1]{\textcolor{mtHLpa}{#1}}
+\newcommand\mtHLme[1]{\textcolor{mtHLme}{#1}}
+\newcommand\mtHLva[1]{\textcolor{mtHLva}{#1}}
+\newcommand\mtHLad[1]{\textcolor{mtHLad}{#1}}
+\newcommand\mtHLde[1]{\textcolor{mtHLde}{#1}}
+\newcommand\mtHLop[1]{\textcolor{mtHLop}{#1}}
+\def\mtBS{\char92\relax}
+\def\mtLB{\char123\relax}
+\def\mtRB{\char125\relax}
+
+%% ---------------------------------------------------------------------------
+%% 代码块
+%% ---------------------------------------------------------------------------
+\fvset{breaklines=true, breakanywhere=true, breaknonspaceingroup=true, fontsize=\small, tabsize=4,
+  formatcom=\ifdefined\xeCJKVerbAddon\xeCJKVerbAddon\fi,
+  breaksymbolleft={\color{mtGray}\tiny\ensuremath{\hookrightarrow}}}
+\newtcolorbox{mtcodebox}[1]{%
+  enhanced, breakable, colback=mtCodeBg, colframe=mtCodeRule, boxrule=.4pt, arc=2pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=.6\baselineskip, after skip=.6\baselineskip,
+  overlay unbroken and first={%
+    \if\relax\detokenize{#1}\relax\else
+      \node[anchor=north east, inner sep=2pt, font=\scriptsize\sffamily\color{mtGray}]
+        at ([xshift=-4pt,yshift=-2pt]frame.north east) {#1};%
+    \fi}}
+
+%% ---------------------------------------------------------------------------
+%% 提问、引用、提示框
+%% ---------------------------------------------------------------------------
+\newtcolorbox{mtquestion}[1]{%
+  enhanced, breakable, colback=mtQuestionBg, colframe=mtQuestionBg, boxrule=0pt, arc=3pt,
+  left=8pt, right=8pt, top=6pt, bottom=6pt,
+  before skip=\baselineskip, after skip=.8\baselineskip,
+  borderline west={2pt}{0pt}{mtAccent},
+  fontupper=\normalsize,
+  before upper={{\sffamily\bfseries\small\color{mtAccent}#1}\par\smallskip}}
+
+\newtcolorbox{mtquote}{%
+  enhanced, breakable, colback=white, colframe=white, boxrule=0pt, arc=0pt,
+  left=8pt, right=0pt, top=1pt, bottom=1pt, before skip=.5\baselineskip, after skip=.5\baselineskip,
+  borderline west={1.5pt}{0pt}{mtRule}, fontupper=\color{mtInk!85}}
+
+\newtcolorbox{mtnote}[2]{%
+  enhanced, breakable, colback=mtPaper, colframe=mtRule, boxrule=.4pt, arc=2pt,
+  left=8pt, right=8pt, top=5pt, bottom=5pt, before skip=.7\baselineskip, after skip=.7\baselineskip,
+  #1,
+  before upper={\if\relax\detokenize{#2}\relax\else{\sffamily\bfseries\small\color{mtGray}#2}\par\smallskip\fi}}
+\tcbset{mtwidget/.style={borderline={.4pt}{0pt}{mtRule,dashed}, boxrule=0pt, colframe=mtPaper},
+  mtthinking/.style={colback=white, fontupper=\small\color{mtThink}},
+  mtdetails/.style={}}
+
+%% ---------------------------------------------------------------------------
+%% 对话标签、题头
+%% ---------------------------------------------------------------------------
+\newcommand\mtanswerhead[1]{%
+  \par\addvspace{.3\baselineskip}%
+  \noindent{\sffamily\bfseries\small\color{mtAccent}#1}\par\nobreak\smallskip\@afterheading}
+\newcommand\mtrule{\par\smallskip\noindent{\color{mtRule}\rule{\linewidth}{.4pt}}\par\smallskip}
+\newcommand\mtturnsep{\par\bigskip\noindent{\color{mtRule}\rule{\linewidth}{.3pt}}\par\bigskip}
+
+%% ---------------------------------------------------------------------------
+%% 图片、链接、行内代码
+%% ---------------------------------------------------------------------------
+\newcommand\mtimage[2]{%
+  \par\smallskip
+  \begin{center}
+    \includegraphics[max width=\linewidth, max height=.45\textheight, keepaspectratio]{#1}%
+    \if\relax\detokenize{#2}\relax\else\par\smallskip{\small\color{mtGray}#2}\fi
+  \end{center}\par}
+\newcommand\mtmissing[1]{{\small\color{mtGray}[图片：#1]}}
+\newcommand\mtcode[1]{{\ttfamily\small\color{mtInk}#1}}
+
+%% ---------------------------------------------------------------------------
+%% 编译失败的公式：显示源码
+%% ---------------------------------------------------------------------------
+\newcommand\mtbadmath[1]{{\ttfamily\small\color{mtBad}#1}}
+\newtcolorbox{mtbaddisplay}{%
+  enhanced, breakable, colback=mtBad!4!white, colframe=mtBad!40!white, boxrule=.4pt, arc=2pt,
+  left=6pt, right=6pt, top=3pt, bottom=3pt, before skip=.5\baselineskip, after skip=.5\baselineskip,
+  fontupper=\small}
+
+%% ---------------------------------------------------------------------------
+%% 符号
+%% ---------------------------------------------------------------------------
+\DeclareRobustCommand\mtcheck{\ensuremath{\checkmark}}
+\DeclareRobustCommand\mtcross{\ensuremath{\times}}
+\DeclareRobustCommand\mtwarn{\textbf{!}}
+\DeclareRobustCommand\mtidea{\ensuremath{\star}}
+\DeclareRobustCommand\mtpin{\ensuremath{\triangleright}}
+
+%% ---------------------------------------------------------------------------
+%% KaTeX / MathJax 里常见、LaTeX 没有的命令
+%% ---------------------------------------------------------------------------
+\providecommand\R{\mathbb{R}}
+\providecommand\N{\mathbb{N}}
+\providecommand\Z{\mathbb{Z}}
+\providecommand\Q{\mathbb{Q}}
+\providecommand\C{\mathbb{C}}
+\providecommand\Reals{\mathbb{R}}
+\providecommand\reals{\mathbb{R}}
+\providecommand\Complex{\mathbb{C}}
+\providecommand\natnums{\mathbb{N}}
+\providecommand\Natural{\mathbb{N}}
+\providecommand\Integer{\mathbb{Z}}
+\providecommand\RR{\mathbb{R}}
+\providecommand\NN{\mathbb{N}}
+\providecommand\ZZ{\mathbb{Z}}
+\providecommand\QQ{\mathbb{Q}}
+\providecommand\CC{\mathbb{C}}
+\providecommand\bm[1]{\boldsymbol{#1}}
+\providecommand\bold[1]{\mathbf{#1}}
+\providecommand\Bbb[1]{\mathbb{#1}}
+\providecommand\gt{>}
+\providecommand\lt{<}
+\providecommand\And{\mathbin{\&}}
+\providecommand\degree{^\circ}
+\providecommand\argmax{\operatorname*{arg\,max}}
+\providecommand\argmin{\operatorname*{arg\,min}}
+\providecommand\sgn{\operatorname{sgn}}
+\providecommand\Tr{\operatorname{Tr}}
+\providecommand\tr{\operatorname{tr}}
+\providecommand\rank{\operatorname{rank}}
+\providecommand\diag{\operatorname{diag}}
+\providecommand\Var{\operatorname{Var}}
+\providecommand\Cov{\operatorname{Cov}}
+\providecommand\E{\mathbb{E}}
+\providecommand\Pr{\operatorname{Pr}}
+\providecommand\llbracket{[\![}
+\providecommand\rrbracket{]\!]}
+\providecommand\lBrace{\{\!\{}
+\providecommand\rBrace{\}\!\}}
+\providecommand\vcentcolon{\mathrel{:}}
+\providecommand\coloneq{\coloneqq}
+\providecommand\Coloneqq{::=}
+\providecommand\iff{\Longleftrightarrow}
+\providecommand\space{\ }
+\providecommand\textsc[1]{#1}
+\providecommand\mathclap[1]{#1}
+\providecommand\dotsc{\ldots}
+\providecommand\set[1]{\{#1\}}
+\providecommand\abs[1]{\lvert #1\rvert}
+\providecommand\norm[1]{\lVert #1\rVert}
+\providecommand\Set[1]{\left\{#1\right\}}
+\providecommand\tfrac[2]{{\textstyle\frac{#1}{#2}}}
+\providecommand\ce[1]{\mathrm{#1}}
+\providecommand\pu[1]{\mathrm{#1}}
+\providecommand\hdashline{\hline}
+\providecommand\Alpha{\mathrm{A}}
+\providecommand\Beta{\mathrm{B}}
+\providecommand\Epsilon{\mathrm{E}}
+\providecommand\Zeta{\mathrm{Z}}
+\providecommand\Eta{\mathrm{H}}
+\providecommand\Iota{\mathrm{I}}
+\providecommand\Kappa{\mathrm{K}}
+\providecommand\Mu{\mathrm{M}}
+\providecommand\Nu{\mathrm{N}}
+\providecommand\Omicron{\mathrm{O}}
+\providecommand\Rho{\mathrm{P}}
+\providecommand\Tau{\mathrm{T}}
+\providecommand\Chi{\mathrm{X}}
+\providecommand\omicron{o}
+\providecommand\thetasym{\vartheta}
+\providecommand\empty{\emptyset}
+\providecommand\isin{\in}
+\providecommand\infin{\infty}
+\providecommand\harr{\leftrightarrow}
+\providecommand\Harr{\Leftrightarrow}
+\providecommand\hArr{\Leftrightarrow}
+\providecommand\lrArr{\Leftrightarrow}
+\providecommand\Larr{\Leftarrow}
+\providecommand\lArr{\Leftarrow}
+\providecommand\Rarr{\Rightarrow}
+\providecommand\rArr{\Rightarrow}
+\providecommand\uarr{\uparrow}
+\providecommand\darr{\downarrow}
+\providecommand\larr{\leftarrow}
+\providecommand\rarr{\rightarrow}
+\providecommand\sub{\subset}
+\providecommand\sube{\subseteq}
+\providecommand\supe{\supseteq}
+\providecommand\weierp{\wp}
+\providecommand\image{\Im}
+\providecommand\real{\Re}
+\providecommand\clubs{\clubsuit}
+\providecommand\diamonds{\diamondsuit}
+\providecommand\hearts{\heartsuit}
+\providecommand\spades{\spadesuit}
+\providecommand\sdot{\cdot}
+\providecommand\plusmn{\pm}
+\providecommand\ang{\angle}
+\providecommand\alef{\aleph}
+\providecommand\alefsym{\aleph}
+\providecommand\exist{\exists}
+\providecommand\Dagger{\ddagger}
+\providecommand\varnothing{\emptyset}
+\providecommand\mathbbm[1]{\mathbb{#1}}
+\providecommand\cal[1]{\mathcal{#1}}
+\providecommand\operatornamewithlimits[1]{\operatorname*{#1}}
+\providecommand\Overrightarrow[1]{\overrightarrow{#1}}
+\providecommand\overgroup[1]{\overparen{#1}}
+\providecommand\undergroup[1]{\underparen{#1}}
+\providecommand\overparen[1]{\overset{\frown}{#1}}
+\providecommand\underparen[1]{\underset{\smile}{#1}}
+\providecommand\vdotswithin[1]{\vdots}
+
+%% 段落与断行：中文、长公式与长网址混排时宁可疏一些，也不要出界
+\setlength{\emergencystretch}{3em}
+\tolerance=2000
+\hbadness=10000
+\setlist{itemsep=.15\baselineskip, topsep=.3\baselineskip, parsep=.2\baselineskip}
+
+\ifx\mt@style\mt@notes\else
+  \@ifpackageloaded{hyperref}{}{\RequirePackage{hyperref}}
+  \hypersetup{colorlinks=true, linkcolor=mtAccent, urlcolor=mtAccent, citecolor=mtAccent,
+    bookmarksopen=true, bookmarksnumbered=false, unicode=true, pdfdisplaydoctitle=true}
+\fi
+\endinput
