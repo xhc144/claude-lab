@@ -59,6 +59,7 @@ Phonica、Motif、音乐粒子宇宙与墨誊的安装版会自动更新：工�
 | 《总有一点不动》The Point That Stays | 约 5 分钟的布劳威尔不动点定理讲解动画，中英双语配音与字幕，附英语面试问答稿 | [播放器](https://xhc144.github.io/claude-lab/films/fixed-point-film/) | [fixed-point-film/](fixed-point-film/)；Canvas、MathJax、Playwright、Kokoro TTS、FFmpeg；`bash build.sh` |
 | 《最优化的本质》 | 约 19 分钟的中文数学讲解视频：不等式与极值、凸优化、梯度下降、线性规划，带配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/optimization-film/) | [optimization-film/](optimization-film/)；Manim、离线中文语音合成、FFmpeg；`python tools/build.py` |
 | 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/two-sample-test-video/) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
+| 《线性回归：从一条直线，到一次投影》 | 约 13 分钟的中文讲解视频：残差平方和、两个偏导条件、正交投影与正规方程、R²、“线性”与“回归”的含义；通义千问语音合成配音 | 待合成配音后生成于 `linear-regression-video/output/`（暂未接入播放器） | [linear-regression-video/](linear-regression-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
 
 站点播放器使用已经生成的 H.264/AAC 成片（与仓库内 `output/` 中的文件相同），不在浏览器执行 Python 渲染；影片制作脚本需要本地依赖与计算资源。双语影片可在播放器里切换中文版 / 英文版，带章节标记的影片可点击章节跳转，字幕 SRT 与讲稿可直接下载。《一架风车》（windmill-theorem）与《风车里的素数》（fermat-windmill）是同一主题的两个独立版本，均保留。
 
