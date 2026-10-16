@@ -189,3 +189,11 @@ git push origin recovered-project
 | 分支 | 原 tip / 恢复 SHA | 处理依据 |
 | --- | --- | --- |
 | `claude/nifty-cori-rk2hop` | `f02b2ca9bd0c2510f0ec9e40a93856fd9cb58776` | 与整合完成时的 main 相同，全部历史已保留 |
+
+## 2026-10-15 站点改版与项目补全
+
+- 主页改为由 `site/projects.mjs` 生成（`scripts/build-site.mjs`），收录仓库全部 21 个项目，分五类：浏览器交互、AI 与产品原型、桌面软件、影片、写作与工具。新收录：论衡、律影 Motif、音乐粒子宇宙、声准 Phonica、五部数学讲解影片、视频讲解稿、Claude 数学技能。
+- 新增关键词搜索（`/` 或 Ctrl/⌘+K 聚焦，结果写入 `?q=&c=`）、分类筛选、深浅色主题、项目封面（`site/covers/`，约 620 KB）与移动端布局；墨经页面换用同一套页头、主题与页脚。
+- 影片播放器从 2 个扩展为 7 个，双语影片可切换版本，带章节的影片可点击跳转，提供 MP4、SRT 与讲稿下载。发布的成片与各项目 `output/` 中的文件逐字节相同，Git 复用同一 blob，仓库体积不增加；Pages 发布目录约 600 MB，低于 1 GB 上限。
+- `check-pages.mjs` 新增影片目录白名单：`films/<id>/` 下只允许 `index.html`、`film[-xx].mp4|srt`、`transcript.html|pdf`；MP4 与 SRT 不得出现在其他目录。
+- 桌面软件只提供介绍与链接：Phonica 指向 Releases，Motif 与 Particle Universe 指向各自的 Windows 构建工作流；鸿雁邮箱仍只链接源码与隔离说明，不发布任何截图或安装包。

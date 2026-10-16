@@ -1,0 +1,203 @@
+1
+00:00:01,200 --> 00:00:03,335
+Stir your coffee as much as you like.
+
+2
+00:00:03,455 --> 00:00:07,777
+Swirl it one way, then the other. Just stir smoothly, without splashing.
+
+3
+00:00:07,897 --> 00:00:12,554
+When it settles, at least one point on the surface is exactly where it started.
+
+4
+00:00:12,674 --> 00:00:14,865
+That's not luck. It's a theorem.
+
+5
+00:00:19,565 --> 00:00:22,395
+Here's another picture. Take a map of a park.
+
+6
+00:00:22,515 --> 00:00:25,912
+Lay it on the ground, anywhere inside that same park.
+
+7
+00:00:26,032 --> 00:00:30,765
+Rotate it, shrink it, even crumple it, as long as it stays inside the park.
+
+8
+00:00:30,885 --> 00:00:35,514
+Then some point on the map lies exactly on top of the real place it shows.
+
+9
+00:00:35,634 --> 00:00:42,663
+For a simple rotate-and-shrink, you can even find it: keep applying the same move, and the maps spiral right into it.
+
+10
+00:00:44,663 --> 00:00:52,037
+This is Brouwer's fixed point theorem, proved by the Dutch mathematician L. E. J. Brouwer around 1910.
+
+11
+00:00:52,157 --> 00:00:56,094
+Let D be a closed disk, or a solid ball in any dimension.
+
+12
+00:00:56,214 --> 00:01:04,300
+If f is a continuous map from D into itself, then f has a fixed point: a point x with f(x) = x.
+
+13
+00:01:04,420 --> 00:01:10,629
+Give every point an arrow, from where it is to where it goes. Somewhere, an arrow must have length zero.
+
+14
+00:01:12,229 --> 00:01:14,986
+In one dimension, you already know this theorem.
+
+15
+00:01:15,106 --> 00:01:21,512
+The disk becomes the interval from 0 to 1, and the graph of f is a continuous curve in the unit square.
+
+16
+00:01:21,632 --> 00:01:25,503
+It starts on or above the diagonal, and ends on or below it.
+
+17
+00:01:25,623 --> 00:01:33,026
+So it must cross the line y = x. The crossing is a fixed point. That's just the intermediate value theorem.
+
+18
+00:01:34,226 --> 00:01:35,979
+Every condition matters.
+
+19
+00:01:36,099 --> 00:01:40,165
+Cut a hole in the disk, and a simple rotation moves every point.
+
+20
+00:01:40,285 --> 00:01:44,480
+Remove the boundary, and points can slide toward an edge that isn't there.
+
+21
+00:01:44,600 --> 00:01:48,204
+Allow a jump, and the curve can leap right over the diagonal.
+
+22
+00:01:48,324 --> 00:01:53,815
+The space must be closed, bounded and without holes, and the map must be continuous.
+
+23
+00:01:55,215 --> 00:02:01,171
+So why is it true? One of the most beautiful proofs is a coloring puzzle, called Sperner's lemma.
+
+24
+00:02:01,291 --> 00:02:07,131
+Take a big triangle with a red, a green and a blue corner, and cut it into small triangles.
+
+25
+00:02:07,251 --> 00:02:14,994
+Now color every vertex. The only rule: a vertex on a side must use one of the two colors at the ends of that side.
+
+26
+00:02:15,114 --> 00:02:16,879
+Inside, anything goes.
+
+27
+00:02:16,999 --> 00:02:24,248
+Sperner's lemma says there is always a small triangle with all three colors. In fact, there's an odd number of them.
+
+28
+00:02:24,368 --> 00:02:30,112
+Here's the proof. Think of each small triangle as a room, and each red-green edge as a door.
+
+29
+00:02:30,232 --> 00:02:38,327
+Along the bottom side, the colors go from red to green, so there's an odd number of doors. The other two sides have no doors at all.
+
+30
+00:02:38,447 --> 00:02:46,438
+Walk in through a door, and leave each room by its other door. A room has at most two doors, so you never enter the same room twice.
+
+31
+00:02:46,558 --> 00:02:53,531
+So the walk either leaves through another door on the bottom, or it stops in a room with just one door: a rainbow room.
+
+32
+00:02:53,651 --> 00:03:00,250
+The bottom doors pair up, but there's an odd number of them. So at least one walk must end in a rainbow room.
+
+33
+00:03:02,050 --> 00:03:07,634
+Now, back to Brouwer. Let f map the triangle into itself, and draw the arrows again.
+
+34
+00:03:07,754 --> 00:03:11,484
+Color each vertex by a corner its arrow moves away from.
+
+35
+00:03:11,604 --> 00:03:17,891
+A point on a side can only move away from that side's two corners, so this is a legal Sperner coloring.
+
+36
+00:03:18,011 --> 00:03:24,012
+So there's a rainbow triangle: a tiny spot where the arrows move away from all three corners.
+
+37
+00:03:24,132 --> 00:03:29,222
+Make the grid finer and finer, and the rainbow triangles close in on a single point.
+
+38
+00:03:29,342 --> 00:03:33,380
+There, the arrow would have to move away from all three corners at once.
+
+39
+00:03:33,500 --> 00:03:39,510
+But the three coordinates always add up to one, so they can't all go down. None of them can change.
+
+40
+00:03:39,630 --> 00:03:42,602
+The arrow has length zero. That's the fixed point.
+
+41
+00:03:44,602 --> 00:03:47,216
+This idea reaches far beyond geometry.
+
+42
+00:03:47,336 --> 00:03:56,200
+In 1950, John Nash used a fixed point theorem to prove that every finite game has an equilibrium, if players may randomize.
+
+43
+00:03:56,320 --> 00:03:58,919
+That work later earned him a Nobel Prize.
+
+44
+00:03:59,039 --> 00:04:08,612
+In the board game Hex, a full board always has exactly one winner. Amazingly, that fact is equivalent to Brouwer's theorem in two dimensions.
+
+45
+00:04:08,732 --> 00:04:14,833
+And Sperner's lemma can even tell roommates how to split the rent, so that nobody wants to swap rooms.
+
+46
+00:04:16,633 --> 00:04:20,432
+But notice what the theorem doesn't tell you: where the fixed point is.
+
+47
+00:04:20,552 --> 00:04:22,419
+It's a pure existence proof.
+
+48
+00:04:22,539 --> 00:04:26,910
+Ironically, Brouwer later became the great champion of intuitionism,
+
+49
+00:04:27,030 --> 00:04:31,990
+a school which insists that to prove something exists, you must show how to construct it.
+
+50
+00:04:32,110 --> 00:04:37,844
+Today, how hard it is to actually find a fixed point is a deep question in computer science.
+
+51
+00:04:37,964 --> 00:04:43,744
+So the next time you stir your coffee, remember: somewhere in that cup, one point hasn't moved at all.
