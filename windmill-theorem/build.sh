@@ -4,8 +4,10 @@
 # Environment:
 #   PY=python  MANIM=manim  JOBS=4  PRESET=slow  CRF=24
 #   ONLY="S06_Windmill S07_Proof"   render only these scenes
-#   TTS_ZH=<dir of vits-melo-tts-zh_en>  TTS_EN=<dir of kokoro-en-v0_19>   (optional; without them the
-#   timing is estimated and the video carries music + subtitles only)
+#   TTS=qwen   synthesize the narration with Model Studio qwen-audio-3.0-tts-plus (key in .env, see README)
+#   TTS_ZH=<dir of vits-melo-tts-zh_en>  TTS_EN=<dir of kokoro-en-v0_19>   (offline alternative)
+#   Without any of them the existing build/audio is used; with no audio at all the timing is
+#   estimated and the video carries music + subtitles only.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PY:-python3}
@@ -22,6 +24,7 @@ mkdir -p build/logs
 
 for L in $LANGS; do
   if [ "$STEP" != assemble ]; then
+    if [ "${TTS:-}" = qwen ]; then $PY tts/qwen.py --lang "$L"; fi
     if [ "$L" = zh ] && [ -n "${TTS_ZH:-}" ]; then $PY tts/synth.py --lang zh --model-dir "$TTS_ZH"; fi
     if [ "$L" = en ] && [ -n "${TTS_EN:-}" ]; then $PY tts/synth.py --lang en --model-dir "$TTS_EN"; fi
     echo "== rendering $L ($QDIR) with $JOBS jobs"
