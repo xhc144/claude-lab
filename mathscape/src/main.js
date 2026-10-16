@@ -17,8 +17,9 @@ import chaos from './modules/chaos.js';
 import life from './modules/life.js';
 import symmetry from './modules/symmetry.js';
 import probability from './modules/probability.js';
+import waves from './modules/waves.js';
 
-const MODULES = [matrix, complexMap, ode, threebody, fractal, fourier, chaos, life, symmetry, probability];
+const MODULES = [matrix, complexMap, ode, threebody, fractal, fourier, chaos, life, symmetry, probability, waves];
 const byId = Object.fromEntries(MODULES.map((m) => [m.id, m]));
 
 const root = document.getElementById('app');
