@@ -212,3 +212,9 @@ git push origin recovered-project
 | `claude/ecstatic-thompson-5wwaij` | `b290a8c0ab072ecafc51e489f625f754d6cab9de` | 鸿雁邮箱 1.1 源码 | 分支提交的 `HongyanMail-Setup-1.1.0.exe` 按隔离规则不进入主树；README 保留隔离说明 |
 
 同时加入「Ship · 自动合并与发布」（`.github/workflows/ship.yml`，说明见 `scripts/windows-release/README.md`）：五个 Windows 软件在 Windows 上构建测试、用仓库已有证书签名，`claude/**` 分支通过后自动合并进 main，有改动的软件各自发布并推进自动更新信息。鸿雁邮箱改用 electron-builder 打包并加入自动更新，安装包从源码重新构建。
+
+## 2026-10-16 主页更新
+
+- 新收录《线性回归：从一条直线，到一次投影》（`linear-regression-video/`），共 23 个项目。成片尚未配音生成，所以只有介绍卡片（“待配音”），链接到说明与源码，没有播放器页面；`build-site.mjs` 现在只为带 `versions` 的影片生成播放器。
+- 桌面软件栏目说明改为：签名安装包发布在 GitHub Releases，装好后自动更新（五个软件都已有 `<软件>-v*` 发布）。
+- `node scripts/check-pages.mjs` 通过（179 个白名单文件、493 个相对引用）；桌面与 390px 宽度下新卡片无脚本错误、无横向滚动。
