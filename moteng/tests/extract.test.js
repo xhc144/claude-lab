@@ -184,3 +184,12 @@ test('unknown site falls back to markdown roots', () => {
   assert.equal(c.generic, true);
   assert.deepEqual(c.messages.map((m) => m.role), ['user', 'assistant']);
 });
+
+test('CRLF line ends (Windows checkouts and saves) never reach TeX as blank lines', () => {
+  const html = fs.readFileSync(path.join(FIX, 'selftest/edge-cases.html'), 'utf8').replace(/\n/g, '\r\n');
+  const c = extractConversation(loadHtmlString(html, { name: 'crlf' }));
+  const json = JSON.stringify(c.messages[0].blocks);
+  assert.ok(!json.includes('\\r'));
+  const inl = c.messages[0].blocks[0].inl;
+  assert.ok(inl.some((x, i) => x.t === 'br' && inl[i + 1]?.t === 'br'), 'the blank line stays a paragraph break');
+});

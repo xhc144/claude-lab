@@ -104,7 +104,9 @@ export function shorten(text, n = 36) {
  * @param {object} opts    { platform?: id, includeThinking?: bool }
  */
 export function extractConversation(loaded, opts = {}) {
-  const html = loaded.fragment ? `<!doctype html><html><head><meta charset="utf-8"></head><body>${loaded.html}</body></html>` : loaded.html;
+  // HTML parsers turn CRLF into LF (the spec says so); linkedom does not.
+  const src = loaded.html.replace(/\r\n?/g, '\n');
+  const html = loaded.fragment ? `<!doctype html><html><head><meta charset="utf-8"></head><body>${src}</body></html>` : src;
   const { document } = parseHTML(html);
   const order = docOrder(document);
   let platform = opts.platform ? platformById(opts.platform) : detectPlatform(document, loaded.url);

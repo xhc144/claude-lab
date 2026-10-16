@@ -24,7 +24,7 @@ export function escapeText(s, { symbols = true } = {}) {
   let out = '';
   const clean = String(s)
     .replace(/[​‌‍⁠﻿­]/g, '')
-    .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, '');
+    .replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '');
   let last = 0;
   EMOJI_RE.lastIndex = 0;
   let m;
