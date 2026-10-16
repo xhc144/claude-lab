@@ -1,0 +1,84 @@
+# 部署 GitHub Pages（https://xhc144.github.io/claude-lab/）：发布 main 分支的 docs/。
+#
+#   push main（改动 docs/）→ 部署
+#   Ship 合并分支后        → Ship 用 workflow_dispatch 触发本工作流（内置令牌的推送不会触发 push 事件，也不会触发 Pages 自带的构建）
+#   手动运行               → Actions → 「Pages · 部署」→ Run workflow
+#
+# 按仓库 Settings → Pages 的发布来源选择做法：
+#   GitHub Actions          → 打包 docs/ 并用 actions/deploy-pages 部署（推荐）
+#   Deploy from a branch    → 请求 GitHub 重新构建 main:/docs，并等待构建结果
+#   未启用                  → 失败，并说明去哪里打开
+name: Pages · 部署
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      build_type: ${{ steps.config.outputs.build_type }}
+    steps:
+      - name: Read the Pages publishing source
+        id: config
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! cfg=$(gh api "repos/$GITHUB_REPOSITORY/pages" 2>&1); then
+            echo "::error::GitHub Pages 没有启用（$cfg）。在 Settings → Pages → Build and deployment → Source 选择 GitHub Actions，然后重新运行本工作流。"
+            exit 1
+          fi
+          build_type=$(jq -r .build_type <<<"$cfg")
+          echo "Pages: build_type=$build_type source=$(jq -c .source <<<"$cfg") url=$(jq -r .html_url <<<"$cfg")"
+          echo "build_type=$build_type" >> "$GITHUB_OUTPUT"
+
+      - name: Rebuild main:/docs (Deploy from a branch)
+        if: steps.config.outputs.build_type == 'legacy'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" --jq .status
+          for i in $(seq 1 60); do
+            sleep 15
+            build=$(gh api "repos/$GITHUB_REPOSITORY/pages/builds/latest")
+            status=$(jq -r .status <<<"$build")
+            echo "build: $status $(jq -r .commit <<<"$build")"
+            case "$status" in
+              built) exit 0 ;;
+              errored) echo "::error::Pages 构建失败：$(jq -r '.error.message // "未知原因"' <<<"$build")"; exit 1 ;;
+            esac
+          done
+          echo "::error::Pages 构建 15 分钟内没有完成"
+          exit 1
+
+  deploy:
+    needs: source
+    if: needs.source.outputs.build_type == 'workflow'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - name: Deploy
+        id: deploy
+        uses: actions/deploy-pages@v4
