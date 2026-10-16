@@ -2,12 +2,18 @@
 %%   \usepackage[style=chat]{moteng}   对话体（ctexart）
 %%   \usepackage[style=notes]{moteng}  讲义体（墨经 mojing-notes）
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{moteng}[2026/10/16 v1.0 Moteng chat-to-TeX support]
+\ProvidesPackage{moteng}[2026/10/17 v1.2 Moteng chat-to-TeX support]
+%%   选项：style=chat|notes  theme=web|print  accent=<RRGGBB>  code=light|dark
 
 \RequirePackage{kvoptions}
 \SetupKeyvalOptions{family=mt, prefix=mt@}
 \DeclareStringOption[chat]{style}
+\DeclareStringOption[print]{theme}
+\DeclareStringOption[]{accent}
+\DeclareStringOption[light]{code}
 \ProcessKeyvalOptions*
+\def\mt@web{web}
+\def\mt@dark{dark}
 
 \RequirePackage{xcolor}
 \RequirePackage{amsmath, amssymb, mathtools}
@@ -16,6 +22,7 @@
 \RequirePackage{array, booktabs, colortbl, xltabular}
 \RequirePackage[export]{adjustbox}
 \RequirePackage{enumitem}
+\RequirePackage{varwidth}
 \RequirePackage{cancel}
 \RequirePackage[normalem]{ulem}
 \IfFileExists{mhchem.sty}{\RequirePackage[version=4]{mhchem}}{}
@@ -39,8 +46,27 @@
   \definecolor{mtPaper}{HTML}{F5F6F8}
   \definecolor{mtQuestionBg}{HTML}{EEF2FA}
 \fi
+\ifx\mt@accent\@empty\else
+  \definecolor{mtAccent}{HTML}{\mt@accent}
+  \colorlet{mtQuestionBg}{mtAccent!7!white}
+\fi
+%% 网页原貌：灰色气泡、接近 ChatGPT 的中性色
+\ifx\mt@theme\mt@web
+  \definecolor{mtInk}{HTML}{0D0D0D}
+  \definecolor{mtGray}{HTML}{6E6E80}
+  \definecolor{mtRule}{HTML}{E3E3E3}
+  \definecolor{mtPaper}{HTML}{F7F7F8}
+  \definecolor{mtBubble}{HTML}{F1F1F1}
+\else
+  \colorlet{mtBubble}{mtQuestionBg}
+\fi
+\colorlet{mtBubbleText}{mtInk}
 \definecolor{mtCodeBg}{HTML}{F7F7F5}
 \definecolor{mtCodeRule}{HTML}{DADAD5}
+\definecolor{mtCodeHead}{HTML}{EDEDEB}
+\definecolor{mtCodeHeadText}{HTML}{5D5D5D}
+\definecolor{mtCodeText}{HTML}{1F2328}
+\definecolor{mtInlineCodeBg}{HTML}{ECECEC}
 \definecolor{mtBad}{HTML}{A33A2B}
 \definecolor{mtThink}{HTML}{8A8F98}
 
@@ -59,6 +85,28 @@
 \definecolor{mtHLad}{HTML}{116329}
 \definecolor{mtHLde}{HTML}{82071E}
 \definecolor{mtHLop}{HTML}{CF222E}
+\ifx\mt@code\mt@dark
+  %% 深色代码块（与 GitHub 深色主题相近）
+  \definecolor{mtCodeBg}{HTML}{0D1117}
+  \definecolor{mtCodeRule}{HTML}{0D1117}
+  \definecolor{mtCodeHead}{HTML}{2F2F2F}
+  \definecolor{mtCodeHeadText}{HTML}{C9C9C9}
+  \definecolor{mtCodeText}{HTML}{E6EDF3}
+  \definecolor{mtHLkw}{HTML}{FF7B72}
+  \definecolor{mtHLbi}{HTML}{D2A8FF}
+  \definecolor{mtHLty}{HTML}{FFA657}
+  \definecolor{mtHLnu}{HTML}{79C0FF}
+  \definecolor{mtHLst}{HTML}{A5D6FF}
+  \definecolor{mtHLco}{HTML}{8B949E}
+  \definecolor{mtHLfn}{HTML}{D2A8FF}
+  \definecolor{mtHLat}{HTML}{79C0FF}
+  \definecolor{mtHLpa}{HTML}{E6EDF3}
+  \definecolor{mtHLme}{HTML}{79C0FF}
+  \definecolor{mtHLva}{HTML}{FFA657}
+  \definecolor{mtHLad}{HTML}{7EE787}
+  \definecolor{mtHLde}{HTML}{FFA198}
+  \definecolor{mtHLop}{HTML}{FF7B72}
+\fi
 %% \mtHLkw{…} 等：每个高亮类别一个单参数宏（fvextra 会在参数里插入断行点）
 \newcommand\mtHLkw[1]{\textbf{\textcolor{mtHLkw}{#1}}}
 \newcommand\mtHLco[1]{\textit{\textcolor{mtHLco}{#1}}}
@@ -84,14 +132,26 @@
 \fvset{breaklines=true, breakanywhere=true, fontsize=\small, tabsize=4,
   formatcom=\ifdefined\xeCJKVerbAddon\xeCJKVerbAddon\fi,
   breaksymbolleft={\color{mtGray}\tiny\ensuremath{\hookrightarrow}}}
-\newtcolorbox{mtcodebox}[1]{%
-  enhanced, breakable, colback=mtCodeBg, colframe=mtCodeRule, boxrule=.4pt, arc=2pt,
-  left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=.6\baselineskip, after skip=.6\baselineskip,
-  overlay unbroken and first={%
-    \if\relax\detokenize{#1}\relax\else
-      \node[anchor=north east, inner sep=2pt, font=\scriptsize\sffamily\color{mtGray}]
-        at ([xshift=-4pt,yshift=-2pt]frame.north east) {#1};%
-    \fi}}
+\ifx\mt@theme\mt@web
+  %% 网页原貌：圆角代码卡片，顶部一条标题栏写语言名
+  \newtcolorbox{mtcodebox}[1]{%
+    enhanced, breakable, colback=mtCodeBg, colframe=mtCodeRule, boxrule=.5pt, arc=6pt,
+    left=8pt, right=8pt, top=5pt, bottom=5pt, before skip=.7\baselineskip, after skip=.7\baselineskip,
+    coltext=mtCodeText,
+    title={\if\relax\detokenize{#1}\relax\strut\else#1\fi}, attach title to upper=false,
+    coltitle=mtCodeHeadText, colbacktitle=mtCodeHead, fonttitle=\scriptsize\sffamily,
+    toptitle=2pt, bottomtitle=2pt, lefttitle=8pt, titlerule=0pt}
+\else
+  \newtcolorbox{mtcodebox}[1]{%
+    enhanced, breakable, colback=mtCodeBg, colframe=mtCodeRule, boxrule=.4pt, arc=2pt,
+    left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=.6\baselineskip, after skip=.6\baselineskip,
+    coltext=mtCodeText,
+    overlay unbroken and first={%
+      \if\relax\detokenize{#1}\relax\else
+        \node[anchor=north east, inner sep=2pt, font=\scriptsize\sffamily\color{mtGray}]
+          at ([xshift=-4pt,yshift=-2pt]frame.north east) {#1};%
+      \fi}}
+\fi
 
 %% ---------------------------------------------------------------------------
 %% 提问、引用、提示框
@@ -103,6 +163,25 @@
   borderline west={2pt}{0pt}{mtAccent},
   fontupper=\normalsize,
   before upper={{\sffamily\bfseries\small\color{mtAccent}#1}\par\smallskip}}
+
+%% 网页气泡：短提问靠右、按内容收窄（不能跨页，长提问用 mtquestion）
+\newcommand\mtbubble[2]{%
+  \par\addvspace{.8\baselineskip}%
+  \noindent\hfill
+  \tcbox[enhanced, colback=mtBubble, colframe=mtBubble, coltext=mtBubbleText, boxrule=0pt, arc=9pt,
+    left=8pt, right=8pt, top=5pt, bottom=5pt, nobeforeafter, tcbox raise base]{%
+    \begin{varwidth}{.78\linewidth}\raggedright\setlength{\parskip}{.5\baselineskip}%
+      \if\relax\detokenize{#1}\relax\else{\sffamily\bfseries\scriptsize\color{mtBubbleText!60}#1}\par\smallskip\fi
+      #2%
+    \end{varwidth}}%
+  \par\addvspace{.5\baselineskip}}
+\newtcolorbox{mtquestionbubble}[1]{%
+  enhanced, breakable, colback=mtBubble, colframe=mtBubble, coltext=mtBubbleText, boxrule=0pt, arc=9pt,
+  left=10pt, right=10pt, top=6pt, bottom=6pt, enlarge left by=.12\linewidth, width=.88\linewidth,
+  before skip=\baselineskip, after skip=.6\baselineskip,
+  before upper={\if\relax\detokenize{#1}\relax\else{\sffamily\bfseries\scriptsize\color{mtBubbleText!60}#1}\par\smallskip\fi}}
+\newenvironment{mtquestionplain}[1]{%
+  \par\addvspace{\baselineskip}\noindent{\sffamily\bfseries\small\color{mtAccent}#1}\par\nobreak\smallskip}{\par\addvspace{.4\baselineskip}}
 
 \newtcolorbox{mtquote}{%
   enhanced, breakable, colback=white, colframe=white, boxrule=0pt, arc=0pt,
@@ -130,14 +209,19 @@
 %% ---------------------------------------------------------------------------
 %% 图片、链接、行内代码
 %% ---------------------------------------------------------------------------
-\newcommand\mtimage[2]{%
+%% \mtimage[<includegraphics 选项>]{文件}{说明}
+\def\mtImageMaxHeight{.45}
+\newcommand\mtimage[3][max width=\linewidth]{%
   \par\smallskip
   \begin{center}
-    \includegraphics[max width=\linewidth, max height=.45\textheight, keepaspectratio]{#1}%
-    \if\relax\detokenize{#2}\relax\else\par\smallskip{\small\color{mtGray}#2}\fi
+    \includegraphics[#1, max height=\mtImageMaxHeight\textheight, keepaspectratio]{#2}%
+    \if\relax\detokenize{#3}\relax\else\par\smallskip{\small\color{mtGray}#3}\fi
   \end{center}\par}
 \newcommand\mtmissing[1]{{\small\color{mtGray}[图片：#1]}}
 \newcommand\mtcode[1]{{\ttfamily\small\color{mtInk}#1}}
+%% 网页里的行内代码：浅灰底色（只用于较短的片段，长片段需要断行）
+\newtcbox{\mtcodechip}{on line, colback=mtInlineCodeBg, colframe=mtInlineCodeBg, boxrule=0pt, arc=2.5pt,
+  boxsep=0pt, left=2.2pt, right=2.2pt, top=1.2pt, bottom=1.2pt, fontupper=\ttfamily\small}
 
 %% ---------------------------------------------------------------------------
 %% 编译失败的公式：显示源码
@@ -271,6 +355,24 @@
 \providecommand\overparen[1]{\overset{\frown}{#1}}
 \providecommand\underparen[1]{\underset{\smile}{#1}}
 \providecommand\vdotswithin[1]{\vdots}
+
+%% 行间公式上下的空白：比 LaTeX 默认紧凑，接近网页里公式与文字的距离。
+%% \normalsize 会重设这些长度，所以挂在 \normalsize 后面。
+\newcommand\mt@displayskips{%
+  \abovedisplayskip=.45\baselineskip plus .15\baselineskip minus .15\baselineskip
+  \belowdisplayskip=\abovedisplayskip
+  \abovedisplayshortskip=.25\baselineskip plus .1\baselineskip
+  \belowdisplayshortskip=\abovedisplayshortskip}
+\AtBeginDocument{\g@addto@macro\normalsize{\mt@displayskips}\mt@displayskips}
+%% 不接在文字后面的行间公式（列表、标题之后）：抵消 TeX 为它起的空行
+\newcommand\mtdisplaystart{\par\vspace*{-\baselineskip}\noindent}
+%% 动态内容（图表、交互组件）的截图
+\newcommand\mtdynamic[3][max width=\linewidth]{%
+  \par\smallskip
+  \begin{center}
+    \includegraphics[#1, max height=\mtImageMaxHeight\textheight, keepaspectratio]{#2}%
+    \par\smallskip{\footnotesize\sffamily\color{mtGray}#3}%
+  \end{center}\par}
 
 %% 段落与断行：中文、长公式与长网址混排时宁可疏一些，也不要出界
 \setlength{\emergencystretch}{3em}

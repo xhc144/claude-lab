@@ -111,19 +111,20 @@ function either(name, byName, byPath, f) {
  * first, then by file, so the same .tex still compiles on another machine
  * (where neither exists, the class's Fandol fonts stay in place).
  */
-export function cjkFontTeX(plan) {
+export function cjkFontTeX(plan, { noFakeSlant = false } = {}) {
   const lines = [];
   const s = plan.serif;
+  const slant = noFakeSlant ? '' : 'AutoFakeSlant=0.2';
   if (s) {
     const n = familyName(s);
     const b = plan.serifBold;
     const nb = familyName(b);
     const k = plan.kai;
     const nk = familyName(k);
-    const nameOpts = [b ? (nb && nb !== n ? `BoldFont=${nb}` : '') : 'AutoFakeBold=2.5', nk ? `ItalicFont=${nk}` : 'AutoFakeSlant=0.2'].filter(Boolean).join(', ');
+    const nameOpts = [b ? (nb && nb !== n ? `BoldFont=${nb}` : '') : 'AutoFakeBold=2.5', nk ? `ItalicFont=${nk}` : slant].filter(Boolean).join(', ');
     const bp = b && sameDir(s, b) ? b : null;
     const kp = k && sameDir(s, k) ? k : null;
-    const sp = spec(s, [bp ? boldSpec(bp) : 'AutoFakeBold=2.5', kp ? `ItalicFont=${kp.file}` : 'AutoFakeSlant=0.2'].join(', '));
+    const sp = spec(s, [bp ? boldSpec(bp) : 'AutoFakeBold=2.5', kp ? `ItalicFont=${kp.file}` : slant].filter(Boolean).join(', '));
     lines.push(either(n,
       `  \\setCJKmainfont{${n}}[${nameOpts}]\n  \\setCJKfamilyfont{zhsong}{${n}}[${nameOpts}]`,
       `  \\setCJKmainfont{${sp.name}}[${sp.opts}]\n  \\setCJKfamilyfont{zhsong}{${sp.name}}[${sp.opts}]`, s));
@@ -159,4 +160,28 @@ export function monoFontTeX(plan) {
   const b = plan.monoBold && sameDir(m, plan.monoBold) ? plan.monoBold : null;
   const sp = spec(m, [b ? boldSpec(b) : '', 'Scale=MatchLowercase'].filter(Boolean).join(', '));
   return either(n, `  \\setmonofont{${n}}[Scale=MatchLowercase]`, `  \\setmonofont{${sp.name}}[${sp.opts}]`, m);
+}
+
+/**
+ * Makes another CJK face the body font: hei (微软雅黑 / 思源黑体), kai (楷体) or fang (仿宋).
+ * Emitted after cjkFontTeX; when the face is missing the earlier main font stays.
+ * `safe`: only the Fandol fonts that ship with TeX.
+ */
+export function cjkMainTeX(plan, role, { safe = false, noFakeSlant = false } = {}) {
+  if (!role || role === 'song') return '';
+  const slant = noFakeSlant ? '' : ', AutoFakeSlant=0.2';
+  if (safe || !plan) {
+    const fandol = { hei: ['FandolHei-Regular.otf', 'FandolHei-Bold.otf'], kai: ['FandolKai-Regular.otf', ''], fang: ['FandolFang-Regular.otf', ''] }[role];
+    if (!fandol) return '';
+    return `\\setCJKmainfont{${fandol[0]}}[${fandol[1] ? `BoldFont=${fandol[1]}` : 'AutoFakeBold=2.5'}${slant}]`;
+  }
+  const f = role === 'hei' ? plan.sans : plan[role];
+  if (!f) return '';
+  const b = role === 'hei' ? plan.sansBold : null;
+  const n = familyName(f);
+  const nb = familyName(b);
+  const nameOpts = [b ? (nb && nb !== n ? `BoldFont=${nb}` : '') : 'AutoFakeBold=2.5', slant.slice(2)].filter(Boolean).join(', ');
+  const bp = b && sameDir(f, b) ? b : null;
+  const sp = spec(f, [bp ? boldSpec(bp) : 'AutoFakeBold=2.5', slant.slice(2)].filter(Boolean).join(', '));
+  return either(n, `  \\setCJKmainfont{${n}}${nameOpts ? `[${nameOpts}]` : ''}`, `  \\setCJKmainfont{${sp.name}}[${sp.opts}]`, f);
 }

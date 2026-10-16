@@ -131,10 +131,14 @@ export function extractConversation(loaded, opts = {}) {
     skip: platform?.skip || null,
     thinking: platform?.thinking || null,
     includeThinking: !!opts.includeThinking,
+    // Dynamic elements (charts, frames, widgets) are numbered in the page so the app can capture them.
+    dyn: { n: 0 },
   };
   const messages = [];
   for (const { el, role } of found) {
     if (role === 'system' || role === 'tool') continue;
+    // For the app's snapshot of the page (the question bubble's colours).
+    try { el.setAttribute('data-moteng-role', role); } catch { /* read-only node */ }
     const sel = platform ? platform.content[role === 'user' ? 'user' : 'assistant'] : null;
     let blocks = [];
     if (role === 'assistant' && ctxBase.thinking && ctxBase.includeThinking) {
@@ -147,7 +151,7 @@ export function extractConversation(loaded, opts = {}) {
       const ctx = { ...ctxBase, includeThinking: false };
       blocks.push(...(role === 'user' ? promptBlocks(root, ctx) : blocksOf(root, ctx)));
     }
-    if (!blocks.length || blockTextLength(blocks) === 0 && !blocks.some((b) => b.t === 'image')) continue;
+    if (!blocks.length || blockTextLength(blocks) === 0 && !blocks.some((b) => b.t === 'image' || b.t === 'dynamic')) continue;
     const prev = messages.at(-1);
     if (prev && prev.role === role) prev.blocks.push(...blocks);
     else messages.push({ role, blocks });
@@ -157,7 +161,8 @@ export function extractConversation(loaded, opts = {}) {
     const blocks = body ? blocksOf(body, { skip: 'nav, aside, header, footer', thinking: null }) : [];
     if (blocks.length) messages.push({ role: 'assistant', blocks });
   }
-  let title = opts.title || stripSuffix(document.title, platform);
+  const meta = loaded.meta || {};
+  let title = opts.title || meta.title || stripSuffix(document.title, platform);
   if (!title || /^(新聊天|new chat|untitled)$/i.test(title)) {
     const firstUser = messages.find((m) => m.role === 'user');
     title = firstUser ? shorten(firstLine(firstUser.blocks), 30) : '';
@@ -166,11 +171,14 @@ export function extractConversation(loaded, opts = {}) {
   return {
     title,
     platform: platform ? platform.id : 'generic',
-    platformName: platform ? platform.name : (loaded.fragment ? '剪贴板内容' : '网页'),
-    assistantName: platform ? platform.name : 'AI',
-    generic,
+    platformName: meta.platformName || (platform ? platform.name : (loaded.fragment ? '剪贴板内容' : '网页')),
+    assistantName: meta.assistantName || (platform ? platform.name : 'AI'),
+    generic: meta.platformName ? false : generic,
     url: loaded.url || '',
-    date: loaded.savedAt ? new Date(loaded.savedAt) : null,
+    date: meta.date ? new Date(meta.date) : loaded.savedAt ? new Date(loaded.savedAt) : null,
     messages,
+    // The page with data-moteng-dyn marks, for rendering it and capturing the dynamic elements.
+    annotatedHtml: ctxBase.dyn.n || !loaded.fragment ? document.toString() : '',
+    dynamicCount: ctxBase.dyn.n,
   };
 }

@@ -21,24 +21,63 @@ const fixtures = path.join(root, 'fixtures', 'selftest');
 const inputs = fs.readdirSync(fixtures).filter((f) => f.endsWith('.html')).map((f) => path.join(fixtures, f));
 const out = fs.mkdtempSync(path.join(os.tmpdir(), 'moteng-warm-'));
 
+// Layout variants: every font, size and package path the settings panel can choose, so the
+// installer's offline cache holds all of them (each variant compiles the ChatGPT fixture).
+const LAYOUTS = [
+  { name: 'web', layout: { theme: 'web' } },
+  { name: 'print', layout: { theme: 'print', questionStyle: 'box', headingNumbers: 'chinese', eqNumbers: 'all', eqWithinSection: true } },
+  { name: 'lm-kai-9pt', layout: { theme: 'print', latinFont: 'lm', mathFont: 'lm', cjkFont: 'kai', sizePt: 9, monoFont: 'lm', headingNumbers: 'arabic' } },
+  { name: 'fira-fang-11pt', layout: { theme: 'web', latinFont: 'fira', mathFont: 'fira', monoFont: 'fira', cjkFont: 'fang', sizePt: 11, codeTheme: 'dark', questionStyle: 'plain' } },
+  { name: 'stix-song-14pt', layout: { theme: 'web', latinFont: 'stix', mathFont: 'stix', cjkFont: 'song', sizePt: 14, paper: 'b5', headingScale: 1.15 } },
+  { name: 'sans-10pt-a5', layout: { theme: 'web', latinFont: 'sans', sizePt: 10, paper: 'a5', margins: 'narrow', mathMode: 'all-display' } },
+];
+
 async function pass(label, engine) {
   let failed = 0;
+  const run = async (input, style, safeFonts, variant) => {
+    const t = Date.now();
+    const tag = `${path.basename(input)} ${style}${safeFonts ? ' safe' : ''}${variant ? ` ${variant.name}` : ''}`;
+    try {
+      const r = await convert(input, { style, safeFonts, layout: variant?.layout, outRoot: out, engine, title: `${path.basename(input, '.html')}-${style}${safeFonts ? '-safe' : ''}${variant ? `-${variant.name}` : ''}-${label}`, fetchImages: false, timeout: 600000 });
+      console.log(`${label} ${tag}: ok ${((Date.now() - t) / 1000).toFixed(1)}s font=${r.cjkFont} repaired=${r.repaired} style=${r.style}`);
+      if (r.style !== style) { failed++; console.log('  style fell back'); }
+    } catch (e) {
+      failed++;
+      console.log(`${label} ${tag}: FAILED ${e.message}`);
+      if (e.log) console.log(e.log.slice(-3000));
+    }
+  };
   for (const input of inputs) {
     for (const style of ['chat', 'notes']) {
       // safeFonts: also fetch the TeX-tree fonts the fallback path uses.
-      for (const safeFonts of [false, true]) {
-        const t = Date.now();
-        try {
-          const r = await convert(input, { style, safeFonts, outRoot: out, engine, title: `${path.basename(input, '.html')}-${style}${safeFonts ? '-safe' : ''}-${label}`, fetchImages: false, timeout: 600000 });
-          console.log(`${label} ${path.basename(input)} ${style}${safeFonts ? ' safe' : ''}: ok ${((Date.now() - t) / 1000).toFixed(1)}s font=${r.cjkFont} repaired=${r.repaired} style=${r.style}`);
-          if (r.style !== style) { failed++; console.log('  style fell back'); }
-        } catch (e) {
-          failed++;
-          console.log(`${label} ${path.basename(input)} ${style}${safeFonts ? ' safe' : ''}: FAILED ${e.message}`);
-          if (e.log) console.log(e.log.slice(-3000));
-        }
-      }
+      for (const safeFonts of [false, true]) await run(input, style, safeFonts, null);
     }
+  }
+  const gpt = inputs.find((f) => /chatgpt-2026/.test(f)) || inputs[0];
+  for (const v of LAYOUTS) {
+    await run(gpt, 'chat', false, v);
+    await run(gpt, 'chat', true, v);
+  }
+  failed += await sizeSweep(label, engine);
+  return failed;
+}
+
+// Math in every size from 5pt to 24pt, in normal and bold text: LaTeX loads the legacy Computer
+// Modern metrics (cmmi5…12, cmsy, cmex, msam/msbm) for each new math size, and a heading or caption
+// at an unusual size must not need a file the offline cache lacks.
+async function sizeSweep(label, engine) {
+  const { compileOnce } = await import('../src/core/compile.js');
+  const dir = fs.mkdtempSync(path.join(out, 'sizes-'));
+  const sizes = [];
+  for (let pt = 5; pt <= 24; pt += 0.5) sizes.push(pt);
+  const lines = sizes.map((pt) => `{\\fontsize{${pt}pt}{${pt * 1.3}pt}\\selectfont $x^2_i+\\frac{a}{b}\\sum\\mathbb{R}$ \\textbf{$y^{2}_{j}$} \\(\\boldsymbol{\\alpha}\\)\\par}`);
+  const tex = (unicode) => `\\documentclass[UTF8, fontset=fandol, zihao=5]{ctexart}\n\\usepackage{amsmath, amssymb}\n${unicode ? '\\usepackage{unicode-math}\\setmathfont{latinmodern-math.otf}\n' : ''}\\begin{document}\n${lines.join('\n')}\n\\end{document}\n`;
+  let failed = 0;
+  for (const unicode of [true, false]) {
+    fs.writeFileSync(path.join(dir, 'main.tex'), tex(unicode));
+    const r = await compileOnce(engine, dir, { timeout: 600000 });
+    console.log(`${label} size sweep${unicode ? ' (unicode-math)' : ''}: ${r.ok ? 'ok' : 'FAILED ' + (r.errors[0]?.message || r.out.slice(-300))}`);
+    if (!r.ok) failed++;
   }
   return failed;
 }

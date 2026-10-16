@@ -7,6 +7,8 @@ import { extractConversation } from './extract.js';
 import { renderTex } from './latex/document.js';
 import { fragmentAt, inlinePlain } from './latex/writer.js';
 import { detectFonts } from './latex/fonts.js';
+import { renderHtmlDocument } from './html.js';
+import { normalizeLayout, normalizeOverrides } from './layout.js';
 import { findEngines, compileOnce, cleanAux } from './compile.js';
 
 const HERE = import.meta.dirname;
@@ -30,7 +32,7 @@ export function safeName(title) {
 
 function uniqueDir(root, name) {
   let dir = path.join(root, name);
-  for (let i = 2; fs.existsSync(dir) && fs.readdirSync(dir).some((f) => !/^(main\.(tex|log|pdf)|moteng(-compat)?\.sty|mojing-.*|images|.*\.pdf)$/.test(f)); i++) {
+  for (let i = 2; fs.existsSync(dir) && fs.readdirSync(dir).some((f) => !/^(main\.(tex|log|pdf)|moteng(-compat)?\.sty|moteng-layout\.json|mojing-.*|images|.*\.(pdf|html))$/.test(f)); i++) {
     dir = path.join(root, `${name} (${i})`);
   }
   return dir;
@@ -99,8 +101,19 @@ async function collectImages(conv, loaded, outDir, opts, warnings) {
     let mime = sniffMime(bytes, res.mime || mimeFromName(b.src));
     if (!TEX_IMAGE.test(mime) && opts.convertImage) {
       try {
-        const png = await opts.convertImage(bytes, mime);
-        if (png) { bytes = png; mime = 'image/png'; }
+        const out = await opts.convertImage(bytes, mime);
+        if (out && out.pdf) {
+          // Vector drawing (SVG): a PDF for TeX, a PNG twin for the preview and the HTML export.
+          fs.mkdirSync(imgDir, { recursive: true });
+          const stem = `images/img-${++n}`;
+          fs.writeFileSync(path.join(outDir, `${stem}.pdf`), out.pdf);
+          if (out.png) fs.writeFileSync(path.join(outDir, `${stem}.png`), out.png);
+          b.file = `${stem}.pdf`;
+          if (out.width) b.pxWidth = out.width;
+          seen.set(b.src, b.file);
+          continue;
+        }
+        if (out) { bytes = out; mime = 'image/png'; }
       } catch { /* keep original */ }
     }
     if (!TEX_IMAGE.test(mime)) {
@@ -159,7 +172,7 @@ function describeFragment(conv, frag) {
  * Parse a saved page (path or {html,name,url}) and return the conversation.
  */
 export function readConversation(input, opts = {}) {
-  const loaded = typeof input === 'string' ? loadInput(input) : loadHtmlString(input.html, input);
+  const loaded = input && typeof input === 'object' && input.html !== undefined ? loadHtmlString(input.html, input) : loadInput(input);
   const conv = extractConversation(loaded, opts);
   return { loaded, conv };
 }
@@ -175,26 +188,125 @@ export function readConversation(input, opts = {}) {
  *   fetchImages, convertImage(bytes, mime) → png bytes
  *   onProgress(stage, detail)
  */
-export async function convert(input, options = {}) {
+/**
+ * Read the page, collect its images and (when the app provides `snapshot`) capture its charts and
+ * widgets, all into `workDir`. The result can be built several times with different layouts.
+ */
+export async function prepare(input, options = {}) {
   const progress = options.onProgress || (() => {});
   const warnings = [];
   progress('read', '读取网页');
   const { loaded, conv } = readConversation(input, { includeThinking: options.includeThinking, title: options.title, platform: options.platform });
   if (!conv.messages.length) throw new Error('没有在这个网页里找到对话内容。请确认保存的是对话页面（Ctrl+S 保存“网页，全部”或“单个文件”）。');
   if (conv.generic) warnings.push('没有识别出网站类型，按通用规则提取；请检查问答是否完整');
-
-  let style = options.style === 'notes' ? 'notes' : 'chat';
-  const outRoot = options.outRoot || path.dirname(typeof input === 'string' ? path.resolve(input) : process.cwd());
-  const name = safeName(options.title || conv.title);
-  const outDir = options.outDir || uniqueDir(outRoot, name);
-  fs.mkdirSync(outDir, { recursive: true });
-
+  const workDir = options.workDir;
+  fs.mkdirSync(workDir, { recursive: true });
   progress('images', '整理图片');
-  await collectImages(conv, loaded, outDir, options, warnings);
+  await collectImages(conv, loaded, workDir, options, warnings);
+  if (options.snapshot && conv.dynamicCount) {
+    progress('snapshot', '截取图表与交互组件');
+    try {
+      await options.snapshot({ conv, loaded, workDir, warnings, input });
+    } catch (e) {
+      warnings.push(`图表与交互组件没能截取（${e.message}），以文字代替`);
+    }
+  }
+  const missingDyn = [];
+  forEachDynamic(conv, (b) => { if (b.t === 'dynamic' && !b.file && b.kind !== 'canvas') missingDyn.push(b); });
+  if (missingDyn.length) warnings.push(`${missingDyn.length} 处图表或交互内容${options.snapshot ? '没能截取画面' : '需要在墨誊窗口中转换才能截取画面（命令行没有浏览器）'}，PDF 中以文字说明代替`);
+  return { loaded, conv, warnings, workDir, input };
+}
+
+export function forEachDynamic(conv, fn) {
+  const walk = (bs) => (bs || []).forEach((b) => {
+    if (b.t === 'dynamic' || (b.t === 'note' && b.kind === 'widget' && b.dyn)) fn(b);
+    if (b.items) b.items.forEach(walk);
+    if (b.blocks) walk(b.blocks);
+  });
+  for (const m of conv.messages) walk(m.blocks);
+}
+
+function copyDir(from, to) {
+  if (!fs.existsSync(from)) return;
+  fs.mkdirSync(to, { recursive: true });
+  for (const e of fs.readdirSync(from, { withFileTypes: true })) {
+    const a = path.join(from, e.name);
+    const b = path.join(to, e.name);
+    if (e.isDirectory()) copyDir(a, b);
+    else fs.copyFileSync(a, b);
+  }
+}
+
+function dataUrl(file) {
+  const ext = path.extname(file).slice(1).toLowerCase();
+  const mime = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', svg: 'image/svg+xml', pdf: 'application/pdf', webp: 'image/webp', gif: 'image/gif' }[ext] || 'application/octet-stream';
+  return `data:${mime};base64,${fs.readFileSync(file).toString('base64')}`;
+}
+
+/** The interactive HTML file for a prepared conversation (images inlined). */
+export function writeHtmlExport(prepared, outFile, options = {}) {
+  const base = prepared.workDir;
+  const html = renderHtmlDocument(prepared.conv, {
+    layout: options.layout,
+    overrides: options.overrides,
+    includeQuestions: options.includeQuestions,
+    pageColors: options.pageColors,
+    imageUrl: (f) => {
+      // PDF pictures (vector charts) have a PNG twin for the browser.
+      const png = f.replace(/\.pdf$/i, '.png');
+      const pick = /\.pdf$/i.test(f) && fs.existsSync(path.join(base, png)) ? png : f;
+      try { return dataUrl(path.join(base, pick)); } catch { return pick; }
+    },
+  });
+  fs.writeFileSync(outFile, html, 'utf8');
+  return outFile;
+}
+
+/**
+ * @param {string|{html:string,name?:string,url?:string}|{path:string,index:number}} input
+ * @param {object} options
+ *   style: 'chat' | 'notes'           版式
+ *   layout, overrides                 排版设置与逐个元素的调整（layout.js）
+ *   outRoot: string                   输出根目录（每次转换建一个子文件夹）
+ *   compile: boolean                  是否生成 PDF（默认 true）
+ *   exportHtml: boolean               同时输出可交互的 HTML
+ *   engine: engine object | null      findEngines() 的一项；省略则自动选择
+ *   prepared                          prepare() 的结果（应用里预览过的同一份文档）
+ *   resourcesDir, includeThinking, includeQuestions, title, toc
+ *   fetchImages, convertImage(bytes, mime) → png bytes, snapshot({conv, loaded, workDir})
+ *   onProgress(stage, detail)
+ */
+export async function convert(input, options = {}) {
+  const progress = options.onProgress || (() => {});
+  let style = options.style === 'notes' ? 'notes' : 'chat';
+  const inPath = typeof input === 'string' ? input : input && input.path;
+  const outRoot = options.outRoot || path.dirname(inPath ? path.resolve(inPath) : process.cwd());
+  let prepared = options.prepared;
+  let outDir = options.outDir;
+  if (!prepared) {
+    // Read first to learn the title, then prepare straight into the output folder.
+    const { conv } = readConversation(input, { includeThinking: options.includeThinking, title: options.title, platform: options.platform });
+    outDir = outDir || uniqueDir(outRoot, safeName(options.title || conv.title));
+    prepared = await prepare(input, { ...options, workDir: outDir });
+  }
+  const { conv } = prepared;
+  const warnings = [...prepared.warnings];
+  const name = safeName(options.title || conv.title);
+  outDir = outDir || uniqueDir(outRoot, name);
+  fs.mkdirSync(outDir, { recursive: true });
+  if (path.resolve(prepared.workDir) !== path.resolve(outDir)) copyDir(path.join(prepared.workDir, 'images'), path.join(outDir, 'images'));
+  try {
+    fs.writeFileSync(path.join(outDir, 'moteng-layout.json'), JSON.stringify({ style, layout: normalizeLayout(options.layout), overrides: normalizeOverrides(options.overrides) }, null, 2));
+  } catch { /* optional */ }
+  let htmlPath = null;
+  if (options.exportHtml) {
+    progress('html', '生成交互式 HTML');
+    htmlPath = writeHtmlExport(prepared, path.join(outDir, `${name}.html`), options);
+  }
 
   const res = texResources(options.resourcesDir);
   const fonts = options.fonts === undefined ? detectFonts() : options.fonts;
-  const texOpts = { ...options, style, fonts, safeFonts: !!options.safeFonts };
+  const texOpts = { ...options, style, fonts, safeFonts: !!options.safeFonts, noFakeSlant: !!options.noFakeSlant };
   const fallback = new Set();
 
   const write = () => {
@@ -206,8 +318,9 @@ export async function convert(input, options = {}) {
   progress('tex', '生成 TeX');
   let rendered = write();
   const result = {
-    outDir, texPath: path.join(outDir, 'main.tex'), pdfPath: null, title: conv.title, platform: conv.platformName,
+    outDir, texPath: path.join(outDir, 'main.tex'), pdfPath: null, htmlPath, title: conv.title, platform: conv.platformName,
     turns: rendered.turns, messages: conv.messages.length, style: texOpts.style, warnings, log: '', engine: null, repaired: 0,
+    dynamic: (() => { let total = 0; let captured = 0; forEachDynamic(conv, (b) => { total++; if (b.file) captured++; }); return { total, captured }; })(),
   };
   if (options.compile === false) return result;
 
@@ -227,6 +340,15 @@ export async function convert(input, options = {}) {
     const bodyStart = rendered.tex.split('\n').findIndex((l) => l.startsWith('\\begin{document}')) + 1;
     const mainErrors = last.errors.filter((e) => e.file === 'main.tex' && e.line > 0);
     const err = mainErrors[0];
+    if (process.env.MOTENG_DEBUG) console.error('[moteng] compile error', err || last.errors[0], last.code, last.signal);
+    // Some XeTeX builds crash on fake-slanted CJK faces (Tectonic with Noto CJK on Linux); the log
+    // then ends at an innocent line. Retry once without fake slant before blaming that line.
+    const crashed = last.code !== 0 && (last.signal || last.code > 128 || last.code < 0);
+    if (crashed && !texOpts.noFakeSlant && texOpts.fonts && !texOpts.safeFonts) {
+      texOpts.noFakeSlant = true;
+      rendered = write();
+      continue;
+    }
     if (!err || err.line <= bodyStart) {
       // Preamble trouble: usually a font. Retry with fonts every TeX has, then the simpler style.
       if (!texOpts.safeFonts) {
@@ -253,6 +375,17 @@ export async function convert(input, options = {}) {
       const parentId = frag.id.split('.').slice(0, -1).join('.');
       frag = rendered.map.find((f) => f.id === parentId) || null;
       if (!frag) break;
+    }
+    if (!frag && !texOpts.noFakeSlant && texOpts.fonts && !texOpts.safeFonts) {
+      texOpts.noFakeSlant = true;
+      rendered = write();
+      continue;
+    }
+    if (!frag && !texOpts.safeFonts) {
+      texOpts.safeFonts = true;
+      warnings.push('本机字体在 TeX 中加载失败，改用 TeX 自带字体');
+      rendered = write();
+      continue;
     }
     if (!frag) {
       const e = new Error(`TeX 编译失败（第 ${err.line} 行）：${err.message}`);
