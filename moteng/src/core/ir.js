@@ -2,7 +2,10 @@
 //
 // Blocks:  heading{level,inl} para{inl} list{ordered,start,items:[Block[]]} code{lang,text}
 //          math{tex} table{rows:[{header,cells:[Inline[]]}],widths?} quote{blocks} hr
-//          image{src,alt} note{kind,title,blocks}
+//          image{src,alt} note{kind,title,blocks,dyn?}
+//          dynamic{kind: svg|iframe|canvas, dyn, svg?, src?, srcdoc?, w, h, title}
+//            — content a browser draws (charts, interactive frames). `dyn` is the number written into
+//              the page as data-moteng-dyn, so the app can render the page and capture that element.
 // Inlines: text{v} b{c} i{c} s{c} sup{c} sub{c} code{v} math{tex} link{href,c} br check{on}
 //          img{src,alt} (small inline picture, e.g. an emoji image)
 //
@@ -205,6 +208,79 @@ function preBlock(pre) {
 }
 
 // ---------------------------------------------------------------------------
+// Dynamic content: charts drawn as SVG, interactive frames, canvases, videos
+// ---------------------------------------------------------------------------
+
+function dimension(el, name) {
+  const a = parseFloat(el.getAttribute(name) || '');
+  if (a > 0) return a;
+  const m = (el.getAttribute('style') || '').match(new RegExp(`(?:^|;)\\s*${name}\\s*:\\s*([\\d.]+)px`, 'i'));
+  return m ? parseFloat(m[1]) : 0;
+}
+
+function markDynamic(el, ctx) {
+  if (!ctx.dyn) return null;
+  const key = ++ctx.dyn.n;
+  el.setAttribute('data-moteng-dyn', String(key));
+  return key;
+}
+
+/** An SVG that is a picture (chart, diagram, plot), not an icon. */
+export function isChartSvg(el) {
+  if (el.closest('button, [role="button"], a, [data-d-component="icon"], [data-d-component="button"]')) return false;
+  if (/\b(icon|lucide|feather|fa-|octicon|spinner)\b/i.test(cls(el))) return false;
+  const vb = (el.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+  const w = dimension(el, 'width') || (vb.length === 4 ? vb[2] : 0);
+  const h = dimension(el, 'height') || (vb.length === 4 ? vb[3] : 0);
+  const shapes = el.querySelectorAll('path, rect, circle, line, polyline, polygon, ellipse, text, image, use').length;
+  const texts = el.querySelectorAll('text').length;
+  if (w && h && (w < 64 || h < 40)) return false;
+  return (shapes >= 6 && (w >= 120 || !w)) || texts >= 2;
+}
+
+function canvasImage(el) {
+  const m = (el.getAttribute('style') || '').match(/background-image\s*:\s*url\((['"]?)(data:image\/[^'")]+)\1\)/i);
+  return m ? m[2] : el.getAttribute('data-moteng-snapshot') || '';
+}
+
+/** Returns blocks for a dynamic element, or null when it is not one (icons, trackers, empty frames). */
+function dynamicBlocks(el, ctx) {
+  const t = tag(el);
+  if (el.matches('[hidden]') || /display\s*:\s*none/i.test(el.getAttribute('style') || '')) return [];
+  if (t === 'SVG') {
+    if (!isChartSvg(el)) return null;
+    const title = (el.querySelector('title')?.textContent || el.getAttribute('aria-label') || '').trim();
+    const dyn = markDynamic(el, ctx);
+    return [{ t: 'dynamic', kind: 'svg', dyn, svg: el.toString(), w: dimension(el, 'width'), h: dimension(el, 'height'), title }];
+  }
+  if (t === 'IFRAME') {
+    const src = el.getAttribute('src') || '';
+    const srcdoc = el.getAttribute('srcdoc') || '';
+    if (!srcdoc && (!src || /^(about:|javascript:)/i.test(src) || /recaptcha|googletagmanager|doubleclick|analytics|intercom|stripe\.com|challenges\.cloudflare/i.test(src))) return [];
+    const w = dimension(el, 'width');
+    const h = dimension(el, 'height');
+    if ((w && w < 40) || (h && h < 30)) return [];
+    const title = (el.getAttribute('title') || el.getAttribute('aria-label') || '').trim();
+    const dyn = markDynamic(el, ctx);
+    return [{ t: 'dynamic', kind: 'iframe', dyn, src, srcdoc, w, h, title }];
+  }
+  if (t === 'CANVAS') {
+    const img = canvasImage(el);
+    if (img) return [{ t: 'image', src: img, alt: el.getAttribute('aria-label') || '' }];
+    const w = dimension(el, 'width');
+    const h = dimension(el, 'height');
+    if ((w && w < 64) || (h && h < 40)) return [];
+    const dyn = markDynamic(el, ctx);
+    return [{ t: 'dynamic', kind: 'canvas', dyn, w, h, title: el.getAttribute('aria-label') || '' }];
+  }
+  if (t === 'VIDEO') {
+    const poster = el.getAttribute('poster');
+    return poster ? [{ t: 'image', src: poster, alt: el.getAttribute('title') || '视频' }] : [];
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------------
 // Inline walk
 // ---------------------------------------------------------------------------
 
@@ -225,7 +301,10 @@ function inlineImage(el) {
   const src = el.getAttribute('src') || el.getAttribute('data-src') || '';
   const alt = el.getAttribute('alt') || '';
   const w = parseInt(el.getAttribute('width') || '0', 10);
-  const small = /emoji|avatar|favicon|icon/i.test(cls(el) + ' ' + src) || (w > 0 && w <= 32);
+  // Only the URL and class say "icon"; the text of an inline data: SVG (font lists name "Color Emoji") does not.
+  const name = /^data:/i.test(src) ? '' : src.split(/[?#]/)[0];
+  const diagram = el.getAttribute('data-d-component') === 'svg';
+  const small = !diagram && (/emoji|avatar|favicon|icon/i.test(`${cls(el)} ${name}`) || (w > 0 && w <= 32));
   return { src, alt, small };
 }
 
@@ -253,6 +332,10 @@ function inlinesOf(el, ctx, pre) {
       else if (m) out.push({ t: 'math', tex: m.tex });
       else pushText(out, n.textContent);
       continue;
+    }
+    if (ctx.allowBlocks && /^(SVG|IFRAME|CANVAS|VIDEO)$/.test(tag(n))) {
+      const dyn = dynamicBlocks(n, ctx);
+      if (dyn) { if (dyn.length) out.push({ t: 'block', blocks: dyn }); continue; }
     }
     if (isSkipped(n, ctx)) continue;
     const t = tag(n);
@@ -462,6 +545,10 @@ export function blocksOf(root, ctx, pre = false) {
       continue;
     }
     if (tag(n) === 'INPUT' && n.getAttribute('type') === 'checkbox') { inl.push({ t: 'check', on: n.hasAttribute('checked') }); continue; }
+    if (/^(SVG|IFRAME|CANVAS|VIDEO)$/.test(tag(n))) {
+      const dyn = dynamicBlocks(n, ctx);
+      if (dyn) { flush(); out.push(...dyn); continue; }
+    }
     if (isSkipped(n, ctx)) continue;
     if (ctx.thinking && n.matches(ctx.thinking)) { flush(); out.push(...thinkingBlock(n, ctx)); continue; }
     const t = tag(n);
@@ -501,10 +588,20 @@ export function blocksOf(root, ctx, pre = false) {
       if (body.length) out.push({ t: 'note', kind: 'details', title, blocks: body });
       continue;
     }
+    if (comp(n) === 'chart') {
+      // ChatGPT (DIL) charts: Recharts SVG plus an HTML legend. Capture the whole chart; without
+      // the app, fall back to the bare SVG and name the series in the caption.
+      flush();
+      const svgEl = n.querySelector('svg.recharts-surface') || [...n.querySelectorAll('svg')].find(isChartSvg) || null;
+      const legend = [...n.querySelectorAll('[class*="LegendItemLabel"], .recharts-legend-item-text')].map((x) => x.textContent.trim()).filter(Boolean);
+      const h = dimension(n, 'height');
+      out.push({ t: 'dynamic', kind: 'chart', dyn: markDynamic(n, ctx), svg: svgEl ? svgEl.toString() : '', w: svgEl ? dimension(svgEl, 'width') : 0, h, title: legend.length ? `图例：${legend.join('、')}` : '' });
+      continue;
+    }
     if (isWidget(n)) {
       flush();
-      const inner = demoteHeadings(blocksOf(n, ctx, p));
-      if (inner.length) out.push({ t: 'note', kind: 'widget', title: '交互组件（静态快照）', blocks: inner });
+      const inner = demoteHeadings(blocksOf(n, { ...ctx, dyn: null }, p));
+      if (inner.length) out.push({ t: 'note', kind: 'widget', title: '交互组件（静态快照）', blocks: inner, dyn: markDynamic(n, ctx) });
       continue;
     }
     if (comp(n) === 'grid') { flush(); const g = gridBlock(n, ctx); if (g) out.push(g); continue; }

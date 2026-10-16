@@ -78,7 +78,11 @@ export class Writer {
           out += safe ? `\\mtbadmath{${escapeCode(x.tex)}}` : this.math(x.tex, mid, x.displaystyle ? 'cell-display' : mode);
           break;
         }
-        case 'code': out += `\\mtcode{${escapeCode(x.v)}}`; break;
+        case 'code':
+          // Short code reads like the web page (grey chip); long code must be able to break.
+          out += this.opts.codeChip && mode !== 'heading' && !safe && [...x.v].length <= 28 && !/\s{2}/.test(x.v)
+            ? `\\mtcodechip{${escapeCode(x.v)}}` : `\\mtcode{${escapeCode(x.v)}}`;
+          break;
         case 'b': out += `\\textbf{${this.inlines(x.c, id, mode, ctr, safe)}}`; break;
         case 'i': out += `\\textit{${this.inlines(x.c, id, mode, ctr, safe)}}`; break;
         case 's': out += mode === 'heading' ? this.inlines(x.c, id, mode, ctr, safe) : `\\sout{${this.inlines(x.c, id, mode, ctr, safe)}}`; break;
@@ -102,19 +106,34 @@ export class Writer {
 
   // ----------------------------------------------------------------- blocks
   blocks(blocks, id, ctx = {}) {
-    const parts = [];
+    let out = '';
+    let prev = null;
     blocks.forEach((b, i) => {
-      const r = this.block(b, `${id}.${i}`, ctx);
-      if (r) parts.push(r);
+      let r = this.block(b, `${id}.${i}`, ctx);
+      if (!r) return;
+      if (b.breakBefore && !ctx.inBox) r = `\\clearpage\n${r}`;
+      if (!out) {
+        out = r;
+      } else if (b.t === 'math' && prev && prev.t === 'para' && !b.breakBefore) {
+        // A formula introduced by the sentence before it stays in that paragraph: no blank line
+        // (a display that starts a paragraph adds an empty line above it).
+        out += `\n${r}`;
+      } else if (b.t === 'math' && !b.breakBefore && !ctx.inBox) {
+        out += `\n\n\\mtdisplaystart\n${r}`;
+      } else {
+        out += `\n\n${r}`;
+      }
+      prev = b;
     });
-    return parts.join('\n\n');
+    return out;
   }
 
-  headingCommand(level, text) {
+  headingCommand(level, text, userLevel = false) {
     const cmds = this.opts.headingCmds;
     const base = this.opts.headingBase ?? 1;
-    const idx = Math.max(0, Math.min(cmds.length - 1, level - base));
-    const numbered = this.opts.headingNumbered && !NUMBERED_HEADING.test(text) && idx < 2;
+    // A level picked in the preview is absolute (1 = top level of the answer).
+    const idx = Math.max(0, Math.min(cmds.length - 1, userLevel ? level - 1 : level - base));
+    const numbered = this.opts.headingNumbered && !NUMBERED_HEADING.test(text) && idx < 2 && cmds[idx] !== 'textbf';
     return { cmd: cmds[idx], numbered, idx };
   }
 
@@ -132,7 +151,7 @@ export class Writer {
           return this.frag(id, 'para', () => `\\textbf{${this.inlines(b.inl, id, 'text')}}`, () => `\\textbf{${escapeText(inlinePlain(b.inl))}}`);
         }
         const plain = inlinePlain(b.inl);
-        const { cmd, numbered, idx } = this.headingCommand(b.level, plain);
+        const { cmd, numbered, idx } = this.headingCommand(b.level, plain, b.userLevel);
         return this.frag(id, 'heading', () => {
           const title = this.inlines(b.inl, id, 'heading');
           if (cmd === 'textbf') return `\\par\\noindent\\textbf{${title}}\\par\\nobreak`;
@@ -145,6 +164,9 @@ export class Writer {
       case 'math': {
         return this.frag(id, 'display', () => {
           const n = normalizeTex(b.tex, true);
+          const numbered = b.numbered ?? this.opts.eqNumbers === 'all';
+          if (numbered) return numberedDisplay(n);
+          if (b.numbered === false) return unnumberedDisplay(n);
           if (n.env === 'raw') return n.tex;
           return `\\[\n${n.tex}\n\\]`;
         }, () => `\\begin{mtbaddisplay}\n\\begin{Verbatim}\n${b.tex.replace(/\\end\{Verbatim\}/g, '\\end {Verbatim}')}\n\\end{Verbatim}\n\\end{mtbaddisplay}`);
@@ -163,11 +185,26 @@ export class Writer {
       case 'image': {
         if (b.file) {
           const cap = b.alt && !/^(image|img|图片|图像|已生成图片|generated image|uploaded image)$/i.test(b.alt.trim()) ? escapeText(b.alt) : '';
-          return this.frag(id, 'image', () => `\\mtimage{${b.file}}{${cap}}`, () => `\\mtmissing{${escapeText(b.alt || b.file)}}`);
+          return this.frag(id, 'image', () => `\\mtimage[${this.imageSize(b)}]{${b.file}}{${cap}}`, () => `\\mtmissing{${escapeText(b.alt || b.file)}}`);
         }
         return `\\mtmissing{${escapeText(b.alt || '图片未能保存')}}`;
       }
+      case 'dynamic': {
+        const what = { svg: '图表', chart: '图表', iframe: '交互内容', canvas: '画布' }[b.kind] || '动态内容';
+        // A captured chart shows its own legend; the caption only says where the picture comes from.
+        const caption = escapeText(b.file ? `${b.kind === 'svg' && b.title ? `${b.title} · ` : ''}${what}（保存网页时的画面）` : `${b.title ? `${b.title} · ` : ''}${what}`);
+        if (b.file) return this.frag(id, 'image', () => `\\mtdynamic[${this.imageSize(b, true)}]{${b.file}}{${caption}}`, () => `\\mtmissing{${caption}}`);
+        if (b.kind === 'canvas') return '';
+        return `\\mtmissing{${escapeText(`${what}${b.title ? `：${b.title}` : ''}（未能截取画面${b.kind === 'iframe' ? '，网页保存时没有保存它的内容' : ''}）`)}}`;
+      }
       case 'note': {
+        // An interactive widget the app captured: the picture of it, the text of it, or both.
+        if (b.kind === 'widget' && b.file && this.opts.dynamic !== 'text') {
+          const pic = this.frag(id + '.snap', 'image', () => `\\mtdynamic[${this.imageSize(b, true)}]{${b.file}}{${escapeText('交互组件（保存网页时的状态）')}}`, () => '');
+          if (this.opts.dynamic === 'image') return pic;
+          const inner = this.blocks(b.blocks, id, { ...ctx, inBox: true });
+          return `${pic}\n\n\\begin{mtnote}{mtwidget}{${escapeText('组件中的文字')}}\n${inner}\n\\end{mtnote}`;
+        }
         const style = b.kind === 'widget' ? 'mtwidget' : b.kind === 'thinking' ? 'mtthinking' : 'mtdetails';
         const inner = this.blocks(b.blocks, id, { ...ctx, inBox: true });
         if (!inner.trim()) return '';
@@ -175,6 +212,18 @@ export class Writer {
       }
       default: return '';
     }
+  }
+
+  /** includegraphics size for an image: chosen width, else at most the layout's default width. */
+  imageSize(b, dynamic = false) {
+    if (b.width) return `width=${(+b.width).toFixed(3)}\\linewidth`;
+    const w = this.opts.imageWidth ?? 1;
+    // Screenshots are taken at 2× and would come out twice as large as on screen.
+    if (b.pxWidth) {
+      const natural = Math.min(1, b.pxWidth / 720);
+      return `width=${Math.min(w, natural).toFixed(3)}\\linewidth`;
+    }
+    return `max width=${(+w).toFixed(3)}\\linewidth`;
   }
 
   list(b, id, ctx) {
@@ -285,6 +334,34 @@ export class Writer {
     }
     return this.blocks(split.map((b) => (b.t === 'para' ? { ...b, inl: trimBr(b.inl) } : b)), id, { inBox: true });
   }
+}
+
+// Numbered display: one number for the whole display (aligned rows share it).
+function numberedDisplay(n) {
+  const tex = n.tex;
+  if (/\\tag\*?\{/.test(tex)) {
+    // The author's own tags win; inside align* they still work.
+    return n.env === 'raw' ? tex : `\\begin{equation}\n${tex}\n\\end{equation}`;
+  }
+  if (n.env === 'raw') {
+    const m = tex.match(/^\\begin\{(align|gather|multline|flalign|alignat|equation)\*\}(\{[^}]*\})?([\s\S]*)\\end\{\1\*\}\s*$/);
+    if (m) {
+      const [, env, arg = '', body] = m;
+      if (env === 'equation') return `\\begin{equation}${body}\\end{equation}`;
+      if (env === 'multline') return `\\begin{multline}${body}\\end{multline}`;
+      if (env === 'gather') return `\\begin{equation}\n\\begin{gathered}${body}\\end{gathered}\n\\end{equation}`;
+      if (env === 'alignat') return `\\begin{equation}\n\\begin{alignedat}${arg}${body}\\end{alignedat}\n\\end{equation}`;
+      return `\\begin{equation}\n\\begin{aligned}${body}\\end{aligned}\n\\end{equation}`;
+    }
+    return tex;
+  }
+  return `\\begin{equation}\n${tex}\n\\end{equation}`;
+}
+
+// A display whose number the user switched off: drop the author's tags too.
+function unnumberedDisplay(n) {
+  const tex = n.tex.replace(/\\tag\*?\{[^{}]*\}/g, '');
+  return n.env === 'raw' ? tex : `\\[\n${tex}\n\\]`;
 }
 
 function trimBr(inl) {

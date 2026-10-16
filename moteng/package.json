@@ -20,17 +20,21 @@
     "selftest": "electron . --self-test selftest.json",
     "fetch-tectonic": "node scripts/fetch-tectonic.js",
     "warm-tectonic": "node scripts/warm-tectonic.js",
-    "dist:win": "electron-builder --win nsis --x64 --publish never"
+    "dist:win": "electron-builder --win nsis --x64 --publish never",
+    "test:ui": "node tests/e2e/ui.mjs"
   },
   "dependencies": {
     "electron-updater": "6.8.9",
     "fflate": "0.8.3",
     "highlight.js": "11.12.0",
-    "linkedom": "0.18.13"
+    "katex": "0.16.47",
+    "linkedom": "0.18.13",
+    "marked": "18.0.14"
   },
   "devDependencies": {
     "electron": "44.5.1",
-    "electron-builder": "26.0.12"
+    "electron-builder": "26.0.12",
+    "playwright-core": "1.56.1"
   },
   "homepage": "https://github.com/xhc144/claude-lab/tree/main/moteng",
   "build": {

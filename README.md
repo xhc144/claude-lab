@@ -40,7 +40,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 五个软件的安装版都会自动更新：每次发布都会刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对校验码与签名后，在重启或关闭时安装（便携版 zip 不自动更新）。安装包与程序都用仓库 Secrets 里的证书签名；没有导入这张自签名证书的电脑也能自动更新，因为软件会确认新版本与自己出自同一张证书。
 
-[墨誊 Moteng](moteng/) 是 Windows 上的 AI 对话转 LaTeX 软件（Electron）：把浏览器保存的 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝等对话网页（.html / .mhtml / .zip，或直接从剪贴板粘贴），转换成 `main.tex` 和 PDF。公式取自网页里保存的 TeX 源码；表格、高亮代码、列表和图片一并转换。版式可选对话体或[墨经](mojing/)讲义体。编译出错时，按行号找到出错的那一处，只把它改为源码显示，其余内容照常排版。安装包内置 Tectonic 排版引擎和离线 TeX 缓存，也可以改用本机的 TeX Live / MiKTeX。安装包由「moteng · Windows build」工作流构建并自检，发布标签为 `moteng-v*`。
+[墨誊 Moteng](moteng/) 是 Windows 上的 AI 对话转 LaTeX 软件（Electron）：把浏览器保存的 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝等对话网页（.html / .mhtml / .zip，或直接从剪贴板粘贴），以及 Markdown 记录和 ChatGPT / Claude 导出的 conversations.json，转换成 `main.tex`、PDF 和可交互的 HTML。可以单选、多选文件或选整个文件夹；即时预览里点击公式可在行内与行间之间切换，标题、图片、分页都能单独调整，右侧面板设置纸张、页边距、字体、行距、标题与公式编号，PDF 标签页随改动自动重新编译。ChatGPT 回答里的图表、示意图和滑块组件按保存时的画面截取放进 PDF（示意图保留为矢量图）。公式取自网页里保存的 TeX 源码；表格、高亮代码、列表和图片一并转换。版式可选对话体或[墨经](mojing/)讲义体。编译出错时，按行号找到出错的那一处，只把它改为源码显示，其余内容照常排版。安装包内置 Tectonic 排版引擎和离线 TeX 缓存，也可以改用本机的 TeX Live / MiKTeX。安装包由「moteng · Windows build」工作流构建并自检，发布标签为 `moteng-v*`。
 
 ## 数学排版模板
 

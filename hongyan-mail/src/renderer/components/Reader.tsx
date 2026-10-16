@@ -14,6 +14,7 @@ import { folderName } from '../lib/folders';
 import { Avatar, Button, cx, Dropdown, IconButton, showContextMenu, Spinner, type MenuItem } from './ui';
 import { EmailFrame, type LinkHover } from './EmailFrame';
 import { addressMenu, confirmBlock } from '../lib/contextmenu';
+import { copyOnClick } from '../lib/copy';
 import { ReaderEmpty } from './EmptyState';
 
 const CATEGORY_LABEL = { primary: '主要', notifications: '通知', promotions: '推广', social: '社交' } as const;
@@ -94,7 +95,7 @@ function selectionWithin(el: Element): string {
 /** An address that can be selected, copied and right-clicked (copy, write to, search, block…). */
 function AddressText({ a, sender }: { a: Address; sender?: boolean }) {
   return (
-    <span className="addr" onContextMenu={(e) => showContextMenu(e, addressMenu(a, { sender, selection: selectionWithin(e.currentTarget) }))}>
+    <span className="addr" {...copyOnClick(a.address, { label: '已复制邮箱地址', tip: `${a.address} · 点击复制，右键更多` })} onContextMenu={(e) => showContextMenu(e, addressMenu(a, { sender, selection: selectionWithin(e.currentTarget) }))}>
       {formatAddress(a)}
     </span>
   );
@@ -230,8 +231,8 @@ function MessageCard({ id, summary, expanded, onToggle, isLast, me, collapsible 
           <span className="mc-avatar" data-tip={collapsible ? '折叠' : undefined}><Avatar name={from?.name || ''} address={from?.address || '?'} size={40} /></span>
           <div className="mc-who">
             <div className="mc-line" onContextMenu={(e) => { if (from) showContextMenu(e, addressMenu(from, { sender: true, selection: selectionWithin(e.currentTarget) })); }}>
-              <span className="mc-name">{displayName(from, me)}</span>
-              {from && from.name && <span className="mc-addr">{from.address}</span>}
+              <span className="mc-name" {...copyOnClick(from?.address, { label: '已复制邮箱地址', tip: from ? `${from.address} · 点击复制，右键更多` : undefined })}>{displayName(from, me)}</span>
+              {from && from.name && <span className="mc-addr" {...copyOnClick(from.address, { label: '已复制邮箱地址' })}>{from.address}</span>}
               {base?.draft && <span className="row-tag is-draft">草稿</span>}
             </div>
             <button className="mc-to" onClick={(e) => { e.stopPropagation(); setShowDetails(!showDetails); }} aria-expanded={showDetails}>
@@ -399,9 +400,9 @@ function ThreadView({ openId }: { openId: number }) {
       <div className="reader-scroll" ref={scrollRef}>
         <motion.div key={openId} className="reader-paper" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.22, ease: [0.22, 0.9, 0.24, 1] }}>
           <div className="subject-block">
-            <h1 className="subject">{subject || '（无主题）'}</h1>
+            <h1 className="subject" {...(subject ? copyOnClick(subject, { label: '已复制主题', tip: '点击复制主题', focusable: false }) : {})}>{subject || '（无主题）'}</h1>
             <div className="subject-meta">
-              {account && s.accounts.length > 1 && <span className="chip"><span className="chip-dot" style={{ background: account.color }} />{account.label || account.email}</span>}
+              {account && s.accounts.length > 1 && <span className="chip" {...copyOnClick(account.email, { label: '已复制邮箱地址', tip: `${account.email} · 点击复制` })}><span className="chip-dot" style={{ background: account.color }} />{account.label || account.email}</span>}
               {folder && <span className="chip">{folderName(folder)}</span>}
               {current && current.category !== 'primary' && <span className="chip is-soft">{CATEGORY_LABEL[current.category]}</span>}
               {thread.length > 1 && <span className="chip is-soft">{thread.length} 封往来邮件</span>}
