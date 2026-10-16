@@ -73,7 +73,7 @@ function header(conv, opts) {
     '% !TEX program = xelatex',
     `% ${conv.title}`,
     `% 由 墨誊 Moteng 从 ${conv.platformName} 对话网页生成${conv.url ? `：${conv.url}` : ''}`,
-    '% 编译：xelatex（需要同目录下的 moteng.sty' + (opts.style === 'notes' ? ' 与墨经 mojing-*.cls/.sty' : '') + '）',
+    '% 编译：xelatex（需要同目录下的 moteng.sty' + (opts.style === 'notes' ? '、moteng-compat.sty 与墨经 mojing-*.cls/.sty' : '') + '）',
     '',
   ].join('\n');
 }
@@ -115,7 +115,8 @@ function notesPreamble(conv, opts) {
   const mono = opts.fonts && !opts.safeFonts ? monoFontTeX(opts.fonts) : '';
   const latin = opts.safeFonts ? ', latin=lm' : '';
   const classOpts = ['nomargin', 'cjk=fandol'];
-  return `${header(conv, opts)}\\documentclass[${classOpts.join(', ')}${latin}]{mojing-notes}
+  return `${header(conv, opts)}\\RequirePackage{moteng-compat}
+\\documentclass[${classOpts.join(', ')}${latin}]{mojing-notes}
 \\usepackage[style=notes]{moteng}
 ${fonts}
 ${mono}

@@ -32,6 +32,15 @@ function verbEscape(s) {
   return s.replace(/[\\{}]/g, (c) => (c === '\\' ? '\\mtBS{}' : c === '{' ? '\\mtLB{}' : '\\mtRB{}'));
 }
 
+// fvextra's breakanywhere cannot break inside a colour group, so long runs
+// inside one get explicit break points.
+function breakable(text) {
+  if (text.length <= 24) return verbEscape(text);
+  const parts = [];
+  for (let i = 0; i < text.length; i += 8) parts.push(verbEscape(text.slice(i, i + 8)));
+  return parts.join('\\allowbreak{}');
+}
+
 function unescapeHtml(s) {
   return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#x27;/g, "'").replace(/&#39;/g, "'").replace(/&amp;/g, '&');
 }
@@ -74,7 +83,7 @@ export function highlightCode(text, lang) {
           const open = stack.filter(Boolean);
           out += '}'.repeat(open.length) + '\n' + open.map((k) => `\\mtHL${k}{`).join('');
         }
-        out += verbEscape(line);
+        out += stack.some(Boolean) ? breakable(line) : verbEscape(line);
       });
     }
   }

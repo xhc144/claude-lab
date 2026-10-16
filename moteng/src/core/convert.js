@@ -30,7 +30,7 @@ export function safeName(title) {
 
 function uniqueDir(root, name) {
   let dir = path.join(root, name);
-  for (let i = 2; fs.existsSync(dir) && fs.readdirSync(dir).some((f) => !/^(main\.(tex|log|pdf)|moteng\.sty|mojing-.*|images|.*\.pdf)$/.test(f)); i++) {
+  for (let i = 2; fs.existsSync(dir) && fs.readdirSync(dir).some((f) => !/^(main\.(tex|log|pdf)|moteng(-compat)?\.sty|mojing-.*|images|.*\.pdf)$/.test(f)); i++) {
     dir = path.join(root, `${name} (${i})`);
   }
   return dir;
@@ -129,6 +129,7 @@ function shortSrc(src) {
 function copyTexSupport(outDir, style, res) {
   fs.copyFileSync(path.join(res.moteng, 'moteng.sty'), path.join(outDir, 'moteng.sty'));
   if (style === 'notes') {
+    fs.copyFileSync(path.join(res.moteng, 'moteng-compat.sty'), path.join(outDir, 'moteng-compat.sty'));
     for (const f of fs.readdirSync(res.mojing)) {
       if (/^mojing-(core|math|theorem|tikz)\.sty$|^mojing-notes\.cls$/.test(f)) fs.copyFileSync(path.join(res.mojing, f), path.join(outDir, f));
     }
