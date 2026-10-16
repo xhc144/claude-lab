@@ -4,7 +4,7 @@ import { drawBackground, backgroundSpec, makeCanvas } from './backgrounds.js';
 import { composite } from './transitions.js';
 import { EASE, clamp01 } from './motion/easing.js';
 import { toCss } from '../core/util/color.js';
-import { fontString } from './text/text.js';
+import { fontString, TextEngine, drawLayout, splitMath } from './text/text.js';
 import { roundRect } from './components/kit.js';
 
 const layers = [];
@@ -158,23 +158,47 @@ function drawChrome(ctx, C, t, S) {
   if (st.captions) {
     const text = S.scene.narration?.text;
     if (text) {
-      const sentences = text.split(/(?<=[。！？!?；;.])\s*/).filter(Boolean);
-      const total = sentences.reduce((s, x) => s + x.length, 0);
+      const sentences = captionSentences(text);
+      const weight = (x) => x.replace(/\$[^$]*\$/g, (m) => 'x'.repeat(Math.ceil(m.length / 3))).length;
+      const total = sentences.reduce((s, x) => s + weight(x), 0) || 1;
       const lt = (t - S.start) / S.duration;
       let acc = 0, cur = sentences[sentences.length - 1];
-      for (const s of sentences) { acc += s.length / total; if (lt <= acc) { cur = s; break; } }
-      const size = env.sizes.small * 1.05;
-      ctx.font = fontString(env.fonts.text, size);
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-      const w = Math.min(ctx.measureText(cur).width, W * 0.8);
-      const bx = W / 2 - w / 2 - size * 0.8, by = H - env.grid.my * 0.95 - size * 1.6;
+      for (const s of sentences) { acc += weight(s) / total; if (lt <= acc) { cur = s; break; } }
+      // Laid out like any other text, so inline TeX is typeset and a long sentence wraps onto a
+      // second line (slightly smaller if needed) instead of being squeezed horizontally.
+      let te = captionTE.get(ctx);
+      if (!te) { te = new TextEngine(ctx); captionTE.set(ctx, te); }
+      const role = { ...env.fonts.text, case: 'none', tracking: 0, lineHeight: 1.3 };
+      const size = env.sizes.small * 1.05, maxWidth = W * 0.8;
+      let L = te.layout(cur, role, size, { maxWidth, balance: true, align: 'center' });
+      if (L.lines.length > 2) L = te.fit(cur, role, { maxWidth, maxLines: 2, min: size * 0.7, max: size, balance: true, align: 'center' });
+      const padX = size * 0.8, padY = size * 0.3;
+      const bottom = H - env.grid.my * 0.95 + size * 0.3;
+      const bw = L.width + padX * 2, bh = L.height + padY * 2;
       ctx.fillStyle = 'rgba(0,0,0,0.62)';
-      roundRect(ctx, bx, by, w + size * 1.6, size * 1.9, size * 0.4); ctx.fill();
-      ctx.fillStyle = '#ffffff'; ctx.textAlign = 'center';
-      ctx.fillText(cur, W / 2, by + size * 1.32, W * 0.8);
-      ctx.textAlign = 'left';
+      roundRect(ctx, W / 2 - bw / 2, bottom - bh, bw, bh, size * 0.4); ctx.fill();
+      drawLayout(ctx, L, W / 2 - L.width / 2, bottom - bh + padY, L.width, { color: '#ffffff', accent: '#ffffff', mark: 'rgba(255,255,255,0.25)' });
+      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
     }
   }
+}
+
+const captionTE = new WeakMap();
+
+/** Narration split into caption sentences; never inside a formula or a decimal number (3.14). */
+function captionSentences(text) {
+  const parts = [];
+  let buf = '';
+  for (const seg of splitMath(text)) {
+    if (seg.math != null) { buf += `$${seg.math}$`; continue; }
+    const pieces = seg.text.split(/(?<=[。！？!?；;]|(?<!\d)\.(?!\d)|\d\.(?!\d))\s*/);
+    pieces.forEach((piece, i) => {
+      buf += piece;
+      if (i < pieces.length - 1) { if (buf.trim()) parts.push(buf.trim()); buf = ''; }
+    });
+  }
+  if (buf.trim()) parts.push(buf.trim());
+  return parts.length ? parts : [text];
 }
 
 /**

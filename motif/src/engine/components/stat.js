@@ -3,7 +3,7 @@ import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon,
   roundRect, toCss, EASE, clamp01, colorOf, formatNumber, decimalsOf, numberWidth, drawTabular, blockPreset, mix,
 } from './kit.js';
-import { fontString, familyList } from '../text/text.js';
+import { fontString, familyList, drawInline, measureInline } from '../text/text.js';
 import { parseNumberish } from '../../core/util/misc.js';
 
 function deltaInfo(delta) {
@@ -87,14 +87,14 @@ function drawStat(ctx, c, it, S, x, y, w, t, o = {}) {
     if (S.prefix) {
       ctx.font = afont;
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-      ctx.fillText(S.prefix, nx, base - S.size * 0.36);
-      nx += te.width(S.prefix, afont) + S.size * 0.06;
+      drawInline(ctx, S.prefix, nx, base - S.size * 0.36);
+      nx += measureInline(ctx, S.prefix) + S.size * 0.06;
     }
     nx += drawTabular(ctx, te, shown, nx, base, font, S.numRole.tracking * S.size);
     if (S.suffix) {
       ctx.font = afont;
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-      ctx.fillText(S.suffix, nx + S.size * 0.06, base);
+      drawInline(ctx, S.suffix, nx + S.size * 0.06, base);
     }
     ctx.restore();
   }
@@ -121,7 +121,7 @@ function drawStat(ctx, c, it, S, x, y, w, t, o = {}) {
       ctx.font = font; ctx.fillStyle = tone; ctx.textBaseline = 'middle';
       if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
       ctx.fillText(S.delta.text, bx + fs * 1.7, cy + S.deltaH / 2 + fs * 0.04);
-      if (it.deltaLabel) { ctx.font = fontString(role(env, 'text'), fs); ctx.fillStyle = p.mutedText; ctx.fillText(' ' + it.deltaLabel, bx + pw + fs * 0.1, cy + S.deltaH / 2 + fs * 0.04); }
+      if (it.deltaLabel) { ctx.font = fontString(role(env, 'text'), fs); ctx.fillStyle = p.mutedText; drawInline(ctx, ' ' + it.deltaLabel, bx + pw + fs * 0.1, cy + S.deltaH / 2 + fs * 0.04); }
     });
     cy += S.deltaH;
   }

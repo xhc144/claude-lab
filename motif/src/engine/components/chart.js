@@ -4,7 +4,7 @@
 import {
   role, drawText, roundRect, toCss, EASE, clamp01, colorOf, formatNumber, decimalsOf, mix, drawIcon, textAnimator, paintFor,
 } from './kit.js';
-import { fontString } from '../text/text.js';
+import { fontString, drawInline } from '../text/text.js';
 
 const TAU = Math.PI * 2;
 
@@ -107,7 +107,7 @@ class ChartCtx {
     const ctx = this.ctx;
     ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = baseline;
     if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
-    ctx.fillText(str, x, y);
+    drawInline(ctx, str, x, y);
     ctx.textAlign = 'left';
   }
   tw(str, font) { return this.te.width(str, font); }

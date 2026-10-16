@@ -4,7 +4,7 @@ import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon, pickIcon,
   roundRect, toCss, EASE, clamp01, colorOf, blockPreset, mix,
 } from './kit.js';
-import { fontString } from '../text/text.js';
+import { fontString, drawInline, measureInline } from '../text/text.js';
 import { parseNumberish } from '../../core/util/misc.js';
 
 const TAU = Math.PI * 2;
@@ -71,7 +71,7 @@ const table = {
     const hfs = Math.max(env.sizes.label, M.fs * 0.55);
     const hf = fontString(role(env, 'label'), hfs);
     const xs = []; let acc = rect.x; for (const w of M.widths) { xs.push(acc); acc += w; }
-    const txt = (ctx, s, x, y, font, color, align) => { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'middle'; if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'; ctx.fillText(s, x, y); ctx.textAlign = 'left'; };
+    const txt = (ctx, s, x, y, font, color, align) => { ctx.font = font; ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'middle'; if ('letterSpacing' in ctx) ctx.letterSpacing = '0px'; drawInline(ctx, s, x, y); ctx.textAlign = 'left'; };
     return {
       duration: tHl + 0.5, hold: 1.5 + M.rows.length * M.ncol * 0.12,
       draw(ctx, t) {
@@ -84,7 +84,7 @@ const table = {
           if ('letterSpacing' in ctx) ctx.letterSpacing = `${(env.fonts.label.tracking || 0) * hfs}px`;
           ctx.font = hf; ctx.fillStyle = j === hlCol ? p.accentText : p.mutedText; ctx.textBaseline = 'middle';
           ctx.textAlign = M.numeric[j] ? 'right' : 'left';
-          ctx.fillText(label, M.numeric[j] ? xs[j] + M.widths[j] - M.pad / 2 : xs[j] + (j ? M.pad / 2 : 0), y0 + M.headH * 0.5);
+          drawInline(ctx, label, M.numeric[j] ? xs[j] + M.widths[j] - M.pad / 2 : xs[j] + (j ? M.pad / 2 : 0), y0 + M.headH * 0.5);
           ctx.textAlign = 'left';
         });
         ctx.restore();
@@ -669,9 +669,9 @@ const flow = {
             const [mx, my] = g.at(0.5);
             ctx.globalAlpha *= clamp01((pr - 0.6) / 0.3);
             ctx.font = fontString(role(env, 'text', { weight: 500 }), env.sizes.caption);
-            const tw = c.te.width(String(g.e.label), ctx.font);
+            const tw = measureInline(ctx, String(g.e.label));
             ctx.fillStyle = p.bg; roundRect(ctx, mx - tw / 2 - 6, my - env.sizes.caption * 0.75, tw + 12, env.sizes.caption * 1.5, 6); ctx.fill();
-            ctx.fillStyle = p.mutedText; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(g.e.label), mx, my);
+            ctx.fillStyle = p.mutedText; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; drawInline(ctx, String(g.e.label), mx, my);
           }
           ctx.restore();
         }
@@ -845,9 +845,9 @@ const matrix = {
         const lf = fontString(role(env, 'label'), env.sizes.label * 1.25);
         ctx.save(); ctx.globalAlpha *= clamp01((t - 0.6) / 0.4); ctx.font = lf; ctx.fillStyle = p.mutedText; ctx.textBaseline = 'middle';
         if ('letterSpacing' in ctx) ctx.letterSpacing = `${env.sizes.label * 0.08}px`;
-        if (ax.xLabel) { ctx.textAlign = 'right'; ctx.fillText(ax.xLabel + ' →', box.x + box.w, my + env.sizes.label * 2); }
-        if (ax.yLabel) { ctx.textAlign = 'left'; ctx.fillText('↑ ' + ax.yLabel, mx + env.sizes.label * 0.8, box.y - env.sizes.label * 0.2 + env.sizes.label * 0.6); }
-        if (ax.x?.length === 2) { ctx.textAlign = 'left'; ctx.fillText(ax.x[0], box.x, my + env.sizes.label * 1.6); }
+        if (ax.xLabel) { ctx.textAlign = 'right'; drawInline(ctx, ax.xLabel + ' →', box.x + box.w, my + env.sizes.label * 2); }
+        if (ax.yLabel) { ctx.textAlign = 'left'; drawInline(ctx, '↑ ' + ax.yLabel, mx + env.sizes.label * 0.8, box.y - env.sizes.label * 0.2 + env.sizes.label * 0.6); }
+        if (ax.x?.length === 2) { ctx.textAlign = 'left'; drawInline(ctx, ax.x[0], box.x, my + env.sizes.label * 1.6); }
         ctx.restore();
         items.forEach((it, k) => {
           const ti = t - 0.9 - k * 0.12;

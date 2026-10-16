@@ -3,7 +3,7 @@ import {
   role, paintFor, textAnimator, drawText, blockState, withState, drawCard, drawIcon,
   roundRect, toCss, EASE, clamp01, colorOf, blockPreset, mix,
 } from './kit.js';
-import { fontString } from '../text/text.js';
+import { fontString, drawInline } from '../text/text.js';
 
 const TAU = Math.PI * 2;
 
@@ -124,7 +124,7 @@ function placeholderArt(ctx, c, box, label) {
   for (let k = -box.h; k < box.w; k += 26 * env.unit) { ctx.moveTo(box.x + k, box.y + box.h); ctx.lineTo(box.x + k + box.h, box.y); }
   ctx.stroke();
   drawIcon(ctx, 'image', box.x + box.w / 2, box.y + box.h / 2 - env.sizes.body * 0.4, Math.min(box.w, box.h) * 0.18, toCss(p.ink, 0.35));
-  if (label) { ctx.font = fontString(role(env, 'text'), env.sizes.caption); ctx.fillStyle = p.mutedText; ctx.textAlign = 'center'; ctx.fillText(label, box.x + box.w / 2, box.y + box.h / 2 + Math.min(box.w, box.h) * 0.15); ctx.textAlign = 'left'; }
+  if (label) { ctx.font = fontString(role(env, 'text'), env.sizes.caption); ctx.fillStyle = p.mutedText; ctx.textAlign = 'center'; drawInline(ctx, label, box.x + box.w / 2, box.y + box.h / 2 + Math.min(box.w, box.h) * 0.15); ctx.textAlign = 'left'; }
   ctx.restore();
 }
 
