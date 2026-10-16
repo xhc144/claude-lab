@@ -217,16 +217,13 @@ export const projects = [
     ],
   },
   {
-    id: 'linear-regression-video', category: 'film', title: '线性回归：从一条直线，到一次投影', en: 'Linear Regression', status: { kind: 'source', label: '待配音' },
-    art: { glyph: 'Xᵀy', hue: 150 },
+    id: 'linear-regression-video', category: 'film', title: '线性回归：从一条直线，到一次投影', en: 'Linear Regression', cover: 'linear-regression-video',
     summary: '最小二乘为什么取平方、两个偏导条件从哪来、为什么它其实是一次正交投影，再讲 R² 的几何意义、“线性”指什么、“回归”这个名字从哪来。',
-    tags: ['统计', '线性代数', '约 13 分钟', '通义千问配音'],
-    keywords: 'linear regression least squares projection normal equation r squared galton 线性回归 最小二乘 投影 正规方程 回归',
-    tools: 'Manim · Qwen TTS · FFmpeg', build: 'bash build.sh',
-    notice: '画面与旁白稿已完成；成片需要用通义千问语音合成配音后在本地生成，暂未接入播放器。',
-    links: [
-      { label: '查看说明', href: blob('linear-regression-video/README.md'), primary: true },
-      { label: '制作源码', href: tree('linear-regression-video') },
+    tags: ['统计', '线性代数', '9 个章节', '通义千问配音'],
+    keywords: 'linear regression least squares projection normal equation r squared galton 线性回归 最小二乘 投影 正规方程 回归 qwen tts',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'bash build.sh',
+    versions: [
+      { id: 'zh', label: '中文版', src: 'linear-regression-video/output/linear-regression.mp4', srt: 'linear-regression-video/output/linear-regression.srt', note: '中文配音（龙安灵心），字幕压在画面里' },
     ],
   },
   {

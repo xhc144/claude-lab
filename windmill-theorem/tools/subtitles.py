@@ -7,7 +7,7 @@ import re
 from pathlib import Path
 
 from timeline import ROOT, global_cues, lang_config
-from content.script import BY_ID, sentences, shown
+from content.script import BY_ID, _MARK, sentences, shown, spoken
 
 COL = {  # ASS colours are &HAABBGGRR
     "white": "&H00F5EDE9", "gloss": "&H00A8C6E8", "sky": "&H00F0A95A", "gold": "&H0042B9F4",
@@ -48,12 +48,29 @@ def chunks_zh(s, maxlen=22):
     if cur:
         out.append(cur)
     res = []
-    for c in out:                      # hard wrap anything still too long
+    for c in out:                      # wrap anything still too long, never inside a formula
         while len(c) > maxlen + 6:
-            res.append(c[:maxlen])
-            c = c[maxlen:]
+            cut = _formula_cut(c, maxlen)
+            res.append(c[:cut].rstrip())
+            c = c[cut:].lstrip()
         res.append(c)
-    return [re.sub(r"[，、]$", "", c) for c in res]
+    return [re.sub(r"[，、：]$", "", c) for c in res]
+
+
+def _formula_cut(c, maxlen):
+    """Where to break an over-long Chinese chunk: at a space, preferably one before an operator
+    (= + − ×), so that "(a + bi)(a − bi)" or "1 − 1/3 + 1/5" is never split inside a term."""
+    depth, outside = 0, set()
+    for i, ch in enumerate(c):
+        depth += ch in "([" and 1 or (ch in ")]" and -1 or 0)
+        if depth == 0:
+            outside.add(i)
+    spaces = [m.start() for m in re.finditer(r" ", c) if 6 <= m.start() <= maxlen + 6 and m.start() in outside]
+    ops = [i for i in spaces if c[i + 1:i + 2] in "=+−×≡"]
+    for cands in (ops, spaces):
+        if cands:
+            return min(cands, key=lambda i: abs(i - maxlen * 0.75))
+    return maxlen
 
 
 def chunks_en(s, maxlen=74):
@@ -69,8 +86,9 @@ def chunks_en(s, maxlen=74):
             if m.end() <= maxlen and (cut is None or abs(m.end() - target) < abs(cut - target)):
                 cut = m.end()
         if cut is None or cut < maxlen * 0.35:
-            cut = rest.rfind(" ", 0, maxlen)
-            cut = cut + 1 if cut > 0 else maxlen
+            # no good punctuation: break at the space nearest the balanced length (no orphans)
+            spaces = [m.end() for m in re.finditer(r" ", rest) if maxlen * 0.3 <= m.end() <= maxlen]
+            cut = min(spaces, key=lambda c: abs(c - target)) if spaces else maxlen
         out.append(rest[:cut].strip())
         rest = rest[cut:].strip()
     if rest:
@@ -98,6 +116,85 @@ def weight(s, lang):
     return max(1, len(s)) if lang == "zh" else max(1, len(s.split()))
 
 
+_MARKS = set("，。、：；！？,.;:!?")
+_SKIP = re.compile(r"[\s“”‘’（）()《》·\"'—…\-\[\]]")
+
+
+def _events(s, tokens=False):
+    """'m' (punctuation) / 'c' (character) sequence.  In the engine's word timestamps a hot_fix
+    pinyin block such as [ch][ā] stands for one character; in the script, a space between two
+    Chinese characters is read as a pause and shows up in the timestamps as "、"."""
+    if tokens:
+        s = re.sub(r"(\[[^\]]*\])+", "#", s)
+    else:
+        s = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "、", s)
+    return ["m" if ch in _MARKS else "c" for ch in s if not _SKIP.match(ch)]
+
+
+def boundary_time(prefix, full, words):
+    """Start time of the first word after `prefix` in the spoken sentence `full`.
+
+    The timestamps are on the engine's normalized text (numbers expanded), so characters don't
+    line up with the script, but punctuation does: count to the k-th mark, then r characters on.
+    Falls back to the character ratio when the punctuation doesn't match."""
+    pre, tot = _events(prefix), _events(full)
+    seq = [(e, i) for i, w in enumerate(words) for e in _events(w[0], tokens=True)]
+    if not seq:
+        return None
+    if tot.count("m") == sum(e == "m" for e, _ in seq):
+        k = pre.count("m")
+        r = pre[len(pre) - pre[::-1].index("m"):].count("c") if k else pre.count("c")
+        seen_m = seen_c = 0
+        for e, i in seq:
+            if seen_m < k:
+                seen_m += e == "m"
+            elif e == "c":
+                if seen_c == r:
+                    return words[i][1]
+                seen_c += 1
+        return words[-1][2]
+    cs = [i for e, i in seq if e == "c"]
+    f = pre.count("c") / max(1, tot.count("c"))
+    return words[cs[min(len(cs) - 1, round(f * len(cs)))]][1]
+
+
+def spoken_prefix(raw, pos):
+    """Spoken text of the part of `raw` whose shown text is shown(raw)[:pos]."""
+    out, last = "", 0
+    for m in list(_MARK.finditer(raw)) + [None]:
+        plain = raw[last:m.start()] if m else raw[last:]
+        if pos <= len(plain):
+            return out + plain[:pos]
+        out, pos = out + plain, pos - len(plain)
+        if m is None:
+            return out
+        sh, sp = m.group(1), m.group(2)
+        if pos < len(sh):                # inside a formula: proportional
+            return out + sp[:round(len(sp) * pos / max(1, len(sh)))]
+        out, pos, last = out + sp, pos - len(sh), m.end()
+    return out
+
+
+def chunk_times(raw, parts, words, a, b):
+    """Start time of every subtitle chunk of one sentence, from the engine's word timestamps,
+    so each chunk appears when the voice starts saying it."""
+    txt, full = shown(raw), spoken(raw)
+    pos, starts = 0, []
+    for p in parts:
+        i = txt.find(p, pos)
+        i = pos if i < 0 else i
+        pos = i + len(p)
+        if not starts:
+            starts.append(a)
+            continue
+        pre = spoken_prefix(raw, i)
+        t = boundary_time(pre, full, words)
+        if t is None:
+            t = a + (b - a) * len(pre) / max(1, len(full))
+        starts.append(min(b, max(starts[-1], t)))
+    return starts
+
+
 # ------------------------------------------------------------------ main
 def build(lang, outdir, quality="1080p30"):
     cfg = lang_config(lang)
@@ -112,13 +209,16 @@ def build(lang, outdir, quality="1080p30"):
         for k, ((raw, gloss), (a, b)) in enumerate(zip(sents, lay)):
             txt = shown(raw)
             parts = chunks_zh(txt) if lang == "zh" else chunks_en(txt)
-            ws = [weight(p, lang) for p in parts]
-            tt = t0 + a
-            span = (b - a)
-            for p, w in zip(parts, ws):
-                d = span * w / sum(ws)
-                start, end = tt, tt + d + (0.25 if p is parts[-1] else 0.0)
-                tt += d
+            words = (cfg.MANIFEST.get(line_id, {}).get("words") or [None] * len(sents))[k]
+            if words:
+                rel = chunk_times(raw, parts, words, a, b) + [b]
+                times = [(t0 + rel[i], t0 + rel[i + 1]) for i in range(len(parts))]
+            else:                      # no word timestamps (offline engines): split by length
+                ws = [weight(p, lang) for p in parts]
+                acc = [a + (b - a) * sum(ws[:i]) / sum(ws) for i in range(len(ws) + 1)]
+                times = [(t0 + acc[i], t0 + acc[i + 1]) for i in range(len(parts))]
+            for i, p in enumerate(parts):
+                start, end = times[i][0], times[i][1] + (0.25 if i == len(parts) - 1 else 0.0)
                 if lang == "zh":
                     events.append(("Main", start, end, p))
                     srt_main.append((start, end, p))

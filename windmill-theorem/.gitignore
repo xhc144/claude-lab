@@ -4,3 +4,4 @@ media/
 # speech models are downloaded separately (see README)
 models/
 __pycache__/
+.env
