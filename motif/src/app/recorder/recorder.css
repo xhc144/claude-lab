@@ -1,0 +1,32 @@
+/* Recorder windows: the floating control bar and the area picker. */
+:root { --fg: #f4f5f8; --fg2: #a9adbb; --bar: rgba(22, 24, 31, .92); --line: rgba(255, 255, 255, .1); --rec: #ff4d5e; --acc: #7c8cff; color-scheme: dark; }
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: transparent; color: var(--fg); font: 13px/1.4 'Motif Inter', 'Motif Sans SC', 'Segoe UI', 'Microsoft YaHei UI', system-ui, sans-serif; overflow: hidden; user-select: none; }
+button { font: inherit; color: inherit; }
+
+/* ── bar ── */
+.bar { position: absolute; inset: 6px; display: flex; align-items: center; gap: 4px; padding: 0 8px 0 14px; border-radius: 26px; background: var(--bar); border: 1px solid var(--line); box-shadow: 0 10px 30px rgba(0, 0, 0, .35); -webkit-app-region: drag; backdrop-filter: blur(18px); }
+.bar .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--rec); box-shadow: 0 0 0 4px rgba(255, 77, 94, .18); flex: none; }
+.bar.recording .dot { animation: pulse 1.4s ease-in-out infinite; }
+.bar.paused .dot { background: #ffb020; box-shadow: 0 0 0 4px rgba(255, 176, 32, .18); animation: none; }
+.bar .time { font: 600 14px/1 'Motif Mono', Consolas, monospace; font-variant-numeric: tabular-nums; min-width: 64px; margin-left: 6px; letter-spacing: .02em; }
+.bar .state { color: var(--fg2); font-size: 12px; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar .meter { width: 34px; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .12); overflow: hidden; flex: none; margin-right: 4px; }
+.bar .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #4ade80, #facc15 70%, #f87171); transition: width .08s linear; }
+.bar .b { -webkit-app-region: no-drag; width: 36px; height: 36px; border-radius: 18px; border: 0; background: transparent; display: grid; place-items: center; cursor: pointer; color: var(--fg); flex: none; }
+.bar .b:hover { background: rgba(255, 255, 255, .1); }
+.bar .b.stop { background: var(--rec); }
+.bar .b.stop:hover { background: #ff6573; }
+.bar .b svg { width: 18px; height: 18px; }
+.bar .count { position: absolute; inset: 0; display: grid; place-items: center; border-radius: 26px; background: var(--bar); font: 700 26px/1 'Motif Inter', system-ui; letter-spacing: .02em; }
+.bar .count small { font: 500 12px/1 inherit; color: var(--fg2); margin-left: 10px; }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* ── area picker ── */
+.area { position: fixed; inset: 0; cursor: crosshair; }
+.area canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.area .hint { position: absolute; left: 50%; top: 28px; transform: translateX(-50%); padding: 9px 16px; border-radius: 20px; background: var(--bar); border: 1px solid var(--line); color: var(--fg); font-size: 13px; pointer-events: none; white-space: nowrap; }
+.area .size { position: absolute; padding: 3px 8px; border-radius: 6px; background: var(--acc); color: #fff; font: 600 12px/1.3 'Motif Mono', Consolas, monospace; pointer-events: none; }
+.area .confirm { position: absolute; display: flex; gap: 6px; }
+.area .confirm button { height: 32px; padding: 0 14px; border-radius: 16px; border: 1px solid var(--line); background: var(--bar); cursor: pointer; }
+.area .confirm button.go { background: var(--acc); border-color: transparent; color: #fff; font-weight: 600; }

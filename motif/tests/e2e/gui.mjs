@@ -14,7 +14,9 @@ const require = createRequire(path.join(root, 'package.json'));
 const outDir = path.join(root, 'out/e2e');
 fs.mkdirSync(outDir, { recursive: true });
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'motif-e2e-'));
-const env = { ...process.env, MOTIF_HOME: path.join(tmp, 'library'), MOTIF_USER_DATA: path.join(tmp, 'userdata') };
+// MOTIF_RECORDER_TEST: the recorder may capture the editor window itself (virtual displays and CI
+// runners have no desktop to capture)
+const env = { ...process.env, MOTIF_HOME: path.join(tmp, 'library'), MOTIF_USER_DATA: path.join(tmp, 'userdata'), MOTIF_RECORDER_TEST: '1' };
 delete env.ELECTRON_RUN_AS_NODE;
 
 const results = [];
@@ -241,6 +243,71 @@ try {
   await page.waitForTimeout(1500);
   await shot('16-home-with-project');
   check('library shows the project', (await page.locator('.pcard').count()) >= 1);
+
+  // ── screen recording ──
+  const caps = await call('recorder.capabilities');
+  check('recorder finds FFmpeg', caps.ffmpeg);
+  if (process.platform === 'win32') check('recorder reads clicks and cursor shapes (koffi loaded)', caps.pointer.clicks && caps.pointer.shape, caps.pointer.error || '');
+  const unpacked = path.join(root, 'release/win-unpacked/resources/app.asar.unpacked/dist/node_modules/@koromix/koffi-win32-x64');
+  if (process.platform === 'win32' && fs.existsSync(path.join(root, 'release/win-unpacked'))) check('packaged app ships koffi unpacked', fs.existsSync(unpacked));
+  await page.locator('.hero-card.record').click();
+  await page.waitForSelector('.rec-dialog');
+  await page.waitForTimeout(1200);
+  await shot('17-record-dialog');
+  check('record dialog opens', true, `${await page.locator('.rec-src').count()} sources`);
+  await page.keyboard.press('Escape');
+  await call('recorder.start', { sourceId: 'test:frame', countdown: 0, keepWindow: true, fps: 30, mic: null, camera: null });
+  for (let i = 0; i < 10; i++) { await page.mouse.move(200 + i * 70, 300 + i * 25); await page.waitForTimeout(250); }
+  const bar = app.windows().find((w) => w.url().includes('recorder.html'));
+  if (bar) await bar.screenshot({ path: path.join(outDir, '18-recorder-bar.png') }).catch(() => {});
+  check('recorder bar opens', !!bar);
+  await call('recorder.stop');
+  await page.waitForSelector('.rec-editor', { timeout: 90000 });
+  await page.waitForTimeout(2500);
+  await shot('19-recording-editor');
+  const recPainted = await page.evaluate(() => { const c = document.querySelector(".rec-canvas canvas"); const d = c.getContext('2d').getImageData(3, 3, 1, 1).data; return d[3] > 0; });
+  check("recording opens in the recording editor with a painted frame", recPainted);
+  const len0 = await page.evaluate(() => window.__motifEditor.s.timing.duration);
+  check('recording has a duration', len0 > 1, `${len0.toFixed(2)} s`);
+  // zoom at the playhead, split, speed, undo
+  await page.evaluate((d) => window.__motifEditor.seek(d * 0.3), len0);
+  await page.keyboard.press('z');
+  await page.waitForTimeout(400);
+  check('Z adds a zoom segment', (await page.locator('.zseg').count()) >= 1 && (await page.locator('text=所选缩放').count()) === 1);
+  await page.evaluate((d) => window.__motifEditor.seek(d * 0.6), len0);
+  await page.keyboard.press('s');
+  await page.waitForTimeout(400);
+  check('S splits the clip', (await page.locator('.clip').count()) === 2);
+  await page.locator('.clip').nth(1).click({ button: 'right' });
+  await page.locator('.menu button', { hasText: '速度 2×' }).click();
+  await page.waitForTimeout(500);
+  const len1 = await page.evaluate(() => window.__motifEditor.s.timing.duration);
+  check('2× speed shortens the recording', len1 < len0 - 0.2, `${len0.toFixed(2)} → ${len1.toFixed(2)} s`);
+  await shot('20-recording-edited');
+  for (const tab of ['运镜', '光标', '摄像头', '音频', '画面']) { await page.locator('.rec-tabs button', { hasText: tab }).click(); await page.waitForTimeout(150); }
+  await page.locator('.bg-sw').nth(2).click();
+  await page.waitForTimeout(300);
+  check('background preset applies', await page.evaluate(() => window.__motifEditor.s.doc.scenes[0].blocks[0].background?.preset === 'ocean'));
+  await page.keyboard.press('Control+z');
+  await page.waitForTimeout(300);
+  check('undo restores the background', await page.evaluate(() => !window.__motifEditor.s.doc.scenes[0].blocks[0].background));
+  // export from the recording editor
+  await page.keyboard.press('Control+e');
+  await page.waitForSelector('.modal .chip');
+  await page.locator('.modal .chip', { hasText: 'MP4' }).click();
+  check('recording export offers 1440p and 4K', (await page.locator('.modal .seg button', { hasText: '1440p' }).count()) === 1 && (await page.locator('.modal .seg button', { hasText: '4K' }).count()) === 1);
+  await page.locator('.modal .seg button', { hasText: '720p' }).click();
+  await page.locator('.modal-foot .btn.primary').click();
+  await page.waitForSelector('text=导出完成', { timeout: 180000 });
+  await shot('21-recording-exported');
+  check('recording exports to MP4', true);
+  await page.locator('.modal-foot .btn.primary').click();
+  // full editor and back
+  await page.locator('.titlebar .btn', { hasText: '高级编辑' }).click();
+  await page.waitForSelector('.editor .stage-canvas', { timeout: 10000 });
+  await page.locator('.titlebar .btn', { hasText: '录屏编辑' }).click();
+  await page.waitForSelector('.rec-editor', { timeout: 10000 });
+  check('switches between recording and full editor', true);
 } catch (e) {
   check('workflow', false, e.message.split('\n')[0]);
   await shot('error').catch(() => {});

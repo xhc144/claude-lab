@@ -15,10 +15,18 @@ import { Present } from './Present.jsx';
 import { AssetsPanel, ComponentsPanel, HistoryDialog, saveComponentFlow } from './Panels.jsx';
 import { blockPreset } from './presets.js';
 import { THEMES } from '../../../core/themes/index.js';
+import { isRecordingDoc } from '../../../core/screen/index.js';
+import { RecEditor } from '../record/RecEditor.jsx';
 
 export function Editor({ projectId, onHome, onCommand }) {
   const status = useEditor((s) => s.status);
   const error = useEditor((s) => s.error);
+  const isRec = useEditor((s) => !!s.doc && isRecordingDoc(s.doc));
+  const hasScreen = useEditor((s) => !!s.doc?.scenes.some((sc) => sc.blocks.some((b) => b.type === 'screen')));
+  const modeKey = `motif.recmode.${projectId}`;
+  const [mode, setModeState] = useState(() => { try { return localStorage.getItem(modeKey) || 'auto'; } catch { return 'auto'; } });
+  const setMode = (m) => { setModeState(m); try { localStorage.setItem(modeKey, m); } catch { /* ignore */ } };
+  const recView = useRef(false);
   const [leftTab, setLeftTab] = useState('scenes');
   const [rightTab, setRightTab] = useState('scene');
   const [modal, setModal] = useState(null);
@@ -42,7 +50,7 @@ export function Editor({ projectId, onHome, onCommand }) {
   // keyboard
   useEffect(() => {
     const k = (e) => {
-      if (modal === 'present') return;
+      if (modal === 'present' || recView.current) return;
       const typing = e.target.closest?.('input, textarea, select, [contenteditable]');
       const mod = e.ctrlKey || e.metaKey;
       if (mod && e.key.toLowerCase() === 'z' && !typing) { e.preventDefault(); e.shiftKey ? editor.redo() : editor.undo(); return; }
@@ -73,6 +81,7 @@ export function Editor({ projectId, onHome, onCommand }) {
 
   // menu commands
   useEffect(() => on('command', (cmd) => {
+    if (recView.current && ['export', 'play', 'present'].includes(cmd)) { dispatchEvent(new CustomEvent('motif:rec-command', { detail: cmd })); return; }
     const inText = document.activeElement?.closest?.('input, textarea, [contenteditable]');
     if ((cmd === 'undo' || cmd === 'redo') && inText) document.execCommand(cmd);
     else if (cmd === 'undo') editor.undo();
@@ -82,6 +91,9 @@ export function Editor({ projectId, onHome, onCommand }) {
     else if (cmd === 'play') editor.toggle();
     else onCommand?.(cmd);
   }), [onCommand]);
+
+  recView.current = status === 'ready' && ((isRec && mode !== 'advanced') || mode === 'recording');
+  if (recView.current) return <RecEditor onHome={onHome} onAdvanced={() => { editor.pause(); setMode('advanced'); }} />;
 
   if (status === 'error') {
     return (
@@ -105,7 +117,7 @@ export function Editor({ projectId, onHome, onCommand }) {
 
   return (
     <div className="editor" style={{ '--tl-h': `${tlH}px` }}>
-      <TopBar onHome={onHome} openModal={setModal} onAI={() => setRightTab('ai')} />
+      <TopBar onHome={onHome} openModal={setModal} onAI={() => setRightTab('ai')} onRecording={hasScreen ? () => { editor.pause(); setMode('recording'); } : null} />
       <div className="left panel">
         <div className="tabs">
           <button className={leftTab === 'scenes' ? 'on' : ''} onClick={() => setLeftTab('scenes')}>场景</button>
@@ -135,7 +147,7 @@ export function Editor({ projectId, onHome, onCommand }) {
   );
 }
 
-function TopBar({ onHome, openModal, onAI }) {
+function TopBar({ onHome, openModal, onAI, onRecording }) {
   const { doc, save, canUndo, canRedo } = useEditor((s) => ({ doc: s.doc, save: s.save, canUndo: s.canUndo, canRedo: s.canRedo }));
   const [title, setTitle] = useState('');
   useEffect(() => { setTitle(doc?.title || ''); }, [doc?.title]);
@@ -153,6 +165,7 @@ function TopBar({ onHome, openModal, onAI }) {
       <button className="ibtn" title="重做 Ctrl+Y" disabled={!canRedo} onClick={() => editor.redo()}><Icon name="redo-2" size={16} /></button>
       <button className="ibtn" title="版本历史" onClick={() => openModal('history')}><Icon name="clock-arrow-up" size={16} /></button>
       <div className="drag grow" />
+      {onRecording ? <button className="btn ghost" onClick={onRecording} title="剪辑录屏：运镜、光标、片段与摄像头"><Icon name="monitor-dot" size={15} />录屏编辑</button> : null}
       <button className="btn ghost" onClick={() => openModal('themes')} title="设计系统"><Icon name="palette" size={15} />{THEMES[doc?.theme.id]?.name?.split(' ')[0] || '主题'}</button>
       <button className="btn ghost" onClick={() => openModal('present')} title="演示 F5"><Icon name="presentation" size={15} />演示</button>
       <button className="btn ai" onClick={onAI}><Icon name="sparkles" size={14} />AI</button>

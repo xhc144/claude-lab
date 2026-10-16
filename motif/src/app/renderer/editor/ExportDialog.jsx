@@ -16,10 +16,11 @@ const FORMATS = [
   { id: 'png', label: 'PNG 序列帧', icon: 'images', ext: '', desc: '逐帧图片，用于合成' },
 ];
 
-export function ExportDialog({ onClose }) {
+export function ExportDialog({ onClose, recording = false }) {
   const doc = useEditor((s) => s.doc);
   const timing = useEditor((s) => s.timing);
-  const [fmt, setFmt] = useState(() => localStorage.getItem('motif.export.fmt') || 'mp4');
+  const fmtKey = recording ? 'motif.export.fmt.rec' : 'motif.export.fmt';
+  const [fmt, setFmt] = useState(() => localStorage.getItem(fmtKey) || 'mp4');
   const [quality, setQuality] = useState('high');
   const [res, setRes] = useState('full');
   const [fps, setFps] = useState(doc.format.fps);
@@ -32,7 +33,7 @@ export function ExportDialog({ onClose }) {
 
   useEffect(() => { call('app.info').then(setInfo).catch(() => {}); }, []);
   useEffect(() => {
-    try { localStorage.setItem('motif.export.fmt', fmt); } catch { /* ignore */ }
+    try { localStorage.setItem(fmtKey, fmt); } catch { /* ignore */ }
     call('project.exportsDir', editor.project.id).then((dir) => {
       const name = doc.title.replace(/[\\/:*?"<>|]+/g, '_');
       const sep = dir.includes('\\') ? '\\' : '/';
@@ -48,7 +49,9 @@ export function ExportDialog({ onClose }) {
     });
   }), []);
 
-  const width = res === 'full' ? doc.format.width : res === 'half' ? Math.round(doc.format.width / 2) : res === '4k' ? doc.format.width * 2 : 720;
+  const shortSide = Math.min(doc.format.width, doc.format.height);
+  const byShort = (n) => Math.round((doc.format.width * n) / shortSide / 2) * 2;
+  const width = res === 'full' ? doc.format.width : res === 'half' ? Math.round(doc.format.width / 2) : res === '4k' ? (recording ? byShort(2160) : doc.format.width * 2) : res === '1440' ? byShort(1440) : res === '1080' ? byShort(1080) : 720;
   const sc = timing.scenes.find((s) => s.id === editor.s.sel.scene);
   const start = async () => {
     await editor.flushNow();
@@ -101,7 +104,9 @@ export function ExportDialog({ onClose }) {
           <div className="dim" style={{ marginBottom: 10 }}>{f.desc}</div>
           {isVideo || fmt === 'png' ? (
             <>
-              <Field label="分辨率"><Segmented value={res} options={[{ value: '720', label: '720p' }, { value: 'half', label: '½' }, { value: 'full', label: `原始 ${doc.format.width}` }, { value: '4k', label: '2×' }]} onChange={setRes} /></Field>
+              <Field label="分辨率"><Segmented value={res} options={recording
+                ? [{ value: '720', label: '720p' }, { value: 'full', label: shortSide === 1080 ? '1080p' : `原始 ${doc.format.width}` }, { value: '1440', label: '1440p' }, { value: '4k', label: '4K' }]
+                : [{ value: '720', label: '720p' }, { value: 'half', label: '½' }, { value: 'full', label: `原始 ${doc.format.width}` }, { value: '4k', label: '2×' }]} onChange={setRes} /></Field>
               {fmt !== 'gif' ? <Field label="帧率"><Segmented value={fps} options={[24, 25, 30, 60].map((v) => ({ value: v, label: String(v) }))} onChange={setFps} /></Field> : null}
               {fmt !== 'png' && fmt !== 'gif' ? <Field label="质量"><Segmented value={quality} options={[{ value: 'small', label: '小文件' }, { value: 'standard', label: '标准' }, { value: 'high', label: '高质量' }]} onChange={setQuality} /></Field> : null}
               <Field label="范围"><Segmented value={range} options={[{ value: 'all', label: '全部' }, { value: 'scene', label: sc ? `当前场景（${sc.index + 1}）` : '当前场景' }]} onChange={setRange} /></Field>

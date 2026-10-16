@@ -110,7 +110,7 @@ function drawScene(ctx, C, S, lt, o) {
   if (ownBg) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'under', env.assets);
   ctx.save();
   if (!o.noCamera) cameraTransform(ctx, env, S.camera, lt, S.duration);
-  const ds = { sceneT: lt, sceneDur: S.duration, frame: o.frame };
+  const ds = { sceneT: lt, sceneDur: S.duration, frame: o.frame, live: !!o.live, playing: !!o.playing };
   // While an explanation track is live, components report where they drew text and items.
   const guided = !!(S.guide && lt >= S.guide.start - 0.05);
   if (guided) { REC.on = true; REC.texts = []; REC.items = []; REC.base = ctx.getTransform(); }
@@ -133,7 +133,7 @@ function drawScene(ctx, C, S, lt, o) {
   for (const d of S.decor) if (d.kind !== 'scrim') drawDecor(ctx, C, S, d, lt);
   if (guided) { try { drawGuide(ctx, C, S, lt); } catch (err) { if (!S._guideErr) { S._guideErr = true; console.error(err); } } }
   ctx.restore();
-  if (ownBg && !C.persistent) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'over', env.assets);
+  if (ownBg && !C.persistent && !S.clean) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'over', env.assets);
 }
 
 function drawChrome(ctx, C, t, S) {
@@ -237,7 +237,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
   if (C.persistent) drawBackground(ctx, env, { ...env.theme.background }, env.palette('base'), t, 'under', env.assets);
   if (act.length === 1) {
     const S = act[0];
-    drawScene(ctx, C, S, opts.solo ? t : t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera });
+    drawScene(ctx, C, S, opts.solo ? t : t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera, live: opts.live, playing: opts.playing });
   } else {
     const [A, B] = act;
     const tr = B.transitionIn || { type: 'fade', duration: 0.6 };
@@ -250,7 +250,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
       g.clearRect(0, 0, pw, ph);
       g.setTransform(scale, 0, 0, scale, 0, 0);
       if (!transparentOK && C.persistent && S.tone === 'base' && !(S.scene.background && S.scene.background !== 'auto')) drawBackground(g, env, { ...env.theme.background }, env.palette('base'), t, 'under', env.assets);
-      drawScene(g, C, S, t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera });
+      drawScene(g, C, S, t - S.start, { globalT: t, frame: opts.frame, noCamera: opts.noCamera, live: opts.live, playing: opts.playing });
     }
     if (transparentOK && (tr.type === 'fade' || tr.type === 'morph')) {
       ctx.save(); ctx.globalAlpha = 1 - EASE.inOutSine(p); ctx.drawImage(la, 0, 0, env.W, env.H); ctx.restore();
@@ -259,7 +259,7 @@ export function renderFrame(ctx, C, t, opts = {}) {
       composite(ctx, tr, p, la, lb, { W: env.W, H: env.H, unit: env.unit, palIn: B.palette, palOut: A.palette });
     }
   }
-  if (C.persistent) drawBackground(ctx, env, { ...env.theme.background }, env.palette('base'), t, 'over', env.assets);
+  if (C.persistent && !act.every((s) => s.clean)) drawBackground(ctx, env, { ...env.theme.background }, env.palette('base'), t, 'over', env.assets);
   if (opts.chrome !== false) drawChrome(ctx, C, t, act[act.length - 1]);
   ctx.restore();
 }

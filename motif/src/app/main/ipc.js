@@ -16,6 +16,7 @@ import { allowRoot, fileUrl } from './protocol.js';
 import { runRenderJob } from './render-job.js';
 import * as ai from './ai.js';
 import { updateStatus, checkForUpdates, installNow } from './updater.js';
+import { recorderApi } from './recorder.js';
 
 export function registerIpc({ distDir, getWindow, takePendingOpen }) {
   const send = (channel, payload) => { for (const w of BrowserWindow.getAllWindows()) if (!w.isDestroyed() && w.webContents.getURL().includes('editor.html')) w.webContents.send('motif:event', channel, payload); };
@@ -203,6 +204,8 @@ export function registerIpc({ distDir, getWindow, takePendingOpen }) {
     'integrations.info': () => integrationInfo(),
     'integrations.installSkill': (target) => installSkill(target),
   };
+
+  Object.assign(api, recorderApi({ getWindow, send, preload: path.join(distDir, 'preload.cjs') }));
 
   ipcMain.handle('motif:call', async (_e, method, args) => {
     const fn = api[method];

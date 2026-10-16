@@ -335,6 +335,8 @@ export class EditorStore {
 }
 
 export const editor = new EditorStore();
+// end-to-end tests drive and inspect the editor through this handle
+if (typeof window !== 'undefined') window.__motifEditor = editor;
 
 /** Select a slice of editor state; re-renders only when the slice changes (shallow). */
 export function useEditor(selector = (s) => s) {

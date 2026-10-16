@@ -5,6 +5,7 @@ import { Editor } from './editor/Editor.jsx';
 import { Settings } from './settings/Settings.jsx';
 import { Toasts, Menus, Dialogs, toast } from './ui.jsx';
 import { call, on, isElectron } from './api.js';
+import { RecordingStatus } from './record/RecordDialog.jsx';
 
 export function App() {
   const [route, setRoute] = useState(() => { try { const r = JSON.parse(sessionStorage.getItem('motif.route') || 'null'); return r || { view: 'home' }; } catch { return { view: 'home' }; } });
@@ -40,6 +41,7 @@ export function App() {
     const ev = [
       ['motif:settings', (e) => setSettings(e.detail?.tab || 'general')],
       ['motif:integrations', () => setSettings('integrations')],
+      ['motif:open-project', (e) => { if (e.detail?.id) setRoute({ view: 'editor', id: e.detail.id }); }],
     ].map(([n, f]) => { addEventListener(n, f); return () => removeEventListener(n, f); });
     return () => [...offs, ...ev].forEach((f) => f());
   }, [openFiles]);
@@ -77,6 +79,7 @@ export function App() {
         : <Home onOpen={(id) => setRoute({ view: 'editor', id })} request={homeRequest} clearRequest={() => setHomeRequest(null)} />}
       {settings ? <Settings initialTab={settings} onClose={() => setSettings(null)} /> : null}
       {dropping ? <div className="global-drop"><div>松开以导入素材<br /><span className="dim" style={{ fontSize: 13 }}>PPTX · DOCX · XLSX · PDF · Markdown · 图片</span></div></div> : null}
+      <RecordingStatus onOpen={(id) => setRoute({ view: 'editor', id })} />
       <Toasts />
       <Menus />
       <Dialogs />

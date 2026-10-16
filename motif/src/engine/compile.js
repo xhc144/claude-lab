@@ -79,9 +79,12 @@ export function compile(doc, o) {
     const lead = tin ? tin.duration * Math.max(IN_DELAY[tin.type] ?? 0.32, 0.25) + 0.1 : 0.35;
     // re-time instances with the lead-in (cached builds are lead-independent)
     let contentEnd = 0;
+    let mediaEnd = 0;
     for (const it of cs.items) {
-      it.start = it.baseStart + (it.bleed ? 0 : lead);
+      it.start = it.baseStart + (it.bleed || it.inst.immediate ? 0 : lead);
       contentEnd = Math.max(contentEnd, it.start + it.inst.duration);
+      // media that plays for a known length (a screen recording) keeps the scene open until it ends
+      if (it.inst.minDuration) mediaEnd = Math.max(mediaEnd, it.start + it.inst.minDuration);
     }
     const nextD = next?.transitionIn?.duration || 0;
     const sc = scenes[i];
@@ -91,6 +94,7 @@ export function compile(doc, o) {
     let dur;
     if (typeof sc.duration === 'number') dur = sc.duration;
     else dur = clamp(Math.max(contentEnd + cs.hold, guideEnd ? guideEnd + 0.9 : 0) + nextD * 0.55 + (sc.hold || 0), 2.4, guideEnd ? 240 : 30);
+    if (sc.duration === 'auto' && mediaEnd) dur = Math.max(dur, mediaEnd + nextD * 0.5 + (sc.hold || 0));
     cs.duration = dur;
     cs.contentEnd = contentEnd;
     if (tin && i > 0) {
@@ -134,7 +138,7 @@ function buildScene(scene, i, n, env, o) {
     const bleed = !!(pl.hint.bleed || pl.hint.backdrop);
     let start;
     if (typeof m.at === 'number') start = m.at;
-    else if (bleed) start = 0;
+    else if (bleed || inst.immediate) start = 0;
     else if (!prev) start = 0;
     else {
       const pn = natureOf(prev.block), cn = natureOf(pl.block);
@@ -148,7 +152,9 @@ function buildScene(scene, i, n, env, o) {
   }
   const holds = items.reduce((s, it) => s + (it.inst.hold || 0), 0);
   const hold = clamp(holds * 0.75, 1.3, 9) * (1.15 - energy * 0.3);
-  return { id: scene.id, scene, layout: L.layout, tone, palette, items, decor: L.decor, hold, camera: cameraFor(env, scene, L.layout) };
+  // A full-frame screen recording is shown as recorded: no theme grain or vignette over it.
+  const clean = items.some((it) => it.block.type === 'screen' && it.rect.w >= env.W - 1 && it.rect.h >= env.H - 1);
+  return { id: scene.id, scene, layout: L.layout, tone, palette, items, decor: L.decor, hold, clean, camera: cameraFor(env, scene, L.layout) };
 }
 
 function layoutSceneWith(scene, i, n, env, o, tone) {
@@ -167,5 +173,7 @@ function cameraFor(env, scene, layout) {
   let cam = scene.camera && scene.camera !== 'auto' ? { ...scene.camera } : env.doc.style?.camera && env.doc.style.camera !== 'auto' ? { type: env.doc.style.camera } : { ...env.motion.camera };
   if (cam.amount == null) cam.amount = env.motion.camera.amount || 0.5;
   if (layout === 'full' && cam.type === 'none') cam = { type: 'push', amount: 0.4 };
+  // a screen recording has its own camera (zoom segments); a drifting scene camera would fight it
+  if (scene.blocks.some((b) => b.type === 'screen' && !b.hidden)) cam = { type: 'none', amount: 0 };
   return cam;
 }

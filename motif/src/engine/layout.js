@@ -37,7 +37,7 @@ export function resolveLayout(scene, index, count) {
     const v = vis[0];
     if (index === 0 && !copy.length && BACKDROP.has(v.type)) return 'cover';
     if (WIDE_VISUAL.has(v.type)) return copy.length && !['stats', 'compare'].includes(v.type) ? 'split' : 'stack';
-    if (v.type === 'image' && !copy.length && !titles.length) return 'full';
+    if ((v.type === 'image' || v.type === 'screen') && !copy.length && !titles.length) return 'full';
     if (v.type === 'stat' && !copy.length) return 'split';
     if (copy.length) return 'split';
     return 'focus';
@@ -244,12 +244,12 @@ export function layoutScene(scene, env, mk, index, count) {
     }
     case 'full': {
       const media = vis[0];
-      if (media) out.push({ block: media, rect: { x: 0, y: 0, w: W, h: H }, hint: { bleed: true, overlay: media.overlay ?? 0.35 } });
+      if (media) out.push({ block: media, rect: { x: 0, y: 0, w: W, h: H }, hint: { bleed: true, overlay: media.overlay ?? (media.type === 'screen' ? 0 : 0.35) } });
       const others = vis.slice(1);
       const tr = { x: S.x, y: S.y + S.h * 0.45, w: S.w * (portrait ? 1 : 0.62), h: S.h * 0.55 };
       if (title) hint(title, { titleRole: 'h1', align: 'left', onImage: true });
       copy.forEach((b) => hint(b, { onImage: true }));
-      decor.push({ kind: 'scrim', side: 'bottom' });
+      if (media?.type !== 'screen' || title || copy.length) decor.push({ kind: 'scrim', side: 'bottom' });
       place(flow([title, ...copy, ...others].filter(Boolean), tr, env, measure, 'bottom'));
       break;
     }

@@ -6,10 +6,11 @@ import diagramComps from './diagram.js';
 import mediaComps from './media.js';
 import mathComps from './math.js';
 import threeComps from './three.js';
+import screenComps from './screen.js';
 
 const REGISTRY = new Map();
 export function register(list) { for (const c of list) REGISTRY.set(c.type, c); }
-register([...textComps, ...statComps, ...chartComps, ...diagramComps, ...mediaComps, ...mathComps, ...threeComps]);
+register([...textComps, ...statComps, ...chartComps, ...diagramComps, ...mediaComps, ...mathComps, ...threeComps, ...screenComps]);
 
 export function getComponent(type) { return REGISTRY.get(type); }
 export function componentTypes() { return [...REGISTRY.keys()]; }

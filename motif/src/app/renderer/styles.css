@@ -212,7 +212,7 @@ kbd { font: 11px var(--mono); background: var(--bg3); border: 1px solid var(--li
 .home { display: flex; flex-direction: column; height: 100%; }
 .home-body { flex: 1; overflow: auto; }
 .home-inner { max-width: 1380px; margin: 0 auto; padding: 28px 36px 60px; }
-.hero { display: grid; grid-template-columns: 1.25fr 1fr 1fr; gap: 14px; margin-bottom: 30px; }
+.hero { display: grid; grid-template-columns: 1.25fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 30px; }
 .hero-card { position: relative; border-radius: 14px; padding: 20px; min-height: 148px; border: 1px solid var(--line); background: var(--bg1); cursor: pointer; overflow: hidden; transition: border-color .15s, transform .15s; display: flex; flex-direction: column; gap: 6px; }
 .hero-card:hover { border-color: #444a5c; transform: translateY(-2px); }
 .hero-card h3 { margin: 18px 0 0; color: var(--fg0); font-size: 16px; font-weight: 600; }
