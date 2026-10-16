@@ -18,6 +18,8 @@ export const C = {
   cyan: '#22d3ee',
   orange: '#fb923c',
   danger: '#ff6b81',
+  ok: '#4ade80',
+  warn: '#fbbf24',
   labelBg: 'rgba(10, 14, 22, 0.78)',
   bodies: ['#ffb454', '#5ccfe6', '#f28779', '#bae67e', '#d4bfff', '#ffd580'],
 };
