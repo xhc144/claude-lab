@@ -8,7 +8,7 @@
 //   node scripts/build.mjs --check    fail if the committed dist/ file is stale (part of npm run lint)
 //
 // Zero dependencies. Supports exactly the module syntax this codebase uses:
-//   import { a, b as c } from './x.js';   import x from './x.js';
+//   import { a, b as c } from './x.js';   import x from './x.js';   import * as X from './x.js';
 //   export function|class|const|let NAME …;   export default …;
 
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
@@ -43,6 +43,8 @@ function transform(file) {
   let code = src.replace(IMPORT_RE, (_, clause, spec) => {
     const dep = JSON.stringify(modules.get(resolve(dirname(file), spec)).id);
     const parts = [];
+    const ns = /^\s*\*\s+as\s+([A-Za-z_$][\w$]*)\s*$/.exec(clause);
+    if (ns) return `const ${ns[1]} = __m[${dep}];`;
     const named = /\{([^}]*)\}/.exec(clause);
     const def = /^\s*([A-Za-z_$][\w$]*)\s*(,|$)/.exec(clause);
     if (def) parts.push(`const ${def[1]} = __m[${dep}].default;`);
@@ -51,6 +53,7 @@ function transform(file) {
         .map((s) => { const [a, b] = s.split(/\s+as\s+/); return b ? `${a}: ${b}` : a; });
       parts.push(`const { ${fields.join(', ')} } = __m[${dep}];`);
     }
+    if (!parts.length) throw new Error(`${id}: unsupported import clause “${clause}”`);
     return parts.join(' ');
   });
   code = code.replace(/^export\s+default\s+/m, () => { hasDefault = true; return 'const __default__ = '; });

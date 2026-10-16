@@ -19,9 +19,9 @@ export const projects = [
   // ─── 浏览器交互 ───
   {
     id: 'mathscape', category: 'play', title: '数境', en: 'MathScape', cover: 'mathscape', status: { kind: 'online', label: '在线体验' },
-    summary: '拖动矩阵与复函数的参数，实时观察线性变换、定义域着色、常微分方程相轨线和三体运动。',
-    tags: ['数学可视化', '复变函数', 'ODE', '三体', '离线单文件'],
-    keywords: 'matrix linear transform complex ode lorenz three body 矩阵 线性代数 微分方程 洛伦茨',
+    summary: '拖动矩阵与复函数的参数，实时观察线性变换、定义域着色、常微分方程相轨线和三体运动；可开启高精度：精确分数、根式与最高 1000 位小数。',
+    tags: ['数学可视化', '复变函数', 'ODE', '三体', '任意精度', '离线单文件'],
+    keywords: 'matrix linear transform complex ode lorenz three body high precision arbitrary precision 矩阵 线性代数 微分方程 洛伦茨 高精度 任意精度',
     links: [
       { label: '打开数境', href: 'mathscape/', primary: true },
       { label: '下载单文件', href: 'mathscape/index.html', download: 'mathscape.html' },

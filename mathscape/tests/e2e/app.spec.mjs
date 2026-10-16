@@ -4,9 +4,10 @@ import { watchErrors, open, canvasStats, state, APP } from './helpers.mjs';
 test('loads, shows four modules and switches by click, hash and keyboard', async ({ page }) => {
   const check = watchErrors(page);
   await open(page, '');
-  await expect(page).toHaveURL(/#\/matrix$/);
+  await expect(page).toHaveURL(/#\/$/); // the start page
   const items = page.locator('.nav-item');
   await expect(items).toHaveCount(4);
+  await page.locator('#home-modules .mcard').first().click();
   await expect(page.locator('#module-title')).toHaveText('矩阵线性变换');
 
   await items.nth(1).click();

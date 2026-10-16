@@ -7,11 +7,15 @@ import { section, slider, toggle, button, chips, readout, iconButton, selectBox 
 import { fmt, fmtVec } from '../ui/format.js';
 import { C, FONT, MONO, alpha, ramp } from '../ui/theme.js';
 import { NBody, PRESETS, INTEGRATORS, randomSystem } from '../core/nbody.js';
+import { tolerances } from '../ui/settings.js';
 
 const TRAIL_MAX = 12000;
 const VEL_SCALE = 0.8; // world units of arrow per unit of velocity
 
 function create({ stage, panel, actions, toast, query, setQuery }) {
+  // precision mode (read once: a change of setting re-creates the module)
+  const tol = tolerances();
+  const dg = tol.hp ? 12 : 6; // digits of the conserved quantities
   const st = {
     preset: PRESETS[0],
     seed: null,
@@ -19,7 +23,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     sys: null,
     method: 'dopri',
     dt: 0.002,
-    rtol: 1e-10,
+    rtol: tol.nbodyRtol,
     speed: 1,
     playing: true,
     trailLen: 4000,
@@ -330,9 +334,9 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     const [px, py] = sys.momentum();
     timeEl.textContent = `t = ${sys.t.toFixed(2)}`;
     hudRead.set('t', fmt(sys.t, 3));
-    hudRead.set('E', fmt(E, 8));
+    hudRead.set('E', fmt(E, dg + 2));
     hudRead.set('dE', rel === 0 ? '0' : rel.toExponential(2), rel < 1e-8 ? 'good' : rel < 1e-4 ? 'warn' : 'bad');
-    hudRead.set('L', fmt(L, 8));
+    hudRead.set('L', fmt(L, dg + 2));
     hudRead.set('dL', fmt(Math.abs(L - st.L0), 3));
     hudRead.set('P', fmt(Math.hypot(px, py), 3));
     hudRead.set('rmin', fmt(sys.minDistance(), 4));
@@ -342,9 +346,9 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
       h('div', { class: 'title' }, st.preset ? st.preset.name : `随机系统 #${st.seed}`),
       h('dl', { class: 'readout' },
         h('dt', null, '时间 t'), h('dd', null, sys.t.toFixed(3)),
-        h('dt', null, '能量 E'), h('dd', null, fmt(E, 6)),
+        h('dt', null, '能量 E'), h('dd', null, fmt(E, dg)),
         h('dt', null, '|ΔE / E₀|'), h('dd', { class: rel < 1e-8 ? 'good' : rel < 1e-4 ? 'warn' : 'bad', id: 'hud-de' }, rel === 0 ? '0' : rel.toExponential(2)),
-        h('dt', null, '角动量 L'), h('dd', null, fmt(L, 6))));
+        h('dt', null, '角动量 L'), h('dd', null, fmt(L, dg))));
   }
 
   function drawChart() {
@@ -611,7 +615,7 @@ function create({ stage, panel, actions, toast, query, setQuery }) {
     state: () => {
       const s = st.sys;
       return {
-        preset: st.preset?.id ?? null, n: s.n, t: s.t, playing: st.playing, method: st.method,
+        preset: st.preset?.id ?? null, n: s.n, t: s.t, playing: st.playing, method: st.method, rtol: s.rtol,
         energy: s.energy(), E0: st.E0, relE: Math.abs((s.energy() - st.E0) / st.E0),
         L: s.angularMomentum(), L0: st.L0, P: s.momentum(), failed: s.failed,
         pos: Array.from({ length: s.n }, (_, i) => s.pos(i)), vel: Array.from({ length: s.n }, (_, i) => s.vel(i)), masses: Array.from(s.m),

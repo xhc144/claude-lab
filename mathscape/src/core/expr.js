@@ -74,7 +74,7 @@ export function tokenize(src) {
     if (/[0-9.]/.test(ch)) {
       const m = /^(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?/.exec(src.slice(i));
       if (!m) throw new ExprError('无法识别的数字', i);
-      toks.push({ t: 'num', v: parseFloat(m[0]), pos: i, len: m[0].length });
+      toks.push({ t: 'num', v: parseFloat(m[0]), raw: m[0], pos: i, len: m[0].length });
       i += m[0].length;
       continue;
     }
@@ -88,7 +88,7 @@ export function tokenize(src) {
     if (ch === '*' && src[i + 1] === '*') { toks.push({ t: '^', pos: i, len: 2 }); i += 2; continue; }
     if (ch === '²' || ch === '³') {
       toks.push({ t: '^', pos: i, len: 1 });
-      toks.push({ t: 'num', v: ch === '²' ? 2 : 3, pos: i, len: 1 });
+      toks.push({ t: 'num', v: ch === '²' ? 2 : 3, raw: ch === '²' ? '2' : '3', pos: i, len: 1 });
       i++;
       continue;
     }
@@ -102,7 +102,8 @@ export function tokenize(src) {
 // ---------------------------------------------------------------------------------------------
 // Parser
 
-const num = (value) => ({ type: 'num', value });
+// `raw` keeps the literal's source text so the high-precision evaluator can read it exactly
+const num = (value, raw = String(value)) => ({ type: 'num', value, raw });
 const bin = (op, left, right) => ({ type: 'bin', op, left, right });
 
 class Parser {
@@ -174,7 +175,7 @@ class Parser {
     switch (tok.t) {
       case 'num':
         this.next();
-        return num(tok.v);
+        return num(tok.v, tok.raw);
       case '(': {
         this.next();
         if (this.peek().t === ')') this.fail('括号内缺少表达式');
