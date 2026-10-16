@@ -254,11 +254,17 @@
   box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 8%, transparent);
 }
 .acct-name {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
+  margin-left: -4px;
+  padding: 2px 4px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.acct-spacer {
+  flex: 1;
+  align-self: stretch;
 }
 .acct-chevron {
   transition: transform var(--t-med) var(--ease-out);

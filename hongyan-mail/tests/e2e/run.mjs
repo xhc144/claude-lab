@@ -332,6 +332,36 @@ try {
     await win.mouse.move(5, 300);
   });
 
+  await step('one click copies an account address, sender, recipient or subject', async () => {
+    await win.mouse.move(5, 300);
+    // the account name in the sidebar copies the address and shows a small bubble; the account stays expanded
+    const before = await win.locator('.acct-folders').count();
+    await win.locator('.acct-head .acct-name').first().click();
+    await until(async () => (await clipboard()) === 'alice@hy.test', 'account address copied');
+    await win.waitForSelector('.copied-bubble.is-shown');
+    if (!(await win.locator('.copied-bubble').textContent()).includes('已复制')) throw new Error('bubble text');
+    if (await win.locator('.acct-folders').count() !== before) throw new Error('clicking the name folded the account');
+    await shot('31-copy-account-address', { keepToasts: true });
+    // the chevron side of the row still folds and unfolds
+    await win.locator('.acct-head .acct-chevron').first().click();
+    if (await win.locator('.acct-folders').count() !== before - 1) throw new Error('chevron did not fold the account');
+    await win.locator('.acct-head .acct-chevron').first().click();
+    // sender name in the reader copies the address without collapsing anything
+    await win.locator('.mc-name').first().click();
+    await until(async () => (await clipboard()) === 'notifications@github.com', 'sender copied');
+    // a click that ends a text selection keeps the selection instead of copying
+    await win.locator('.subject').click();
+    await until(async () => (await clipboard()) === (await win.locator('.subject').textContent()).trim(), 'subject copied');
+    await win.locator('.mc-to').first().click();
+    // the first address in the details is the sender; the next one is a recipient
+    const rcpt = win.locator('.recipients .addr').nth(1);
+    const rcptText = (await rcpt.textContent()) || '';
+    await rcpt.click();
+    await until(async () => { const c = await clipboard(); return /@/.test(c) && c !== 'notifications@github.com' && rcptText.includes(c); }, 'recipient copied');
+    await win.waitForTimeout(1300);
+    if (await win.locator('.copied-bubble.is-shown').count()) throw new Error('bubble did not fade');
+  });
+
   await step('text fields have a cut / copy / paste menu', async () => {
     await app.evaluate(({ clipboard: cb }) => cb.writeText('团建'));
     const search = win.getByPlaceholder('搜索邮件、联系人、附件…');
