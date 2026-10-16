@@ -1,6 +1,6 @@
 # Windows 软件：自动更新与免费签名
 
-声准 Phonica、律影 Motif、音乐粒子宇宙这三个 Windows 软件的**安装版**会自动更新，用自签名证书盖章也不用花钱。这个文件夹里是共用的脚本。
+声准 Phonica、律影 Motif、音乐粒子宇宙、墨誊 Moteng 这四个 Windows 软件的**安装版**会自动更新，用自签名证书盖章也不用花钱。这个文件夹里是共用的脚本。
 
 ## 自动更新是怎么工作的
 
@@ -8,13 +8,14 @@
    - 把安装包发布到这个版本自己的发布页，比如 `phonica-v1.1.0`；
    - 更新一个固定的"更新信息"发布页，比如 `phonica-latest`，里面只有一个 `latest.yml`，写着最新版本号、安装包地址和校验码。
 2. 装好的软件启动后不久去读这个 `latest.yml`，之后每 6 小时读一次。发现新版本就在后台下载，下载完核对校验码。
-3. 下载好以后，软件会提示"重启更新"（Phonica 在标题栏，Motif 和粒子宇宙弹一个窗口）。不点的话，下次关闭软件时也会自动装上。
+3. 下载好以后，软件会提示"重启更新"（Phonica 和墨誊在标题栏，Motif 和粒子宇宙弹一个窗口）。不点的话，下次关闭软件时也会自动装上。
 
 | 软件 | 更新信息地址 | 在哪看更新状态 |
 | --- | --- | --- |
 | 声准 Phonica | `releases/download/phonica-latest/latest.yml` | 设置 → 软件更新（可以关掉自动检查） |
 | 律影 Motif | `releases/download/motif-latest/latest.yml` | 设置 → 关于 |
 | 音乐粒子宇宙 | `releases/download/particle-universe-latest/latest.yml` | 下载好后弹窗提示 |
+| 墨誊 Moteng | `releases/download/moteng-latest/latest.yml` | 左侧“软件更新”（可以关掉自动检查） |
 
 几点说明：
 
@@ -22,7 +23,7 @@
 - `*-latest` 这几个发布页不要删，删了已安装的软件就找不到新版本了。
 - 发新版本前要先把对应软件 `package.json` 里的 `version` 改大，比如 1.1.0 → 1.1.1。版本号没变，软件不会认为有更新。
 - 出了问题，可以看软件数据目录下的 `logs\updater.log`（`%APPDATA%\<软件名>\logs\updater.log`）。
-- 从旧版本（Phonica 1.0.0、Motif 0.9.0、粒子宇宙 1.0.0 便携版）升级，要手动装一次新安装包，之后就自动了。
+- 从旧版本（Phonica 1.0.0、Motif 0.9.0、粒子宇宙 1.0.0 便携版、墨誊 1.0.0）升级，要手动装一次新安装包，之后就自动了。
 
 ## 免费签名：自己做一张证书
 
@@ -53,7 +54,7 @@ powershell -ExecutionPolicy Bypass -File .\new-signing-cert.ps1 -Name "你的名
 
 粘贴完删掉这两个 txt。`code-signing.pfx` 和密码另外备份（U 盘或密码管理器），**不要提交到仓库，不要发给别人**。谁拿到它，谁就能做出你的电脑会信任的软件。不过这张证书只能用来给软件盖章，不能用来冒充网站。
 
-以后三个软件的工作流都会自动用它签名，构建日志里能看到签名人是 `CN=你的名字`。
+以后四个软件的工作流都会自动用它签名，构建日志里能看到签名人是 `CN=你的名字`。
 
 ### 第三步：别的电脑
 

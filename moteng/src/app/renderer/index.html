@@ -15,6 +15,7 @@
         <div class="brand-sub">AI 对话网页 → LaTeX 源码与 PDF</div>
       </div>
     </div>
+    <button class="btn primary update-ready" id="update-ready" hidden title="关闭软件时也会自动安装"></button>
     <div class="engine" id="engine" title="">
       <span class="dot"></span><span id="engine-text">正在查找排版引擎…</span>
     </div>
@@ -64,6 +65,12 @@
           <span class="label">输出到</span>
           <span class="path" id="outRoot"></span>
           <button class="btn link" id="pickOut">更改</button>
+        </div>
+        <div class="row update">
+          <span class="label">软件更新</span>
+          <span class="path" id="update-text"></span>
+          <label><input type="checkbox" id="autoUpdate"> 自动检查</label>
+          <button class="btn link" id="update-check">检查更新</button>
         </div>
       </div>
 

@@ -255,11 +255,45 @@ window.__motengSelfTestShow = (items) => {
   return true;
 };
 
+// ------------------------------------------------------------------- updates
+function showUpdate(u) {
+  if (!u) return;
+  const text = u.state === 'disabled' ? `自动更新不可用：${u.reason || ''}`
+    : u.state === 'checking' ? '正在检查…'
+    : u.state === 'downloading' ? `正在下载 ${u.version || ''}（${u.percent || 0}%）`
+    : u.state === 'ready' ? `${u.version} 已下载，重启后生效；关闭软件时也会自动安装`
+    : u.state === 'none' ? `${u.current}，已是最新版本`
+    : u.state === 'error' ? `检查失败：${u.error}` : `当前版本 ${u.current}`;
+  $('update-text').textContent = text;
+  $('update-text').title = text;
+  const btn = $('update-check');
+  btn.disabled = u.state === 'disabled' || u.state === 'checking' || u.state === 'downloading';
+  btn.textContent = u.state === 'ready' ? '重启并更新' : '检查更新';
+  const ready = $('update-ready');
+  ready.hidden = u.state !== 'ready';
+  ready.textContent = `新版本 ${u.version || ''} 已下载 · 重启更新`;
+}
+
+function initUpdates() {
+  let last = null;
+  const show = (u) => { last = u; showUpdate(u); };
+  api.updateStatus().then(show).catch(() => {});
+  api.onUpdateStatus(show);
+  $('update-check').addEventListener('click', async () => {
+    if (last?.state === 'ready') { api.installUpdate(); return; }
+    const u = await api.checkUpdate();
+    show(u);
+    if (u.state === 'none') toast('已是最新版本');
+  });
+  $('update-ready').addEventListener('click', () => api.installUpdate());
+}
+
 // ------------------------------------------------------------------- wiring
 async function init() {
   state.settings = await api.getSettings();
   ['style', 'paper', 'fontSize'].forEach(bindSeg);
-  ['includeQuestions', 'includeThinking', 'fetchImages', 'openAfter'].forEach(bindCheck);
+  ['includeQuestions', 'includeThinking', 'fetchImages', 'openAfter', 'autoUpdate'].forEach(bindCheck);
+  initUpdates();
   $('outRoot').textContent = state.settings.outRoot;
   $('outRoot').title = state.settings.outRoot;
 

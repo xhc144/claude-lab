@@ -3,6 +3,9 @@
 # real compiles), packages the NSIS installer, then installs it silently and
 # runs the app's built-in self-test (both layouts, a Chinese output folder,
 # PDF checks, a window screenshot) against the unpacked and the installed copy.
+# With the WIN_CSC_LINK / WIN_CSC_KEY_PASSWORD secrets set
+# (scripts/windows-release/new-signing-cert.ps1) the app and installer are signed;
+# a release also refreshes the auto-update feed in the moteng-latest release.
 name: moteng · Windows build
 
 on:
@@ -61,7 +64,28 @@ jobs:
         run: npm test
 
       - name: Package installer (NSIS)
+        env:
+          WIN_CSC_LINK: ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
         run: npx electron-builder --win nsis --x64 --publish never
+
+      - name: Check signature and update files
+        shell: pwsh
+        env:
+          SIGNING: ${{ secrets.WIN_CSC_LINK != '' }}
+        run: |
+          Get-ChildItem release -File | Format-Table Name, Length
+          foreach ($f in 'release/latest.yml', 'release/win-unpacked/resources/app-update.yml') {
+            if (-not (Test-Path $f)) { throw "$f missing: auto-update would not work" }
+            Write-Host "--- $f"; Get-Content $f
+          }
+          $setup = Get-ChildItem release/Moteng-Setup-*.exe | Select-Object -First 1
+          foreach ($exe in $setup.FullName, (Resolve-Path release/win-unpacked/Moteng.exe).Path) {
+            $sig = Get-AuthenticodeSignature -LiteralPath $exe
+            Write-Host "$([IO.Path]::GetFileName($exe)): $($sig.Status) $($sig.SignerCertificate.Subject)"
+            if ($env:SIGNING -eq 'true' -and $sig.Status -eq 'NotSigned') { throw "$exe is not signed although WIN_CSC_LINK is set" }
+          }
+          if ($env:SIGNING -ne 'true') { Write-Host '::warning::WIN_CSC_LINK not set: this build is unsigned (see scripts/windows-release/README.md)' }
 
       - name: Self-test the unpacked app
         shell: pwsh
@@ -98,7 +122,7 @@ jobs:
       - name: Checksums
         shell: pwsh
         run: |
-          Get-ChildItem release/Moteng-Setup-*.exe | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } | Tee-Object -FilePath release/SHA256SUMS.txt
+          Get-ChildItem release/Moteng-Setup-*.exe, release/latest.yml | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } | Tee-Object -FilePath release/SHA256SUMS.txt
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
@@ -106,6 +130,8 @@ jobs:
           name: Moteng-Setup-win-x64
           path: |
             moteng/release/Moteng-Setup-*.exe
+            moteng/release/Moteng-Setup-*.exe.blockmap
+            moteng/release/latest.yml
             moteng/release/SHA256SUMS.txt
           compression-level: 0
           retention-days: 30
@@ -131,7 +157,7 @@ jobs:
           NOTES=$(cat <<EOF
           **墨誊 Moteng $VERSION** — 把 ChatGPT、Claude、Gemini、DeepSeek 等 AI 对话网页转换成 LaTeX 源码与 PDF 的 Windows 软件（64 位安装包）。
 
-          下载下方的 \`Moteng-Setup-$VERSION-x64.exe\` 并运行即可安装（无需管理员权限）。安装包内置 Tectonic 排版引擎与离线 TeX 文件，不需要另装 TeX Live；如果电脑上装有 TeX Live 或 MiKTeX，也可以在软件里改用它们。
+          下载下方的 \`Moteng-Setup-$VERSION-x64.exe\` 并运行即可安装（无需管理员权限）。从 1.1.0 起，装好后软件会自己检查并安装新版本（左侧“软件更新”）。安装包内置 Tectonic 排版引擎与离线 TeX 文件，不需要另装 TeX Live；如果电脑上装有 TeX Live 或 MiKTeX，也可以在软件里改用它们。
 
           - 输入：浏览器 Ctrl+S 保存的 .html（连同 _files 文件夹）、.mhtml、.zip，或直接从剪贴板粘贴
           - 识别 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝、智谱清言、Perplexity、Poe、Le Chat，其他网站按通用规则提取
@@ -152,4 +178,13 @@ jobs:
           else
             gh release create "$TAG" --target "${{ github.sha }}" --title "墨誊 Moteng $VERSION（Windows 安装包）" --notes "$NOTES"
           fi
-          gh release upload "$TAG" release/Moteng-Setup-*.exe release/SHA256SUMS.txt --clobber
+          gh release upload "$TAG" release/Moteng-Setup-*.exe release/Moteng-Setup-*.exe.blockmap release/SHA256SUMS.txt --clobber
+
+          # The installed app reads releases/download/moteng-latest/latest.yml; it points at the files above.
+          node ../scripts/windows-release/update-feed.mjs release "${{ github.repository }}" "$TAG" feed/latest.yml
+          FEED=moteng-latest
+          if ! gh release view "$FEED" >/dev/null 2>&1; then
+            gh release create "$FEED" --prerelease --target "${{ github.sha }}" --title "墨誊 Moteng · 自动更新信息" \
+              --notes "已安装的墨誊 Moteng 从这里读取最新版本信息（latest.yml），安装包在对应的 moteng-v* 发布里。请不要删除这个发布。"
+          fi
+          gh release upload "$FEED" feed/latest.yml --clobber

@@ -86,8 +86,8 @@ kbd { font: 12px ui-monospace, Consolas, monospace; border: 1px solid var(--rule
 .seg button.on { background: var(--accent); color: #fff; }
 @media (prefers-color-scheme: dark) { .seg button.on { color: #12161d; } }
 .seg.small button { padding: 3px 10px; font-size: 13px; }
-.checks label { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
-.checks input { accent-color: var(--accent); margin: 0; }
+.checks label, .update label { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; cursor: pointer; }
+.checks input, .update input { accent-color: var(--accent); margin: 0; }
 .out .path { flex: 1; min-width: 0; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .queue-head { display: flex; align-items: center; gap: 6px; font-weight: 600; }
@@ -133,3 +133,5 @@ kbd { font: 12px ui-monospace, Consolas, monospace; border: 1px solid var(--rule
 .styles span { color: var(--muted); }
 
 .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); background: var(--ink); color: var(--bg); padding: 8px 16px; border-radius: 8px; font-size: 13px; box-shadow: 0 4px 18px rgba(0, 0, 0, .2); max-width: 70vw; }
+.topbar .update-ready { margin-left: auto; margin-right: 10px; }
+.update .path { flex: 1; min-width: 0; font-size: 12.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

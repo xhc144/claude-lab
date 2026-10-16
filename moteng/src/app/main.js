@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 import { convert, readConversation, findEngines, detectFonts } from '../core/convert.js';
+import { initUpdater, updateStatus, checkForUpdates, installNow, updateConfigSummary } from './updater.js';
 
 const selfTestIdx = process.argv.indexOf('--self-test');
 const SELF_TEST = selfTestIdx >= 0;
@@ -31,6 +32,7 @@ const DEFAULTS = () => ({
   openAfter: false,
   outRoot: path.join(app.getPath('documents'), '墨誊'),
   enginePath: '',
+  autoUpdate: true,
 });
 
 function loadSettings() {
@@ -147,6 +149,9 @@ function registerIpc() {
   ipcMain.handle('open:url', (_, u) => (/^https:\/\//.test(u) ? shell.openExternal(u) : null));
   ipcMain.handle('pending-files', () => pendingFiles.splice(0));
   ipcMain.handle('app:info', () => ({ version: app.getVersion(), platform: process.platform }));
+  ipcMain.handle('update:status', () => updateStatus());
+  ipcMain.handle('update:check', () => checkForUpdates());
+  ipcMain.handle('update:install', () => installNow());
 }
 
 // ---------------------------------------------------------------------------
@@ -202,6 +207,8 @@ async function selfTest() {
   const report = { version: app.getVersion(), platform: process.platform, engines: [], fonts: null, cases: [], ok: false };
   const started = Date.now();
   try {
+    // the packaged app must carry its update feed (resources/app-update.yml)
+    if (app.isPackaged) report.updater = updateConfigSummary();
     report.engines = engines().map((e) => e.label + ' ' + e.path);
     const f = detectFonts();
     report.fonts = Object.fromEntries(Object.entries(f).map(([k, v]) => [k, v ? v.dir + v.file : null]));
@@ -258,6 +265,7 @@ app.whenReady().then(async () => {
   registerIpc();
   pendingFiles.push(...filesFromArgv(process.argv));
   createWindow();
+  initUpdater({ win: () => win, enabled: () => loadSettings().autoUpdate !== false, selfTest: SELF_TEST });
   if (SELF_TEST) {
     await new Promise((r) => win.webContents.once('did-finish-load', r));
     await selfTest();
