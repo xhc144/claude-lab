@@ -24,5 +24,6 @@
   设置与播放列表保存在 %APPDATA%\ParticleUniverse。截图保存在「图片\音乐粒子宇宙」。
 
 说明
-  本程序未进行代码签名，首次运行时 Windows SmartScreen 可能提示“未知发布者”，
+  这是便携版，不会自动更新；想自动更新请改用 ParticleUniverse-Setup 安装版。
+  本程序默认未进行代码签名，首次运行时 Windows SmartScreen 可能提示“未知发布者”，
   可点击「更多信息 → 仍要运行」。源代码见 https://github.com/xhc144/claude-lab/tree/main/particle-universe

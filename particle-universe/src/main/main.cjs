@@ -8,6 +8,7 @@ const path = require('node:path');
 const fs = require('node:fs');
 const fsp = require('node:fs/promises');
 const { pathToFileURL } = require('node:url');
+const { initUpdater } = require('./updater.cjs');
 
 const isSmoke = process.argv.includes('--smoke') || process.env.PU_SMOKE === '1';
 const devUrl = process.env.PU_DEV_URL || '';
@@ -260,6 +261,7 @@ app.whenReady().then(() => {
 
   registerIpc();
   createWindow();
+  initUpdater({ getWindow: () => win, disabled: isSmoke ? '自检模式' : devUrl ? '开发模式' : null });
   if (isSmoke) smokeTimer = setTimeout(() => finishSmoke({ ok: false, error: 'timeout' }), Number(process.env.PU_SMOKE_TIMEOUT || 600000));
 });
 
