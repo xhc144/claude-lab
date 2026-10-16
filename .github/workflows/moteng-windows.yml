@@ -1,0 +1,155 @@
+# Builds the 墨誊 Moteng Windows installer on a real Windows runner: fetches the
+# Tectonic TeX engine and fills its offline cache, runs the tests (including
+# real compiles), packages the NSIS installer, then installs it silently and
+# runs the app's built-in self-test (both layouts, a Chinese output folder,
+# PDF checks, a window screenshot) against the unpacked and the installed copy.
+name: moteng · Windows build
+
+on:
+  push:
+    paths:
+      - 'moteng/**'
+      - 'mojing/tex/**'
+      - '.github/workflows/moteng-windows.yml'
+  workflow_dispatch:
+    inputs:
+      release:
+        description: 'Publish a GitHub Release with the installer'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: moteng-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        working-directory: moteng
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: moteng/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore Tectonic and its TeX cache
+        uses: actions/cache@v4
+        with:
+          path: moteng/vendor/tectonic
+          key: moteng-tectonic-0.17.0-${{ hashFiles('moteng/tex/**', 'mojing/tex/**', 'moteng/src/core/latex/**', 'moteng/scripts/*-tectonic.js', 'moteng/fixtures/selftest/**') }}
+          restore-keys: moteng-tectonic-0.17.0-
+
+      - name: Fetch Tectonic
+        run: node scripts/fetch-tectonic.js
+
+      - name: Fill the offline TeX cache (and prove it works offline)
+        run: node scripts/warm-tectonic.js
+
+      - name: Tests (extraction, TeX generation, real compiles with Tectonic)
+        run: npm test
+
+      - name: Package installer (NSIS)
+        run: npx electron-builder --win nsis --x64 --publish never
+
+      - name: Self-test the unpacked app
+        shell: pwsh
+        env:
+          MOTENG_SHOTS_DIR: ${{ runner.temp }}\shots-unpacked
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:MOTENG_SHOTS_DIR | Out-Null
+          $out = "$env:RUNNER_TEMP\selftest-unpacked.json"
+          $p = Start-Process -FilePath (Resolve-Path release/win-unpacked/Moteng.exe) -ArgumentList '--self-test', $out -PassThru -Wait -NoNewWindow
+          Write-Host "exit code: $($p.ExitCode)"
+          if (Test-Path $out) { Get-Content $out } else { Write-Host 'no self-test result written' }
+          if ($p.ExitCode -ne 0) { exit 1 }
+
+      - name: Install silently and self-test the installed app
+        shell: pwsh
+        env:
+          MOTENG_SHOTS_DIR: ${{ runner.temp }}\shots-installed
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:MOTENG_SHOTS_DIR | Out-Null
+          $setup = Get-ChildItem release/Moteng-Setup-*.exe | Select-Object -First 1
+          Write-Host "installer: $($setup.Name) $([math]::Round($setup.Length / 1MB, 1)) MB"
+          $i = Start-Process -FilePath $setup.FullName -ArgumentList '/S' -PassThru -Wait
+          Write-Host "installer exit code: $($i.ExitCode)"
+          $exe = "$env:LOCALAPPDATA\Programs\Moteng\Moteng.exe"
+          if (-not (Test-Path $exe)) { Write-Host 'installed exe not found'; Get-ChildItem "$env:LOCALAPPDATA\Programs" -Recurse -Depth 1 | Select-Object FullName; exit 1 }
+          $out = "$env:RUNNER_TEMP\selftest-installed.json"
+          $p = Start-Process -FilePath $exe -ArgumentList '--self-test', $out -PassThru -Wait -NoNewWindow
+          Write-Host "exit code: $($p.ExitCode)"
+          if (Test-Path $out) { Get-Content $out } else { Write-Host 'no self-test result written' }
+          if ($p.ExitCode -ne 0) { exit 1 }
+          $u = "$env:LOCALAPPDATA\Programs\Moteng\Uninstall Moteng.exe"
+          if (Test-Path $u) { Start-Process -FilePath $u -ArgumentList '/S' -Wait; Write-Host 'uninstalled' }
+
+      - name: Checksums
+        shell: pwsh
+        run: |
+          Get-ChildItem release/Moteng-Setup-*.exe | ForEach-Object { "$((Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLower())  $($_.Name)" } | Tee-Object -FilePath release/SHA256SUMS.txt
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: Moteng-Setup-win-x64
+          path: |
+            moteng/release/Moteng-Setup-*.exe
+            moteng/release/SHA256SUMS.txt
+          compression-level: 0
+          retention-days: 30
+
+      - name: Upload self-test results and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: moteng-selftest
+          path: |
+            ${{ runner.temp }}\selftest-*.json
+            ${{ runner.temp }}\shots-*\*.png
+          if-no-files-found: ignore
+
+      - name: Publish release
+        if: (github.event_name == 'workflow_dispatch' && inputs.release) || contains(github.event.head_commit.message, '[release]')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          TAG="moteng-v$VERSION"
+          NOTES=$(cat <<EOF
+          **墨誊 Moteng $VERSION** — 把 ChatGPT、Claude、Gemini、DeepSeek 等 AI 对话网页转换成 LaTeX 源码与 PDF 的 Windows 软件（64 位安装包）。
+
+          下载下方的 \`Moteng-Setup-$VERSION-x64.exe\` 并运行即可安装（无需管理员权限）。安装包内置 Tectonic 排版引擎与离线 TeX 文件，不需要另装 TeX Live；如果电脑上装有 TeX Live 或 MiKTeX，也可以在软件里改用它们。
+
+          - 输入：浏览器 Ctrl+S 保存的 .html（连同 _files 文件夹）、.mhtml、.zip，或直接从剪贴板粘贴
+          - 识别 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝、智谱清言、Perplexity、Poe、Le Chat，其他网站按通用规则提取
+          - 公式取自网页里的 TeX 源码；表格、代码高亮、列表、图片一并转换
+          - 两种版式：对话体，或墨经讲义体
+          - 个别 LaTeX 排不出的公式自动改为源码显示，不会让整份文档失败
+
+          源码与说明：https://github.com/${{ github.repository }}/tree/${{ github.ref_name }}/moteng
+
+          SHA-256：
+          \`\`\`
+          $(cat release/SHA256SUMS.txt)
+          \`\`\`
+          EOF
+          )
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --title "墨誊 Moteng $VERSION（Windows 安装包）" --notes "$NOTES"
+          else
+            gh release create "$TAG" --target "${{ github.sha }}" --title "墨誊 Moteng $VERSION（Windows 安装包）" --notes "$NOTES"
+          fi
+          gh release upload "$TAG" release/Moteng-Setup-*.exe release/SHA256SUMS.txt --clobber

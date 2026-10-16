@@ -40,6 +40,8 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 Phonica、Motif 与音乐粒子宇宙的安装版会自动更新：工作流发布新版本时刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对后在重启或关闭时安装（便携版 zip 不自动更新）。默认不做代码签名；可以用免费的自签名证书签名，步骤、限制与报毒处理见 [scripts/windows-release/](scripts/windows-release/README.md)。
 
+[墨誊 Moteng](moteng/) 是 Windows 上的 AI 对话转 LaTeX 软件（Electron）：把浏览器保存的 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝等对话网页（.html / .mhtml / .zip，或直接从剪贴板粘贴），转换成 `main.tex` 和 PDF。公式取自网页里保存的 TeX 源码；表格、高亮代码、列表和图片一并转换。版式可选对话体或[墨经](mojing/)讲义体。编译出错时，按行号找到出错的那一处，只把它改为源码显示，其余内容照常排版。安装包内置 Tectonic 排版引擎和离线 TeX 缓存，也可以改用本机的 TeX Live / MiKTeX。安装包由「moteng · Windows build」工作流构建并自检，发布标签为 `moteng-v*`，未做代码签名。
+
 ## 数学排版模板
 
 [墨经 Mojing：PDF 预览与 ZIP 下载](https://xhc144.github.io/claude-lab/mojing/) 提供讲义、习题与解答、竞赛试卷、数学论文、数学书籍、翻译对照六套 LaTeX 模板。十份示例 PDF 包含学生版、答案版与双栏对照等变体；六个 ZIP 各自包含完整源码和 ASCII 文件名的 `README.txt`。
