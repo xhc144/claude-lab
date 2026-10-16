@@ -83,10 +83,35 @@
               ],
               "text": "c = ?"
             }
-          ]
+          ],
+          "id": "b_tri"
         }
       ],
-      "narration": "两条直角边分别是 4 和 3，斜边是多少？"
+      "narration": "两条直角边分别是 4 和 3，斜边是多少？",
+      "guide": {
+        "cursor": "pen",
+        "steps": [
+          {
+            "target": "b_tri",
+            "part": "AB",
+            "do": "highlight",
+            "say": "底边 AB 长 4"
+          },
+          {
+            "target": "b_tri",
+            "part": "AC",
+            "do": "highlight",
+            "say": "竖直的边 AC 长 3"
+          },
+          {
+            "target": "b_tri",
+            "part": "BC",
+            "do": "circle",
+            "note": "斜边 = ?",
+            "say": "那么斜边 BC 有多长？"
+          }
+        ]
+      }
     },
     {
       "blocks": [
@@ -102,10 +127,35 @@
             "16 + 9 = c^2",
             "c = \\sqrt{25} = 5"
           ],
-          "label": "两直角边的平方和，等于斜边的平方"
+          "label": "两直角边的平方和，等于斜边的平方",
+          "id": "b_pyth"
         }
       ],
-      "narration": "代入计算，斜边等于 5。"
+      "narration": "代入计算，斜边等于 5。",
+      "guide": {
+        "steps": [
+          {
+            "target": "b_pyth",
+            "part": "\\sqrt{25}",
+            "do": "underline",
+            "say": "把 16 和 9 加起来，再开平方"
+          },
+          {
+            "target": "b_pyth",
+            "part": "5",
+            "nth": 2,
+            "do": "circle",
+            "note": "斜边",
+            "say": "斜边正好是 5"
+          },
+          {
+            "target": "b_pyth",
+            "part": "斜边的平方",
+            "do": "highlight",
+            "say": "对任何直角三角形都成立"
+          }
+        ]
+      }
     },
     {
       "layout": "focus",
@@ -140,10 +190,32 @@
             "expr": "0.5*x^2",
             "from": 0.4,
             "to": 2.8
-          }
+          },
+          "id": "b_area"
         }
       ],
-      "narration": "积分就是把曲线下的面积切成无数细条再加起来。"
+      "narration": "积分就是把曲线下的面积切成无数细条再加起来。",
+      "guide": {
+        "cursor": "laser",
+        "steps": [
+          {
+            "target": "b_area",
+            "part": [
+              2.5,
+              3.125
+            ],
+            "do": "point",
+            "note": "x = 2.5",
+            "say": "面积从 0 一直累积到 2.5"
+          },
+          {
+            "target": "b_area",
+            "part": "x轴",
+            "do": "highlight",
+            "say": "下边界是 x 轴"
+          }
+        ]
+      }
     },
     {
       "blocks": [
@@ -154,9 +226,33 @@
         {
           "type": "equation",
           "latex": "\\int_a^b f(x)\\,dx = F(b) - F(a)",
-          "label": "求面积，只需要找到原函数"
+          "label": "求面积，只需要找到原函数",
+          "id": "b_ftc"
         }
-      ]
+      ],
+      "guide": {
+        "steps": [
+          {
+            "target": "b_ftc",
+            "part": "\\int_a^b f(x)\\,dx",
+            "do": "underline",
+            "say": "左边：曲线下从 a 到 b 的面积"
+          },
+          {
+            "target": "b_ftc",
+            "part": "F(b) - F(a)",
+            "do": "circle",
+            "note": "原函数之差",
+            "say": "右边：只要原函数在两端的差"
+          },
+          {
+            "target": "b_ftc",
+            "part": "原函数",
+            "do": "highlight",
+            "say": "求面积，变成了找原函数"
+          }
+        ]
+      }
     },
     {
       "layout": "focus",

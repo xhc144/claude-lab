@@ -103,6 +103,36 @@ try {
   const live = await page.evaluate(() => [...document.querySelectorAll('.scene-item .nm')].map((e) => e.textContent).join('|'));
   check('external (AI/CLI) edit appears live', live.includes('AI 改的名字'), live.slice(0, 80));
 
+  // playback paints frames (regression: the stage froze on its first frame while playing)
+  await page.click('.stage-wrap', { position: { x: 6, y: 6 } }).catch(() => {});
+  const sig = () => page.evaluate(() => { const c = document.querySelector('.stage-canvas'); const d = c.getContext('2d', { willReadFrequently: true }).getImageData(0, 0, c.width, c.height).data; let h = 0; for (let i = 0; i < d.length; i += 4 * 499) h = (h * 31 + d[i] + d[i + 1] * 7 + d[i + 2] * 13) >>> 0; return h; });
+  const playBtn = page.locator('button[title^="播放 / 暂停"]');
+  await call('project.open', pid);
+  await playBtn.click();
+  await page.waitForTimeout(700);
+  const f1 = await sig(); await page.waitForTimeout(600); const f2 = await sig(); await page.waitForTimeout(600); const f3 = await sig();
+  await playBtn.click();
+  await page.waitForTimeout(300);
+  check('playback paints moving frames', new Set([f1, f2, f3]).size >= 2, `${f1} ${f2} ${f3}`);
+
+  // explanation pointer: add a step from the block's context menu → document, inspector, timeline
+  await page.locator('.scene-item').nth(1).click();
+  await page.waitForTimeout(600);
+  await page.locator('.ov-box').first().click({ button: 'right', force: true });
+  await page.locator('text=讲解标注：圈出').first().click();
+  await page.waitForTimeout(1200);
+  const guided = await call('project.open', pid);
+  const gScene = guided.doc.scenes[1];
+  check('pointer step added from block menu', gScene.guide?.steps?.length === 1 && gScene.guide.steps[0].do === 'circle', JSON.stringify(gScene.guide));
+  await page.locator('.guide-step textarea').first().fill('这里是重点');
+  await page.locator('.guide-step textarea').first().blur();
+  await page.waitForTimeout(900);
+  await page.locator('.guide-step').first().click({ position: { x: 6, y: 50 } });
+  await page.waitForTimeout(1200);
+  await shot('04b-guide');
+  const gDoc = await call('project.open', pid);
+  check('pointer step editable in the scene panel and shown on the timeline', gDoc.doc.scenes[1].guide.steps[0].say === '这里是重点' && (await page.locator('.tl-guide').count()) === 1);
+
   // add element palette
   await page.keyboard.press('Control+k');
   await page.waitForSelector('.palette .it');

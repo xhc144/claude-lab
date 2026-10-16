@@ -142,6 +142,7 @@ export class MotifEngine {
         id: S.id, index: S.index, start: S.start, duration: S.duration, end: S.end, settled: S.start + settledTime(S),
         contentEnd: S.contentEnd, layout: S.layout, tone: S.tone, transition: S.transitionIn ? { type: S.transitionIn.type, duration: S.transitionIn.duration } : null,
         items: S.items.map((it) => ({ id: it.block.id, type: it.block.type, start: it.start, duration: it.inst.duration, rect: it.rect, bleed: it.bleed, framed: !!it.block.frame && typeof it.block.frame === 'object' })),
+        guide: S.guide ? S.guide.steps.map((g) => ({ idx: g.idx, do: g.do, target: g.block?.id || null, part: g.part, note: g.note, say: g.say, at: g.at, travel: g.travel, drawDur: g.drawDur, end: g.end, fixed: typeof S.scene.guide.steps[g.idx]?.at === 'number' })) : null,
       })),
     };
   }

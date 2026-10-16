@@ -1,5 +1,6 @@
 // Context menu definitions shared by the stage, the layer list and the timeline.
 import { editor, findBlock } from './store.js';
+import { addGuideStep } from './GuideEditor.jsx';
 
 export function blockMenu(id) {
   const fb = findBlock(editor.s.doc, id);
@@ -14,6 +15,10 @@ export function blockMenu(id) {
     '-',
     { label: b.hidden ? '显示' : '隐藏', icon: b.hidden ? 'eye' : 'eye-off', onClick: () => editor.updateBlock(id, { hidden: b.hidden ? null : true }, { message: b.hidden ? '显示' : '隐藏' }) },
     { label: b.locked ? '解锁' : '锁定', icon: b.locked ? 'lock-open' : 'lock', onClick: () => editor.updateBlock(id, { locked: b.locked ? null : true }, { message: b.locked ? '解锁' : '锁定' }) },
+    '-',
+    { label: '讲解标注：圈出', icon: 'circle', onClick: () => addGuideStep(s.id, { target: id, do: 'circle' }) },
+    { label: '讲解标注：下划线', icon: 'underline', onClick: () => addGuideStep(s.id, { target: id, do: 'underline' }) },
+    { label: '讲解标注：指向', icon: 'mouse-pointer-2', onClick: () => addGuideStep(s.id, { target: id, do: 'point' }) },
     '-',
     { label: '保存为组件…', icon: 'component', onClick: () => window.dispatchEvent(new CustomEvent('motif:save-component', { detail: { block: id } })) },
     { label: '让 AI 改进这个元素', icon: 'sparkles', onClick: () => window.dispatchEvent(new CustomEvent('motif:open-ai', { detail: { prompt: '帮我改进选中的元素：' } })) },

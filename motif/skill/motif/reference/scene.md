@@ -14,6 +14,7 @@
 | `variant` | 版式变体：`{flip: true}` 左右交换，`{align: "center"}`，`{ratio: 0.45}` 文字栏比例 |
 | `notes` | 演讲者备注 |
 | `narration` | 旁白：字符串或 `{text, asset}`；开启 `style.captions` 时显示字幕 |
+| `guide` | 讲解指针：光标依次圈出/划线/指向内容的局部，配合每步讲解词（见下文） |
 
 ## 版式 layout
 
@@ -114,3 +115,34 @@
 - `4:5`：1080×1350，竖版 4:5（信息流）
 - `4:3`：1440×1080，传统 4:3
 - `21:9`：2520×1080，超宽 21:9（电影）
+
+## 讲解指针 guide（场景级）
+
+讲公式、图表、步骤时，不要让一页静止很久：给场景加 `guide`，一支虚拟光标会依次移到目标处并画出标注（圈、下划线、荧光笔…），节奏跟着每步的 `say`（旁白）走。场景时长会自动延长以容纳全部步骤。
+
+```json
+"guide": {
+  "cursor": "arrow",
+  "steps": [
+    { "target": "b_eq", "part": "a^2", "do": "underline", "say": "先看第一项，a 的平方" },
+    { "target": "b_eq", "part": "c^2", "do": "circle", "note": "斜边", "say": "等号右边是斜边 c 的平方" },
+    { "target": "b_plot", "part": [3, 4], "do": "point", "say": "代入 3 和 4 正好落在这里" }
+  ]
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| `cursor` | `arrow` 鼠标箭头 · `pen` 画笔 · `laser` 激光点 · `hand` 手指 · `none` 不显示光标（默认 arrow） |
+| `steps[].target` | 目标块：块 ID、序号（1 起）或类型名（如 `"equation"`）；省略时指向场景主体 |
+| `steps[].part` | 目标的局部：公式中的 LaTeX 片段（`"c^2"`、`"\\frac{a}{b}"`）、文字片段（`"关键词"`）、条目序号（`2`）、图表分类名或序号、函数图上的坐标 `[x, y]`、几何图中的点名（`"A"`）或两点（`"AB"`）；省略则为整个块 |
+| `steps[].nth` | part 出现多次时取第几处（1 起，默认 1） |
+| `steps[].do` | `point` 指向 · `circle` 圈出 · `underline` 下划线 · `highlight` 荧光笔 · `box` 框选 · `arrow` 箭头 · `focus` 聚光 · `cross` 划掉 · `check` 打勾 |
+| `steps[].say` | 这一步的讲解词：决定停留时长（约每秒 4.5 字）；开启 `style.captions` 时作为字幕显示 |
+| `steps[].note` | 标注旁的小标签（≤ 8 字最佳） |
+| `steps[].at` | 指定开始时间（场景内秒数）；默认紧接上一步 |
+| `steps[].hold` | 停留秒数（覆盖按 say 估算的时长） |
+| `steps[].keep` | true：标注保留到场景结束（默认下一步开始时淡出） |
+| `steps[].color` | 标注颜色（默认主题强调色；cross 用 negative，check 用 positive） |
+
+要点：每步只讲一个点；`say` 写成口语短句；同一场景 3–6 步为宜。公式的 part 要与 latex 中的写法一致（如 latex 是 `a^2 + b^2 = c^2`，part 用 `"b^2"`）。

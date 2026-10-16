@@ -1,7 +1,7 @@
 // Math & science components: equation, plot, geometry, transform, vectorfield, fourier, simulation.
 import { role, paintFor, textAnimator, drawText, roundRect, toCss, EASE, clamp01, colorOf, mix } from './kit.js';
 import { fontString, drawInline } from '../text/text.js';
-import { texGlyphs, glyphPath } from '../math/tex.js';
+import { texGlyphs, glyphPath, glyphBox, findTexPart } from '../math/tex.js';
 import { compileExpr } from '../../core/expr.js';
 import { niceScale } from './chart.js';
 import { rng } from '../../core/util/misc.js';
@@ -122,8 +122,27 @@ const equation = {
       ctx.restore();
     };
     const total = writeDur + (valid.length - 1) * (hold + morph);
+    const shownAt = (t) => {
+      if (valid.length === 1) return 0;
+      const k = Math.max(0, Math.min(valid.length - 1, Math.floor((t - writeDur) / (hold + morph)) + 1));
+      return k === 0 ? 0 : t < writeDur + (k - 1) * (hold + morph) + hold ? k - 1 : k;
+    };
     return {
       duration: total, hold: 1.8, issues,
+      // Explanation pointer: the box of a TeX fragment ("c^2") in the formula on screen at t.
+      anchor(part, t, nth = 1) {
+        const T = valid[shownAt(t)];
+        const o = origin(T);
+        let idx = T.glyphs.map((_, i) => i);
+        if (part != null && part !== '') {
+          const P = texGlyphs(prepTex(String(part), p));
+          idx = P.error ? null : findTexPart(T, P, nth);
+          if (!idx) return null;
+        }
+        let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+        for (const i of idx) { const [bx, by, bw, bh] = glyphBox(T.glyphs[i]); x0 = Math.min(x0, bx); y0 = Math.min(y0, by); x1 = Math.max(x1, bx + bw); y1 = Math.max(y1, by + bh); }
+        return [{ x: o.x + x0 * s, y: o.y + y0 * s, w: (x1 - x0) * s, h: (y1 - y0) * s }];
+      },
       draw(ctx, t) {
         const k = valid.length === 1 ? 0 : Math.max(0, Math.min(valid.length - 1, Math.floor((t - writeDur) / (hold + morph)) + 1));
         const phaseStart = writeDur + (k - 1) * (hold + morph) + hold;
@@ -284,8 +303,30 @@ const plot = {
     const labels = fns.map((F) => (F.f.label ? texGlyphs(prepTex(F.f.label, p)) : null));
     const areaLabel = block.area?.label ? texGlyphs(prepTex(block.area.label, p)) : null;
     const clipRect = (ctx) => { ctx.beginPath(); ctx.rect(P.r.x, P.r.y - 2, P.r.w, P.r.h + 4); ctx.clip(); };
+    const dotBox = (X, Y) => { const r = env.sizes.body * 0.45; return [{ x: X - r, y: Y - r, w: r * 2, h: r * 2, point: true }]; };
     return {
       duration, hold: 2, issues,
+      // Explanation pointer: [x, y] → that point; n → a point on function n; "x轴"/"y轴" → the axis.
+      anchor(part, t) {
+        if (Array.isArray(part)) return dotBox(P.X(+part[0]), P.Y(+part[1]));
+        if (part == null || part === '') return [{ x: P.r.x, y: P.r.y, w: P.r.w, h: P.r.h }];
+        const s = String(part).toLowerCase();
+        if (/^x(轴| ?axis)?$/.test(s)) return [{ x: P.r.x, y: P.Y(Math.min(Math.max(0, P.y0), P.y1)) - env.sizes.small * 0.6, w: P.r.w, h: env.sizes.small * 1.2 }];
+        if (/^y(轴| ?axis)?$/.test(s)) return [{ x: P.X(Math.min(Math.max(0, P.x0), P.x1)) - env.sizes.small * 0.6, y: P.r.y, w: env.sizes.small * 1.2, h: P.r.h }];
+        const F = typeof part === 'number' || /^\d+$/.test(s) ? fns[Number(part) - 1] : fns.find((f) => f.f.label === part || f.f.expr === part);
+        if (!F) return null;
+        const sc = scopeAt(t);
+        if (F.kind === 'fx') {
+          for (const u of [0.62, 0.5, 0.75, 0.38, 0.85, 0.25]) {
+            sc.x = xr[0] + (xr[1] - xr[0]) * u;
+            const v = F.fn(sc);
+            if (Number.isFinite(v) && v >= P.y0 && v <= P.y1) return dotBox(P.X(sc.x), P.Y(v));
+          }
+          return null;
+        }
+        sc.t = F.t[0] + (F.t[1] - F.t[0]) * 0.3;
+        return dotBox(P.X(F.fx(sc)), P.Y(F.fy(sc)));
+      },
       draw(ctx, t) {
         drawAxes(ctx, c, P, t, { grid: block.grid, axes: block.axes, piX });
         const sc = scopeAt(t);
@@ -428,6 +469,19 @@ const geometry = {
     const tex = (s) => { if (!texCache.has(s)) texCache.set(s, texGlyphs(prepTex(/[\\^_{]/.test(s) || /^[A-Za-zα-ωθ]$/.test(s) ? s : `\\text{${s}}`, p))); return texCache.get(s); };
     return {
       duration: shStart + per * shapes.length + dur, hold: 2.5,
+      // Explanation pointer: "A" → point A; "AB" / ["A","B"] → segment AB; "ABC" → that polygon.
+      anchor(part) {
+        if (part == null || part === '') return null;
+        if (Array.isArray(part) && part.every((v) => typeof v === 'number')) { const r = env.sizes.body * 0.45; return [{ x: P.X(part[0]) - r, y: P.Y(part[1]) - r, w: r * 2, h: r * 2, point: true }]; }
+        const names = Array.isArray(part) ? part.map(String) : pts[part] ? [String(part)] : String(part).match(/[A-Z][a-z0-9'′]*/g) || [];
+        const qs = names.map((n) => pts[n]).filter(Boolean);
+        if (!qs.length) return null;
+        const xs = qs.map((q) => P.X(q.x)), ys = qs.map((q) => P.Y(q.y));
+        const r = env.sizes.body * 0.45;
+        const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+        if (qs.length === 2) return [{ x: x0, y: y0, w: x1 - x0, h: y1 - y0, seg: [[xs[0], ys[0]], [xs[1], ys[1]]] }];
+        return [{ x: x0 - (qs.length === 1 ? r : 0), y: y0 - (qs.length === 1 ? r : 0), w: x1 - x0 + (qs.length === 1 ? r * 2 : 0), h: y1 - y0 + (qs.length === 1 ? r * 2 : 0), point: qs.length === 1 }];
+      },
       draw(ctx, t) {
         shapes.forEach((sh, k) => {
           const q = EASE.inOutCubic(clamp01((t - shStart - k * per) / dur));

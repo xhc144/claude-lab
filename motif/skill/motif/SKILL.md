@@ -67,6 +67,17 @@ motif analyze 报告.pptx 数据.xlsx --json
 - 某个转场需要强调：`transition: {"type":"band"}`、`"iris"`、`"zoom"` 等；相邻场景同一元素平滑变形用 `morph` + 块的 `key`。
 - 个别元素的入场：块的 `motion: {"enter":"slam","delay":0.2}`；强调动画 `emphasis: "pulse"`。
 - 竖屏短视频：`set_format` 为 `9:16`，版式会自动重排，不需要改内容结构。
+- **讲解类内容不要让一页静止很久**：讲公式、图表、流程、代码思路时，给场景加 `guide`（讲解指针）。一支光标会按步骤移到要讲的局部——公式里的某一项、文字里的关键词、第 2 个步骤、函数图上的点——画圈、划线、荧光笔或指向，每步配一句 `say`（讲解词，决定停留时长，开字幕时显示）。场景时长自动延长到讲完。
+
+```json
+{ "title": "勾股定理", "blocks": [{ "id": "b_eq", "type": "equation", "latex": "a^2 + b^2 = c^2" }],
+  "guide": { "cursor": "arrow", "steps": [
+    { "target": "b_eq", "part": "a^2", "do": "underline", "say": "先看一条直角边的平方" },
+    { "target": "b_eq", "part": "b^2", "do": "underline", "say": "再加上另一条直角边的平方" },
+    { "target": "b_eq", "part": "c^2", "do": "circle", "note": "斜边", "say": "正好等于斜边的平方" } ] } }
+```
+
+  动作：`point` 指向 · `circle` 圈出 · `underline` 下划线 · `highlight` 荧光笔 · `box` 框选 · `arrow` 箭头 · `focus` 聚光 · `cross` 划掉 · `check` 打勾。`part` 的写法见 `reference/scene.md`「讲解指针」；公式片段要与 latex 原文一致。改已有作品时用 `update_scene` 的 `set: {"guide": {...}}` 整体写入。lint 会报出找不到的 part。
 
 ### 第 5 步 · 检查（必做）
 

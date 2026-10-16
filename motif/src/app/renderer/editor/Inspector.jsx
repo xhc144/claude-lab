@@ -10,6 +10,7 @@ import { THEMES } from '../../../core/themes/index.js';
 import { ParamField, ColorField, labelFor } from './fields.jsx';
 import { blockMenu } from './menus.js';
 import { AIPanel } from './AIPanel.jsx';
+import { GuideEditor } from './GuideEditor.jsx';
 import { call } from '../api.js';
 
 export function Inspector({ tab, setTab, onOpenThemes, onOpenPalette }) {
@@ -214,6 +215,7 @@ function SceneInspector({ id, onOpenPalette }) {
           {!s.blocks.length ? <div className="dim" style={{ padding: 6 }}>空场景 — 点「添加」放入内容</div> : null}
         </div>
       </div>
+      <GuideEditor scene={s} />
       <div className="section">
         <h4>演讲备注 / 旁白</h4>
         <TextArea rows={3} value={s.notes} placeholder="演示模式下显示；也会写入讲义 PDF" onCommit={(v) => up({ notes: v || null }, '备注')} />

@@ -7,11 +7,12 @@ import { COMMON_BLOCK_PARAMS } from './catalog/spec.js';
 import { LAYOUTS, TRANSITIONS, BACKGROUNDS, MOTIONS, FORMATS, formatFromAspect, CAMERAS } from './catalog/scene.js';
 import { THEMES, DEFAULT_THEME } from './themes/index.js';
 import { uid, clone, isPlainObject, suggest } from './util/misc.js';
+import { normalizeGuide, validateGuide } from './catalog/guide.js';
 import { isColor } from './util/color.js';
 
 export const DOC_VERSION = 1;
 
-const SCENE_KEYS = new Set(['id', 'name', 'layout', 'variant', 'duration', 'hold', 'transition', 'background', 'camera', 'tone', 'blocks', 'notes', 'narration', 'section', 'sectionNumber', 'hidden']);
+const SCENE_KEYS = new Set(['id', 'name', 'layout', 'variant', 'duration', 'hold', 'transition', 'background', 'camera', 'tone', 'blocks', 'notes', 'narration', 'section', 'sectionNumber', 'hidden', 'guide']);
 const MAIN_PARAM = { title: 'text', text: 'text', quote: 'text', callout: 'text', equation: 'latex', code: 'code', icon: 'name', image: 'asset', stat: 'value', model: 'asset', video: 'asset', particles: 'text' };
 const LIST_PARAM = { bullets: 'items', stats: 'items', timeline: 'items', steps: 'items', features: 'items', gallery: 'images', pyramid: 'items', chart: 'data', compare: 'columns', table: 'rows', plot: 'functions' };
 
@@ -135,6 +136,7 @@ export function normalizeScene(input, warnings = [], path = 'scene') {
   if (s.camera == null) s.camera = 'auto';
   if (s.tone == null) s.tone = 'auto';
   if (typeof s.narration === 'string') s.narration = { text: s.narration };
+  if (s.guide != null) { const g = normalizeGuide(s.guide, warnings, `${path}.guide`); if (g) s.guide = g; else delete s.guide; }
   return s;
 }
 
@@ -285,6 +287,7 @@ export function validateDocument(doc) {
     if (isPlainObject(s.background) && !BACKGROUNDS[s.background.type]) issues.push({ level: 'warning', path: `${p}.background`, message: `未知背景 ${s.background.type}` });
     if (isPlainObject(s.camera) && !CAMERAS[s.camera.type]) issues.push({ level: 'warning', path: `${p}.camera`, message: `未知镜头 ${s.camera.type}` });
     if (!s.blocks.length) issues.push({ level: 'warning', path: `${p}.blocks`, message: '场景没有内容块' });
+    validateGuide(s, `${p}.guide`, issues);
     s.blocks.forEach((b, j) => {
       if (ids.has(b.id)) issues.push({ level: 'error', path: `${p}.blocks[${j}].id`, message: `块 ID 重复：${b.id}` });
       ids.add(b.id);
@@ -322,6 +325,7 @@ export function summarizeDocument(doc, { blocks = true } = {}) {
   doc.scenes.forEach((s, i) => {
     lines.push(`${i + 1}. [${s.id}] layout=${s.layout}${s.tone !== 'auto' ? ` tone=${s.tone}` : ''} duration=${s.duration}${s.transition !== 'auto' ? ` transition=${s.transition.type}` : ''}${s.name ? ` "${s.name}"` : ''}`);
     if (blocks) for (const b of s.blocks) lines.push(`     - [${b.id}] ${describeBlock(b)}`);
+    if (s.guide?.steps?.length) lines.push(`     ↳ guide ×${s.guide.steps.length}: ${s.guide.steps.slice(0, 5).map((g) => `${g.do}${g.part != null ? `(${Array.isArray(g.part) ? g.part.join(',') : clip(g.part, 12)})` : ''}`).join(' → ')}`);
   });
   const assets = Object.values(doc.assets || {});
   if (assets.length) lines.push(`assets: ${assets.map((a) => `${a.id}(${a.kind}:${a.name || a.file})`).join(', ')}`);

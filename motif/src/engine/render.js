@@ -5,7 +5,8 @@ import { composite } from './transitions.js';
 import { EASE, clamp01 } from './motion/easing.js';
 import { toCss } from '../core/util/color.js';
 import { fontString, TextEngine, drawLayout, splitMath } from './text/text.js';
-import { roundRect } from './components/kit.js';
+import { roundRect, REC } from './components/kit.js';
+import { drawGuide, guideSay } from './guide.js';
 
 const layers = [];
 function layer(i, w, h) {
@@ -110,6 +111,9 @@ function drawScene(ctx, C, S, lt, o) {
   ctx.save();
   if (!o.noCamera) cameraTransform(ctx, env, S.camera, lt, S.duration);
   const ds = { sceneT: lt, sceneDur: S.duration, frame: o.frame };
+  // While an explanation track is live, components report where they drew text and items.
+  const guided = !!(S.guide && lt >= S.guide.start - 0.05);
+  if (guided) { REC.on = true; REC.texts = []; REC.items = []; REC.base = ctx.getTransform(); }
   let scrimDrawn = false;
   for (const it of S.items) {
     if (!it.bleed && !scrimDrawn) {
@@ -119,12 +123,15 @@ function drawScene(ctx, C, S, lt, o) {
     if (o.skip && o.skip.has(it.block.id)) continue;
     const local = lt - it.start;
     if (local < -0.0001 && !it.bleed) continue;
+    REC.block = it.block.id; REC.item = null;
     ctx.save();
     try { it.inst.draw(ctx, local, ds); } catch (err) { if (!it._err) { it._err = true; console.error(err); } }
     ctx.restore();
   }
   if (!scrimDrawn) for (const d of S.decor) if (d.kind === 'scrim') drawDecor(ctx, C, S, d, lt);
+  REC.on = false;
   for (const d of S.decor) if (d.kind !== 'scrim') drawDecor(ctx, C, S, d, lt);
+  if (guided) { try { drawGuide(ctx, C, S, lt); } catch (err) { if (!S._guideErr) { S._guideErr = true; console.error(err); } } }
   ctx.restore();
   if (ownBg && !C.persistent) drawBackground(ctx, env, backgroundSpec(env, S.scene), S.palette, (o.globalT ?? lt), 'over', env.assets);
 }
@@ -156,29 +163,18 @@ function drawChrome(ctx, C, t, S) {
     ctx.fillText([doc.brand.name, doc.brand.footer].filter(Boolean).join('  ·  '), env.grid.mx, H - env.grid.my * 0.42);
   }
   if (st.captions) {
-    const text = S.scene.narration?.text;
-    if (text) {
+    const say = guideSay(S, t - S.start);
+    const text = say || S.scene.narration?.text;
+    if (say) {
+      drawCaption(ctx, env, say);
+    } else if (text) {
       const sentences = captionSentences(text);
       const weight = (x) => x.replace(/\$[^$]*\$/g, (m) => 'x'.repeat(Math.ceil(m.length / 3))).length;
       const total = sentences.reduce((s, x) => s + weight(x), 0) || 1;
       const lt = (t - S.start) / S.duration;
       let acc = 0, cur = sentences[sentences.length - 1];
       for (const s of sentences) { acc += weight(s) / total; if (lt <= acc) { cur = s; break; } }
-      // Laid out like any other text, so inline TeX is typeset and a long sentence wraps onto a
-      // second line (slightly smaller if needed) instead of being squeezed horizontally.
-      let te = captionTE.get(ctx);
-      if (!te) { te = new TextEngine(ctx); captionTE.set(ctx, te); }
-      const role = { ...env.fonts.text, case: 'none', tracking: 0, lineHeight: 1.3 };
-      const size = env.sizes.small * 1.05, maxWidth = W * 0.8;
-      let L = te.layout(cur, role, size, { maxWidth, balance: true, align: 'center' });
-      if (L.lines.length > 2) L = te.fit(cur, role, { maxWidth, maxLines: 2, min: size * 0.7, max: size, balance: true, align: 'center' });
-      const padX = size * 0.8, padY = size * 0.3;
-      const bottom = H - env.grid.my * 0.95 + size * 0.3;
-      const bw = L.width + padX * 2, bh = L.height + padY * 2;
-      ctx.fillStyle = 'rgba(0,0,0,0.62)';
-      roundRect(ctx, W / 2 - bw / 2, bottom - bh, bw, bh, size * 0.4); ctx.fill();
-      drawLayout(ctx, L, W / 2 - L.width / 2, bottom - bh + padY, L.width, { color: '#ffffff', accent: '#ffffff', mark: 'rgba(255,255,255,0.25)' });
-      if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
+      drawCaption(ctx, env, cur);
     }
   }
 }
@@ -199,6 +195,25 @@ function captionSentences(text) {
   }
   if (buf.trim()) parts.push(buf.trim());
   return parts.length ? parts : [text];
+}
+
+// Laid out like any other text, so inline TeX is typeset and a long sentence wraps onto a
+// second line (slightly smaller if needed) instead of being squeezed horizontally.
+function drawCaption(ctx, env, cur) {
+  const { W, H } = env;
+  let te = captionTE.get(ctx);
+  if (!te) { te = new TextEngine(ctx); captionTE.set(ctx, te); }
+  const role = { ...env.fonts.text, case: 'none', tracking: 0, lineHeight: 1.3 };
+  const size = env.sizes.small * 1.05, maxWidth = W * 0.8;
+  let L = te.layout(cur, role, size, { maxWidth, balance: true, align: 'center' });
+  if (L.lines.length > 2) L = te.fit(cur, role, { maxWidth, maxLines: 2, min: size * 0.7, max: size, balance: true, align: 'center' });
+  const padX = size * 0.8, padY = size * 0.3;
+  const bottom = H - env.grid.my * 0.95 + size * 0.3;
+  const bw = L.width + padX * 2, bh = L.height + padY * 2;
+  ctx.fillStyle = 'rgba(0,0,0,0.62)';
+  roundRect(ctx, W / 2 - bw / 2, bottom - bh, bw, bh, size * 0.4); ctx.fill();
+  drawLayout(ctx, L, W / 2 - L.width / 2, bottom - bh + padY, L.width, { color: '#ffffff', accent: '#ffffff', mark: 'rgba(255,255,255,0.25)' });
+  if ('letterSpacing' in ctx) ctx.letterSpacing = '0px';
 }
 
 /**
