@@ -9,7 +9,7 @@
 # 哪个软件要发布：apps.json 里该软件的文件与它上一次正式发布相比有改动（README 之类除外）。
 # 版本号：package.json 里的版本若已发布过（或标签已被占用），自动改为下一个补丁号并提交。
 # 防重复：版本标签通过 API 原子创建，同一版本只可能发布一次；更新信息只会前进，不会被旧版本覆盖。
-# 提交信息含 [skip ship] 时整次跳过；含 [skip release] 时只合并、不发布。
+# 提交标题（第一行）含 [skip ship] 时整次跳过；含 [skip release] 时只合并、不发布。
 # 详细说明：scripts/windows-release/README.md
 name: Ship · 自动合并与发布
 
@@ -87,11 +87,13 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           skip() { echo "skip=true" >> "$GITHUB_OUTPUT"; echo "::notice::$1"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; exit 0; }
+          # markers count only in the subject line, so a message that merely mentions them does not trigger them
+          SUBJECT=${HEAD_MSG%%$'\n'*}
 
           if [ "$EVENT" = push ]; then
-            case "$HEAD_MSG" in *'[skip ship]'*) skip '提交信息含 [skip ship]，跳过。';; esac
+            case "$SUBJECT" in *'[skip ship]'*) skip '提交标题含 [skip ship]，跳过。';; esac
             # commits that this workflow landed itself (only possible with SHIP_TOKEN) are already handled
-            if [ "$BRANCH" = main ]; then case "$HEAD_MSG" in *'[ship]'*) skip '这次 main 的更新来自流水线本身，已在原来的运行里处理。';; esac; fi
+            if [ "$BRANCH" = main ]; then case "$SUBJECT" in *'[ship]'*) skip '这次 main 的更新来自流水线本身，已在原来的运行里处理。';; esac; fi
           fi
           git fetch --quiet --tags --force origin
           MAIN=$(git rev-parse origin/main)
@@ -119,7 +121,7 @@ jobs:
           gh api --paginate "repos/$GITHUB_REPOSITORY/releases?per_page=100" --jq '.[] | select(.draft == false and .prerelease == false) | .tag_name' > "$RUNNER_TEMP/published.txt"
           MODE=$APPS_INPUT
           [ "$RELEASE_INPUT" = true ] || MODE=none
-          case "${HEAD_MSG:-}" in *'[skip release]'*) MODE=none;; esac
+          case "$SUBJECT" in *'[skip release]'*) MODE=none;; esac
           BASE_ARG=()
           [ "$BRANCH" = main ] || BASE_ARG=(--base "$MAIN")
           node scripts/windows-release/plan.mjs "${BASE_ARG[@]}" --head HEAD --published "$RUNNER_TEMP/published.txt" --apps "$MODE" > "$RUNNER_TEMP/plan.json"
