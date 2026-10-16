@@ -54,6 +54,18 @@ jobs:
           path: phonica/models
           key: phonica-models-${{ hashFiles('phonica/scripts/fetch-models.mjs') }}
 
+      # The repository is private, so release assets need the job token; fetch-models.mjs then
+      # only verifies the checksums (and fetches the public Kokoro model).
+      - name: Download models from the model release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download phonica-models-v1 --repo "${{ github.repository }}" --dir models --skip-existing \
+            --pattern 'en_w2v2_fc_10ms.json' --pattern 'w2v2_lv60_espeak_cv_ft.json' \
+            --pattern 'en_w2v2_fc_10ms.int8.onnx' --pattern 'w2v2_lv60_espeak_cv_ft.int8.onnx'
+          ls -la models
+
       - name: Download and verify models
         run: node scripts/fetch-models.mjs
 

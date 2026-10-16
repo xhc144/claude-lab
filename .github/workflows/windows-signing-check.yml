@@ -39,7 +39,7 @@ jobs:
           $b64 = [IO.File]::ReadAllText("$out\WIN_CSC_LINK.txt")
           $bytes = [Convert]::FromBase64String($b64)
           if (Compare-Object $bytes ([IO.File]::ReadAllBytes("$out\code-signing.pfx"))) { throw 'WIN_CSC_LINK.txt is not the base64 of code-signing.pfx' }
-          $pfx = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList (,$bytes), $pass, 'Exportable'
+          $pfx = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($bytes, $pass, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
           if (-not $pfx.HasPrivateKey) { throw 'pfx has no private key' }
           if ($pfx.Subject -ne 'CN=CI Test') { throw "subject $($pfx.Subject)" }
           $left = Get-ChildItem Cert:\CurrentUser\My | Where-Object { $_.Thumbprint -eq $pfx.Thumbprint }
@@ -52,7 +52,7 @@ jobs:
           powershell -NoProfile -ExecutionPolicy Bypass -File scripts\windows-release\trust-signing-cert.ps1 -CerPath "$out\code-signing.cer" -AllUsers
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           $pass = [IO.File]::ReadAllText("$out\WIN_CSC_KEY_PASSWORD.txt")
-          $pfx = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList "$out\code-signing.pfx", $pass
+          $pfx = [System.Security.Cryptography.X509Certificates.X509Certificate2]::new("$out\code-signing.pfx", $pass)
           $file = "$env:RUNNER_TEMP\signed.ps1"
           Set-Content -Path $file -Value "Write-Host 'signed'" -Encoding UTF8
           Set-AuthenticodeSignature -FilePath $file -Certificate $pfx -HashAlgorithm SHA256 | Out-Null
