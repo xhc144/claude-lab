@@ -1,0 +1,23 @@
+{
+  "name": "math-starmap",
+  "version": "1.0.0",
+  "description": "数学知识星图：以清华大学 2027 新领军考纲为纲的数学与物理知识图谱，星系式可缩放星图、无限展开的知识星链、LaTeX 公式与交互动画",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node scripts/build.mjs --loose && node scripts/serve.mjs",
+    "build": "node scripts/build.mjs --report",
+    "serve": "node scripts/serve.mjs",
+    "pinyin": "node scripts/pinyin.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "node scripts/build.mjs && playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "pinyin-pro": "3.26.0"
+  }
+}
