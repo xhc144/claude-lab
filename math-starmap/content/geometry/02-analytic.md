@@ -151,7 +151,7 @@ alias: 极坐标系, 极径, 极角, 玫瑰线, 心形线, 阿基米德螺线
 极坐标下的面积 $S=\frac12\int\rho^2\,\dd\theta$，二重积分 $\dd x\,\dd y=\rho\,\dd\rho\,\dd\theta$，复数的三角形式就是极坐标。
 
 ## 极坐标下的积分 {#polar-coordinates-integral}
-type: 方法 | en: Integration in polar coordinates | w: 2 | 考纲: 多元微积分, 解析几何
+type: 方法 | en: Integration in polar coordinates | level: core | w: 2 | 考纲: 多元微积分, 解析几何
 前置: polar-coordinates, change-of-variables
 alias: 极坐标面积公式, 扇形微元
 

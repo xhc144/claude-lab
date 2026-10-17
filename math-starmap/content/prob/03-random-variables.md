@@ -163,7 +163,8 @@ alias: 指数分布, 寿命分布, 等待时间, 无记忆
 
 ## 正态分布 {#normal-distribution}
 type: 模型 | en: Normal distribution | w: 5 | 考纲: 正态分布
-前置: continuous-rv, gaussian-integral
+前置: continuous-rv
+用到: gaussian-integral
 后续: clt, one-sample-test
 anim: clt
 alias: 高斯分布, 钟形曲线, N(μ,σ²), 3σ 原则, 标准正态分布

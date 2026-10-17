@@ -337,6 +337,7 @@ export class Universe {
   }
 
   drawPath(ctx) {
+    if (this.path.kind === 'learn') { this.drawPrerequisites(ctx); return; }
     const pts = this.path.nodes.map((i) => this.cam.toScreen(...this.pos(i)));
     if (pts.length < 2) return;
     ctx.save();
@@ -361,6 +362,40 @@ export class Universe {
       const [x1, y1] = pts[k], [x2, y2] = pts[Math.min(k + 1, segs)];
       const x = x1 + (x2 - x1) * f, y = y1 + (y2 - y1) * f;
       ctx.drawImage(this.goldGlow, x - 18, y - 18, 36, 36);
+    }
+    ctx.restore();
+  }
+
+  // a learning path is a set of stars ordered by 前置 / 推导: draw those relations, not a polyline
+  drawPrerequisites(ctx) {
+    const set = new Set(this.path.nodes);
+    const segs = [];
+    for (const i of this.path.nodes) for (const e of this.g.nodes[i].out) {
+      if (set.has(e.t) && this.g.orders(e)) segs.push([this.cam.toScreen(...this.pos(e.s)), this.cam.toScreen(...this.pos(e.t))]);
+    }
+    ctx.save();
+    ctx.lineCap = 'round';
+    const stroke = (style, width, dash) => {
+      ctx.strokeStyle = style; ctx.lineWidth = width; ctx.setLineDash(dash);
+      ctx.beginPath();
+      for (const [[x1, y1], [x2, y2]] of segs) { ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); }
+      ctx.stroke();
+    };
+    stroke('rgba(255,209,102,0.1)', 7, []);
+    ctx.lineDashOffset = -this.time * 0.03;
+    stroke('rgba(255,224,150,0.75)', 1.3, [6, 6]);
+    ctx.setLineDash([]);
+    // arrowheads in the middle of each relation: from prerequisite to what it unlocks
+    ctx.fillStyle = 'rgba(255,224,150,0.85)';
+    for (const [[x1, y1], [x2, y2]] of segs) {
+      const L = Math.hypot(x2 - x1, y2 - y1);
+      if (L < 30) continue;
+      const a = Math.atan2(y2 - y1, x2 - x1), mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+      ctx.beginPath();
+      ctx.moveTo(mx + Math.cos(a) * 5, my + Math.sin(a) * 5);
+      ctx.lineTo(mx + Math.cos(a + 2.5) * 5, my + Math.sin(a + 2.5) * 5);
+      ctx.lineTo(mx + Math.cos(a - 2.5) * 5, my + Math.sin(a - 2.5) * 5);
+      ctx.fill();
     }
     ctx.restore();
   }

@@ -136,7 +136,8 @@ export function bindInput(app, canvas) {
     const cam = view().cam;
     switch (e.key) {
       case 'Escape':
-        if (app.help.isOpen()) app.help.close();
+        if (app.intro.isOpen()) app.intro.close();
+        else if (app.help.isOpen()) app.help.close();
         else if (app.tour.active()) app.tour.stop();
         else if (app.card.isOpen()) app.deselect();
         else if (app.drawer.isOpen()) app.drawer.close();

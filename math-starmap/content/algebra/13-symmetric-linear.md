@@ -34,7 +34,8 @@ $$\begin{pmatrix}1&2&3&4&5&6\\3&5&1&6&2&4\end{pmatrix}=(1\,3)(2\,5)(4\,6).$$
 ## 置换的符号 {#sign-of-permutation}
 type: 定义 | en: Sign of a permutation | w: 4 | 考纲: 对称群, 行列式
 前置: permutation-cycles
-后续: determinant, alternating-group
+后续: alternating-group
+应用于: determinant
 alias: 奇置换, 偶置换, 逆序数, 符号
 
 每个置换都能写成对换之积，对换个数的奇偶性是确定的。偶置换符号 $+1$，奇置换 $-1$；$\sgn\sigma=(-1)^{\text{逆序数}}$，$k$-轮换的符号为 $(-1)^{k-1}$。

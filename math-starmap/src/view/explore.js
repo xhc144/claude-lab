@@ -39,6 +39,20 @@ export class Explorer {
     this.expand(root);
     this.sel = root;
     this.heat = 1;
+    this.frameFor(2600);
+  }
+
+  /** keep the camera framing the graph while it settles, until the user moves the camera */
+  frameFor(ms) { this.fitUntil = this.time + ms; this.framed = null; }
+  autoFrame(dt) {
+    if (!(this.time < this.fitUntil) || !this.items.size) return;
+    const c = this.cam;
+    if (this.framed && (c.anim || Math.abs(c.x - this.framed[0]) > 0.01 || Math.abs(c.y - this.framed[1]) > 0.01 || Math.abs(c.k - this.framed[2]) > 1e-4)) { this.fitUntil = 0; return; }
+    const [tx, ty, tk] = this.fitTarget();
+    const a = 1 - Math.pow(0.92, dt / 16);
+    c.x += (tx - c.x) * a; c.y += (ty - c.y) * a;
+    c.k = Math.exp(Math.log(c.k) + (Math.log(tk) - Math.log(c.k)) * a);
+    this.framed = [c.x, c.y, c.k];
   }
 
   add(i, x, y, parent) {
@@ -115,7 +129,7 @@ export class Explorer {
         let d2 = dx * dx + dy * dy;
         if (d2 < 1) { dx = Math.random() - 0.5; dy = Math.random() - 0.5; d2 = 1; }
         if (d2 > 640000) continue;
-        const f = (5200 / d2) * this.heat;
+        const f = (7000 / d2) * this.heat;
         const d = Math.sqrt(d2);
         A.vx -= (dx / d) * f; A.vy -= (dy / d) * f;
         B.vx += (dx / d) * f; B.vy += (dy / d) * f;
@@ -125,7 +139,8 @@ export class Explorer {
       const A = this.items.get(e.s), B = this.items.get(e.t);
       const dx = B.x - A.x, dy = B.y - A.y;
       const d = Math.hypot(dx, dy) || 1;
-      const rest = 120 + (this.g.nodes[e.s].w + this.g.nodes[e.t].w) * 7;
+      // leave room for the moons around the selected star
+      const rest = 130 + (this.g.nodes[e.s].w + this.g.nodes[e.t].w) * 8 + (e.s === this.sel || e.t === this.sel ? 60 : 0);
       const f = (d - rest) * 0.012 * this.heat;
       A.vx += (dx / d) * f; A.vy += (dy / d) * f;
       B.vx -= (dx / d) * f; B.vy -= (dy / d) * f;
@@ -139,14 +154,20 @@ export class Explorer {
     if (this.dragging < 0) this.heat *= Math.pow(0.994, h);
   }
 
-  fit(duration = 700) {
-    if (!this.items.size) return;
+  fitTarget() {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const it of this.items.values()) { x0 = Math.min(x0, it.x); x1 = Math.max(x1, it.x); y0 = Math.min(y0, it.y); y1 = Math.max(y1, it.y); }
     const pad = 110;
     const shift = this.u.panelShift ? this.u.panelShift() : 0;
     const k = clamp(Math.min((this.cam.w - shift - pad * 2) / Math.max(x1 - x0, 1), (this.cam.h - pad * 2) / Math.max(y1 - y0, 1)), 0.25, 1.4);
-    this.cam.flyTo((x0 + x1) / 2 + shift / 2 / k, (y0 + y1) / 2, k, { duration });
+    return [(x0 + x1) / 2 + shift / 2 / k, (y0 + y1) / 2, k];
+  }
+
+  fit(duration = 700) {
+    if (!this.items.size) return;
+    this.fitUntil = 0;
+    const [x, y, k] = this.fitTarget();
+    this.cam.flyTo(x, y, k, { duration });
   }
 
   screenRadius(n) { return clamp((5 + n.w * 2.4) * Math.pow(this.cam.k, 0.5), 3, 30); }
@@ -193,6 +214,7 @@ export class Explorer {
     cam.resize(w, h);
     cam.update(dt);
     this.step(dt);
+    this.autoFrame(dt);
     const nodes = this.g.nodes;
     const edges = this.edges();
     const focusId = this.hover >= 0 ? this.hover : this.sel;
@@ -204,7 +226,7 @@ export class Explorer {
       const c = ((e.s + e.t) % 2 ? 1 : -1) * 0.08;
       const G = { x1, y1, x2, y2, cx: (x1 + x2) / 2 - dy * c, cy: (y1 + y2) / 2 + dx * c, len };
       const touches = focusId >= 0 && (e.s === focusId || e.t === focusId);
-      const age = Math.min(1, (this.time - Math.max(A.born, B.born)) / 500);
+      const age = Math.max(0, Math.min(1, (this.time - Math.max(A.born, B.born)) / 500));
       ctx.globalAlpha = (touches ? 1 : focusId >= 0 ? 0.42 : 0.7) * age;
       this.u.drawRelation(ctx, { ...e, index: e.index }, G, 1, { width: touches ? 2 : 1.2, particles: touches });
       if (touches && len > 90) {
@@ -230,7 +252,7 @@ export class Explorer {
     ctx.save();
     for (const it of this.items.values()) {
       const n = nodes[it.i];
-      const age = easeOut(Math.min(1, (this.time - it.born) / 450));
+      const age = easeOut(Math.max(0, Math.min(1, (this.time - it.born) / 450)));
       const [sx, sy] = cam.toScreen(it.x, it.y);
       if (sx < -80 || sy < -80 || sx > w + 80 || sy > h + 80) continue;
       const rs = this.screenRadius(n) * (0.4 + 0.6 * age);
@@ -261,8 +283,14 @@ export class Explorer {
       drawn.push([it, n, sx, sy, rs, a]);
     }
     ctx.restore();
-    // labels and badges
+    // labels (most important first; a label that would overlap one already placed tries the
+    // other side of its star, then gives way) and badges
     ctx.textAlign = 'center';
+    const near = focusId >= 0 ? new Set(this.g.neighbors(focusId)) : null;
+    const prio = ([it, n]) => (it.i === focusId ? 1e6 : 0) + (it.i === this.sel ? 5e5 : 0) + (near?.has(it.i) ? 1e4 : 0) + (it.expanded ? 1e3 : 0) + n.w * 10;
+    drawn.sort((A, B) => prio(B) - prio(A));
+    const boxes = [];
+    const free = (x0, y0, x1, y1) => boxes.every(([a0, b0, a1, b1]) => x1 < a0 || x0 > a1 || y1 < b0 || y0 > b1);
     for (const [it, n, sx, sy, rs, a] of drawn) {
       const px = clamp(Math.round((12 + n.w) * Math.pow(cam.k, 0.2)), 11, 18);
       ctx.font = `${it.i === this.sel || n.w >= 4 ? 600 : 500} ${px}px ${FONT}`;
@@ -271,10 +299,18 @@ export class Explorer {
       ctx.lineWidth = 3.5;
       ctx.strokeStyle = 'rgba(3,4,12,0.9)';
       const moonR = it.i === this.sel && this.moons(it.i).length ? rs * 2.2 + 30 + 18 : 0;
-      const y = sy + Math.max(rs * 1.25 + px + 4, moonR + px * 0.4);
-      ctx.strokeText(n.t, sx, y);
-      ctx.fillStyle = it.i === this.sel ? '#fff' : 'rgba(232,238,255,0.92)';
-      ctx.fillText(n.t, sx, y);
+      const tw = ctx.measureText(n.t).width / 2 + 2;
+      const below = sy + Math.max(rs * 1.25 + px + 4, moonR + px * 0.4);
+      const above = sy - Math.max(rs * 1.25 + 6, moonR);
+      let y = null;
+      for (const cand of [below, above]) if (free(sx - tw, cand - px, sx + tw, cand + 3)) { y = cand; break; }
+      if (y === null && prio([it, n]) >= 5e5) y = below;
+      if (y !== null) {
+        boxes.push([sx - tw, y - px, sx + tw, y + 3]);
+        ctx.strokeText(n.t, sx, y);
+        ctx.fillStyle = it.i === this.sel ? '#fff' : 'rgba(232,238,255,0.92)';
+        ctx.fillText(n.t, sx, y);
+      }
       if (!it.expanded) {
         const hidden = this.hiddenNeighbors(it.i).length;
         if (hidden) {

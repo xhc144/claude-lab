@@ -96,7 +96,7 @@ class App {
   // ---- frame loop
   frame(t) {
     requestAnimationFrame((tt) => this.frame(tt));
-    const dt = Math.min(60, t - this.last);
+    const dt = Math.max(0, Math.min(60, t - this.last)); // rAF time can precede performance.now()
     this.last = t;
     const ctx = this.ctx;
     ctx.setTransform(this.dpr, 0, 0, this.dpr, 0, 0);
@@ -153,7 +153,7 @@ class App {
     this.universe.select(i);
     this.card.open(i);
     if (this.mode === 'explore') {
-      if (!this.explorer.items.has(i)) { this.explorer.start(i); setTimeout(() => this.explorer.fit(), 650); }
+      if (!this.explorer.items.has(i)) this.explorer.start(i);
       this.explorer.sel = i;
       if (fly) {
         const it = this.explorer.items.get(i);
@@ -196,9 +196,8 @@ class App {
       this.root.classList.add('mode-explore');
       this.explorer.start(r);
       this.explorer.cam.k = 0.6;
-      setTimeout(() => this.explorer.fit(900), 500);
       this.select(r, { fly: false, from: 'mode' });
-      this.hint(`星链 · 点击星星继续展开，再点一次已选中的星把它收起`, [['展开全部', () => { const k = this.explorer.expandAll(); this.toast(k ? `又展开了 ${k} 颗星` : '没有更多邻居了'); setTimeout(() => this.explorer.fit(), 700); }], ['适配视图', () => this.explorer.fit()], ['返回星图', () => this.setMode('map')]]);
+      this.hint(`星链 · 点击星星继续展开，再点一次已选中的星把它收起`, [['展开全部', () => { const k = this.explorer.expandAll(); this.toast(k ? `又展开了 ${k} 颗星` : '没有更多邻居了'); this.explorer.frameFor(2400); }], ['适配视图', () => this.explorer.fit()], ['返回星图', () => this.setMode('map')]]);
     } else {
       this.mode = 'map';
       this.root.classList.remove('mode-explore');
@@ -268,6 +267,7 @@ class App {
     const m = /^#\/(n|x|tour|learn)\/([a-z0-9-]+)$/.exec(hash || '');
     if (!m) { if (fromHistory) this.deselect(); return; }
     const [, kind, id] = m;
+    this.intro.close();
     if (kind === 'tour') { this.tour.start(id); return; }
     const n = this.graph.node(id);
     if (!n) return;

@@ -112,10 +112,16 @@ function parseTours(text, file) {
   for (const [k, raw] of text.replace(/\r\n?/g, '\n').split('\n').entries()) {
     const line = raw.trimEnd();
     const h = /^##\s+(.+?)\s*\{#([^}]+)\}\s*$/.exec(line);
-    if (h) { cur = { id: h[2], title: h[1], desc: '', steps: [], line: k + 1 }; tours.push(cur); continue; }
+    if (h) {
+      if (/[$\\]/.test(h[1])) throw new Error(`${file}:${k + 1}: tour titles are plain text (no formulas): ${h[1]}`);
+      cur = { id: h[2], title: h[1], desc: '', steps: [], line: k + 1 }; tours.push(cur); continue;
+    }
     if (!cur) continue;
     const d = /^desc:\s*(.*)$/.exec(line);
-    if (d) { cur.desc = d[1]; continue; }
+    if (d) {
+      if (/[$\\]/.test(d[1])) throw new Error(`${file}:${k + 1}: tour descriptions are plain text (no formulas)`);
+      cur.desc = d[1]; continue;
+    }
     const s = /^-\s+([a-z0-9][a-z0-9-]*)\s*[:：]\s*(.*)$/.exec(line);
     if (s) { cur.steps.push({ id: s[1], text: s[2], line: k + 1 }); continue; }
     if (/^\s+\S/.test(line) && cur.steps.length) { cur.steps[cur.steps.length - 1].text += ' ' + line.trim(); continue; }

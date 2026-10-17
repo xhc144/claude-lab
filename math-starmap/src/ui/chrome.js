@@ -187,7 +187,9 @@ export class Intro {
         el('div', { class: 'intro-tips' }, ...['拖动 平移', '滚轮 / 双指 缩放', '单击 打开星卡', '双击 星链展开', '/ 搜索', '? 帮助'].map((t) => el('span', { text: t })))));
   }
   open() { this.root.classList.remove('hide'); }
+  isOpen() { return !this.root.classList.contains('hide'); }
   close() {
+    if (!this.isOpen()) return;
     this.root.classList.add('hide');
     if (!this.app.store.data.introSeen) { this.app.store.data.introSeen = true; this.app.store.save({ type: 'intro' }); }
   }

@@ -9,7 +9,8 @@ level: core
 
 ## 行列式 {#determinant}
 type: 定义 | en: Determinant | w: 5 | 考纲: 行列式
-前置: matrix, sign-of-permutation
+前置: matrix
+用到: sign-of-permutation
 后续: det-properties, laplace-expansion, characteristic-polynomial
 alias: 行列式, det, 莱布尼茨公式, 交错多线性函数
 tags: 行列式

@@ -6,6 +6,10 @@
 import { RELATIONS, RELATION_ORDER, ORDER_RELATIONS } from '../config.js';
 import { hslToRgb } from './util.js';
 
+// A deeper star that explains a more elementary one (函数极限 → 导数 in school, 斯托克斯公式 →
+// 法拉第定律) is shown on the map but does not make the elementary star wait for it.
+const LEVEL_RANK = { hs: 0, core: 1, ext: 2 };
+
 // cost of following one relation when searching for a route
 const ROUTE_COST = { pre: 1, der: 1, gen: 1.2, eq: 0.8, app: 1.6, ex: 1.6, rel: 2.2 };
 
@@ -67,13 +71,18 @@ export class Graph {
   }
 
   /** Every star you should learn before i (前置/推导 closure), in a valid learning order, ending with i. */
+  /** does relation e fix a learning order (前置 / 推导 from an equally or more elementary star)? */
+  orders(e) {
+    return ORDER_RELATIONS.includes(e.type) && (LEVEL_RANK[this.nodes[e.s].lv] ?? 1) <= (LEVEL_RANK[this.nodes[e.t].lv] ?? 1);
+  }
+
   learningPath(i, { skip } = {}) {
     const need = new Set([i]);
     const queue = [i];
     while (queue.length) {
       const u = queue.shift();
       for (const e of this.nodes[u].in) {
-        if (!ORDER_RELATIONS.includes(e.type) || need.has(e.s)) continue;
+        if (!this.orders(e) || need.has(e.s)) continue;
         need.add(e.s);
         queue.push(e.s);
       }
@@ -84,14 +93,14 @@ export class Graph {
       if (depth.has(u)) return depth.get(u);
       depth.set(u, 0);
       let d = 0;
-      for (const e of this.nodes[u].in) if (ORDER_RELATIONS.includes(e.type) && need.has(e.s)) d = Math.max(d, dep(e.s) + 1);
+      for (const e of this.nodes[u].in) if (this.orders(e) && need.has(e.s)) d = Math.max(d, dep(e.s) + 1);
       depth.set(u, d);
       return d;
     };
     for (const u of need) dep(u);
     // Kahn's algorithm, preferring shallow stars, then the same galaxy as the goal, then heavier stars
     const indeg = new Map([...need].map((u) => [u, 0]));
-    for (const u of need) for (const e of this.nodes[u].out) if (ORDER_RELATIONS.includes(e.type) && need.has(e.t)) indeg.set(e.t, indeg.get(e.t) + 1);
+    for (const u of need) for (const e of this.nodes[u].out) if (this.orders(e) && need.has(e.t)) indeg.set(e.t, indeg.get(e.t) + 1);
     const goalG = this.nodes[i].g;
     const key = (u) => depth.get(u) * 1000 + (this.nodes[u].g === goalG ? 0 : 100) - this.nodes[u].w * 10 + (this.nodes[u].c % 10);
     const ready = [...need].filter((u) => indeg.get(u) === 0);
@@ -101,7 +110,7 @@ export class Graph {
       const u = ready.shift();
       order.push(u);
       for (const e of this.nodes[u].out) {
-        if (!ORDER_RELATIONS.includes(e.type) || !need.has(e.t)) continue;
+        if (!this.orders(e) || !need.has(e.t)) continue;
         indeg.set(e.t, indeg.get(e.t) - 1);
         if (indeg.get(e.t) === 0) ready.push(e.t);
       }
@@ -145,7 +154,7 @@ export class Graph {
     const out = [];
     for (const n of this.nodes) {
       if (status(n.id) === 2) continue;
-      const pre = n.in.filter((e) => ORDER_RELATIONS.includes(e.type));
+      const pre = n.in.filter((e) => this.orders(e));
       if (!pre.length) continue;
       if (pre.every((e) => status(this.nodes[e.s].id) === 2)) out.push(n);
     }
@@ -156,7 +165,7 @@ export class Graph {
 
   /** Starting points: stars with no prerequisites, heaviest first. */
   roots(g) {
-    return this.nodes.filter((n) => (g == null || n.g === g) && !n.in.some((e) => ORDER_RELATIONS.includes(e.type)))
+    return this.nodes.filter((n) => (g == null || n.g === g) && !n.in.some((e) => this.orders(e)))
       .sort((a, b) => b.w - a.w || b.out.length - a.out.length).map((n) => n.index);
   }
 

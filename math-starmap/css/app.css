@@ -286,7 +286,7 @@ details.sec .sec-in { padding: 4px 0 0 2px; }
 
 /* ---------- legend, zoom, minimap */
 #legend { position: absolute; left: 12px; bottom: 12px; z-index: 15; padding: 10px 12px; width: 264px; font-size: 12px; transition: opacity 0.3s, transform 0.4s; }
-#drawer.open ~ #legend { opacity: 0; pointer-events: none; transform: translateY(10px); }
+#drawer.open ~ #legend, body:has(#tour.on) #legend { opacity: 0; pointer-events: none; transform: translateY(10px); }
 #legend .lg-head { display: flex; align-items: center; justify-content: space-between; color: var(--muted); letter-spacing: 0.14em; font-size: 11px; font-weight: 600; }
 #legend .lg-head button { border: 0; background: none; color: var(--muted); font-size: 11px; padding: 0 2px; }
 #legend.collapsed .lg-body { display: none; }
@@ -339,7 +339,7 @@ details.sec .sec-in { padding: 4px 0 0 2px; }
 #toast.on { opacity: 1; transform: translate(-50%, 0); }
 
 /* ---------- intro */
-#intro { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(3, 4, 11, 0.72), rgba(3, 4, 11, 0.5) 60%, rgba(3, 4, 11, 0.86) 100%); transition: opacity 0.9s; padding: 24px; }
+#intro { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(ellipse at center, rgba(3, 4, 11, 0.86), rgba(3, 4, 11, 0.66) 58%, rgba(3, 4, 11, 0.9) 100%); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); transition: opacity 0.9s; padding: 24px; }
 #intro.hide { opacity: 0; pointer-events: none; }
 .intro-in { max-width: 720px; text-align: center; }
 .intro-kicker { font-size: 12px; letter-spacing: 0.5em; color: var(--muted); text-transform: uppercase; }
