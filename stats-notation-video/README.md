@@ -4,7 +4,7 @@
 
 画面、字幕、铺底音乐全部由本目录的代码生成；配音用阿里云百炼的通义千问语音合成（模型 `qwen-audio-3.0-tts-plus`，音色龙安灵心），密钥读环境变量 `DASHSCOPE_API_KEY`。
 
-成片：[`output/stats-notation.mp4`](output/stats-notation.mp4)（1080p30，H.264 + AAC，带章节，中文配音，字幕压在画面里），字幕另附 [`output/stats-notation.srt`](output/stats-notation.srt)。
+成片：[`output/stats-notation.mp4`](output/stats-notation.mp4)（36 分 16 秒，1080p30，H.264 + AAC，约 86 MB，20 个章节，中文配音，字幕压在画面里），字幕另附 [`output/stats-notation.srt`](output/stats-notation.srt)。
 
 ## 章节
 
@@ -50,7 +50,7 @@ export DASHSCOPE_API_KEY=...      # 或 cp .env.example .env 后填入 QWEN_TTS_
 cd src && ../.venv/bin/python check.py      # 每句送进 qwen3-asr-flash，和配音文字对照，按字错误率列出可疑的句子
 ```
 
-剩下的差异基本是同音字（并 / 病、似然 / 自然、竖线 / 数现）和识别器把“缪”“柔”写成 μ、ρ。回听时发现过一句开头被接口漏读（“z 阿尔法叫上阿尔法分位点”），改写后重新合成。
+当前 241 句平均字错误率约 1.6%，剩下的差异基本是同音字（并 / 病、似然 / 自然、竖线 / 数现）和识别器把“缪”“柔”写成 μ、ρ。回听时发现过一句开头被接口漏读（“z 阿尔法叫上阿尔法分位点”），改写后重新合成。
 
 ## 制作方式
 
