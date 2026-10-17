@@ -29,6 +29,16 @@ export const projects = [
     ],
   },
   {
+    id: 'math-starmap', category: 'play', title: '数学知识星图', en: 'Math Starmap', cover: 'math-starmap', status: { kind: 'online', label: '在线体验' },
+    summary: '以 2027 新领军考纲为纲的知识宇宙：706 颗知识星分布在高中数学、分析、代数、几何与拓扑、概率统计、应用数学与物理七个星系，1452 条前置、推导、推广、等价、应用关系连成星座；点开一颗星就能无限展开定义、定理、证明、例题与应用，配 37 个交互动画、学习路径与 15 条精选航线。',
+    tags: ['706 颗知识星', '考纲 152/152', '37 个交互动画', '学习路径', '拼音搜索'],
+    keywords: 'knowledge graph star map mathematics physics syllabus learning path prerequisite derivation generalization equivalence latex katex animation search favorites progress tour obsidian 知识图谱 星图 考纲 新领军 高中数学 数学分析 代数 几何 拓扑 概率 统计 应用数学 物理 前置 推导 推广 等价 学习路径 航线 定理 证明 例题 动画 拼音',
+    links: [
+      { label: '进入星图', href: 'math-starmap/', primary: true },
+      { label: '源码', href: tree('math-starmap') },
+    ],
+  },
+  {
     id: 'personal-site', category: 'play', title: '0 → ∞ 交互实验室', en: 'Zero to Infinity', cover: 'personal-site', status: { kind: 'online', label: '在线体验' },
     summary: '沿维度旅行：复映射、傅里叶、三叶结、双摆、量子波包、神经网络与注意力等 13 台仪器，WebGL 粒子场随章节变化。',
     tags: ['13 台仪器', 'WebGL', '数学 / 物理 / AI'],
