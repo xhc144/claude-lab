@@ -26,6 +26,7 @@ class App {
     this.universe = new Universe(this.graph, this.store);
     this.explorer = new Explorer(this.graph, this.store, this.universe);
     this.universe.panelShift = () => this.panelShift();
+    this.universe.sheetCover = () => this.sheetCover();
     this.mode = 'map';
     this.sel = -1;
     this.lastSel = -1;
@@ -80,6 +81,11 @@ class App {
   }
   isNarrow() { return this.w < 760; }
   panelShift() { return this.card.isOpen() && !this.isNarrow() ? Math.min(460, this.w - 24) + 24 : 0; }
+  /** on a phone the card is a bottom sheet: how much of the screen it covers */
+  sheetCover() {
+    if (!this.card.isOpen() || !this.isNarrow()) return 0;
+    return this.card.root.classList.contains('tall') ? this.h - 60 : Math.round(this.h * 0.64) + 8;
+  }
 
   overview(far = false) {
     const gs = this.graph.galaxies;
@@ -158,7 +164,8 @@ class App {
       if (fly) {
         const it = this.explorer.items.get(i);
         const cam = this.explorer.cam;
-        if (it) cam.flyTo(it.x + this.panelShift() / 2 / cam.k, it.y, Math.max(cam.k, 0.7), { duration: 600 });
+        const k = Math.max(cam.k, 0.7);
+        if (it) cam.flyTo(it.x + this.panelShift() / 2 / k, it.y + this.sheetCover() / 2 / k, k, { duration: 600 });
       }
     } else if (fly) {
       this.universe.flyToNode(i, zoom);

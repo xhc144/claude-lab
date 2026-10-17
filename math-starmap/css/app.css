@@ -66,7 +66,7 @@ a { color: #a9c6ff; }
 .brand-sub { font-size: 10px; letter-spacing: 0.32em; color: var(--muted); text-transform: uppercase; display: block; margin-top: -2px; }
 .brand-text { display: flex; flex-direction: column; line-height: 1.15; text-align: left; }
 
-.search { position: relative; flex: 1; max-width: 520px; margin: 0 auto; }
+.search { position: relative; flex: 1; min-width: 0; max-width: 520px; margin: 0 auto; }
 .search-box { display: flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border-radius: 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); transition: border-color 0.2s, background 0.2s; }
 .search-box:focus-within { border-color: rgba(138, 180, 255, 0.55); background: rgba(255, 255, 255, 0.08); }
 .search-box svg { flex: none; opacity: 0.65; }
@@ -86,9 +86,9 @@ a { color: #a9c6ff; }
 .results .empty { padding: 18px; text-align: center; color: var(--muted); font-size: 13px; }
 .results .hint { padding: 6px 10px 4px; font-size: 11px; color: var(--faint); letter-spacing: 0.08em; }
 
-.tools { display: flex; align-items: center; gap: 4px; }
+.tools { display: flex; align-items: center; gap: 4px; flex: none; }
 .seg { display: inline-flex; padding: 3px; border-radius: 11px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--line); }
-.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 8px; font-size: 13px; color: var(--text-2); }
+.seg button { border: 0; background: none; padding: 5px 12px; border-radius: 8px; font-size: 13px; color: var(--text-2); white-space: nowrap; }
 .seg button.on { background: linear-gradient(180deg, rgba(138, 180, 255, 0.3), rgba(138, 180, 255, 0.14)); color: #fff; box-shadow: inset 0 0 0 1px rgba(138, 180, 255, 0.35); }
 .icon-btn { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 11px; border: 1px solid transparent; background: none; color: var(--text-2); position: relative; }
 .icon-btn:hover { background: rgba(255, 255, 255, 0.06); color: #fff; }
@@ -403,6 +403,7 @@ details.sec .sec-in { padding: 4px 0 0 2px; }
   #tour { bottom: 10px; }
   .card-open #tour { left: 50%; bottom: calc(64vh + 18px); }
   .results { position: fixed; top: 60px; left: 8px; right: 8px; }
+  #hud, .card-open #hud { left: 8px; right: 8px; max-width: none; transform: none; top: calc(var(--top) + 12px); flex-wrap: wrap; justify-content: center; font-size: 12px; padding: 6px 8px; text-align: center; }
   .intro-stats { gap: 16px; }
   .intro-stats b { font-size: 24px; }
 }

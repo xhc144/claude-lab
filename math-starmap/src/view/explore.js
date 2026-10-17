@@ -157,10 +157,12 @@ export class Explorer {
   fitTarget() {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const it of this.items.values()) { x0 = Math.min(x0, it.x); x1 = Math.max(x1, it.x); y0 = Math.min(y0, it.y); y1 = Math.max(y1, it.y); }
-    const pad = 110;
+    const narrow = this.cam.w < 760, pad = narrow ? 56 : 110;
     const shift = this.u.panelShift ? this.u.panelShift() : 0;
-    const k = clamp(Math.min((this.cam.w - shift - pad * 2) / Math.max(x1 - x0, 1), (this.cam.h - pad * 2) / Math.max(y1 - y0, 1)), 0.25, 1.4);
-    return [(x0 + x1) / 2 + shift / 2 / k, (y0 + y1) / 2, k];
+    const cover = this.u.sheetCover ? this.u.sheetCover() : 0;
+    const top = narrow ? 140 : 0; // top bar and the hint under it
+    const k = clamp(Math.min((this.cam.w - shift - pad * 2) / Math.max(x1 - x0, 1), (this.cam.h - cover - top - pad * 2) / Math.max(y1 - y0, 1)), 0.2, 1.4);
+    return [(x0 + x1) / 2 + shift / 2 / k, (y0 + y1) / 2 + (cover - top) / 2 / k, k];
   }
 
   fit(duration = 700) {

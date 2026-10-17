@@ -87,7 +87,8 @@ export class Universe {
     const target = k ?? Math.max(this.cam.k, 1.15);
     // keep the star clear of the card on the right
     const shift = this.panelShift ? this.panelShift() / target / 2 : 0;
-    this.cam.flyTo(x + shift, y, target);
+    const lift = this.sheetCover ? this.sheetCover() / target / 2 : 0;
+    this.cam.flyTo(x + shift, y + lift, target);
   }
 
   // ---- picking
