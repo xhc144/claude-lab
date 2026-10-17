@@ -35,7 +35,7 @@ $\gcd(252,198)$：$252=1\times198+54$，$198=3\times54+36$，$54=1\times36+18$�
 type: 定理 | en: Bézout's identity | w: 4 | 考纲: 中学数学全部内容
 源于: gcd-euclid
 推出: primes, crt
-推广为: ideal
+推广为: ring
 alias: 贝祖定理, 裴蜀等式, 扩展欧几里得算法
 
 对整数 $a,b$（不全为零），存在整数 $x,y$ 使 $ax+by=\gcd(a,b)$；并且 $\{ax+by\}$ 恰好是 $\gcd(a,b)$ 的全体倍数。特别地，$a,b$ 互素 $\iff$ 存在 $x,y$ 使 $ax+by=1$。
@@ -79,7 +79,7 @@ alias: 欧几里得定理, 素数无穷
 ## 同余 {#congruence}
 type: 定义 | en: Congruence | w: 5 | 考纲: 中学数学全部内容
 前置: divisibility
-后续: fermat-little, crt, modular-group
+后续: fermat-little, crt, cyclic-group
 alias: 同余, 模运算, 剩余类, mod
 
 $a\equiv b\pmod m$ 指 $m\mid(a-b)$。同余是等价关系，并且与加、减、乘相容，可以像等式一样运算：$a\equiv b,\ c\equiv d\Rightarrow a+c\equiv b+d,\ ac\equiv bd$。

@@ -118,7 +118,7 @@ $f:\R\to\R$ 连续 $\iff$ 每个开集的原像是开集 $\iff$ 每个闭集的�
 连续双射且逆也连续的映射叫同胚，同胚的空间在拓扑上“相同”。拓扑学研究同胚下不变的性质：连通性、紧致性、欧拉示性数、基本群。
 
 ## 连通性 {#connectedness}
-type: 定义 | en: Connectedness | w: 4 | 考纲: 实数轴的连续性, 实数轴的拓扑
+type: 定义 | en: Connectedness | w: 4 | 考纲: 实数轴的连续性
 前置: open-set, closed-set
 源于: ivt
 alias: 连通, 道路连通, 区间的连通性
@@ -148,7 +148,7 @@ alias: 康托尔三分集, 分形, 自相似, 魔鬼阶梯
 它是“长度为零但点数与实数一样多”的反直觉例子，也是最早的分形。康托尔函数（魔鬼阶梯）在康托尔集外导数为零，却从 $0$ 连续增长到 $1$。
 
 ## 度量空间 {#metric-space}
-type: 定义 | en: Metric space | w: 4 | 考纲: 实数轴的拓扑, 实数轴的完备性
+type: 定义 | en: Metric space | w: 4 | 考纲: 实数轴的完备性
 前置: abs-inequality
 源于: cauchy-criterion
 后续: topological-space, banach-fixed-point
