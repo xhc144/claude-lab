@@ -527,15 +527,22 @@ export class Universe {
     const nodes = this.g.nodes;
     const k = cam.k;
     const settings = this.store.data.settings;
-    // galaxy names when zoomed far out
-    const ga = 1 - smoothstep(0.13, 0.24, k);
+    // galaxy names when zoomed far out; while they are clearly visible other labels keep off them
+    const ga = 1 - smoothstep(0.19, 0.34, k);
+    const placed = [];
+    const overlaps = (x0, y0, x1, y1) => placed.some((r) => !(x1 < r[0] || x0 > r[2] || y1 < r[1] || y0 > r[3]));
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     if (ga > 0.01) {
       for (const G of this.g.galaxies) {
         const [sx, sy] = cam.toScreen(G.x, G.y);
         ctx.globalAlpha = ga * (1 - this.dim);
-        ctx.font = `600 ${Math.round(clamp(G.r * k * 0.16, 18, 34))}px ${SERIF}`;
+        const size = Math.round(clamp(G.r * k * 0.16, 18, 34));
+        ctx.font = `600 ${size}px ${SERIF}`;
+        if (ga > 0.3 && !this.focus) {
+          const tw = ctx.measureText(G.name).width;
+          placed.push([sx - tw / 2 - 8, sy - 6 - size * 0.7, sx + tw / 2 + 8, sy + 26]);
+        }
         ctx.fillStyle = rgba(G.rgb, 0.95);
         ctx.shadowColor = 'rgba(0,0,0,0.8)';
         ctx.shadowBlur = 12;
@@ -548,8 +555,6 @@ export class Universe {
     }
     // cluster names in the middle range
     const ca = smoothstep(0.1, 0.17, k) * (1 - smoothstep(0.42, 0.75, k));
-    const placed = [];
-    const overlaps = (x0, y0, x1, y1) => placed.some((r) => !(x1 < r[0] || x0 > r[2] || y1 < r[1] || y0 > r[3]));
     if (ca > 0.01 && !this.focus) {
       for (const c of this.g.clusters) {
         if (!c.members.length) continue;

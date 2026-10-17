@@ -4,13 +4,14 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 23 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；八部影片都有带版本切换、章节跳转和下载链接的在线播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 24 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；八部影片都有带版本切换、章节跳转和下载链接的在线播放器。
 
 ## 浏览器交互项目
 
 | 项目 | 用途 | 在线入口 | 源码与本地运行 |
 | --- | --- | --- | --- |
 | 数境 MathScape | 矩阵、复映射、常微分方程与三体运动可视化 | [打开](https://xhc144.github.io/claude-lab/mathscape/) | [mathscape/](mathscape/)；`npm start`；`npm run build` 生成单文件 |
+| 数学知识星图 Math Starmap | 以 2027 新领军考纲为纲的知识图谱：706 颗知识星、1452 条前置/推导/推广/等价/应用关系，可无限展开的星链、学习路径、精选航线、拼音搜索与 37 个交互动画 | [打开](https://xhc144.github.io/claude-lab/math-starmap/) | [math-starmap/](math-starmap/)；`npm start`；`npm test`；知识库在 `content/*.md` |
 | 万象 Myriad | 地形、气候、生态和文明演化的创世沙盒 | [打开](https://xhc144.github.io/claude-lab/myriad/) | [myriad/](myriad/)；`npm start`；`npm run build` 生成单文件；桌面操作最佳 |
 | 薪火纪 Emberstack | 卡牌堆叠文明策略游戏：采集、合成、科技、探索、战斗，7 章 28 关与远征/无尽/挑战模式，可完全托管给自主 AI 玩家 | [打开](https://xhc144.github.io/claude-lab/emberstack/) | [emberstack/](emberstack/)；`npm start`；`npm run build` 生成单文件；提供桌面与触屏操作 |
 | 回响荒野 Echowild | 程序化体素世界、建造与生存冒险 | [打开](https://xhc144.github.io/claude-lab/echowild/) | [echowild/](echowild/)；`node scripts/serve.mjs`；需要桌面键鼠与 WebGL2，暂不支持触屏游玩 |
@@ -91,7 +92,7 @@ python3 -m http.server 8080 --directory docs
 node scripts/build-site.mjs   # 只重新生成主页、影片播放器、封面与墨经页面，不需要各项目的构建依赖
 ```
 
-`build-pages.mjs` 先重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack 与星枢 Tensora 的静态文件，再调用 `build-site.mjs`，最后运行检查；只把白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；影片只复制成片、字幕、讲稿与播放器（成片与仓库内文件内容相同，Git 中不额外占用空间）。绝不把整个仓库作为发布目录。
+`build-pages.mjs` 先重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack、星枢 Tensora 与数学知识星图的静态文件，再调用 `build-site.mjs`，最后运行检查；只把白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；影片只复制成片、字幕、讲稿与播放器（成片与仓库内文件内容相同，Git 中不额外占用空间）。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 
