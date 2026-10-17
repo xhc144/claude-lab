@@ -378,7 +378,7 @@ details.sec .sec-in { padding: 4px 0 0 2px; }
 .ax-controls select option { background: #0c1124; }
 .ax-readout { padding: 0 12px 10px; font-size: 12.5px; color: var(--text-2); line-height: 1.7; min-height: 1.7em; }
 .ax-readout .katex { font-size: 1em; }
-.ax-hint { position: absolute; left: 10px; top: 8px; font-size: 11px; color: var(--faint); pointer-events: none; }
+.ax-hint { position: absolute; right: 10px; bottom: 6px; font-size: 11px; color: var(--faint); pointer-events: none; }
 
 /* ---------- small screens: the card becomes a bottom sheet */
 @media (max-width: 760px) {

@@ -266,3 +266,27 @@ export function gauss(rand) {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 }
 export const TAU = Math.PI * 2;
+
+// ---- tiny 3-D helper: drag to rotate, perspective projection
+export function orbit(S, { yaw = 0.6, pitch = 0.35, auto = 0.00025 } = {}) {
+  const R = { yaw, pitch, auto, dragging: false };
+  let px = 0, py = 0;
+  S.pointer({
+    down: (x, y) => { px = x; py = y; R.dragging = true; return true; },
+    move: (x, y) => { R.yaw += (x - px) * 0.01; R.pitch = Math.max(-1.5, Math.min(1.5, R.pitch + (y - py) * 0.01)); px = x; py = y; },
+    up: () => { R.dragging = false; },
+  });
+  R.step = (dt) => { if (!R.dragging) R.yaw += dt * R.auto; };
+  /** rotate into view space: x right, y up, z away from the viewer */
+  R.rotate = ([x, y, z]) => {
+    const cy1 = Math.cos(R.yaw), sy1 = Math.sin(R.yaw), cp = Math.cos(R.pitch), sp = Math.sin(R.pitch);
+    const x1 = x * cy1 + z * sy1, z1 = -x * sy1 + z * cy1;
+    return [x1, y * cp - z1 * sp, y * sp + z1 * cp];
+  };
+  R.project = (v, scale, cx, cy, dist = 4) => {
+    const [x1, y2, z2] = R.rotate(v);
+    const f = dist / (dist + z2);
+    return [cx + x1 * scale * f, cy - y2 * scale * f, z2];
+  };
+  return R;
+}
