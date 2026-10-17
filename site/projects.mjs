@@ -236,6 +236,16 @@ export const projects = [
     ],
   },
   {
+    id: 'stats-notation-video', category: 'film', title: '统计的符号与术语', en: 'Statistical Notation', cover: 'stats-notation-video',
+    summary: '把统计里的符号和专有名词逐个讲清楚：怎么读、是什么意思、为什么这样写。从“参数用希腊字母、统计量用拉丁字母、帽子表示估计”讲起，经过描述统计、概率、分布、抽样、估计、检验与回归，最后整理一字多义的记号和常见缩写。',
+    tags: ['统计', '符号与术语', '20 个章节', '通义千问配音'],
+    keywords: 'statistics notation symbols terminology glossary greek letters mu sigma hat bar estimator likelihood p-value hypothesis test confidence interval standard error regression anova odds ratio bayes 统计 符号 术语 希腊字母 参数 统计量 估计 检验 p值 置信区间 标准误 回归 方差分析 缩写 qwen tts',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'bash build.sh',
+    versions: [
+      { id: 'zh', label: '中文版', src: 'stats-notation-video/output/stats-notation.mp4', srt: 'stats-notation-video/output/stats-notation.srt', note: '中文配音（龙安灵心），字幕压在画面里' },
+    ],
+  },
+  {
     id: 'symmetry-film', category: 'film', title: '对称的语言', en: 'The Language of Symmetry', cover: 'symmetry-film',
     summary: '从雪花、十二平均律与魔方，到双曲铺砌、五次方程、椭圆曲线和 E₈：一次关于群与对称的视觉旅行。',
     tags: ['抽象代数', '程序化影片', '合成配乐'],
