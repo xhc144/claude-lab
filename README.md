@@ -69,6 +69,10 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 [video-scripts/](video-scripts/) 收录数学专题的视频讲解稿。目前有《最优化》一份：6 集，覆盖不等式与极值问题、凸优化、梯度下降法和线性规划，附带核对全部数值例子的 Python 脚本。稿件只在仓库中维护，不发布到 Pages。
 
+## 考试预测训练卷
+
+[xinlingjun-mock-2027/](xinlingjun-mock-2027/) 是 2027 清华新领军的预测训练卷（非官方），共 12 份：一试数学 1、数学 2、物理；二试语文、英语与综合六科（物理加强、化学、生物、计算机、经济、社科）；三试现学现考。每份都有题面 PDF 和带评分标准的答案 PDF，另附设计说明与两轮独立审核记录。源码用墨经试卷模板，`latex/build.sh` 一键编译。
+
 ## Claude 技能
 
 [.claude/skills/](.claude/skills/) 收录六个数学教学相关的 Claude Code 技能：数学讲义写作（math-lecture-writing）、题目难度评估（assess-math-difficulty）、数学 LaTeX 排版（math-latex-typesetting）、墨经模板排版（mojing-latex）、概念讲解（explain-concepts-clearly）与新领军面试专家（xinlingjun-exam-expert）。在本仓库打开 Claude Code 时自动可用。

@@ -1,0 +1,127 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力二试 · 综合 · 物理加强（预测训练卷）
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 1.5 小时（训练设置）}, full=100]{二试 · 综合 · 物理加强}
+
+\begin{instructions}
+  \item 二试综合在物理加强、化学、生物、计算机、经济、社科六科中选考两科。官方只公布了科目名称，没有公布各科考纲、题型、时长与分值；
+        本卷按“高中核心内容加上题给新信息，考查建模、推理与迁移”的思路编写，侧重转动参考系、场中运动、热力学与量纲分析，全部安排为训练设置。
+  \item 本卷共 4 题，每题 25 分，满分 100 分。超出高中范围的公式均已在题中给出。允许使用科学计算器（训练设置）。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准。分值标在关键步骤之后，表示做到该步骤累计可得的分数。
+\end{gradingnotes}
+
+\scoretable{1,2,3,4}
+
+\begin{questions}
+
+% =============================================================================
+\question[25]
+（傅科摆）在随地球自转的参考系中，质量为 $m$、速度为 $\vb v$ 的物体除受真实的力外，还受科里奥利力 $\vb F_{\rm c}=-2m\,\vb\Omega\times\vb v$，
+其中 $\vb\Omega$ 为地球自转角速度矢量，$\Omega=\frac{2\pi}{T_0}$，$T_0\approx23.93$ h（恒星日）。离心力已计入重力，不再单独考虑。
+在北纬 $\varphi$ 处悬挂一个很长的单摆（摆长 $l$），让它做小振幅摆动，摆球的运动可近似看作在水平面内（竖直速度可以忽略），且 $\Omega\ll\sqrt{g/l}$。
+\begin{enumerate}
+  \item 只有 $\vb\Omega$ 的哪个分量会影响摆球在水平面内的运动？说明理由；
+  \item 证明：摆动平面以角速度 $\Omega\sin\varphi$ 相对地面缓慢转动，并判断从上往下看转动方向是顺时针还是逆时针
+        （提示：可写出水平面内的运动方程，再换到相对地面以某个角速度绕竖直轴转动的坐标系中考察，$\Omega^2$ 量级的项可以忽略）；
+  \item 求北京（$\varphi\approx40^\circ$）的傅科摆摆动平面转过一整圈所需的时间；在赤道和北极分别会怎样？
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~把 $\vb\Omega$ 分解为竖直分量 $\Omega\sin\varphi$（向上）和水平分量 $\Omega\cos\varphi$（指向北）。摆球速度 $\vb v$ 在水平面内，
+水平分量与 $\vb v$ 的叉乘沿竖直方向，只改变对绳的拉力，不影响水平运动；起作用的只有竖直分量 $\Omega_z=\Omega\sin\varphi$。\score{6}
+
+(2)~取东为 $x$、北为 $y$，小振幅时水平回复力为 $-m\omega_0^2(x,y)$，科里奥利力的水平部分为 $2m\Omega_z(\dot y,-\dot x)$，
+\[
+  \ddot x=-\omega_0^2x+2\Omega_z\dot y,\qquad \ddot y=-\omega_0^2y-2\Omega_z\dot x .
+\]
+\score{12}
+改到绕竖直轴以角速度 $-\Omega_z$ 转动的坐标系中：令 $x+\ii y=(X+\ii Y)\ee^{-\ii\Omega_zt}$，记 $u=x+\ii y$，$U=X+\ii Y$，方程化为
+$\ddot u+2\ii\Omega_z\dot u+\omega_0^2u=0$，代入得 $\ddot U+(\omega_0^2+\Omega_z^2)U=0$。因 $\Omega_z\ll\omega_0$，$U$ 是平面内的普通简谐振动，
+摆动平面固定在这个坐标系中。所以相对地面，摆动平面以角速度 $\Omega_z=\Omega\sin\varphi$ 转动，方向为从上往下看顺时针（北半球）。\score{20}
+
+(3)~$T=\dfrac{T_0}{\sin\varphi}=\dfrac{23.93\ \mathrm h}{\sin40^\circ}\approx37$ h。赤道处 $\sin\varphi=0$，摆动平面不转；北极处转一圈需一个恒星日，
+相当于地球在摆的下方转动。\score{25}
+\end{solution}
+
+% =============================================================================
+\question[25]
+（正交电磁场）空间存在沿 $y$ 轴正方向的匀强电场 $E$ 与沿 $z$ 轴正方向的匀强磁场 $B$。质量为 $m$、电荷量为 $q>0$ 的粒子从原点由静止释放，
+不计重力，粒子速度远小于光速。
+\begin{enumerate}
+  \item 在沿 $x$ 轴以速度 $u$ 匀速运动的参考系中，粒子所受的电磁力为 $q(\vb E+\vb v'\times\vb B)+q\,\vb u\times\vb B$，其中 $\vb v'$ 是粒子在该参考系中的速度。
+        求使该参考系中“等效电场”为零的 $u$；
+  \item 求粒子的轨迹方程（参数形式），并求粒子离 $x$ 轴的最大距离和运动中的最大速率；
+  \item 用功能关系验证 (2) 中的最大速率。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~$\vb u\times\vb B=u\,\hat x\times B\hat z=-uB\,\hat y$，等效电场 $E-uB=0$，$u=\dfrac EB$（即 $\vb E\times\vb B/B^2$ 方向）。\score{7}
+
+(2)~在该参考系中只有磁场，粒子初速度为 $-u\hat x$，做半径 $R=\dfrac{mu}{qB}=\dfrac{mE}{qB^2}$ 的匀速圆周运动，角速度 $\omega=\dfrac{qB}{m}$。
+回到原参考系：
+\[
+  x=\frac{E}{B}t-R\sin\omega t,\qquad y=R(1-\cos\omega t),
+\]
+为摆线（旋轮线）。\score{16}
+最大距离 $y_{\max}=2R=\dfrac{2mE}{qB^2}$；最大速率在最高点，等于 $u+u=\dfrac{2E}{B}$。\score{21}
+
+(3)~洛伦兹力不做功，电场力做功 $qEy_{\max}=\dfrac{2mE^2}{B^2}=\dfrac12m\Bigl(\dfrac{2E}B\Bigr)^2$，与 (2) 一致。\score{25}
+\end{solution}
+
+% =============================================================================
+\question[25]
+（热机与熵）两个相同的物体，热容均为常量 $C$，初温分别为 $T_1>T_2$。已知：熵是状态函数，物体的熵变可沿任一可逆过程按 $\Delta S=\displaystyle\int\frac{\delta Q}{T}$ 计算；
+热机每完成一个循环自身状态复原、熵变为零；孤立系统中只发生可逆过程时总熵不变，发生不可逆过程时总熵增加。
+\begin{enumerate}
+  \item 让两物体直接接触直至热平衡，求末温和两物体总熵的变化，并说明它为正；
+  \item 若在两物体之间运行可逆热机（每一循环中热机自身状态复原），直到两物体温度相同。求末温 $T_f$ 和热机输出的总功 $W$；
+  \item 取 $C=1.0\times10^3\ \mathrm{J/K}$，$T_1=400$ K，$T_2=100$ K，计算 (1) 中的末温与熵变、(2) 中的末温与 $W$，并说明 (2) 中的 $W$ 为什么是两物体之间所能获得的最大功。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~末温 $\frac{T_1+T_2}2$。$\Delta S=C\ln\frac{T_1+T_2}{2T_1}+C\ln\frac{T_1+T_2}{2T_2}=C\ln\frac{(T_1+T_2)^2}{4T_1T_2}>0$（均值不等式），
+不可逆过程总熵增加。\score{8}
+
+(2)~可逆时总熵不变：$C\ln\frac{T_f}{T_1}+C\ln\frac{T_f}{T_2}=0$，$T_f=\sqrt{T_1T_2}$。\score{15}
+能量守恒：$W=C(T_1-T_f)-C(T_f-T_2)=C(T_1+T_2-2\sqrt{T_1T_2})=C(\sqrt{T_1}-\sqrt{T_2})^2$。\score{20}
+
+(3)~直接接触末温 250 K，$\Delta S\approx4.5\times10^2$ J/K；可逆热机末温 200 K，$W=1.0\times10^5$ J。\score{23}
+任何过程都有总熵 $\ge0$，即 $C\ln\frac{T_f^2}{T_1T_2}\ge0$，$T_f\ge\sqrt{T_1T_2}$；而 $W=C(T_1+T_2-2T_f)$ 随 $T_f$ 增大而减小，所以可逆时 $W$ 最大。\score{25}
+\end{solution}
+
+% =============================================================================
+\question[25]
+（量纲分析与水波）深水表面波的传播速度 $v$ 由波长 $\lambda$、重力加速度 $g$、水的密度 $\rho$ 与表面张力系数 $\sigma$（单位 N/m）决定。
+\begin{enumerate}
+  \item 若只考虑重力（忽略表面张力），用量纲分析求 $v$ 与 $\lambda,g$ 的关系，并说明 $\rho$ 为什么不出现；
+  \item 若只考虑表面张力（忽略重力），用量纲分析求 $v$ 与 $\lambda,\sigma,\rho$ 的关系；
+  \item 精确理论给出 $v^2=\dfrac{g\lambda}{2\pi}+\dfrac{2\pi\sigma}{\rho\lambda}$。取 $\sigma=0.073$ N/m，$\rho=1.0\times10^3\ \mathrm{kg/m^3}$，$g=9.8\ \mathrm{m/s^2}$，
+        求水面波的最小传播速度及对应波长；并判断波长为 $1$ mm 与 $1$ m 的水波各主要由哪一项决定，估算它们的传播速度。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~设 $v=k\lambda^ag^b\rho^c$：长度 $1=a+b-3c$，时间 $-1=-2b$，质量 $0=c$，得 $b=\frac12$，$a=\frac12$，$c=0$，$v=k\sqrt{g\lambda}$。
+$\rho$ 是唯一含质量量纲的量，无法与其他量组合成无质量量纲的速度，所以不出现。\score{8}
+
+(2)~设 $v=k\lambda^a\sigma^b\rho^c$，$\sigma$ 的量纲为 $\mathrm{M\,T^{-2}}$：质量 $0=b+c$，时间 $-1=-2b$，长度 $1=a-3c$，
+得 $b=\frac12$，$c=-\frac12$，$a=-\frac12$，$v=k\sqrt{\dfrac{\sigma}{\rho\lambda}}$。\score{15}
+
+(3)~两项之积为常数 $g\sigma/\rho$，由均值不等式 $v^2\ge2\sqrt{g\sigma/\rho}$，当 $\lambda=2\pi\sqrt{\sigma/(\rho g)}\approx1.7$ cm 时取等，
+$v_{\min}=(4g\sigma/\rho)^{1/4}\approx0.23$ m/s。\score{21}
+$\lambda=1$ mm：重力项 $\approx1.6\times10^{-3}$，表面张力项 $\approx0.46$（单位 $\mathrm{m^2/s^2}$），表面张力主导，$v\approx0.68$ m/s；
+$\lambda=1$ m：重力项 $\approx1.56$，表面张力项 $\approx4.6\times10^{-4}$，重力主导，$v\approx1.25$ m/s。
+波长比 $1.7$ cm 长得多或短得多的波都比最慢的波快，水波是色散的。\score{25}
+\end{solution}
+
+\end{questions}
+\end{paper}
+\end{document}

@@ -1,0 +1,263 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力一试 · 数学 2（预测训练卷）
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 3 小时（训练设置）}, full=150]{一试 · 数学 2}
+
+\begin{instructions}
+  \item 本卷共 6 题，满分 150 分，建议用时 3 小时。官方未公布一试的题量、时长与分值，本卷安排均为训练设置。
+  \item 数学 2 对应 2027 年考纲中的概率与统计（含组合）、应用数学（数值分析、数值代数、最优化）。
+  \item 解答应写出完整的推理、证明与计算过程；只写结果而无论证的，不能得到相应分数。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准，不是官方评分细则。分值标在关键步骤之后，表示做到该步骤累计可得的分数。
+  \item 考生方法与本解答不同时，只要论证严格完整，参照相应步骤的分值给分。
+\end{gradingnotes}
+
+\scoretable{1,2,3,4,5,6}
+
+\begin{questions}
+
+% =============================================================================
+\question[25]
+设 $X_1,X_2,\dots$ 独立同分布，$P(X_i=1)=P(X_i=-1)=\frac12$，记 $S_k=X_1+X_2+\dots+X_k$。对正整数 $n$，令
+\[
+  V_n=\max\Bigl\{\operatorname{Var}\bigl(a_1S_1+a_2S_2+\dots+a_nS_n\bigr)\ :\ a_1,\dots,a_n\in\R,\ a_1^2+\dots+a_n^2=1\Bigr\}.
+\]
+\begin{enumerate}
+  \item 求 $V_n$；
+  \item 求 $\displaystyle\lim_{n\to\infty}\frac{V_n}{n^2}$。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $V_n=\dfrac{1}{4\sin^2\frac{\pi}{4n+2}}$；(2) $\dfrac4{\pi^2}$。
+
+(1)~令 $b_j=a_j+a_{j+1}+\dots+a_n$，$b_{n+1}=0$。交换求和次序，$\sum_ka_kS_k=\sum_jb_jX_j$；$X_j$ 独立、方差为 $1$，故方差为
+$\sum_jb_j^2$。又 $a_j=b_j-b_{j+1}$，$a\mapsto b$ 可逆，所以
+\[
+  V_n=\max_{b\ne0}\frac{\sum_{j=1}^nb_j^2}{q(b)},\qquad q(b)=\sum_{j=1}^n(b_j-b_{j+1})^2 .
+\]
+\score{8}
+$q$ 正定，矩阵 $Q$ 为三对角阵：对角元为 $1,2,\dots,2$，次对角元为 $-1$。由谱定理，$V_n=1/\lambda_{\min}(Q)$。\score{12}
+试 $b_j=\cos\bigl((j-\frac12)\theta\bigr)$：中间各行 $-b_{j-1}+2b_j-b_{j+1}=(2-2\cos\theta)b_j$ 恒成立；第一行等价于 $b_0=b_1$，
+由余弦的偶性自动成立；最后一行等价于 $b_{n+1}=0$，即 $\cos\bigl((n+\frac12)\theta\bigr)=0$，
+$\theta_k=\frac{(2k-1)\pi}{2n+1}$（$k=1,\dots,n$）。这 $n$ 个值互不相同，给出 $Q$ 的全部特征值 $4\sin^2\frac{\theta_k}{2}$。\score{20}
+最小者为 $k=1$，所以 $V_n=\dfrac1{4\sin^2\frac{\pi}{4n+2}}$。（检验：$V_1=1$，$V_2=\frac{3+\sqrt5}2$。）\score{22}
+
+(2)~$\sin x\sim x$，$V_n\sim\dfrac{(4n+2)^2}{4\pi^2}$，极限为 $\dfrac4{\pi^2}$。\score{25}
+
+\emph{另一路线}　$\operatorname{Cov}(S_i,S_j)=\min(i,j)$，$(\min(i,j))=LL\T$（$L$ 为元素全为 $1$ 的下三角阵），其逆为三对角阵。
+$4/\pi^2$ 是布朗运动协方差核 $\min(s,t)$ 在 $[0,1]$ 上的最大特征值，本题是它的离散版本。
+\end{solution}
+
+% =============================================================================
+\question[25]
+一个种群按代繁衍：第 $0$ 代有 $1$ 个个体；每个个体独立地产生 $0,1,2$ 个后代的概率分别为 $\frac14,\frac12,\frac14$，
+第 $n$ 代全部个体的后代构成第 $n+1$ 代。记 $p_n$ 为第 $n$ 代仍有个体的概率。
+\begin{enumerate}
+  \item 求 $\displaystyle\lim_{n\to\infty}np_n$；
+  \item 求 $\displaystyle\lim_{n\to\infty}\frac{n(np_n-4)}{\ln n}$。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $4$；(2) $-4$。
+
+(1)~记 $q_n=1-p_n$。对第 $0$ 代个体的后代数取条件：每个孩子的子孙独立地按同一规律繁衍，“到第 $n+1$ 代灭绝”等价于
+“每个孩子的子孙在 $n$ 代内灭绝”，所以 $q_{n+1}=\frac14+\frac12q_n+\frac14q_n^2=\frac{(1+q_n)^2}{4}$，即
+\[
+  p_{n+1}=p_n-\frac{p_n^2}{4},\qquad p_0=1 .
+\]
+\score{7}
+取倒数：$\dfrac1{p_{n+1}}-\dfrac1{p_n}=\dfrac{1}{4-p_n}\in\bigl(\frac14,\frac13\bigr]$。求和得 $1+\frac n4\le\frac1{p_n}\le1+\frac n3$，
+于是 $p_n\to0$，$\frac1{4-p_n}\to\frac14$，由 Stolz 定理 $\frac{1/p_n}{n}\to\frac14$，$\lim np_n=4$。\score{12}
+
+(2)~由 $\dfrac1{4-p}=\dfrac14+\dfrac p{16}+\dfrac{p^2}{16(4-p)}$，
+\[
+  \frac1{p_n}=1+\frac n4+\frac1{16}\sum_{k=0}^{n-1}p_k+R_n,\qquad 0\le R_n\le\frac1{48}\sum_{k\ge0}p_k^2 .
+\]
+由 $p_k\le\frac4{k+4}$，$R_n=O(1)$，$\sum_{k<n}p_k=O(\ln n)$，代回得 $\frac1{p_k}\le\frac{k+4}4+O(\ln(k+2))$，
+从而 $0\le\frac4{k+4}-p_k=O\bigl(\frac{\ln(k+2)}{(k+4)^2}\bigr)$，其和收敛。\score{19}
+所以 $\sum_{k<n}p_k=4\ln n+O(1)$，$\dfrac1{p_n}=\dfrac n4+\dfrac14\ln n+O(1)$，
+\[
+  np_n=\frac{4}{1+\frac{\ln n}{n}+O(\frac1n)}=4-\frac{4\ln n}{n}+O\Bigl(\frac1n\Bigr),\qquad \frac{n(np_n-4)}{\ln n}\to-4 .
+\]
+\score{25}
+
+\emph{评注}　数值上比值以 $O(1/\ln n)$ 的速度缓慢趋于 $-4$（$n=10^7$ 时约为 $-4.69$），只能靠证明确定。
+\end{solution}
+
+% =============================================================================
+\question[25]
+某批产品按 $1,2,\dots,N$ 连续编号，$N$ 为未知的正整数。从中依次不放回地抽取 $n$ 件（$2\le n\le N$），每次在剩余产品中
+等可能地抽取一件，记抽到的最大编号为 $M$、最小编号为 $m$。
+\begin{enumerate}
+  \item 求 $N$ 的极大似然估计 $\hat N$，并判断它是否为 $N$ 的无偏估计（即是否对一切 $N\ge n$ 都有 $E\hat N=N$）；
+  \item 求常数 $a_n,b_n$，使对一切 $N\ge n$，$T_1=a_nM+b_n$ 都是 $N$ 的无偏估计，并求 $\operatorname{Var}(T_1)$；
+  \item 若编号改为 $s+1,s+2,\dots,s+N$，其中非负整数 $s$ 也未知。求常数 $c_n,d_n$，使 $T_2=c_n(M-m)+d_n$ 对一切 $s\ge0$、
+        $N\ge n$ 都是 $N$ 的无偏估计，并当 $n<N$ 时求 $\operatorname{Var}(T_2)/\operatorname{Var}(T_1)$（$T_1$ 为 (2) 中的估计量，按 $s=0$ 计算其方差；平移不改变方差）。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $\hat N=M$，$n<N$ 时有偏；(2) $a_n=\frac{n+1}n$，$b_n=-1$，$\operatorname{Var}(T_1)=\frac{(N+1)(N-n)}{n(n+2)}$；
+(3) $c_n=\frac{n+1}{n-1}$，$d_n=-1$，比值为 $\dfrac{2n}{n-1}$。
+
+\textbf{关键观察：间隔可交换。} 把抽到的编号从小到大排为 $y_1<\dots<y_n$，令 $G_0=y_1-1$，$G_i=y_{i+1}-y_i-1$（$1\le i\le n-1$），
+$G_n=N-y_n$。$(G_0,\dots,G_n)$ 与无序样本一一对应，且恰取遍和为 $N-n$ 的全部非负整数组；无序样本等可能，故 $(G_0,\dots,G_n)$
+在这些整数组上均匀分布，其分布在下标置换下不变。\score{6}
+
+(1)~有序样本的概率为 $\frac{1}{N(N-1)\cdots(N-n+1)}$（$N\ge M$ 时），否则为 $0$，在 $N\ge M$ 上严格递减，故 $\hat N=M$。
+由可交换性 $E G_i=\frac{N-n}{n+1}$，$EM=N-EG_n=\frac{n(N+1)}{n+1}<N$（$n<N$），所以有偏。\score{10}
+
+(2)~$a_n\frac{n(N+1)}{n+1}+b_n=N$ 对一切 $N\ge n$ 成立，得 $a_n=\frac{n+1}n$，$b_n=-1$。记 $v=\operatorname{Var}(G_i)$，
+$c=\operatorname{Cov}(G_i,G_j)$（$i\ne j$）。由 $\sum G_i$ 为常数，$(n+1)v+n(n+1)c=0$，$c=-\frac vn$。$\operatorname{Var}(M)=\operatorname{Var}(G_n)=v$。
+用 $P(M\le j)=\binom jn/\binom Nn$ 及曲棍球恒等式可算出 $E[M(M+1)]=\frac{n(N+1)(N+2)}{n+2}$，于是
+\[
+  v=\operatorname{Var}(M)=\frac{n(N+1)(N-n)}{(n+1)^2(n+2)},\qquad \operatorname{Var}(T_1)=\Bigl(\frac{n+1}{n}\Bigr)^2v=\frac{(N+1)(N-n)}{n(n+2)} .
+\]
+\score{17}
+
+(3)~极差 $M-m=N-1-G_0-G_n$ 与 $s$ 无关，$E(M-m)=N-1-\frac{2(N-n)}{n+1}=\frac{(n-1)(N+1)}{n+1}$，故 $c_n=\frac{n+1}{n-1}$，$d_n=-1$。\score{20}
+$\operatorname{Var}(M-m)=\operatorname{Var}(G_0+G_n)=2v+2c=\frac{2(n-1)}{n}v$，所以
+\[
+  \operatorname{Var}(T_2)=\Bigl(\frac{n+1}{n-1}\Bigr)^2\frac{2(n-1)}{n}v=\frac{2(N+1)(N-n)}{(n-1)(n+2)},\qquad
+  \frac{\operatorname{Var}(T_2)}{\operatorname{Var}(T_1)}=\frac{2n}{n-1}.
+\]
+\score{25}
+
+\emph{评注}　不知道编号起点，代价是方差变成约 $2$ 倍：两端都要估计。$n=2$ 时比值为 $4$。
+\end{solution}
+
+% =============================================================================
+\question[25]
+设有限群 $G$ 作用在集合 $\Omega$ 上（记为 $g\cdot\omega$），$X$ 是取值于 $\Omega$ 的随机变量（若 $\Omega$ 不是有限集，约定下文涉及的映射都可测）。
+考虑原假设
+\[
+  H_0:\ \text{对每个}\ g\in G,\ g\cdot X\ \text{与}\ X\ \text{同分布}.
+\]
+取定函数 $T\colon\Omega\to\R$，对 $\omega\in\Omega$ 令 $p(\omega)=\dfrac1{\abs G}\#\bigl\{g\in G:\ T(g\cdot\omega)\ge T(\omega)\bigr\}$，
+检验规则为：当 $p(X)\le\alpha$ 时拒绝 $H_0$。
+\begin{enumerate}
+  \item 证明：若 $H_0$ 成立，则对任意 $\alpha\in[0,1]$，有 $P\bigl(p(X)\le\alpha\bigr)\le\alpha$；
+  \item 设 $S$ 是 $\Omega$ 上若干个双射组成的有限集合，含恒等映射但不一定构成群。把 $H_0$ 改为“对每个 $s\in S$，$s(X)$ 与 $X$ 同分布”，
+        并把 $p$ 的定义中的 $G$ 换成 $S$。(1) 的结论是否对所有这样的 $S$ 仍然成立？证明你的结论；
+  \item 某配对试验得到 $6$ 个差值 $d=(3,-1,4,-2,5,6)$。在原假设“各差值相互独立，且每个差值的分布关于 $0$ 对称”下，取
+        $G=\{\pm1\}^6$ 按分量变号作用在 $\R^6$ 上，$T(d)=d_1+\dots+d_6$。求 $p(d)$，并判断在显著性水平 $\alpha=0.05$ 下是否拒绝原假设。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(2) 不一定成立；(3) $p(d)=\frac5{64}\approx0.078$，不拒绝。
+
+(1)~固定 $\omega$，令 $t_h=T(h\cdot\omega)$。由 $h\cdot(g\cdot\omega)=(hg)\cdot\omega$ 及代换 $k=hg$（$h\mapsto hg$ 是 $G$ 上的双射），
+\[
+  p(g\cdot\omega)=\frac1{\abs G}\#\{k\in G:\ t_k\ge t_g\}.
+\]
+即 $p(g\cdot\omega)$ 与 $p(\omega)$ 在同一组数 $\{t_k\}$ 中比较，这里用到群的封闭性。\score{8}
+\textbf{计数引理}：$J=\{g:\#\{k:t_k\ge t_g\}\le\alpha\abs G\}$ 非空时，取 $g^*\in J$ 使 $t_{g^*}$ 最小，则
+$J\subseteq\{k:t_k\ge t_{g^*}\}$，$\abs J\le\alpha\abs G$（含并列值的情形）。故 $N_\alpha(\omega):=\#\{g:p(g\cdot\omega)\le\alpha\}\le\alpha\abs G$。\score{13}
+在 $H_0$ 下 $P(p(g\cdot X)\le\alpha)=P(p(X)\le\alpha)$，对 $g$ 平均：
+$P(p(X)\le\alpha)=\frac1{\abs G}\sum_gP(p(g\cdot X)\le\alpha)=\frac{E N_\alpha(X)}{\abs G}\le\alpha$。\score{16}
+
+(2)~不一定。取 $\Omega=\{1,2,3\}$，$X$ 均匀分布，$\sigma\colon1\mapsto2\mapsto3\mapsto1$，$S=\{\mathrm{id},\sigma\}$（$\sigma^2\notin S$），
+$\sigma(X)$ 仍均匀。取 $T(1)=3$，$T(2)=2$，$T(3)=1$，则 $p(1)=p(2)=\frac12$，$p(3)=1$，$P(p(X)\le\frac12)=\frac23>\frac12$。
+原因：$S\cdot1=\{1,2\}$ 而 $S\cdot2=\{2,3\}$，参照集合随观测值改变。\score{21}
+
+(3)~原假设下对任意 $\varepsilon\in\{\pm1\}^6$，$(\varepsilon_id_i)$ 与 $(d_i)$ 同分布，满足 (1) 的条件。$T(d)=15$；$\abs d$ 的分量恰为
+$1,\dots,6$，变号后 $T=21-2s$，$s$ 为取负号的绝对值之和。$T\ge15\iff s\le3$，对应 $\varnothing,\{1\},\{2\},\{3\},\{1,2\}$
+共 $5$ 种，$p(d)=\frac5{64}>0.05$，不拒绝。\score{25}
+\end{solution}
+
+% =============================================================================
+\question[20]
+对以 $2\pi$ 为周期的连续函数 $f$ 和正整数 $N$，记
+\[
+  I(f)=\int_0^{2\pi}f(x)\,\dd x,\qquad T_N(f)=\frac{2\pi}N\sum_{k=0}^{N-1}f\Bigl(\frac{2k\pi}N\Bigr).
+\]
+对周期函数，$T_N(f)$ 就是步长为 $\frac{2\pi}N$ 的复合梯形公式；利用 $f(0)=f(2\pi)$，步长为 $\frac\pi N$（共 $2N$ 个小区间）的
+复合 Simpson 公式可以写成 $S_N(f)=\frac{4T_{2N}(f)-T_N(f)}3$。令 $f(x)=\dfrac{1}{5-4\cos x}$。
+\begin{enumerate}
+  \item 求 $I(f)$ 与 $T_N(f)$ 的精确值；
+  \item 求所有正整数 $N$，使 $\abs{S_N(f)-I(f)}>\abs{T_{2N}(f)-I(f)}$。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $I(f)=\frac{2\pi}3$，$T_N(f)=\frac{2\pi}3\cdot\frac{2^N+1}{2^N-1}$；(2) 全体 $N\ge3$。
+
+(1)~令 $z=\ee^{\ii x}$，则 $5-4\cos x=(2-z)(2-\bar z)$。由等比级数，
+$f(x)=\sum_{j,l\ge0}\frac{z^j\bar z^l}{2^{j+l+2}}=\sum_{m\in\Z}c_m\ee^{\ii mx}$，$c_m=\frac{2^{-\abs m}}3$，级数绝对一致收敛，
+故 $I(f)=2\pi c_0=\frac{2\pi}3$。\score{6}
+单位根的正交性：$\frac1N\sum_{k=0}^{N-1}\ee^{2\pi\ii mk/N}$ 当 $N\mid m$ 时为 $1$，否则为 $0$。交换求和（绝对收敛）：
+\[
+  T_N(f)=2\pi\sum_{j\in\Z}c_{jN}=\frac{2\pi}3\Bigl(1+2\sum_{j\ge1}2^{-jN}\Bigr)=\frac{2\pi}{3}\cdot\frac{2^N+1}{2^N-1}.
+\]
+\score{12}
+
+(2)~记 $E_N=T_N-I=\frac{4\pi}3\cdot\frac1{2^N-1}$，则 $S_N-I=\frac{4E_{2N}-E_N}3=\frac{4\pi}9\cdot\frac{3-2^N}{4^N-1}$，
+$T_{2N}-I=\frac{4\pi}3\cdot\frac1{4^N-1}$。所以
+$\abs{S_N-I}>\abs{T_{2N}-I}\iff\abs{2^N-3}>3\iff N\ge3$。\score{20}
+
+\emph{评注}　$\frac{S_N-I}{T_N-I}\to-\frac13$：Simpson 只把误差缩小约 $3$ 倍，而 $T_{2N}$ 的误差量级由 $2^{-N}$ 变为 $4^{-N}$。
+Simpson 公式是梯形公式的 Richardson 外推，假定误差按 $h^2,h^4,\dots$ 展开；对光滑周期函数这些项全为零，误差来自混叠项 $c_{\pm N}$。
+\end{solution}
+
+% =============================================================================
+\question[30]
+设 $0<m<M$。对特征值都在 $[m,M]$ 内的 $n$ 阶实对称正定矩阵 $A$，考虑 $f(x)=\frac12x\T Ax$（$x\in\R^n$）的精确线搜索最速下降法：
+给定 $x_0$，若 $g_k=Ax_k\ne0$，令 $x_{k+1}=x_k-\alpha_kg_k$，其中 $\alpha_k$ 使 $f(x_k-\alpha g_k)$ 关于 $\alpha\in\R$ 取最小值。
+\begin{enumerate}
+  \item 求最小的常数 $c=c(m,M)$，使对一切这样的 $n$、$A$、$x_0$ 及每个使 $g_k\ne0$ 的 $k$，都有 $f(x_{k+1})\le c\,f(x_k)$；
+  \item 设 $n=2$，$A=\diag(m,M)$，$x_0=(\xi,\eta)$，$\xi\eta\ne0$。证明：对每个 $k$ 都有 $g_k\ne0$，且比值 $\dfrac{f(x_{k+1})}{f(x_k)}$
+        与 $k$ 无关；用 $m,M,\xi,\eta$ 表示这个比值；
+  \item 在 (2) 的设定下，求所有使每一步都有 $f(x_{k+1})=c\,f(x_k)$ 的初始点 $x_0$（$c$ 为 (1) 中的常数）。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $c=\Bigl(\dfrac{M-m}{M+m}\Bigr)^2$；(2) $\rho(\xi,\eta)=\dfrac{mM(M-m)^2\xi^2\eta^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}$；
+(3) $x_0=t\,(M,\pm m)$，$t\ne0$。
+
+(1)~\textbf{上界。} 记 $g=g_k$。$f(x_k-\alpha g)=f(x_k)-\alpha g\T g+\frac{\alpha^2}2g\T Ag$，最小点
+$\alpha_k=\frac{g\T g}{g\T Ag}$，$f(x_{k+1})=f(x_k)-\frac{(g\T g)^2}{2g\T Ag}$。又 $f(x_k)=\frac12g\T A^{-1}g>0$，故
+\[
+  \frac{f(x_{k+1})}{f(x_k)}=1-\frac{(g\T g)^2}{(g\T Ag)(g\T A^{-1}g)} .
+\]
+\score{6}
+由谱分解 $A=\sum\lambda_ie_ie_i\T$，$\lambda_i\in[m,M]$，有 $\lambda_i+\frac{mM}{\lambda_i}\le m+M$；写 $g=\sum c_ie_i$ 得
+$g\T Ag+mM\,g\T A^{-1}g\le(m+M)g\T g$。再由均值不等式，$(g\T Ag)(g\T A^{-1}g)\le\frac{(m+M)^2}{4mM}(g\T g)^2$，故
+$\frac{f(x_{k+1})}{f(x_k)}\le1-\frac{4mM}{(m+M)^2}=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{13}
+\textbf{最优性。} 取 $n=2$，$A=\diag(m,M)$，$x_0=(M,m)$：$g_0=mM(1,1)$，代入上式得比值恰为 $\bigl(\frac{M-m}{M+m}\bigr)^2$。
+故 $c=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{15}
+
+(2)~\textbf{一步的比值。} 对 $x=(\xi,\eta)$，$g=(m\xi,M\eta)$，代入 (1) 中的公式并化简：
+\[
+  1-\frac{(m^2\xi^2+M^2\eta^2)^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}=\frac{mM(M-m)^2\xi^2\eta^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}=:\rho(\xi,\eta).
+\]
+\score{19}
+\textbf{下一个点。} 精确线搜索使 $\frac{\dd}{\dd\alpha}f(x_k-\alpha g_k)\big|_{\alpha_k}=-g_k\T g_{k+1}=0$，即 $g_{k+1}\perp g_k$。
+二维中与 $g_0=(m\xi,M\eta)$ 垂直的向量都平行于 $(-M\eta,m\xi)$，所以 $x_1=A^{-1}g_1=s\,(M^2\eta,\,-m^2\xi)$。
+又 $\xi\eta\ne0$ 时 $\rho(\xi,\eta)>0$，$f(x_1)>0$，故 $s\ne0$。\score{22}
+\textbf{不变性。} 记 $\xi'=sM^2\eta$，$\eta'=-sm^2\xi$，则 $\xi'\eta'\ne0$，且
+\begin{gather*}
+  \xi'^2\eta'^2=s^4m^4M^4\xi^2\eta^2,\\
+  m^3\xi'^2+M^3\eta'^2=s^2m^3M^3(M\eta^2+m\xi^2),\qquad m\xi'^2+M\eta'^2=s^2mM(M^3\eta^2+m^3\xi^2),
+\end{gather*}
+代入得 $\rho(\xi',\eta')=\rho(\xi,\eta)$。由归纳，每个 $x_k$ 的两个坐标都不为零（故 $g_k\ne0$），且比值恒为 $\rho(\xi,\eta)$。\score{26}
+
+(3)~直接计算
+\[
+  c-\rho(\xi,\eta)=\frac{(M-m)^2\,(m^2\xi^2-M^2\eta^2)^2}{(M+m)^2(m\xi^2+M\eta^2)(m^3\xi^2+M^3\eta^2)}\ \ge0,
+\]
+等号当且仅当 $m\abs\xi=M\abs\eta$。由 (2)，第一步取等则每一步都取等；若 $\xi\eta=0$，则 $x_1=0$，不取等。
+所以所求初始点为 $x_0=t\,(M,\pm m)$，$t\ne0$。\score{30}
+
+\emph{评注}　(2) 说明二维时最速下降法的收敛速度完全由初始点决定，“之”字形迭代的方向在两条直线之间来回折返；(3) 给出最坏的初始方向。
+固定步长 $\frac2{m+M}$ 的梯度下降每步也至少把 $f$ 缩小到 $c$ 倍：在最坏情形下，精确线搜索并不比最优固定步长快。
+\end{solution}
+
+\end{questions}
+\end{paper}
+\end{document}

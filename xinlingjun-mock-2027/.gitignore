@@ -1,2 +1,11 @@
-node_modules/
-dist/*.html
+# LaTeX 中间文件（源文件在 latex/，成品 PDF 在 dist/）
+latex/*.aux
+latex/*.log
+latex/*.out
+latex/*.toc
+latex/*.xdv
+latex/*.fls
+latex/*.fdb_latexmk
+latex/*.synctex.gz
+latex/*.pdf
+latex/missfont.log
