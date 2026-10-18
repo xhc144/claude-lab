@@ -83,10 +83,11 @@ $\rho_E=\dfrac{S^3}{ab}$。于是
 对 $r<r'$，$X\in D(O_r,r)$ 时 $\abs{XO_{r'}}\le\abs{XO_r}+\abs{O_rO_{r'}}\le r+(r'-r)=r'$，即这些圆盘嵌套。所以 $D\subseteq D_P\subseteq K$，
 由极大性 $D=D_P$。\textbf{反之}，若 $D_P\subsetneq D'\subseteq K$，同理 $P$ 在 $D'$ 的边界圆上，$D'$ 是 $P$ 处的合格圆盘；
 它真包含 $D_P$，半径大于 $r(P)$（半径相同而有包含关系的两个圆盘必相同），矛盾。故每个 $D_P$ 都是极大圆盘。
-圆心集合为 $\bigl\{\bigl(\frac{c^2}a\cos t,0\bigr):t\in\R\bigr\}$，即长轴上的线段 $\abs x\le\frac{c^2}a$。\score{25}
+圆心集合为 $\bigl\{\bigl(\frac{c^2}a\cos t,0\bigr):t\in\R\bigr\}$，即长轴上的闭线段 $\abs x\le\frac{c^2}a$；
+端点对应 $P=(\pm a,0)$ 处的圆盘，也是极大圆盘，必须包含在内（只写开线段的扣 1 分）。\score{25}
 
 \emph{评注}　短轴端点处 $r=b<\rho_E=a^2/b$：曲率给出的只是局部上界，真正挡住圆盘的是对称点 $P'$ 这一整体障碍。
-(4) 的线段端点 $(\pm\frac{c^2}a,0)$ 恰为长轴端点处的曲率中心；这条线段称为椭圆的“中轴”。
+(4) 的线段端点 $(\pm\frac{c^2}a,0)$ 恰为长轴端点处的曲率中心，与 (3) 中 $r=\rho_E$ 的两点相对应。
 另有 $r(P)=\dfrac ba\sqrt{\abs{PF_1}\abs{PF_2}}$（$F_1,F_2$ 为焦点）。
 \end{solution}
 
@@ -158,6 +159,7 @@ $\pi/2$，$C_1=\pi/2$。\score{10}
 整理即得不等式。\score{11}
 Hölder 不等式取等当且仅当两个被积函数几乎处处成比例；它们连续，故 $\ee^{-x\T Ax}=\lambda\ee^{-x\T Bx}$ 处处成立。
 令 $x=0$ 得 $\lambda=1$，于是 $x\T Ax=x\T Bx$ 对一切 $x$ 成立，由极化恒等式 $A=B$。所以 $A\ne B$ 时不等号严格。\score{13}
+（也可写 $A=B^{1/2}CB^{1/2}$，把 $C$ 正交对角化后对特征值用加权均值不等式 $t\lambda+1-t\ge\lambda^t$，取等当且仅当特征值全为 $1$；同样给满分。）
 
 (3)~记 $\Delta=\{w:w_i\ge0,\sum w_i=1\}$。$\det M(w)$ 在紧集 $\Delta$ 上连续，有最大值点 $w^*$；由下面的计算，
 $\det M(w^*)\ge\det M(\bar w)>0$（$\bar w$ 为均匀权重），故 $M(w^*)$ 正定。\score{15}
@@ -229,7 +231,7 @@ $\abs{h(x)}\le\frac{x^4}2$。令 $G=\{X\ge-\frac12\}$，由 Markov 不等式 $P(
 $\tau_n^{1/2^n}-n=nL_n+O(nL_n^2)=-\frac12+O\bigl(\frac{\ln n}{n}\bigr)\to-\frac12$。\score{25}
 
 \emph{评注}　一阶结论 $\tau_n^{1/2^n}\sim n$ 说生成树数“按每个顶点平均”约为 $n$ 个选择，凭印象也能猜到；本题要的是下一项 $-\frac12$，
-它来自 $E\ln(1+X)\approx-\frac12EX^2$，即二项分布的方差。数值上 $n=1000$ 时 $\tau_n^{1/2^n}-n\approx-0.5006$。
+它来自 $E\ln(1+X)\approx-\frac12EX^2$，即二项分布的方差。数值上 $n=1000$ 时 $\tau_n^{1/2^n}-n\approx-0.5006$；再下一项为 $-\frac5{8n}$。
 \end{solution}
 
 % =============================================================================
@@ -239,7 +241,8 @@ $\tau_n^{1/2^n}-n=nL_n+O(nL_n^2)=-\frac12+O\bigl(\frac{\ln n}{n}\bigr)\to-\frac1
   \item 设 $G$ 共有 $k(G)$ 个共轭类，证明 $P(G)=\dfrac{k(G)}{\abs G}$；
   \item 设 $p$ 为素数。考虑所有满足“$G$ 不是交换群，且 $\abs G$ 的每个素因子都不小于 $p$”的有限群 $G$。求 $P(G)$ 的最大值（用 $p$ 表示），
         并证明：这样的 $G$ 使 $P(G)$ 取到最大值，当且仅当 $[G:Z(G)]=p^2$；
-  \item 设正整数 $N$ 的每个素因子都不小于 $p$。证明：存在 $N$ 阶群使 $P(G)$ 取到 (2) 中的最大值，当且仅当 $p^3\mid N$。
+  \item 设 $G$ 满足 (2) 的条件且 $P(G)$ 取到最大值。证明：$G$ 的换位子群 $G'$（由全体 $x^{-1}y^{-1}xy$ 生成的子群）是 $p$ 阶群，
+        且 $G'\subseteq Z(G)$；并对每个素因子都不小于 $p$、且被 $p^3$ 整除的正整数 $N$，构造一个取到最大值的 $N$ 阶群。
 \end{enumerate}
 \answerspace{2cm}
 \begin{solution}
@@ -267,18 +270,20 @@ $Z\subsetneq C(x)\subsetneq G$（$x\in C(x)\setminus Z$），$[G:C(x)]\cdot[C(x)
 共轭类大小都是 $p$，两处不等号都取等。\score{16}
 \textbf{最大值确能取到}：见 (3) 中的 $H_p$，故最大值为 $\frac{p^2+p-1}{p^3}$。\score{17}
 
-(3)~\textbf{必要性。} 设 $\abs G=N$ 且 $P(G)$ 取到最大值，由 (2)，$[G:Z]=p^2$，$G/Z$ 是 $p^2$ 阶非循环群，每个元素的 $p$ 次方在 $Z$ 中。
-取 $x,y$ 使 $xZ,yZ$ 生成 $G/Z$，则 $G=\langle x,y\rangle Z$。记 $[a,b]=a^{-1}b^{-1}ab$。$G/Z$ 交换，故一切 $[a,b]\in Z$，
-由 $a^kb=ba^k[a^k,b]$ 归纳得 $[a^{k+1},b]=[a,b][a^k,b]$，即 $[a^k,b]=[a,b]^k$。\score{20}
-于是 $[x,y]^p=[x^p,y]=1$（$x^p\in Z$）。又 $[x,y]\ne1$，否则 $x,y$ 可交换，$G=\langle x,y\rangle Z$ 交换。所以 $Z$ 含 $p$ 阶元，
-$p\mid\abs Z$，$N=p^2\abs Z$ 被 $p^3$ 整除。\score{22}
+(3)~\textbf{$G'\subseteq Z$。} 由 (2)，$[G:Z]=p^2$，$G/Z$ 是 $p^2$ 阶非循环群，从而交换，且每个元素的 $p$ 次方在 $Z$ 中。
+记 $[a,b]=a^{-1}b^{-1}ab$。$G/Z$ 交换，故一切 $[a,b]\in Z$，$G'\subseteq Z$。\score{19}
+\textbf{双线性。} 换位子都在中心时，$[ab,c]=b^{-1}(a^{-1}c^{-1}a)bc=b^{-1}[a,c]c^{-1}bc=[a,c][b,c]$，同理 $[a,bc]=[a,b][a,c]$；
+又中心元与一切元素的换位子为 $1$。取 $x,y$ 使 $xZ,yZ$ 生成 $G/Z$，则每个元素形如 $x^iy^jz$（$z\in Z$），于是
+$[x^iy^jz,\ x^ky^lz']=[x,y]^{il-jk}$：所有换位子都是 $[x,y]$ 的幂，$G'=\langle[x,y]\rangle$。\score{22}
+\textbf{阶为 $p$。} $[x,y]^p=[x^p,y]=1$（$x^p\in Z$）。又 $[x,y]\ne1$，否则 $G'=\{1\}$，$G$ 交换。所以 $\abs{G'}=p$。\score{23}
 
-\textbf{充分性。} $H_p=\Bigl\{\begin{psmallmatrix}1&a&c\\0&1&b\\0&0&1\end{psmallmatrix}:a,b,c\in\F_p\Bigr\}$，$\abs{H_p}=p^3$。
+\textbf{构造。} $H_p=\Bigl\{\begin{psmallmatrix}1&a&c\\0&1&b\\0&0&1\end{psmallmatrix}:a,b,c\in\F_p\Bigr\}$，$\abs{H_p}=p^3$。
 记为 $(a,b,c)$，则 $(a,b,c)(a',b',c')=(a+a',b+b',c+c'+ab')$，两元可交换当且仅当 $ab'=a'b$，中心为 $\{a=b=0\}$，阶 $p$。
 令 $G=H_p\times C_{N/p^3}$（$C_m$ 为 $m$ 阶循环群），则 $\abs G=N$，$G$ 不交换，$Z(G)=Z(H_p)\times C_{N/p^3}$，$[G:Z(G)]=p^2$，
 由 (2) 取到最大值。\score{25}
 
-\emph{评注}　$p=2$ 是 Gustafson 的“$\frac58$ 定理”。(3) 说明最大值是否可达只取决于 $N$ 是否被 $p^3$ 整除，
+\emph{评注}　$p=2$ 是 Gustafson 的“$\frac58$ 定理”。由 (1)，取到最大值时 $p^3k(G)=(p^2+p-1)\abs G$，而 $p\nmid p^2+p-1$，
+所以 $p^3\mid\abs G$ 只是算术推论；(3) 要的是结构：换位子群恰为 $p$ 阶中心子群。
 例如 $p=2$ 时 $12$ 阶群都达不到 $\frac58$（其中非交换群的 $P$ 为 $\frac13$ 或 $\frac12$），$24$ 阶群 $D_4\times C_3$ 达到。
 \end{solution}
 
