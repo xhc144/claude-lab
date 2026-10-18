@@ -1,0 +1,7 @@
+{
+  "template": "exam",
+  "variant": "questions",
+  "source_repository": "https://github.com/xhc144/claude-lab",
+  "source_commit": "35a5afc2524a4162e28a9cd9de3b9e1d32f61a0a",
+  "archive_sha256": "73f56ee92d2ae6de85c07554b8c58786c9d1898a45f937142026ef7dee693dcd"
+}

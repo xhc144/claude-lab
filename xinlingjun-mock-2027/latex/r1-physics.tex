@@ -1,0 +1,205 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力一试 · 物理（预测训练卷）
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 2 小时（训练设置）}, full=100]{一试 · 物理}
+
+\begin{instructions}
+  \item 本卷共 5 题，满分 100 分，建议用时 2 小时。官方未公布一试物理的题量、时长与分值，本卷安排均为训练设置。
+  \item 2027 年考纲：以高中物理核心内容为基准，超出高中范围的新概念、公式或模型由题目提供，重点考查理解、建模、推理与迁移。
+  \item 解答应写出必要的文字说明、方程和演算步骤；数值结果保留合理的有效数字。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准，不是官方评分细则。分值标在关键步骤之后，表示做到该步骤累计可得的分数。
+  \item 数值结果在合理的有效数字范围内即可给分；方法不同但物理正确的，参照相应步骤给分。
+\end{gradingnotes}
+
+\scoretable{1,2,3,4,5}
+
+\begin{questions}
+
+% =============================================================================
+\question[20]
+\begin{withfigure}[.24]{%
+  \begin{tikzpicture}[scale=.55, font=\footnotesize]
+    \draw[thick] (-.35,4.2) -- (-.35,2.2) -- (-1.9,1.6) -- (-1.9,-1.6) -- (1.9,-1.6) -- (1.9,1.6) -- (.35,2.2) -- (.35,4.2);
+    \fill[mjGray!60] (0,3.3) circle (.33);
+    \draw (0,3.3) circle (.33);
+    \node at (0,0) {$V_0$};
+    \draw[->] (1.1,3.3) node[right] {$m$} -- (.4,3.3);
+    \draw[<->] (-.35,4.45) -- node[above] {$A$} (.35,4.45);
+  \end{tikzpicture}}
+容积为 $V_0$ 的大玻璃瓶内封有理想气体，瓶口竖直插接一根内截面积为 $A$ 的精密玻璃管，管的上端开口、与大气相通。管内有一个与管壁密合、
+可无摩擦滑动的小钢球，质量为 $m$。大气压强为 $p_0$，重力加速度为 $g$。钢球静止在管中某处；把钢球稍向下推后释放，它在平衡位置附近
+上下做小振动。瓶内气体总体积可视为 $V_0$。
+
+已知：气体经历绝热过程时 $pV^\gamma$ 保持不变，$\gamma$ 为比热比；理想气体分子自由度为 $f$ 时 $\gamma=\frac{f+2}f$，常温下单原子分子
+$f=3$，双原子分子 $f=5$。
+\end{withfigure}
+\begin{enumerate}
+  \item 设振动中气体经历绝热过程，求钢球小振动的周期 $T$；
+  \item 已知 $V_0=10.0$ L，$A=2.00\ \mathrm{cm}^2$，$m=16.0$ g，$p_0=1.00\times10^5$ Pa，$g=9.8\ \mathrm{m/s^2}$。瓶中装有某种未知气体，
+        测得钢球完成 20 次全振动用时 19.5 s。求 $\gamma$，并判断该气体的分子是单原子分子还是双原子分子；
+  \item 瓶中气体的声速与空气中的声速（约 $340$ m/s）同数量级；气体中热量扩散距离 $L$ 所需时间的数量级为 $L^2/D$，
+        $D\approx2\times10^{-5}\ \mathrm{m^2/s}$。取 $L$ 为瓶的线度，说明 (1) 中“瓶内各处压强相同”与“气体经历绝热过程”这两个假设为什么都合理；
+  \item 若误把该过程当作等温过程，由 (2) 中的数据会得到什么矛盾？实际上，紧靠瓶壁的一薄层气体来得及与瓶壁交换热量，
+        这一效应会使按 (1) 的公式算出的 $\gamma$ 偏大还是偏小？说明理由。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~平衡时 $p_1A=p_0A+mg$，$p_1=p_0+\frac{mg}A$。钢球上移 $x$，气体体积 $V_0+Ax$，
+$p=p_1\bigl(\frac{V_0}{V_0+Ax}\bigr)^\gamma\approx p_1\bigl(1-\frac{\gamma Ax}{V_0}\bigr)$，合力 $F=(p-p_0)A-mg=-\frac{\gamma p_1A^2}{V_0}x$，
+故 $T=2\pi\sqrt{\dfrac{mV_0}{\gamma(p_0+mg/A)A^2}}$。\score{6}
+
+(2)~$p_1=1.008\times10^5$ Pa，$T=0.975$ s，$\gamma=\dfrac{4\pi^2mV_0}{T^2p_1A^2}\approx1.65$，$f=\frac2{\gamma-1}\approx3.1$，为单原子分子
+（若为双原子分子，20 次全振动应约 21.2 s）。忽略 $mg/A$ 得 $1.66$，结论不变。结果在 $1.64\sim1.67$ 之间均可。\score{11}
+
+(3)~$L\sim V_0^{1/3}\approx0.2$ m。声波穿过瓶子约需 $L/c\approx6\times10^{-4}$ s，远小于周期，压强时时来得及均匀；热扩散时间
+$L^2/D\sim2\times10^3$ s，远大于周期，一个周期内来不及换热。$10^{-3}\,\mathrm s\ll T\ll10^3\,\mathrm s$，两个假设同时成立。\score{15}
+
+(4)~等温即 $\gamma=1$，周期应约为 $1.25$ s，20 次约 25.0 s，与实测 19.5 s 矛盾（且等温时周期与气体种类无关，无法区分气体）。\score{17}
+偏小。一个周期内热量扩散约 $\sqrt{DT}\approx4$ mm，贴壁薄层近似等温。压强变化相同时，等温气体体积变化（$\frac{\Delta V}V=-\frac{\Delta p}{p}$）
+比绝热气体（$\frac{\Delta V}V=-\frac{\Delta p}{\gamma p}$）大，整瓶气体更“软”：钢球位移给定的体积变化所对应的压强变化更小，回复力更弱，
+周期更长，反推出的 $\gamma$ 偏小。(2) 中 $1.65$ 略小于 $\frac53$ 方向一致，但偏差与计时误差同量级，不能据此证实。在钢球密合、无摩擦的
+理想化条件下这是主要系统误差，与瓶壁的热交换也是振幅衰减的主要原因之一。\score{20}
+\end{solution}
+
+% =============================================================================
+\question[20]
+\begin{withfigure}[.3]{%
+  \begin{tikzpicture}[scale=.62, font=\footnotesize]
+    \draw[thick] (0,0) -- (5.4,0); \draw[thick] (0,2) -- (5.4,2);
+    \draw (0,0) -- (0,.55); \draw (0,2) -- (0,1.45);
+    \draw (-.3,.55) -- (.3,.55); \draw (-.3,.75) -- (.3,.75); \node[left] at (-.3,.65) {$C$};
+    \draw (0,.75) -- (0,1.0); \draw (-.15,1.0) rectangle (.15,1.45); \node[left] at (-.15,1.22) {$R$};
+    \draw[very thick] (3,-.2) -- (3,2.2) node[above] {$m$};
+    \draw[->] (3.2,1) -- (4.3,1) node[right] {$v$};
+    \foreach \x in {1.2,2.2,4.6} \foreach \y in {.5,1.5} \node[mjGray] at (\x,\y) {$\times$};
+    \draw[<->] (5.6,0) -- node[right] {$L$} (5.6,2);
+  \end{tikzpicture}}
+两根足够长的光滑平行金属导轨水平放置，间距为 $L$，处在竖直向下、磁感应强度为 $B$ 的匀强磁场中。导轨左端通过串联的电阻 $R$ 和电容器 $C$
+相连。质量为 $m$ 的金属棒垂直导轨放置，与导轨接触良好。除 $R$ 外其余电阻不计，不计电路的自感。
+\end{withfigure}
+\begin{enumerate}
+  \item 电容器开始时不带电。给金属棒一个向右的初速度 $v_0$。求棒的最终速度 $v_1$，以及整个过程中电阻 $R$ 上产生的焦耳热 $Q$；$Q$ 与 $R$ 有什么关系？
+  \item 在 (1) 的情形下，求棒的速度 $v$ 随时间 $t$ 的变化关系；
+  \item 改为：棒开始时静止，电容器开始时已充电，电压为 $U_0$，极性使棒所受安培力向右。求棒的最终速度 $v_2$。若 $m,U_0,C$ 给定、
+        $B,L$ 可以调节，求棒的最终动能与电容器初始储能之比 $\eta$ 的最大值，以及取得最大值的条件。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+记 $k=B^2L^2C$（量纲为质量）。
+
+(1)~设电容器电量为 $q$，$i=\dot q$。$BLv=iR+\frac qC$，$m\dot v=-BLi$，积分得 $m(v_0-v)=BLq$。末态 $i=0$，$BLv_1=q_1/C$，
+得 $v_1=\dfrac{mv_0}{m+k}$。\score{6}
+$Q=\frac12mv_0^2-\frac12mv_1^2-\frac{q_1^2}{2C}=\frac12mv_0^2-\frac12(m+k)v_1^2=\dfrac{k}{m+k}\cdot\frac12mv_0^2$，与 $R$ 无关；$R$ 只影响过程快慢
+（依赖“不计自感”的理想化）。这与质量 $m$、速度 $v_0$ 的物体和静止的质量 $k$ 发生完全非弹性碰撞完全相同。\score{10}
+
+(2)~代入 $q=\frac{m(v_0-v)}{BL}$、$i=-\frac m{BL}\dot v$：$B^2L^2v=-mR\dot v+\frac mC(v_0-v)$，即 $\dot v=-\frac{v-v_1}{\tau}$，
+$\tau=\dfrac{mRC}{m+B^2L^2C}$，$v=v_1+(v_0-v_1)\ee^{-t/\tau}$。（$\tau=RC_{\rm eff}$，$C_{\rm eff}$ 为 $C$ 与“棒的等效电容” $m/(B^2L^2)$ 的串联。）\score{14}
+
+(3)~放电电流 $i=-\dot q$：$\frac qC=iR+BLv$，$m\dot v=BLi$，得 $mv=BL(CU_0-q)$。末态 $q_2=CBLv_2$，
+$v_2=\dfrac{BLCU_0}{m+B^2L^2C}$。\score{17}
+$\eta=\dfrac{\frac12mv_2^2}{\frac12CU_0^2}=\dfrac{mk}{(m+k)^2}\le\frac14$，当且仅当 $B^2L^2C=m$ 时取等。此时初始储能的 $\frac14$ 成为动能，
+$\frac14$ 留在电容器，$\frac12$ 变为焦耳热。\score{20}
+\end{solution}
+
+% =============================================================================
+\question[20]
+用光电管研究光电效应：以频率为 $\nu$ 的单色光照射阴极，调节反向电压使光电流恰好为零，此时的电压称为遏止电压 $U_c$。
+爱因斯坦光电效应方程给出 $eU_c=h\nu-W$，$W$ 为阴极材料的逸出功。某小组测得：
+\begin{center}
+\begin{tabular}{c|ccccc}
+  \toprule
+  $\nu\ (10^{14}\ \mathrm{Hz})$ & 5.50 & 6.00 & 6.50 & 7.00 & 7.50 \\
+  $U_c\ (\mathrm V)$ & 0.28 & 0.47 & 0.69 & 0.90 & 1.10 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+取 $e=1.60\times10^{-19}$ C。
+\begin{enumerate}
+  \item 用最小二乘法求 $U_c$ 关于 $\nu$ 的回归直线 $U_c=k\nu+b$，并求普朗克常量 $h$、逸出功 $W$（以 eV 为单位）和截止频率 $\nu_0$；
+  \item 阴极与阳极材料不同，二者之间存在恒定的接触电势差，使测得的电压为 $U=U_c+\Delta U$（$\Delta U$ 与 $\nu$ 无关）。用 $U$ 代替 $U_c$
+        按 (1) 处理数据，$h$ 与 $W$ 的测量结果各受什么影响？
+  \item 设 $U_i=k\nu_i+b+\varepsilon_i$，各 $\varepsilon_i$ 相互独立，均值为 $0$、方差为 $\sigma^2$，频率误差可忽略（可以利用：相互独立的
+        随机变量之和的方差等于方差之和）。(a) 证明最小二乘斜率 $\hat k$ 是 $k$ 的无偏估计（即 $E\hat k=k$），并求 $\operatorname{Var}(\hat k)$；
+        (b) 若只能在 $[\nu_{\min},\nu_{\max}]$ 内选取 $2n$ 个频率（可重复）测量，怎样选取使 $\operatorname{Var}(\hat k)$ 最小？从检验物理规律的角度看，这种方案有什么不足？
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~以 $x=\nu/(10^{14}\,\mathrm{Hz})$ 计：$\bar x=6.50$，$\bar U=0.688$，$S_{xx}=2.50$，$S_{xU}=1.035$，$k=0.414\ \mathrm V/(10^{14}\,\mathrm{Hz})
+=4.14\times10^{-15}\ \mathrm{V\cdot s}$，$b=-2.003$ V。\score{6}
+$h=ek\approx6.62\times10^{-34}\ \mathrm{J\cdot s}$，$W=-eb\approx2.00$ eV，$\nu_0=-b/k\approx4.84\times10^{14}$ Hz（$\lambda_0\approx620$ nm）。\score{10}
+
+(2)~斜率不变，$h$ 不受影响；截距变为 $b+\Delta U$，测得的逸出功为 $W-e\Delta U$，截止频率也随之偏移。\score{13}
+
+(3)(a)~记 $S=\sum(\nu_i-\bar\nu)^2$。由 $\sum(\nu_i-\bar\nu)\bar U=0$，$\hat k=\sum w_iU_i$，$w_i=\frac{\nu_i-\bar\nu}S$，$\sum w_i=0$，
+$\sum w_i\nu_i=1$，故 $E\hat k=k$，$\operatorname{Var}(\hat k)=\sigma^2\sum w_i^2=\sigma^2/S$。\score{17}
+
+(b)~$S\le\sum(\nu_i-c)^2\le2n(\Delta/2)^2$（$c$ 为区间中点，$\Delta=\nu_{\max}-\nu_{\min}$），等号当且仅当两端各测 $n$ 次。
+不足：只有两个频率，任何曲线只要穿过两组点的平均值都同样“符合”数据，无法检验线性关系，也难发现异常数据或系统性偏离；
+检验爱因斯坦方程必须安排中间频率（且都高于截止频率）。\score{20}
+\end{solution}
+
+% =============================================================================
+\question[20]
+质量为 $m$ 的人造卫星在地球大气上层绕地球运行。卫星受到很小的空气阻力 $f$，方向与速度相反，$f$ 远小于万有引力，因此可以认为卫星在任一时刻
+都近似做圆周运动，只是轨道半径 $r$ 随时间缓慢变化。地球质量为 $M_\oplus$，引力常量为 $G$。
+\begin{enumerate}
+  \item 证明：在阻力作用下卫星的速率反而增大，并求速率的变化率 $\dfrac{\dd v}{\dd t}$（用 $f,m$ 表示）；
+  \item 卫星对地心的角动量怎样变化？速率增大并不违背“阻力使物体减速”的常识：是哪个力使卫星加速的？求这个力沿速度方向的分量；
+  \item 估算：某卫星 $m=500$ kg，迎风面积 $S=4.0\ \mathrm{m^2}$，在高度约 $400$ km 处运行，此处大气密度 $\rho\approx3\times10^{-12}\ \mathrm{kg/m^3}$，
+        阻力 $f=\frac12C_D\rho Sv^2$，$C_D=2.2$。地球半径 $R=6.37\times10^6$ m，地面重力加速度 $g=9.8\ \mathrm{m/s^2}$。估算每天轨道高度下降多少。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~圆轨道 $v^2=\frac{GM_\oplus}r$，机械能 $E=-\frac{GM_\oplus m}{2r}=-\frac12mv^2$，动能 $E_k=-E$。阻力做功 $\frac{\dd E}{\dd t}=-fv$，
+故 $\frac{\dd E_k}{\dd t}=+fv$，即 $mv\frac{\dd v}{\dd t}=fv$，$\dfrac{\dd v}{\dd t}=\dfrac fm>0$。\score{7}
+相应地 $\frac{\dd r}{\dd t}=-\frac{2fr}{mv}<0$，轨道变小。\score{9}
+
+(2)~角动量 $L=mvr=m\sqrt{GM_\oplus r}$，$\frac{\dd L}{\dd t}=\frac{L}{2r}\frac{\dd r}{\dd t}=-fr$，与阻力的力矩一致，角动量减小。\score{12}
+卫星沿螺旋线缓慢向内运动，速度有微小的向内分量，引力沿速度方向有分量。引力的功率
+$-\frac{\dd U}{\dd t}=\frac{\dd}{\dd t}\frac{GM_\oplus m}{r}=\frac{GM_\oplus m}{r^2}\cdot\frac{2fr}{mv}=2fv$，所以引力沿速度方向的分量为 $2f$，
+是阻力的 $2$ 倍，净切向力为 $+f$。\score{16}
+
+(3)~$r=6.77\times10^6$ m，$v=\sqrt{gR^2/r}\approx7.66\times10^3$ m/s，$f\approx7.8\times10^{-4}$ N。
+$\frac{\dd r}{\dd t}=-\frac{2fr}{mv}\approx-2.7\times10^{-3}$ m/s，每天约下降 $2\times10^2$ m（约 240 m；量级正确即可）。\score{20}
+\end{solution}
+
+% =============================================================================
+\question[20]
+在迈克耳孙干涉仪中，光源发出的光被分束后沿两臂传播，经平面镜反射后重新会合；平移其中一面平面镜改变两臂的光程差，观察视场中心的明暗变化。
+\begin{enumerate}
+  \item 用某单色光照射，平面镜平移 $d=0.2947$ mm 的过程中，视场中心共出现 $N=1000$ 次“亮—暗—亮”的变化。求该光的波长；
+  \item 钠光灯的黄光实际含两条谱线 $\lambda_1=589.0$ nm、$\lambda_2=589.6$ nm。用它照射时，随平面镜平移，干涉条纹周期性地变清晰、变模糊。
+        求相邻两次条纹最模糊之间平面镜平移的距离；
+  \item 定义条纹可见度 $\mathcal V=\frac{I_{\max}-I_{\min}}{I_{\max}+I_{\min}}$（$I_{\max},I_{\min}$ 为附近明暗条纹的光强）。设两条谱线的强度之比为 $1:\beta$
+        （$0<\beta\le1$），求条纹最模糊时的可见度；实验测得其约为 $0.33$，两条谱线的强度之比约为多少？
+  \item 改用中心波长 $550$ nm、谱宽约 $30$ nm 的白光 LED 照射，只在平面镜位置的很小范围内能看到条纹。估计这个范围的数量级，
+        并说明为什么实验中常用白光来确定“两臂光程相等”的位置。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+(1)~平面镜平移 $d$，光程差改变 $2d$，每改变一个波长出现一次明暗循环：$\lambda=\frac{2d}N=589.4$ nm。\score{5}
+
+(2)~两套条纹分别以 $\lambda_1,\lambda_2$ 为周期（光程差 $\delta$ 的函数），叠加形成“拍”：当两套条纹相位差改变 $2\pi$ 时清晰度循环一次，
+$\delta\bigl(\frac1{\lambda_1}-\frac1{\lambda_2}\bigr)=1$，$\Delta\delta=\frac{\lambda_1\lambda_2}{\lambda_2-\lambda_1}$，平面镜平移
+$\Delta d=\frac{\lambda_1\lambda_2}{2(\lambda_2-\lambda_1)}\approx0.289$ mm。\score{11}
+
+(3)~$I(\delta)=I_1\bigl(1+\cos\frac{2\pi\delta}{\lambda_1}\bigr)+I_2\bigl(1+\cos\frac{2\pi\delta}{\lambda_2}\bigr)$。两套条纹反相时最模糊：
+$I_{\max}-I_{\min}\approx2(I_1-I_2)$，$I_{\max}+I_{\min}\approx2(I_1+I_2)$，$\mathcal V_{\min}=\frac{1-\beta}{1+\beta}$。由 $\frac{1-\beta}{1+\beta}=0.33$ 得
+$\beta\approx0.5$，强度比约 $2:1$。\score{16}
+
+(4)~相干长度 $\ell\sim\frac{\lambda^2}{\Delta\lambda}\approx\frac{(550)^2}{30}$ nm $\approx10\ \mu$m，条纹只在光程差 $\lesssim\ell$ 时可见，平面镜范围约
+$5\ \mu$m 量级。白光各波长只有在光程差接近零时才同时“对齐”，彩色条纹只在零光程差附近出现，因此可以精确标定两臂等光程的位置。\score{20}
+\end{solution}
+
+\end{questions}
+\end{paper}
+\end{document}

@@ -1,0 +1,181 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力三试 · 现学现考（预测训练卷）
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+\usepackage{tcolorbox}
+\newenvironment{lecture}[1]
+  {\begin{tcolorbox}[colback=white, colframe=black!45, boxrule=.5pt, arc=0pt,
+     left=2mm, right=2mm, top=1mm, bottom=1mm, fonttitle=\sffamily\bfseries,
+     coltitle=black, colbacktitle=black!8, title={#1}]}
+  {\end{tcolorbox}}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 2.5 小时，含阅读（训练设置）}, full=100]{三试 · 现学现考}
+
+\begin{instructions}
+  \item 2027 年简章规定三试为“非固定形式的开放性内容”（现学现考），未公布形式、时长与分值。往年的开放测试有学生回忆为
+        “先看教学视频或讲义、再当场作答”，涉及过陌生的数学与物理专题。本卷据此设计：先阅读讲义，再作答。全部安排为训练设置。
+  \item 本卷含两个模块，每个模块 50 分。讲义中的结论可以直接引用；题目要求证明的结论须给出推导。
+  \item 最后一问为开放性问题，没有唯一答案，按观察是否准确、论证是否清楚给分。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准。现学现考重在能否把讲义中的新概念用对、用活；推导完整、条理清楚者从高给分。
+\end{gradingnotes}
+
+\scoretable{1,2,3,4,5,6,7,8,9,10,11}
+
+% -----------------------------------------------------------------------------
+\examsection*{模块 A\quad 四元数与空间旋转}{50 分}
+
+\begin{lecture}{讲义 A　四元数}
+形如 $q=a+b\,\mathbf i+c\,\mathbf j+d\,\mathbf k$（$a,b,c,d\in\R$）的数称为\textbf{四元数}。加法逐项进行；乘法满足结合律和对加法的分配律，实数与一切四元数可交换，并且
+\[
+  \mathbf i^2=\mathbf j^2=\mathbf k^2=\mathbf i\mathbf j\mathbf k=-1 .
+\]
+称 $a$ 为 $q$ 的实部，$b\mathbf i+c\mathbf j+d\mathbf k$ 为虚部。实部为零的四元数称为\textbf{纯四元数}；把纯四元数 $x\mathbf i+y\mathbf j+z\mathbf k$ 与空间向量 $(x,y,z)$ 等同，
+于是空间向量也可以相乘。$q$ 的\textbf{共轭}为 $\bar q=a-b\mathbf i-c\mathbf j-d\mathbf k$，\textbf{模}为 $\abs q=\sqrt{a^2+b^2+c^2+d^2}$。
+
+可以直接使用的事实：
+\begin{enumerate}
+  \item $q\bar q=\bar qq=\abs q^2$；
+  \item 对纯四元数 $u,v$（看作向量），$uv=-u\cdot v+u\times v$，其中 $u\cdot v$ 为点积，$u\times v$ 为叉积。
+\end{enumerate}
+\end{lecture}
+
+\begin{questions}
+\question[6] 由 $\mathbf i^2=\mathbf j^2=\mathbf k^2=\mathbf i\mathbf j\mathbf k=-1$ 推出 $\mathbf i\mathbf j=\mathbf k$，$\mathbf j\mathbf i=-\mathbf k$；并计算 $(1+\mathbf i)(1+\mathbf j)$ 与 $(1+\mathbf j)(1+\mathbf i)$。
+\answerspace{2.5cm}
+\begin{solution}
+$\mathbf i\mathbf j\mathbf k=-1$ 两边右乘 $\mathbf k$：$\mathbf i\mathbf j\mathbf k^2=-\mathbf k$，即 $-\mathbf i\mathbf j=-\mathbf k$，$\mathbf i\mathbf j=\mathbf k$。\score{2}
+$(\mathbf j\mathbf i)(\mathbf i\mathbf j)=\mathbf j\mathbf i^2\mathbf j=-\mathbf j^2=1$，又 $(-\mathbf k)\mathbf k=1$，故 $\mathbf j\mathbf i=(\mathbf i\mathbf j)^{-1}=\mathbf k^{-1}=-\mathbf k$。\score{4}
+$(1+\mathbf i)(1+\mathbf j)=1+\mathbf i+\mathbf j+\mathbf k$，$(1+\mathbf j)(1+\mathbf i)=1+\mathbf i+\mathbf j-\mathbf k$，乘法不交换。\score{6}
+\end{solution}
+
+\question[8] 证明：对任意四元数 $p,q$，$\overline{pq}=\bar q\,\bar p$；并由此证明 $\abs{pq}=\abs p\abs q$。
+\answerspace{2.5cm}
+\begin{solution}
+两边都对 $p$、$q$ 是实线性的，只需对 $p,q\in\{1,\mathbf i,\mathbf j,\mathbf k\}$ 验证。有一个是 $1$ 时显然；$p=q$ 时 $\overline{\mathbf i\mathbf i}=-1=(-\mathbf i)(-\mathbf i)$；
+$p\ne q$ 时如 $\overline{\mathbf i\mathbf j}=-\mathbf k$，$\bar{\mathbf j}\,\bar{\mathbf i}=\mathbf j\mathbf i=-\mathbf k$，其余同理。\score{5}
+于是 $\abs{pq}^2=pq\,\overline{pq}=p\,q\bar q\,\bar p=\abs q^2p\bar p=\abs p^2\abs q^2$（$\abs q^2$ 是实数，可以交换）。\score{8}
+\end{solution}
+
+\question[10] 设 $\abs q=1$。对纯四元数 $v$，令 $R_q(v)=qv\bar q$。证明：$R_q(v)$ 仍是纯四元数，$\abs{R_q(v)}=\abs v$；$R_q$ 是线性的，并且保持向量的点积。
+\answerspace{2.5cm}
+\begin{solution}
+纯四元数满足 $\bar v=-v$。由上题 $\overline{qv\bar q}=q\bar v\bar q=-qv\bar q$，一个四元数等于其共轭的相反数，实部必为零，故 $R_q(v)$ 是纯四元数。\score{4}
+$\abs{qv\bar q}=\abs q\abs v\abs{\bar q}=\abs v$。\score{6}
+线性显然。保持模长的线性映射保持点积：$u\cdot v=\frac14\bigl(\abs{u+v}^2-\abs{u-v}^2\bigr)$。\score{10}
+\end{solution}
+
+\question[12] 设 $u$ 是单位纯四元数（单位向量），$q=\cos\frac\theta2+\sin\frac\theta2\,u$。证明 $R_q$ 是绕 $u$ 轴（按右手定则）转过角 $\theta$ 的旋转。
+\answerspace{3cm}
+\begin{solution}
+$q$ 是 $1$ 与 $u$ 的组合，与 $u$ 可交换，故 $R_q(u)=uq\bar q=u$，转轴不动。\score{3}
+取与 $u$ 垂直的单位向量 $w$，令 $w'=u\times w$，则 $u,w,w'$ 构成右手正交基。由事实 2：$uw=w'$，$wu=-w'$，$w'u=(u\times w)\times u=w$。\score{6}
+记 $c=\cos\frac\theta2$，$s=\sin\frac\theta2$：
+\begin{align*}
+  R_q(w)&=(c+su)\,w\,(c-su)=(cw+sw')(c-su)=c^2w-cs\,wu+cs\,w'-s^2w'u\\
+  &=(c^2-s^2)w+2cs\,w'=\cos\theta\,w+\sin\theta\,(u\times w).
+\end{align*}
+\score{11}
+同理 $R_q(w')=\cos\theta\,w'-\sin\theta\,w$。所以在与 $u$ 垂直的平面内转过 $\theta$，方向符合右手定则。\score{12}
+\end{solution}
+
+\question[8] 求 $q=\frac12(1+\mathbf i+\mathbf j+\mathbf k)$ 对应的旋转的转轴和转角，并写出 $R_q$ 把 $\mathbf i,\mathbf j,\mathbf k$ 分别变成什么。
+\answerspace{2.5cm}
+\begin{solution}
+$q=\frac12+\frac{\sqrt3}2\cdot\frac{\mathbf i+\mathbf j+\mathbf k}{\sqrt3}$，$\cos\frac\theta2=\frac12$，转角 $120^\circ$，转轴为 $(1,1,1)/\sqrt3$。\score{4}
+直接计算（或由绕 $(1,1,1)$ 转 $120^\circ$ 轮换坐标轴）：$\mathbf i\mapsto\mathbf j$，$\mathbf j\mapsto\mathbf k$，$\mathbf k\mapsto\mathbf i$。\score{8}
+\end{solution}
+
+\question[6] (1) 说明先作 $R_{q_1}$ 再作 $R_{q_2}$ 等于 $R_{q_2q_1}$，并求“先绕 $x$ 轴转 $90^\circ$、再绕 $y$ 轴转 $90^\circ$”的合成旋转的转轴与转角；
+(2)（开放问题）$q$ 与 $-q$ 给出同一个旋转。让 $\theta$ 从 $0$ 连续增加到 $2\pi$，$q=\cos\frac\theta2+\sin\frac\theta2u$ 怎样变化？谈谈你从中观察到的现象。
+\answerspace{3cm}
+\begin{solution}
+(1) $R_{q_2}(R_{q_1}(v))=q_2q_1v\bar q_1\bar q_2=(q_2q_1)v\,\overline{q_2q_1}$。\score{1}
+$q_1=\frac{1+\mathbf i}{\sqrt2}$，$q_2=\frac{1+\mathbf j}{\sqrt2}$，$q_2q_1=\frac12(1+\mathbf i+\mathbf j-\mathbf k)$，转角 $120^\circ$，转轴 $(1,1,-1)/\sqrt3$。注意顺序，按 $q_1q_2$ 计算会得到不同的轴。\score{4}
+(2) 参考要点：$\theta$ 从 $0$ 到 $2\pi$ 时 $q$ 从 $1$ 连续变到 $-1$，旋转却回到恒等；要转到 $4\pi$ 才回到 $q=1$。每个旋转恰对应两个单位四元数 $\pm q$，
+单位四元数全体（三维球面）“两层覆盖”了全体旋转。可提及“转一圈”与“转两圈”的路径在拓扑上的区别等。观察准确、表述清楚即可给满分。\score{6}
+\end{solution}
+\end{questions}
+
+% -----------------------------------------------------------------------------
+\examsection*{模块 B\quad 快度与相对论中的速度合成}{50 分}
+
+\begin{lecture}{讲义 B　洛伦兹变换与快度}
+惯性系 $S'$ 相对惯性系 $S$ 以速度 $v$ 沿 $x$ 轴正方向运动，两系的原点在 $t=t'=0$ 时重合。狭义相对论中两系的坐标满足\textbf{洛伦兹变换}
+\[
+  x'=\gamma(x-vt),\qquad t'=\gamma\Bigl(t-\frac{vx}{c^2}\Bigr),\qquad y'=y,\qquad \gamma=\frac{1}{\sqrt{1-v^2/c^2}} .
+\]
+物体在 $S'$ 中的速度为 $(u'_x,u'_y)$ 时，它在 $S$ 中的速度为
+\[
+  u_x=\frac{u'_x+v}{1+u'_xv/c^2},\qquad u_y=\frac{u'_y}{\gamma\,(1+u'_xv/c^2)} .
+\]
+定义\textbf{快度} $\varphi$：$v=c\tanh\varphi$。双曲函数 $\cosh\varphi=\frac{\ee^\varphi+\ee^{-\varphi}}2$，$\sinh\varphi=\frac{\ee^\varphi-\ee^{-\varphi}}2$，
+$\tanh\varphi=\frac{\sinh\varphi}{\cosh\varphi}$，满足 $\cosh^2\varphi-\sinh^2\varphi=1$，$\tanh(\alpha+\beta)=\dfrac{\tanh\alpha+\tanh\beta}{1+\tanh\alpha\tanh\beta}$。
+\end{lecture}
+
+\begin{questions}
+\question[8] 证明 $\gamma=\cosh\varphi$，$\gamma v/c=\sinh\varphi$；把洛伦兹变换写成 $\begin{psmallmatrix}ct'\\x'\end{psmallmatrix}=\Lambda(\varphi)\begin{psmallmatrix}ct\\x\end{psmallmatrix}$，
+求矩阵 $\Lambda(\varphi)$，并验证 $c^2t'^2-x'^2=c^2t^2-x^2$。
+\answerspace{2.5cm}
+\begin{solution}
+$1-\tanh^2\varphi=\frac1{\cosh^2\varphi}$，故 $\gamma=\cosh\varphi$，$\gamma v/c=\cosh\varphi\tanh\varphi=\sinh\varphi$。\score{3}
+$ct'=\cosh\varphi\,ct-\sinh\varphi\,x$，$x'=-\sinh\varphi\,ct+\cosh\varphi\,x$，$\Lambda(\varphi)=\begin{psmallmatrix}\cosh\varphi&-\sinh\varphi\\-\sinh\varphi&\cosh\varphi\end{psmallmatrix}$。\score{6}
+$c^2t'^2-x'^2=(\cosh^2\varphi-\sinh^2\varphi)(c^2t^2-x^2)$，交叉项相消。\score{8}
+\end{solution}
+
+\question[10] 证明：沿同一直线合成速度时快度相加，即 $u'_y=0$ 时 $\varphi_u=\varphi_{u'}+\varphi_v$；并证明 $\Lambda(\alpha)\Lambda(\beta)=\Lambda(\alpha+\beta)$。由此说明：无论把小于 $c$ 的速度合成多少次，结果总小于 $c$。
+\answerspace{2.5cm}
+\begin{solution}
+设 $u'=c\tanh\alpha$，$v=c\tanh\beta$，由速度合成公式及 $\tanh$ 的加法公式，$u=c\tanh(\alpha+\beta)$。\score{4}
+由双曲函数的加法公式 $\cosh(\alpha+\beta)=\cosh\alpha\cosh\beta+\sinh\alpha\sinh\beta$，$\sinh(\alpha+\beta)=\sinh\alpha\cosh\beta+\cosh\alpha\sinh\beta$，
+直接相乘得 $\Lambda(\alpha)\Lambda(\beta)=\Lambda(\alpha+\beta)$。\score{8}
+有限个实数快度之和仍是实数，$\abs{\tanh}<1$，所以合成速度的大小总小于 $c$；快度可以无限增加，速度只能趋近 $c$。\score{10}
+\end{solution}
+
+\question[12] 火箭从静止出发，沿直线运动，在它每一时刻的瞬时静止惯性系中加速度大小恒为 $a$（固有加速度恒定）。记火箭自身时钟的读数（固有时）为 $\tau$，
+在地面系中 $\dd t=\gamma\,\dd\tau$。
+\begin{enumerate}
+  \item 利用快度相加，说明火箭快度满足 $\dfrac{\dd\varphi}{\dd\tau}=\dfrac ac$，从而 $\varphi=\dfrac{a\tau}{c}$；
+  \item 求地面系中的 $t(\tau)$ 与 $x(\tau)$（$x(0)=0$），并证明火箭的世界线满足 $\bigl(x+\frac{c^2}a\bigr)^2-c^2t^2=\bigl(\frac{c^2}a\bigr)^2$。
+\end{enumerate}
+\answerspace{3cm}
+\begin{solution}
+(1) 在固有时 $\dd\tau$ 内，火箭相对瞬时静止系获得速度 $a\,\dd\tau$，对应快度 $\operatorname{artanh}\frac{a\,\dd\tau}c\approx\frac{a\,\dd\tau}c$；
+沿直线快度相加，故 $\dd\varphi=\frac ac\dd\tau$，$\varphi=\frac{a\tau}c$。\score{4}
+(2) $\dd t=\cosh\varphi\,\dd\tau$，$\dd x=v\,\dd t=c\sinh\varphi\,\dd\tau$，积分得
+$t=\frac ca\sinh\frac{a\tau}c$，$x=\frac{c^2}a\bigl(\cosh\frac{a\tau}c-1\bigr)$。\score{10}
+于是 $\bigl(x+\frac{c^2}a\bigr)^2-c^2t^2=\frac{c^4}{a^2}(\cosh^2-\sinh^2)=\bigl(\frac{c^2}a\bigr)^2$，世界线是双曲线（“双曲运动”）。\score{12}
+\end{solution}
+
+\question[10] 设 $a=g=9.8\ \mathrm{m/s^2}$，$c=3.0\times10^8$ m/s，1 年 $\approx3.16\times10^7$ s。火箭按自身时钟先加速 5 年、再以同样大小的固有加速度减速 5 年，到达时恰好静止。
+估算到达时离地球的距离（以光年计）与地球上经过的时间。
+\answerspace{2.5cm}
+\begin{solution}
+$\frac cg\approx0.97$ 年，$\frac{c^2}g\approx0.97$ 光年，$\varphi_{\max}=\frac{5}{0.97}\approx5.16$，$\cosh5.16\approx\sinh5.16\approx87$。\score{4}
+加速段走过 $\frac{c^2}g(\cosh\varphi_{\max}-1)\approx0.97\times86\approx83$ 光年，减速段对称，共约 $1.7\times10^2$ 光年。\score{7}
+地面时间 $2\cdot\frac cg\sinh\varphi_{\max}\approx2\times0.97\times87\approx1.7\times10^2$ 年。而航天员只过了 10 年。\score{10}
+\end{solution}
+
+\question[10] 设物体在 $S'$ 中沿 $y'$ 方向以速度 $v_2$ 运动，$S'$ 相对 $S$ 沿 $x$ 方向以速度 $v_1$ 运动。
+\begin{enumerate}
+  \item 求物体在 $S$ 中的速率，并证明其快度 $\varphi$ 满足 $\cosh\varphi=\cosh\varphi_1\cosh\varphi_2$（$\varphi_1,\varphi_2$ 分别为 $v_1,v_2$ 的快度）；
+  \item （开放问题）这个关系与你熟悉的哪个几何关系相似？速度不在同一直线上时，快度还能简单相加吗？谈谈你的看法。
+\end{enumerate}
+\answerspace{3cm}
+\begin{solution}
+(1) $u'_x=0$，$u_x=v_1$，$u_y=v_2/\gamma_1$。$1-\frac{u^2}{c^2}=1-\frac{v_1^2}{c^2}-\frac{v_2^2}{c^2}\Bigl(1-\frac{v_1^2}{c^2}\Bigr)=\Bigl(1-\frac{v_1^2}{c^2}\Bigr)\Bigl(1-\frac{v_2^2}{c^2}\Bigr)$，
+所以 $\gamma_u=\gamma_1\gamma_2$，即 $\cosh\varphi=\cosh\varphi_1\cosh\varphi_2$；速率 $u=\sqrt{v_1^2+v_2^2(1-v_1^2/c^2)}$。\score{6}
+(2) 参考要点：类似直角三角形的勾股定理（欧氏）与球面上的 $\cos c=\cos a\cos b$；这里是“双曲型”的勾股定理，快度空间具有双曲几何。
+非共线时快度不再简单相加（$\varphi<\varphi_1+\varphi_2$，像三角形两边之和大于第三边），而且两次非共线变换合成后还会附带一个空间转动。
+观察合理、表述清楚即可给满分。\score{10}
+\end{solution}
+\end{questions}
+
+\end{paper}
+\end{document}
