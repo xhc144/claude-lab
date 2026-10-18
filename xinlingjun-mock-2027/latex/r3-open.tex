@@ -19,7 +19,7 @@
   \item 2027 年简章规定三试为“非固定形式的开放性内容”（现学现考），未公布形式、时长与分值。往年的开放测试有学生回忆为
         “先看教学视频或讲义、再当场作答”，涉及过陌生的数学与物理专题。本卷据此设计：先阅读讲义，再作答。全部安排为训练设置。
   \item 本卷含两个模块，每个模块 50 分。讲义中的结论可以直接引用；题目要求证明的结论须给出推导。
-  \item 最后一问为开放性问题，没有唯一答案，按观察是否准确、论证是否清楚给分。
+  \item 标有“开放问题”的小问没有唯一答案，按观察是否准确、论证是否清楚给分。
 \end{instructions}
 
 \begin{gradingnotes}
@@ -44,6 +44,10 @@
   \item $q\bar q=\bar qq=\abs q^2$；
   \item 对纯四元数 $u,v$（看作向量），$uv=-u\cdot v+u\times v$，其中 $u\cdot v$ 为点积，$u\times v$ 为叉积。
 \end{enumerate}
+\textbf{叉积}：$u=(u_1,u_2,u_3)$，$v=(v_1,v_2,v_3)$ 时，$u\times v=(u_2v_3-u_3v_2,\ u_3v_1-u_1v_3,\ u_1v_2-u_2v_1)$。
+它与 $u$、$v$ 都垂直，模长为 $\abs u\abs v\sin\angle(u,v)$，方向按右手定则（右手四指从 $u$ 转向 $v$，拇指所指）；
+$v\times u=-u\times v$，$u\times u=0$，对每个因子都满足分配律。例如 $(1,0,0)\times(0,1,0)=(0,0,1)$。
+本模块中“绕单位向量 $u$ 转 $\theta$”均按右手定则：拇指指向 $u$，四指弯曲方向为正方向。
 \end{lecture}
 
 \begin{questions}
@@ -85,15 +89,16 @@ $q$ 是 $1$ 与 $u$ 的组合，与 $u$ 可交换，故 $R_q(u)=uq\bar q=u$，�
 同理 $R_q(w')=\cos\theta\,w'-\sin\theta\,w$。所以在与 $u$ 垂直的平面内转过 $\theta$，方向符合右手定则。\score{12}
 \end{solution}
 
-\question[8] 求 $q=\frac12(1+\mathbf i+\mathbf j+\mathbf k)$ 对应的旋转的转轴和转角，并写出 $R_q$ 把 $\mathbf i,\mathbf j,\mathbf k$ 分别变成什么。
+\question[8] 求 $q=\frac12(1+\mathbf i+\mathbf j+\mathbf k)$ 对应的旋转的转轴和转角（转角取在 $[0^\circ,180^\circ]$ 内，并相应确定转轴的方向），并写出 $R_q$ 把 $\mathbf i,\mathbf j,\mathbf k$ 分别变成什么。
 \answerspace{2.5cm}
 \begin{solution}
 $q=\frac12+\frac{\sqrt3}2\cdot\frac{\mathbf i+\mathbf j+\mathbf k}{\sqrt3}$，$\cos\frac\theta2=\frac12$，转角 $120^\circ$，转轴为 $(1,1,1)/\sqrt3$。\score{4}
 直接计算（或由绕 $(1,1,1)$ 转 $120^\circ$ 轮换坐标轴）：$\mathbf i\mapsto\mathbf j$，$\mathbf j\mapsto\mathbf k$，$\mathbf k\mapsto\mathbf i$。\score{8}
 \end{solution}
 
-\question[6] (1) 说明先作 $R_{q_1}$ 再作 $R_{q_2}$ 等于 $R_{q_2q_1}$，并求“先绕 $x$ 轴转 $90^\circ$、再绕 $y$ 轴转 $90^\circ$”的合成旋转的转轴与转角；
-(2)（开放问题）$q$ 与 $-q$ 给出同一个旋转。让 $\theta$ 从 $0$ 连续增加到 $2\pi$，$q=\cos\frac\theta2+\sin\frac\theta2u$ 怎样变化？谈谈你从中观察到的现象。
+\question[6] (1) 说明先作 $R_{q_1}$ 再作 $R_{q_2}$ 等于 $R_{q_2q_1}$，并求“先绕 $x$ 轴正方向转 $90^\circ$、再绕 $y$ 轴正方向转 $90^\circ$”（均按右手定则）的合成旋转的转轴与转角
+（转角取在 $[0^\circ,180^\circ]$ 内，并相应确定转轴的方向）；
+(2)（开放问题）$q$ 与 $-q$ 给出同一个旋转。让 $\theta$ 从 $0$ 连续增加到 $2\pi$，$q=\cos\frac\theta2+\sin\frac\theta2\,u$ 怎样变化？谈谈你从中观察到的现象。
 \answerspace{3cm}
 \begin{solution}
 (1) $R_{q_2}(R_{q_1}(v))=q_2q_1v\bar q_1\bar q_2=(q_2q_1)v\,\overline{q_2q_1}$。\score{1}
@@ -116,7 +121,13 @@ $q_1=\frac{1+\mathbf i}{\sqrt2}$，$q_2=\frac{1+\mathbf j}{\sqrt2}$，$q_2q_1=\f
   u_x=\frac{u'_x+v}{1+u'_xv/c^2},\qquad u_y=\frac{u'_y}{\gamma\,(1+u'_xv/c^2)} .
 \]
 定义\textbf{快度} $\varphi$：$v=c\tanh\varphi$。双曲函数 $\cosh\varphi=\frac{\ee^\varphi+\ee^{-\varphi}}2$，$\sinh\varphi=\frac{\ee^\varphi-\ee^{-\varphi}}2$，
-$\tanh\varphi=\frac{\sinh\varphi}{\cosh\varphi}$，满足 $\cosh^2\varphi-\sinh^2\varphi=1$，$\tanh(\alpha+\beta)=\dfrac{\tanh\alpha+\tanh\beta}{1+\tanh\alpha\tanh\beta}$。
+$\tanh\varphi=\frac{\sinh\varphi}{\cosh\varphi}$，满足 $\cosh^2\varphi-\sinh^2\varphi=1$，以及（均可由定义直接验证）
+\begin{gather*}
+  \cosh(\alpha+\beta)=\cosh\alpha\cosh\beta+\sinh\alpha\sinh\beta,\qquad
+  \sinh(\alpha+\beta)=\sinh\alpha\cosh\beta+\cosh\alpha\sinh\beta,\\
+  \tanh(\alpha+\beta)=\frac{\tanh\alpha+\tanh\beta}{1+\tanh\alpha\tanh\beta};
+\end{gather*}
+$(\cosh\varphi)'=\sinh\varphi$，$(\sinh\varphi)'=\cosh\varphi$；$\varphi$ 很小时 $\tanh\varphi\approx\varphi$。
 \end{lecture}
 
 \begin{questions}
@@ -129,7 +140,7 @@ $ct'=\cosh\varphi\,ct-\sinh\varphi\,x$，$x'=-\sinh\varphi\,ct+\cosh\varphi\,x$�
 $c^2t'^2-x'^2=(\cosh^2\varphi-\sinh^2\varphi)(c^2t^2-x^2)$，交叉项相消。\score{8}
 \end{solution}
 
-\question[10] 证明：沿同一直线合成速度时快度相加，即 $u'_y=0$ 时 $\varphi_u=\varphi_{u'}+\varphi_v$；并证明 $\Lambda(\alpha)\Lambda(\beta)=\Lambda(\alpha+\beta)$。由此说明：无论把小于 $c$ 的速度合成多少次，结果总小于 $c$。
+\question[10] 证明：沿同一直线合成速度时快度相加，即 $u'_y=0$ 时 $\varphi_u=\varphi_{u'}+\varphi_v$；并证明 $\Lambda(\alpha)\Lambda(\beta)=\Lambda(\alpha+\beta)$。由此说明：沿同一直线，无论把小于 $c$ 的速度合成多少次，结果总小于 $c$。
 \answerspace{2.5cm}
 \begin{solution}
 设 $u'=c\tanh\alpha$，$v=c\tanh\beta$，由速度合成公式及 $\tanh$ 的加法公式，$u=c\tanh(\alpha+\beta)$。\score{4}
@@ -142,7 +153,7 @@ $c^2t'^2-x'^2=(\cosh^2\varphi-\sinh^2\varphi)(c^2t^2-x^2)$，交叉项相消。\
 在地面系中 $\dd t=\gamma\,\dd\tau$。
 \begin{enumerate}
   \item 利用快度相加，说明火箭快度满足 $\dfrac{\dd\varphi}{\dd\tau}=\dfrac ac$，从而 $\varphi=\dfrac{a\tau}{c}$；
-  \item 求地面系中的 $t(\tau)$ 与 $x(\tau)$（$x(0)=0$），并证明火箭的世界线满足 $\bigl(x+\frac{c^2}a\bigr)^2-c^2t^2=\bigl(\frac{c^2}a\bigr)^2$。
+  \item 求地面系中的 $t(\tau)$ 与 $x(\tau)$（$\tau=0$ 时 $t=0$，$x=0$），并证明火箭的世界线满足 $\bigl(x+\frac{c^2}a\bigr)^2-c^2t^2=\bigl(\frac{c^2}a\bigr)^2$。
 \end{enumerate}
 \answerspace{3cm}
 \begin{solution}
@@ -160,6 +171,7 @@ $t=\frac ca\sinh\frac{a\tau}c$，$x=\frac{c^2}a\bigl(\cosh\frac{a\tau}c-1\bigr)$
 $\frac cg\approx0.97$ 年，$\frac{c^2}g\approx0.97$ 光年，$\varphi_{\max}=\frac{5}{0.97}\approx5.16$，$\cosh5.16\approx\sinh5.16\approx87$。\score{4}
 加速段走过 $\frac{c^2}g(\cosh\varphi_{\max}-1)\approx0.97\times86\approx83$ 光年，减速段对称，共约 $1.7\times10^2$ 光年。\score{7}
 地面时间 $2\cdot\frac cg\sinh\varphi_{\max}\approx2\times0.97\times87\approx1.7\times10^2$ 年。而航天员只过了 10 年。\score{10}
+（结果对指数很敏感，指数差 1\% 结果约差 5\%；距离与时间在 $160\sim175$ 之间、说明了减速段与加速段对称，均给满分。）
 \end{solution}
 
 \question[10] 设物体在 $S'$ 中沿 $y'$ 方向以速度 $v_2$ 运动，$S'$ 相对 $S$ 沿 $x$ 方向以速度 $v_1$ 运动。

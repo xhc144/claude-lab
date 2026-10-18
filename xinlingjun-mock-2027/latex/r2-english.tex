@@ -36,8 +36,8 @@ A counterexample is a single case in which a general claim fails. It may seem a 
 builds --- but working mathematicians value it highly. One reason is economy. A conjecture about infinitely many objects can never be
 confirmed by checking examples, however many we check; a single well-chosen counterexample settles the matter at once. Another reason
 is precision. When a statement fails, the way it fails usually tells us which hypothesis was missing. A function that is continuous
-everywhere but differentiable nowhere does not merely refute the belief that continuity implies smoothness; it forces us to say
-clearly what extra conditions smoothness requires.
+everywhere but differentiable nowhere does not merely refute the belief that continuity implies differentiability; it forces us to say
+clearly what extra conditions differentiability requires.
 
 There is also a less obvious benefit. Searching for a counterexample is an excellent way to understand a theorem that is true.
 If you try to break a result and fail, the reasons for your failure are, very often, the ideas of the proof. A student who has tried
@@ -102,8 +102,8 @@ days, one tuner handles a thousand pianos a year --- so the city needs on the or
 
 Every number in this chain is uncertain, some of them by a factor of two or more. Why, then, should the answer be trusted at all?
 Part of the reason is that errors tend to cancel: an overestimate in one step is often balanced by an underestimate in another.
-If each factor is off by a random amount, the logarithm of the final answer is a sum of independent errors, and such a sum grows
-more slowly than the number of terms. The other part of the reason is more important. The value of the estimate lies less in its exact
+If each factor is off by an independent random amount, with no systematic bias, the error in the logarithm of the final answer is a
+sum of independent errors, and the typical size of such a sum grows only like the square root of the number of terms. The other part of the reason is more important. The value of the estimate lies less in its exact
 figure than in its order of magnitude. Knowing that the answer is fifty rather than five or five thousand is already a real piece of
 knowledge.
 
@@ -131,7 +131,7 @@ C。每人每年只能调 $2\times250=500$ 台，$50\,000/500=100$。
 
 \question[4] According to the passage, why can the estimate be trusted although its inputs are uncertain? \paren[B]
 \choices{Every input is checked against a directory.}
-        {Errors in different steps partly cancel, and only the order of magnitude matters.}
+        {Errors in different steps partly cancel, and what matters most is the order of magnitude.}
         {Fermi's figures were exact.}
         {Pianos are tuned at regular intervals.}
 \begin{solution}
@@ -147,12 +147,13 @@ B。第二段给出两点理由：误差部分抵消；估算的价值在于数�
 B。上文：最终结果与粗估相差悬殊时，说明假设有误或细致计算出错。
 \end{solution}
 
-\question[4] In about 30 words, explain why scientists make a rough estimate before a long computation or an expensive experiment.
+\question[4] In about 40 words, explain in your own words why the errors in the separate steps of such an estimate do not simply pile up.
 \answerspace{2.5cm}
 \begin{solution}
-It tells them what size of result to expect; if the detailed result differs wildly, either an assumption was wrong or the detailed
-work contains a mistake, and both are worth discovering.\score{4}
-（要点：预知结果的量级 2 分；作为检验、发现错误 2 分。）
+Each factor is as likely to be too high as too low, and the errors are independent. Multiplying the factors adds their errors on a
+logarithmic scale, so errors of opposite sign partly cancel, and the total error grows only like the square root of the number of
+steps, not in proportion to it.\score{4}
+（要点：各步误差独立、无系统偏差，方向不一 1 分；相乘即对数相加 1 分；正负部分抵消 1 分；总误差按步数的平方根而非线性增长 1 分。）
 \end{solution}
 \end{questions}
 

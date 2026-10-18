@@ -100,7 +100,7 @@ $4/\pi^2$ 是布朗运动协方差核 $\min(s,t)$ 在 $[0,1]$ 上的最大特征
   \item 求 $N$ 的极大似然估计 $\hat N$，并判断它是否为 $N$ 的无偏估计（即是否对一切 $N\ge n$ 都有 $E\hat N=N$）；
   \item 求常数 $a_n,b_n$，使对一切 $N\ge n$，$T_1=a_nM+b_n$ 都是 $N$ 的无偏估计，并求 $\operatorname{Var}(T_1)$；
   \item 若编号改为 $s+1,s+2,\dots,s+N$，其中非负整数 $s$ 也未知。求常数 $c_n,d_n$，使 $T_2=c_n(M-m)+d_n$ 对一切 $s\ge0$、
-        $N\ge n$ 都是 $N$ 的无偏估计，并当 $n<N$ 时求 $\operatorname{Var}(T_2)/\operatorname{Var}(T_1)$。
+        $N\ge n$ 都是 $N$ 的无偏估计，并当 $n<N$ 时求 $\operatorname{Var}(T_2)/\operatorname{Var}(T_1)$（$T_1$ 为 (2) 中的估计量，按 $s=0$ 计算其方差；平移不改变方差）。
 \end{enumerate}
 \answerspace{2cm}
 \begin{solution}
@@ -211,33 +211,51 @@ Simpson 公式是梯形公式的 Richardson 外推，假定误差按 $h^2,h^4,\d
 给定 $x_0$，若 $g_k=Ax_k\ne0$，令 $x_{k+1}=x_k-\alpha_kg_k$，其中 $\alpha_k$ 使 $f(x_k-\alpha g_k)$ 关于 $\alpha\in\R$ 取最小值。
 \begin{enumerate}
   \item 求最小的常数 $c=c(m,M)$，使对一切这样的 $n$、$A$、$x_0$ 及每个使 $g_k\ne0$ 的 $k$，都有 $f(x_{k+1})\le c\,f(x_k)$；
-  \item 设 $n=2$，$A=\diag(m,M)$。求所有非零初始点 $x_0$，使 $f(x_1)=c\,f(x_0)$；并证明对这样的 $x_0$，每个 $k$ 都有 $f(x_{k+1})=c\,f(x_k)$。
+  \item 设 $n=2$，$A=\diag(m,M)$，$x_0=(\xi,\eta)$，$\xi\eta\ne0$。证明：对每个 $k$ 都有 $g_k\ne0$，且比值 $\dfrac{f(x_{k+1})}{f(x_k)}$
+        与 $k$ 无关；用 $m,M,\xi,\eta$ 表示这个比值；
+  \item 在 (2) 的设定下，求所有使每一步都有 $f(x_{k+1})=c\,f(x_k)$ 的初始点 $x_0$（$c$ 为 (1) 中的常数）。
 \end{enumerate}
 \answerspace{2cm}
 \begin{solution}
-答案：(1) $c=\Bigl(\dfrac{M-m}{M+m}\Bigr)^2$；(2) $x_0=t\,(M,\pm m)$，$t\ne0$。
+答案：(1) $c=\Bigl(\dfrac{M-m}{M+m}\Bigr)^2$；(2) $\rho(\xi,\eta)=\dfrac{mM(M-m)^2\xi^2\eta^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}$；
+(3) $x_0=t\,(M,\pm m)$，$t\ne0$。
 
 (1)~\textbf{上界。} 记 $g=g_k$。$f(x_k-\alpha g)=f(x_k)-\alpha g\T g+\frac{\alpha^2}2g\T Ag$，最小点
 $\alpha_k=\frac{g\T g}{g\T Ag}$，$f(x_{k+1})=f(x_k)-\frac{(g\T g)^2}{2g\T Ag}$。又 $f(x_k)=\frac12g\T A^{-1}g>0$，故
 \[
   \frac{f(x_{k+1})}{f(x_k)}=1-\frac{(g\T g)^2}{(g\T Ag)(g\T A^{-1}g)} .
 \]
-\score{8}
+\score{6}
 由谱分解 $A=\sum\lambda_ie_ie_i\T$，$\lambda_i\in[m,M]$，有 $\lambda_i+\frac{mM}{\lambda_i}\le m+M$；写 $g=\sum c_ie_i$ 得
 $g\T Ag+mM\,g\T A^{-1}g\le(m+M)g\T g$。再由均值不等式，$(g\T Ag)(g\T A^{-1}g)\le\frac{(m+M)^2}{4mM}(g\T g)^2$，故
-$\frac{f(x_{k+1})}{f(x_k)}\le1-\frac{4mM}{(m+M)^2}=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{17}
-\textbf{最优性}由 (2) 的例子给出（$k=0$ 时取等），故 $c=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{19}
+$\frac{f(x_{k+1})}{f(x_k)}\le1-\frac{4mM}{(m+M)^2}=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{13}
+\textbf{最优性。} 取 $n=2$，$A=\diag(m,M)$，$x_0=(M,m)$：$g_0=mM(1,1)$，代入上式得比值恰为 $\bigl(\frac{M-m}{M+m}\bigr)^2$。
+故 $c=\bigl(\frac{M-m}{M+m}\bigr)^2$。\score{15}
 
-(2)~$x_0=(\xi,\eta)\ne0$，$g_0=(m\xi,M\eta)$。二维时特征值只有 $m,M$，第一个不等式自动取等；所以取等当且仅当均值不等式取等：
-\begin{align*}
-  g\T Ag=mM\,g\T A^{-1}g&\iff m^3\xi^2+M^3\eta^2=mM(m\xi^2+M\eta^2)\\
-  &\iff(M-m)(M^2\eta^2-m^2\xi^2)=0\iff M\abs\eta=m\abs\xi,
-\end{align*}
-即 $x_0=t(M,\pm m)$，$t\ne0$。\score{25}
-此时 $g_0=t\,mM(1,\pm1)$，$\alpha_0=\frac2{m+M}$，$x_1=t\cdot\frac{M-m}{M+m}\,(M,\mp m)$，仍是同一形式且非零；归纳得每一步都取等号，
-迭代点在两条直线之间“之”字形折返。\score{30}
+(2)~\textbf{一步的比值。} 对 $x=(\xi,\eta)$，$g=(m\xi,M\eta)$，代入 (1) 中的公式并化简：
+\[
+  1-\frac{(m^2\xi^2+M^2\eta^2)^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}=\frac{mM(M-m)^2\xi^2\eta^2}{(m^3\xi^2+M^3\eta^2)(m\xi^2+M\eta^2)}=:\rho(\xi,\eta).
+\]
+\score{19}
+\textbf{下一个点。} 精确线搜索使 $\frac{\dd}{\dd\alpha}f(x_k-\alpha g_k)\big|_{\alpha_k}=-g_k\T g_{k+1}=0$，即 $g_{k+1}\perp g_k$。
+二维中与 $g_0=(m\xi,M\eta)$ 垂直的向量都平行于 $(-M\eta,m\xi)$，所以 $x_1=A^{-1}g_1=s\,(M^2\eta,\,-m^2\xi)$。
+又 $\xi\eta\ne0$ 时 $\rho(\xi,\eta)>0$，$f(x_1)>0$，故 $s\ne0$。\score{22}
+\textbf{不变性。} 记 $\xi'=sM^2\eta$，$\eta'=-sm^2\xi$，则 $\xi'\eta'\ne0$，且
+\begin{gather*}
+  \xi'^2\eta'^2=s^4m^4M^4\xi^2\eta^2,\\
+  m^3\xi'^2+M^3\eta'^2=s^2m^3M^3(M\eta^2+m\xi^2),\qquad m\xi'^2+M\eta'^2=s^2mM(M^3\eta^2+m^3\xi^2),
+\end{gather*}
+代入得 $\rho(\xi',\eta')=\rho(\xi,\eta)$。由归纳，每个 $x_k$ 的两个坐标都不为零（故 $g_k\ne0$），且比值恒为 $\rho(\xi,\eta)$。\score{26}
 
-\emph{评注}　固定步长 $\frac2{m+M}$ 的梯度下降每步也至少把 $f$ 缩小到 $c$ 倍：在最坏情形下，精确线搜索并不比最优固定步长快。
+(3)~直接计算
+\[
+  c-\rho(\xi,\eta)=\frac{(M-m)^2\,(m^2\xi^2-M^2\eta^2)^2}{(M+m)^2(m\xi^2+M\eta^2)(m^3\xi^2+M^3\eta^2)}\ \ge0,
+\]
+等号当且仅当 $m\abs\xi=M\abs\eta$。由 (2)，第一步取等则每一步都取等；若 $\xi\eta=0$，则 $x_1=0$，不取等。
+所以所求初始点为 $x_0=t\,(M,\pm m)$，$t\ne0$。\score{30}
+
+\emph{评注}　(2) 说明二维时最速下降法的收敛速度完全由初始点决定，“之”字形迭代的方向在两条直线之间来回折返；(3) 给出最坏的初始方向。
+固定步长 $\frac2{m+M}$ 的梯度下降每步也至少把 $f$ 缩小到 $c$ 倍：在最坏情形下，精确线搜索并不比最优固定步长快。
 \end{solution}
 
 \end{questions}
