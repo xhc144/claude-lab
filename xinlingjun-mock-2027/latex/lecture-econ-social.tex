@@ -1,0 +1,80 @@
+% !TEX program = xelatex
+% 经济与社科速成讲义：配合二试综合“经济”“社科”两份预测训练卷
+\documentclass[cjk=noto, nomargin]{mojing-notes}
+\usepackage{float}
+
+\course[Crash Course]{经济与社科速成讲义}
+\term{2026 年 10 月}
+\instructor{Claude（配合本套预测训练卷编写）}
+\institute{训练资料，非官方文件}
+
+% ---------------------------------------------------------------------------
+% 讲义专用的小盒子
+% ---------------------------------------------------------------------------
+\NewDocumentEnvironment{pitfall}{}
+  {\begin{tcolorbox}[mojing/base, frame hidden, colback=mjVermilion!5,
+     left=9pt, right=8pt, top=6pt, bottom=6pt,
+     borderline west={1.1pt}{0pt}{mjVermilion}]
+   {\mojingheadfont\color{mjVermilion}易错提醒}\par\vspace{.25\baselineskip}}
+  {\end{tcolorbox}}
+\NewDocumentEnvironment{oneline}{}
+  {\begin{tcolorbox}[mojing/base, frame hidden, colback=mjPine!6,
+     left=9pt, right=8pt, top=6pt, bottom=6pt,
+     borderline west={1.1pt}{0pt}{mjPine}]
+   {\mojingheadfont\color{mjPine}一句话记住}\quad}
+  {\end{tcolorbox}}
+
+% ---------------------------------------------------------------------------
+% 作图约定：需求用黛蓝，供给用朱砂；剩余、税收、无谓损失用浅色填充
+% ---------------------------------------------------------------------------
+\tikzset{
+  dem/.style={draw=mjAccent, line width=1pt},
+  sup/.style={draw=mjSecond, line width=1pt},
+  sup2/.style={draw=mjSecond, line width=1pt, dash pattern=on 4pt off 2pt},
+  dem2/.style={draw=mjAccent, line width=1pt, dash pattern=on 4pt off 2pt},
+  csfill/.style={fill=mjAccent!16},
+  psfill/.style={fill=mjSecond!14},
+  taxfill/.style={fill=mjOchre!28},
+  dwlfill/.style={fill=mjPine!38},
+  guide/.style={draw=mjGray, line width=.4pt, dash pattern=on 2pt off 1.6pt},
+  lab/.style={font=\small},
+  slab/.style={font=\footnotesize},
+  eqpt/.style={circle, fill=mjInk, inner sep=0pt, minimum size=3.6pt},
+  shiftarrow/.style={-{Stealth[length=2.4mm,width=1.8mm]}, draw=mjInk!70, line width=.7pt},
+  node box/.style={draw=mjAccent!70, rounded corners=2pt, fill=white, align=center,
+    inner sep=4pt, font=\small},
+  cause/.style={-{Stealth[length=2.4mm,width=1.8mm]}, draw=mjInk!80, line width=.8pt},
+}
+% 坐标轴：\econaxes{横轴长}{纵轴长}{横轴名}{纵轴名}
+\newcommand{\econaxes}[4]{%
+  \draw[mj axis] (0,0) -- (#1,0) node[right, lab] {#3};
+  \draw[mj axis] (0,0) -- (0,#2) node[above, lab] {#4};}
+% 收益表中的一对收益：甲（行）黛蓝，乙（列）朱砂
+\newcommand{\pay}[2]{$(\textcolor{mjAccent}{#1},\,\textcolor{mjSecond}{#2})$}
+\newcommand{\upay}[2]{$(\textcolor{mjAccent}{\underline{#1}},\,\textcolor{mjSecond}{\underline{#2}})$}
+\newcommand{\upayA}[2]{$(\textcolor{mjAccent}{\underline{#1}},\,\textcolor{mjSecond}{#2})$}
+\newcommand{\upayB}[2]{$(\textcolor{mjAccent}{#1},\,\textcolor{mjSecond}{\underline{#2}})$}
+
+\setlength{\parskip}{.35\baselineskip}
+\captionsetup{font=small}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\input{lecture-es/00-intro}
+\input{lecture-es/01-supply-demand}
+\input{lecture-es/02-elasticity-surplus}
+\input{lecture-es/03-tax}
+\input{lecture-es/04-controls-externality}
+\input{lecture-es/05-games}
+\input{lecture-es/06-time-value}
+\input{lecture-es/07-trade}
+\input{lecture-es/08-voting}
+\input{lecture-es/09-numbers}
+\input{lecture-es/10-sampling}
+\input{lecture-es/11-causality}
+\input{lecture-es/12-methods-answers}
+
+\end{document}

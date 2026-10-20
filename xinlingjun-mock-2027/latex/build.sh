@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# 编译全部试卷：每份试卷生成试题卷与“参考答案及评分标准”两个版本，复制到 ../dist/。
+# 编译全部试卷：每份试卷生成试题卷与“参考答案及评分标准”两个版本，复制到 ../dist/；
+# 不带参数时还编译设计说明（notes）和经济与社科速成讲义（lecture-econ-social）。
 # 用法：bash build.sh            编译全部
 #       bash build.sh r1-math1   只编译指定试卷
 # 依赖：TeX Live 2023+（XeLaTeX、latexmk、ctex），中文字体 Noto CJK。
@@ -25,8 +26,11 @@ for p in "${papers[@]}"; do
   echo "$p: $(pdfinfo "$p.pdf" | awk '/Pages/{print $2}') + $(pdfinfo "$p-answers.pdf" | awk '/Pages/{print $2}') pages"
 done
 
-if [ -f notes.tex ] && [ $# -eq 0 ]; then
-  latexmk -xelatex -interaction=nonstopmode -halt-on-error notes.tex > build-notes.log 2>&1
-  cp notes.pdf "$out/notes.pdf"
-  echo "notes: $(pdfinfo notes.pdf | awk '/Pages/{print $2}') pages"
+if [ $# -eq 0 ]; then
+  for n in notes lecture-econ-social; do
+    [ -f "$n.tex" ] || continue
+    latexmk -xelatex -interaction=nonstopmode -halt-on-error "$n.tex" > "build-$n.log" 2>&1
+    cp "$n.pdf" "$out/$n.pdf"
+    echo "$n: $(pdfinfo "$n.pdf" | awk '/Pages/{print $2}') pages"
+  done
 fi

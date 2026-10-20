@@ -1,0 +1,214 @@
+% =============================================================================
+\lecture[number=1, short=供给与需求]{供给与需求：价格是怎么定出来的}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 需求曲线向下倾斜：价格越高，想买的量越少。供给曲线向上倾斜：价格越高，想卖的量越多。
+  \item 两条线的交点叫\textbf{均衡}。价格高于均衡会出现过剩，低于均衡会出现短缺，这两种力量都会把价格推回交点。
+  \item 价格本身变了，是\textbf{沿着}曲线移动；价格以外的因素变了，是\textbf{整条}曲线移动。
+  \item 分析题三步走：哪条线动？往哪边动？新的交点在哪里？
+\end{itemize}
+\end{keypoints}
+
+\section{需求：价格和“想买多少”}
+
+设想学校门口的一家奶茶店。经过一段时间的观察，店主发现价格和每天卖出的杯数大致是这样的：
+\begin{center}
+\small
+\begin{tabular}{l*{6}{c}}
+  \toprule
+  价格 $P$（元） & 15 & 20 & 25 & 30 & 35 & 40 \\
+  需求量 $Q$（杯） & 60 & 50 & 40 & 30 & 20 & 10 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+这张表叫\textbf{需求表}。它正好满足 $Q=90-2P$。把它画出来，就是\textbf{需求曲线}（图~\ref{fig:es-dd-ss}(a)）。
+
+价格越高，买的人越少，原因很朴素：
+\begin{itemize}
+  \item 每个顾客心里都有一个“最多愿意付多少”的价格。价格越高，超过这个心理价位的人越多，这些人就不买了；
+  \item 价格高了，有人会改买别的饮料（这叫\textbf{替代}）。
+\end{itemize}
+
+需求曲线可以从两个方向读：
+\begin{itemize}
+  \item \textbf{横着读}：给定价格，读出想买多少。价格 30 元时，一天卖 30 杯。
+  \item \textbf{竖着读}：给定数量，读出“最后那位顾客最多愿意付多少”。第 30 杯对应 30 元，意思是第 30 位顾客最多愿意付 30 元。
+\end{itemize}
+第二种读法在第 2 讲计算“消费者剩余”时要用到。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{78}{52}{$Q$}{$P$}
+  \draw[dem] (8,41) -- (72,9) node[right, slab, mjAccent] {需求 $D$};
+  \foreach \q/\p in {60/15, 50/20, 40/25, 30/30, 20/35, 10/40}
+    \node[eqpt, fill=mjAccent] at (\q,\p) {};
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0) node[below, slab] {30};
+\end{tikzpicture}
+\caption{需求曲线：向下倾斜}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{78}{52}{$Q$}{$P$}
+  \draw[sup] (0,0) -- (47,47) node[right, slab, mjSecond] {供给 $S$};
+  \foreach \q in {10,20,30,40}
+    \node[eqpt, fill=mjSecond] at (\q,\q) {};
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0) node[below, slab] {30};
+\end{tikzpicture}
+\caption{供给曲线：向上倾斜}
+\end{subfigure}
+\caption{需求曲线和供给曲线。圆点是表中的数据。}
+\label{fig:es-dd-ss}
+\end{figure}
+
+\begin{pitfall}
+经济学习惯把\textbf{价格画在纵轴、数量画在横轴}，和数学里“自变量画在横轴”的习惯相反。所以需求 $Q=90-2P$ 在图上是直线 $P=45-\frac12Q$，
+斜率是 $-\frac12$ 而不是 $-2$。读题、画图时先确认哪根轴是什么。
+\end{pitfall}
+
+\section{供给：价格和“想卖多少”}
+
+再看卖方。价格越高，越多的店愿意卖奶茶，原有的店也愿意多做一些（加班、多雇人也划算了）。假设这个市场的\textbf{供给}是 $Q=P$：
+价格 10 元时一天只供应 10 杯，价格 40 元时供应 40 杯（图~\ref{fig:es-dd-ss}(b)）。
+
+供给曲线也可以竖着读：第 $Q$ 杯对应的价格，是卖方肯做这一杯的\textbf{最低要价}，也就是多做这一杯的成本。第 30 杯的成本是 30 元，价格低于 30 元，就没人愿意做第 30 杯。
+
+\section{均衡：两条线的交点}
+
+把两条线画在一起（图~\ref{fig:es-eq}）。想买的量等于想卖的量时，市场“出清”：
+\[
+  90-2P=P \quad\Longrightarrow\quad P^*=30,\qquad Q^*=30 .
+\]
+这一点叫\textbf{均衡}，$P^*$、$Q^*$ 叫均衡价格和均衡数量。
+
+为什么价格会停在这里？看图中的两条虚线。
+\begin{itemize}
+  \item \textbf{价格偏高}（比如 36 元）：顾客只想买 18 杯，店家却想卖 36 杯，多出 18 杯卖不掉，叫\textbf{过剩}。卖不掉的店家会降价。
+  \item \textbf{价格偏低}（比如 24 元）：顾客想买 42 杯，店家只肯做 24 杯，差 18 杯，叫\textbf{短缺}。排队买不到的顾客愿意多付钱，店家会涨价。
+\end{itemize}
+两种情况都会把价格推向 30 元。只有在交点上，没有人有动力改变价格。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.1cm, y=.09cm]
+  \econaxes{88}{53}{数量 $Q$}{价格 $P$}
+  \draw[dem] (0,45) -- (80,5) node[right, slab, mjAccent] {需求 $D$};
+  \draw[sup] (0,0) -- (49,49) node[right, slab, mjSecond] {供给 $S$};
+  % 过剩
+  \draw[guide] (0,36) node[left, slab] {36} -- (36,36);
+  \draw[decorate, decoration={brace, amplitude=4pt}, mjOchre, line width=.7pt] (18,37) -- (36,37)
+    node[midway, above=4pt, slab, mjOchre] {过剩 18};
+  \node[circle, fill=mjAccent, inner sep=1.4pt] at (18,36) {};
+  \node[circle, fill=mjSecond, inner sep=1.4pt] at (36,36) {};
+  % 短缺
+  \draw[guide] (0,24) node[left, slab] {24} -- (42,24);
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, mjOchre, line width=.7pt] (24,23) -- (42,23)
+    node[pos=.62, below=4pt, slab, mjOchre] {短缺 18};
+  \node[circle, fill=mjSecond, inner sep=1.4pt] at (24,24) {};
+  \node[circle, fill=mjAccent, inner sep=1.4pt] at (42,24) {};
+  % 均衡
+  \draw[guide] (0,30) node[left, slab] {$P^*=30$} -- (30,30) -- (30,0) node[below, slab] {$Q^*=30$};
+  \node[eqpt] at (30,30) {};
+  \node[slab, above=2pt] at (30,30) {$E$};
+  % 价格调整箭头
+  \draw[shiftarrow] (60,40) -- (60,33) node[midway, right, slab] {价格回落};
+  \draw[shiftarrow] (60,18) -- (60,26) node[midway, right, slab] {价格上涨};
+\end{tikzpicture}
+\caption{均衡、过剩与短缺：价格偏离交点时，过剩和短缺会把它推回来}
+\label{fig:es-eq}
+\end{figure}
+
+\section{曲线什么时候整体移动}
+
+需求曲线描述的是“\textbf{其他条件不变}时，价格和想买的量的关系”。如果其他条件变了，整条曲线都会移动。
+\begin{center}
+\small
+\begin{tabular}{p{6.6cm}p{6.6cm}}
+  \toprule
+  \textcolor{mjAccent}{\textbf{使需求曲线移动的因素}} & \textcolor{mjSecond}{\textbf{使供给曲线移动的因素}} \\
+  \midrule
+  收入变化 & 原料、工资等成本 \\
+  相关商品的价格：替代品涨价，需求增加；互补品涨价，需求减少 & 生产技术 \\
+  偏好、潮流、季节 & 卖家的数量 \\
+  对未来价格的预期 & 对未来价格的预期 \\
+  买家的数量 & 天气、自然灾害、政策 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+需求“增加”指整条需求曲线向右移：在每个价格上，人们都想买得更多。
+图~\ref{fig:es-shift}(a) 中，天气转热，奶茶的需求从 $Q=90-2P$ 增加到 $Q=105-2P$，新交点在 $P=35$，$Q=35$，价格和数量都上升。
+图~\ref{fig:es-shift}(b) 中，牛奶涨价，每杯成本多了 15 元，供给从 $Q=P$ 减少为 $Q=P-15$（曲线向上、向左移），新交点在 $P=35$，$Q=20$，价格上升、数量下降。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.072cm, y=.072cm]
+  \econaxes{80}{58}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (70,10) node[below, slab, mjAccent] {$D_1$};
+  \draw[dem2] (0,52.5) -- (75,15) node[right, slab, mjAccent] {$D_2$};
+  \draw[sup] (0,0) -- (50,50) node[above, slab, mjSecond] {$S$};
+  \draw[shiftarrow] (52,19.5) -- (62,19.5);
+  \node[eqpt] at (30,30) {}; \node[eqpt] at (35,35) {};
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0) node[below, slab] {30};
+  \draw[guide] (0,35) node[left, slab] {35} -- (35,35) -- (35,0) node[below right=-1pt, slab] {35};
+\end{tikzpicture}
+\caption{需求增加：价格$\uparrow$，数量$\uparrow$}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.072cm, y=.072cm]
+  \econaxes{80}{58}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (70,10) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (50,50) node[above, slab, mjSecond] {$S_1$};
+  \draw[sup2] (0,15) -- (38,53) node[above, slab, mjSecond] {$S_2$};
+  \draw[shiftarrow] (44,44) -- (36.5,51.5);
+  \node[eqpt] at (30,30) {}; \node[eqpt] at (20,35) {};
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0) node[below, slab] {30};
+  \draw[guide] (0,35) node[left, slab] {35} -- (20,35) -- (20,0) node[below, slab] {20};
+\end{tikzpicture}
+\caption{供给减少：价格$\uparrow$，数量$\downarrow$}
+\end{subfigure}
+\caption{曲线的整体移动。虚线是移动后的曲线。}
+\label{fig:es-shift}
+\end{figure}
+
+四种基本情形可以合成一张表：
+\begin{center}
+\small
+\begin{tabular}{lcc|lcc}
+  \toprule
+  & 价格 & 数量 & & 价格 & 数量 \\
+  \midrule
+  需求增加（$D$ 右移） & $\uparrow$ & $\uparrow$ & 供给增加（$S$ 右移） & $\downarrow$ & $\uparrow$ \\
+  需求减少（$D$ 左移） & $\downarrow$ & $\downarrow$ & 供给减少（$S$ 左移） & $\uparrow$ & $\downarrow$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+记法：\textbf{需求动，价量同向；供给动，价量反向。}
+
+\begin{example}[两条线同时动]
+夏天到了（奶茶需求增加），同时牛奶涨价（供给减少）。两件事都使价格上升，所以价格\textbf{一定}上升；
+但需求增加使数量上升，供给减少使数量下降，数量的变化\textbf{不确定}，要看哪条线移动得多。
+答题时应写“价格上升，数量变化方向取决于两条曲线移动的相对幅度”，而不是硬猜一个方向。
+\end{example}
+
+\begin{pitfall}
+\begin{itemize}
+  \item 区分“需求”和“需求量”。“价格上涨使需求下降”是错误说法：价格上涨使\textbf{需求量}下降，这是沿着曲线移动，需求曲线本身没动。
+  \item 不要循环论证：“需求增加使价格上升，价格上升又使需求减少，所以……”是错的。正确做法是直接找新交点。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+需求动，价量同向；供给动，价量反向。分析时永远先问：是哪条曲线在动？
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 某水果的需求为 $Q_d=120-4P$，供给为 $Q_s=2P$。求均衡价格和数量。如果价格被规定为 15 元，会出现过剩还是短缺？差多少？
+  \item 判断下列事件使电动汽车市场的哪条曲线怎样移动，均衡价格和数量如何变化：
+        (a) 电池成本大幅下降；(b) 汽油价格大幅上涨；(c) 两件事同时发生。
+  \item 有人说：“这几年某城市房价一直在涨，成交量也在增加，可见价格上涨并没有减少人们买房的需求，需求曲线向下倾斜的说法不成立。”指出这个推理的错误。
+\end{exercises}

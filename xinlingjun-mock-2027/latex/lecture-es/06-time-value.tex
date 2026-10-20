@@ -1,0 +1,201 @@
+% =============================================================================
+\lecture[number=6, short=钱的时间价值]{钱的时间价值：利息、贴现与房贷}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 今天的 1 元比明年的 1 元值钱，因为今天的钱可以生利息。年利率为 $r$ 时，$n$ 年后的 $F$ 元，今天只值 $\dfrac{F}{(1+r)^n}$，这叫\textbf{现值}。
+  \item 复利是指数增长。“72 法则”：翻倍所需年数约为 $72\div$（年利率的百分数）。
+  \item 每期付 $A$、共付 $n$ 期，现值是一个等比数列的和：$A\cdot\dfrac{1-(1+i)^{-n}}{i}$；一直付下去，现值是 $\dfrac Ai$。
+  \item 比较不同的付款方式，要把所有现金流折算到同一时刻。“总利息少”不等于“更划算”。
+\end{itemize}
+\end{keypoints}
+
+\section{单利与复利}
+
+把 100 元存起来，年利率 5\%：
+\begin{itemize}
+  \item \textbf{单利}：每年只按本金 100 元算利息，每年 5 元，30 年后共 $100+5\times30=250$ 元；
+  \item \textbf{复利}：每年的利息也加进本金一起生息，$n$ 年后是 $100\times1.05^n$，30 年后约 432 元。
+\end{itemize}
+单利是直线，复利是指数曲线。开始时两者差不多，时间越长差得越多（图~\ref{fig:es-compound}）。
+
+\paragraph{72 法则}
+复利下，钱翻一倍需要多少年？解 $1.05^n=2$，得 $n=\frac{\ln2}{\ln1.05}\approx14.2$ 年。一个好用的近似是
+\[
+  \text{翻倍年数}\approx\frac{72}{\text{年利率的百分数}},
+\]
+5\% 时 $72\div5=14.4$ 年，误差很小。这个近似来自 $\ln2\approx0.693$ 以及 $\ln(1+r)\approx r$；用 72 而不用 69，是因为 72 的因数多、好心算，而且在常见的利率下更准一些。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing, width=9.5cm, height=6cm, xmin=0, xmax=32, ymin=0, ymax=470,
+    xlabel={年}, ylabel={元}, xtick={0,10,14.2,20,30}, xticklabels={0,10,14.2,20,30},
+    ytick={100,200,250,432}, legend pos=north west]
+  \addplot[mjSecond, domain=0:30, samples=40] {100*1.05^x};
+  \addplot[mjAccent, domain=0:30, samples=2] {100*(1+0.05*x)};
+  \legend{复利,单利}
+  \draw[guide] (axis cs:0,200) -- (axis cs:14.2,200) -- (axis cs:14.2,0);
+  \node[eqpt] at (axis cs:14.2,200) {};
+  \node[slab, anchor=south east] at (axis cs:14,205) {翻倍};
+  \node[eqpt] at (axis cs:30,432.2) {}; \node[eqpt] at (axis cs:30,250) {};
+\end{axis}
+\end{tikzpicture}
+\caption{100 元按年利率 5\% 存 30 年：单利 250 元，复利约 432 元}
+\label{fig:es-compound}
+\end{figure}
+
+\section{现值：把未来的钱搬到今天}
+
+反过来问：3 年后的 1000 元，今天值多少钱？如果今天存 $x$ 元，3 年后正好变成 1000 元，那么 $x(1.05)^3=1000$，$x\approx863.84$。
+所以在 5\% 的利率下，“3 年后的 1000 元”和“今天的 863.84 元”是等价的。
+
+\begin{definition}[现值]
+利率为 $r$ 时，$n$ 期后的 $F$ 元的\textbf{现值}是 $\dfrac{F}{(1+r)^n}$。把未来的钱换算成现值的过程叫\textbf{贴现}。
+\end{definition}
+
+现值的意义在于：\textbf{不同时间点的钱不能直接相加或比较}，换算到同一时刻以后才能比较。第 5 讲重复博弈里的贴现因子 $\delta$，就是 $\frac1{1+r}$：明天的 1 元今天值 $\delta$ 元。
+
+\section{年金：一串相等的付款}
+
+很多付款是一串等额的钱：每月房贷、每年的奖学金、退休金。每期期末付 $A$，共 $n$ 期，每期利率 $i$。把每一笔都贴现到今天（图~\ref{fig:es-timeline}(b)），
+记 $v=\frac1{1+i}$：
+\[
+  \text{现值}=Av+Av^2+\cdots+Av^n=Av\cdot\frac{1-v^n}{1-v}=A\cdot\frac{1-(1+i)^{-n}}{i}.
+\]
+最后一步用到 $\dfrac{v}{1-v}=\dfrac1i$。
+
+\paragraph{永续年金}
+如果一直付下去（$n\to\infty$），$(1+i)^{-n}\to0$，现值是 $\dfrac Ai$。例如年利率 5\% 时，“每年永远给你 100 元”今天只值 $100\div0.05=2000$ 元。
+道理很直观：今天存 2000 元，每年的利息正好是 100 元，本金永远不动。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1.9cm, y=1cm]
+  % (a) 单笔
+  \node[lab, anchor=west] at (-.6,4.3) {(a) 单笔：3 年后的 1000 元};
+  \draw[mj axis] (0,2.2) -- (4.3,2.2) node[right, slab] {年};
+  \foreach \k in {0,...,3} { \draw (\k,2.13) -- (\k,2.27); \node[slab, below] at (\k,2.13) {\k}; }
+  \draw[mjSecond, line width=1.2pt, -{Stealth}] (3,2.2) -- (3,3.1) node[above, slab, mjSecond] {1000};
+  \draw[mjAccent, line width=1.2pt, -{Stealth}] (0,2.2) -- (0,3.1) node[above, slab, mjAccent] {863.84};
+  \draw[mjAccent, line width=.8pt, -{Stealth}] (2.9,2.65) to[bend right=22] node[above, slab, mjAccent] {$\div1.05^3$} (.1,2.65);
+  % (b) 年金
+  \node[lab, anchor=west] at (-.6,.9) {(b) 年金：每期末付 $A$，共 $n$ 期};
+  \draw[mj axis] (0,-.6) -- (5.4,-.6) node[right, slab] {期};
+  \foreach \k/\l in {0/0,1/1,2/2,3/3,5/n} { \draw (\k,-.67) -- (\k,-.53); \node[slab, below] at (\k,-.67) {$\l$}; }
+  \node[slab] at (4,-.9) {$\cdots$};
+  \foreach \k in {1,2,3,5} \draw[mjSecond, line width=1.2pt, -{Stealth}] (\k,-.6) -- (\k,.05) node[above, slab, mjSecond] {$A$};
+  \foreach \k/\b in {1/40, 2/30, 3/26, 5/22}
+    \draw[mjAccent, line width=.6pt, -{Stealth}] (\k-.03,-1.1) to[bend left=\b] (.03,-1.1);
+  \node[slab, mjAccent] at (2.5,-2.75) {现值 $=Av+Av^2+Av^3+\cdots+Av^n$，其中 $v=\frac1{1+i}$};
+\end{tikzpicture}
+\caption{贴现：把未来每一笔钱都折算到 0 时刻再相加}
+\label{fig:es-timeline}
+\end{figure}
+
+\section{两种还款方式}
+
+借 10000 元，分 12 个月还清，月利率 1\%。银行通常提供两种方式。
+
+\paragraph{等额本息}
+每月还款额相同，记为 $A$。还款的现值之和应等于借到的钱：
+\[
+  10000=A\cdot\frac{1-1.01^{-12}}{0.01}\quad\Longrightarrow\quad A\approx888.49\ \text{元}.
+\]
+12 个月共还 $12\times888.49\approx10661.85$ 元，总利息约 661.85 元。每月的 888.49 元里，先付当月利息（欠款 $\times1\%$），剩下的才用来还本金。
+开始时欠得多，利息占的比例大；越往后，利息越少，还的本金越多。
+
+\paragraph{等额本金}
+每月还相同的本金 $10000\div12\approx833.33$ 元，另付当月剩余欠款的利息。第 1 个月欠 10000 元，利息 100 元，共还 933.33 元；
+以后欠款每月减少 833.33 元，利息每月减少 8.33 元；第 12 个月只还 841.67 元。总利息是
+\[
+  100+91.67+83.33+\cdots+8.33=0.01\times\frac{10000\times(12+11+\cdots+1)}{12}=650\ \text{元}.
+\]
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, ybar stacked, bar width=7pt, width=7.6cm, height=5.6cm,
+    ymin=0, ymax=1000, xmin=.3, xmax=12.7, xtick={1,3,6,9,12}, xlabel={月}, ylabel={元},
+    title={\small 等额本息}, legend style={at={(.5,1.02)}, anchor=south, legend columns=2, draw=none, yshift=10pt}, enlarge x limits=false]
+  \addplot[fill=mjAccent!60, draw=none] coordinates {(1,788.49) (2,796.37) (3,804.34) (4,812.38) (5,820.50) (6,828.71) (7,837.00) (8,845.37) (9,853.82) (10,862.36) (11,870.98) (12,879.69)};
+  \addplot[fill=mjOchre!70, draw=none] coordinates {(1,100.00) (2,92.12) (3,84.15) (4,76.11) (5,67.98) (6,59.78) (7,51.49) (8,43.12) (9,34.67) (10,26.13) (11,17.51) (12,8.80)};
+\end{axis}
+\end{tikzpicture}\hfill
+\begin{tikzpicture}
+\begin{axis}[mojing box, ybar stacked, bar width=7pt, width=7.6cm, height=5.6cm,
+    ymin=0, ymax=1000, xmin=.3, xmax=12.7, xtick={1,3,6,9,12}, xlabel={月}, ylabel={元},
+    title={\small 等额本金}, enlarge x limits=false]
+  \addplot[fill=mjAccent!60, draw=none] coordinates {(1,833.33) (2,833.33) (3,833.33) (4,833.33) (5,833.33) (6,833.33) (7,833.33) (8,833.33) (9,833.33) (10,833.33) (11,833.33) (12,833.33)};
+  \addplot[fill=mjOchre!70, draw=none] coordinates {(1,100.00) (2,91.67) (3,83.33) (4,75.00) (5,66.67) (6,58.33) (7,50.00) (8,41.67) (9,33.33) (10,25.00) (11,16.67) (12,8.33)};
+\end{axis}
+\end{tikzpicture}
+\caption{每月还款的构成：\textcolor{mjAccent}{\textbf{蓝色}}是本金，\textcolor{mjOchre}{\textbf{棕色}}是利息。借 10000 元，12 个月，月利率 1\%。}
+\label{fig:es-loan}
+\end{figure}
+
+\section{总利息少，就一定更划算吗}
+
+等额本金总利息 650 元，比等额本息的 661.85 元少。原因在于：\textbf{利息是借钱的“租金”}，每个月的利息 $=$ 月初欠款 $\times$ 月利率。
+等额本金每月还的本金多、还得早，平均欠款少，租金自然少。两种方式每月的月初欠款加起来分别是 65000 元和约 66185 元，乘以 1\% 正好是两种方式的总利息。
+
+但这并不说明等额本金更划算：
+\begin{itemize}
+  \item 按 1\% 的月利率贴现，\textbf{两种方式还款的现值都恰好是 10000 元}。站在银行的角度，两者完全等价；
+  \item 等额本息让你把钱留在手里更久。如果你能把这些钱投到月收益高于 1\% 的地方，等额本息反而更好；如果你手里的钱只能存银行拿更低的利息，早点还更好；
+  \item 等额本金第 1 个月要比等额本息多还约 45 元，前期的还款压力更大。刚工作、收入逐年增加的人，常常更适合等额本息。
+\end{itemize}
+所以，哪种方式更好，取决于借款人的收入节奏和其他投资机会，不能只看总利息。
+
+\section{识破“免息分期”的真实利率}
+
+买一件 12000 元的商品，分 12 期，每期还本金 1000 元，另收“手续费” $12000\times0.6\%=72$ 元。一年手续费共 864 元，看起来“年费率” $7.2\%$。
+
+可是你欠的钱在逐月减少：最后一个月只欠 1000 元，却仍按 12000 元交手续费（图~\ref{fig:es-fee}）。真实的月利率 $i$ 应该满足“还款的现值等于借到的钱”：
+\[
+  12000=1072\cdot\frac{1-(1+i)^{-12}}{i},
+\]
+数值求解得 $i\approx1.09\%$，折合年利率约 $13\%$，接近名义费率的两倍。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.85cm, y=.03cm]
+  \fill[mjSecond!10] (0,0) rectangle (12,120);
+  \foreach \k in {1,...,12} {
+    \pgfmathsetmacro{\h}{120-10*(\k-1)}
+    \fill[mjAccent!45] (\k-1+.08,0) rectangle (\k-.08,\h);
+  }
+  \draw[mjSecond, line width=1pt] (0,120) -- (12,120) node[right, slab, mjSecond, align=left] {手续费按\\12000 元算};
+  \draw[mj axis] (0,0) -- (12.8,0) node[right, slab] {月};
+  \draw[mj axis] (0,0) -- (0,140) node[above, slab] {欠款（百元）};
+  \foreach \k in {1,6,12} \node[slab, below] at (\k-.5,0) {\k};
+  \node[slab, left] at (0,120) {120};
+  \node[slab, left] at (0,10) {10};
+  \node[slab, mjAccent!80!black, anchor=west] at (7.2,80) {实际欠款};
+\end{tikzpicture}
+\caption{分期手续费的陷阱：蓝色是每月实际欠的钱，红色区域是被收了手续费、你却早已还掉的部分}
+\label{fig:es-fee}
+\end{figure}
+
+\paragraph{名义利率与实际利率}
+还有一种“实际”：扣除物价上涨。存款年利率 3\%，物价一年涨 2\%，存款的购买力一年只增加约 1\%。经济学里常说的“实际利率”$\approx$ 名义利率 $-$ 通货膨胀率。
+
+\begin{pitfall}
+\begin{itemize}
+  \item 不同时间的钱不能直接相加比较，先贴现到同一时刻。
+  \item 年金公式里的 $i$ 和 $n$ 必须对应：按月还款就用月利率和月数，不能用年利率配月数。
+  \item “总利息少”不等于“更划算”，要按同一个利率比较现值，再考虑现金流和其他投资机会。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+钱有时间价值：一切比较都先折算到同一时刻；利息多少取决于你欠了多少钱、欠了多久。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 某奖学金有两种领取方式：现在领 8500 元，或 4 年后一次领 10000 元。年利率 4\% 时，哪种更值钱？
+  \item 用等比数列求和公式推导年金现值公式 $A\cdot\dfrac{1-(1+i)^{-n}}{i}$，并说明 $n\to\infty$ 时的极限。
+  \item 贷款 12000 元，12 个月，月利率 1\%，按等额本金还款。求总利息和第 1 个月的还款额。
+  \item 年利率 3\% 时，用 72 法则估计钱翻倍需要多少年，再用计算器求精确值。
+\end{exercises}

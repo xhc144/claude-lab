@@ -1,0 +1,232 @@
+% =============================================================================
+\lecture[number=9, short=读懂数字]{读懂数字：比率、平均与辛普森悖论}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 看到一个数，先问“\textbf{分母是谁}”。总数多不等于比率高。
+  \item 总体的比率是各组比率的\textbf{加权平均}，权重是各组人数的占比。
+  \item \textbf{辛普森悖论}：每一组里甲都比乙好，合起来甲却比乙差。原因是两者各组的人数构成不同。
+  \item 罕见的病，即使检测很准，检测阳性的人里也可能大多数没病：要考虑\textbf{基础比率}。
+  \item 平均数会被极端值拉动，偏斜的数据要看中位数；图表的纵轴起点也会误导人。
+\end{itemize}
+\end{keypoints}
+
+\section{先问分母}
+
+“某市交通事故中，85\% 的肇事司机是本地人。”这能说明本地人开车更不小心吗？不能。如果该市路上 90\% 的司机是本地人，85\% 反而说明本地司机出事的\textbf{比率}略低。
+要比较的是“本地司机中出事的比例”和“外地司机中出事的比例”，而不是“出事司机中本地人的比例”。
+
+同样，“A 市去年发生了 300 起盗窃，B 市只有 100 起”，如果 A 市人口是 B 市的 5 倍，A 市其实更安全。\textbf{比较之前，先把数字换算成同样分母的比率。}
+
+\section{加权平均}
+
+某医院去年做了 500 台同一种手术：轻症病人 100 人，存活 95 人（95\%）；重症病人 400 人，存活 280 人（70\%）。总存活率是
+\[
+  \frac{95+280}{500}=75\% = \underbrace{\frac{100}{500}}_{\text{轻症占比}}\times95\%+\underbrace{\frac{400}{500}}_{\text{重症占比}}\times70\%.
+\]
+\textbf{总比率是各组比率的加权平均，权重是各组人数的占比。}可以把它想成跷跷板：各组比率是数轴上的点，人数是点的重量，总比率是平衡点。
+重的一端把平衡点拉向自己（图~\ref{fig:es-seesaw}）。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.16cm, y=1cm]
+  \foreach \yy/\name/\lo/\hi/\wlo/\whi/\avg/\col/\llo/\lhi in
+      {2.2/甲医院/70/95/0.8/0.2/75/mjAccent/重症/轻症, 0/乙医院/60/90/0.2/0.8/84/mjSecond/重症/轻症} {
+    \draw[mj thin] (55,\yy) -- (100,\yy);
+    \foreach \t in {60,70,80,90,100} \draw (\t,\yy-.06) -- (\t,\yy+.06);
+    \node[font=\scriptsize, mjGray, right] at (100,\yy) {100\%};
+    \node[font=\scriptsize, mjGray, left] at (55,\yy) {};
+    \fill[\col!85] (\lo,\yy) circle[radius={0.08cm+0.22cm*\wlo}];
+    \fill[\col!85] (\hi,\yy) circle[radius={0.08cm+0.22cm*\whi}];
+    \node[slab, \col, above=8pt] at (\lo,\yy) {\llo\ \lo\%};
+    \node[slab, \col, above=8pt] at (\hi,\yy) {\lhi\ \hi\%};
+    \fill[mjPine] (\avg,\yy-.05) -- ++(-.9,-.36) -- ++(1.8,0) -- cycle;
+    \node[slab, mjPine, below=12pt] at (\avg,\yy) {总 \avg\%};
+    \node[lab, anchor=east] at (53,\yy) {\name};
+  }
+\end{tikzpicture}
+\caption{加权平均像跷跷板：圆点大小表示人数，三角形是平衡点（总存活率）}
+\label{fig:es-seesaw}
+\end{figure}
+
+\section{辛普森悖论}
+
+图~\ref{fig:es-seesaw} 下面那条线是另一家医院的数据。把两家放在一起：
+\begin{center}
+\small
+\begin{tabular}{l|cc|cc|c}
+  \toprule
+  & \multicolumn{2}{c|}{轻症} & \multicolumn{2}{c|}{重症} & 合计 \\
+  & 人数 & 存活率 & 人数 & 存活率 & 存活率 \\
+  \midrule
+  甲医院 & 100 & \textbf{95\%} & 400 & \textbf{70\%} & 75\% \\
+  乙医院 & 400 & 90\% & 100 & 60\% & \textbf{84\%} \\
+  \bottomrule
+\end{tabular}
+\end{center}
+轻症、重症分开看，甲医院都更好；合起来看，乙医院反而更好。这种“分组的结论和合并的结论方向相反”的现象叫\textbf{辛普森悖论}。
+
+原因就在跷跷板上：甲医院收治的大多是重症病人，平衡点被拉向 70\% 那一端；乙医院大多是轻症病人，平衡点被拉向 90\% 那一端。
+\textbf{合并后比较的，其实是两家医院病人构成的差别，而不是医疗水平的差别。}
+
+图~\ref{fig:es-simpson} 把这件事画得更清楚：横轴是重症病人的占比，纵轴是总存活率。每家医院的总存活率随重症占比沿一条直线变化，
+甲医院的直线\textbf{处处}高于乙医院；但甲医院实际处在右边（重症占 80\%），乙医院处在左边（重症占 20\%），于是甲的点反而低于乙的点。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, width=9.5cm, height=6.4cm, xmin=0, xmax=1, ymin=55, ymax=100,
+    xlabel={重症病人的占比}, ylabel={总存活率（\%）}, xtick={0,.2,.5,.8,1}, xticklabels={0,20\%,50\%,80\%,100\%},
+    ytick={60,70,80,90,100}, grid=major, legend pos=north east]
+  \addplot[mjAccent, domain=0:1, samples=2, line width=1.1pt] {95-25*x};
+  \addplot[mjSecond, domain=0:1, samples=2, line width=1.1pt] {90-30*x};
+  \legend{甲医院,乙医院}
+  \node[eqpt, fill=mjAccent, minimum size=5pt] at (axis cs:.8,75) {};
+  \node[eqpt, fill=mjSecond, minimum size=5pt] at (axis cs:.2,84) {};
+  \node[slab, mjAccent, anchor=west] (la) at (axis cs:.5,88) {甲的实际位置 75\%};
+  \draw[mjAccent, line width=.4pt] (la.south) -- (axis cs:.79,75.8);
+  \node[slab, mjSecond, anchor=west] (lb) at (axis cs:.03,64) {乙的实际位置 84\%};
+  \draw[mjSecond, line width=.4pt] (lb.north) -- (axis cs:.2,82.8);
+  \draw[guide] (axis cs:.5,55) -- (axis cs:.5,82.5);
+  \node[eqpt, fill=mjAccent] at (axis cs:.5,82.5) {};
+  \node[eqpt, fill=mjSecond] at (axis cs:.5,75) {};
+  \node[slab, anchor=south west] at (axis cs:.51,56) {同样构成下比较};
+\end{axis}
+\end{tikzpicture}
+\caption{辛普森悖论的图示：甲的直线处处在上方，但两家医院在横轴上的位置不同}
+\label{fig:es-simpson}
+\end{figure}
+
+\paragraph{怎样公平地比较}
+\begin{itemize}
+  \item \textbf{分组比较}：在轻症内部比、在重症内部比。
+  \item \textbf{标准化}：用同一个病人构成去算两家医院的总存活率。比如都按“轻症、重症各一半”计算：甲 $\frac{95\%+70\%}2=82.5\%$，乙 $\frac{90\%+60\%}2=75\%$，甲更好。
+        在图~\ref{fig:es-simpson} 中，就是在同一条竖线上比较两条直线的高度。
+\end{itemize}
+按什么分组也要想一想：分组的变量应该是“在接受治疗之前就已经存在、又会影响结果”的因素，例如病情轻重。如果分组变量本身是治疗造成的结果，分组反而会误导。
+
+\section{基础比率：阳性就是有病吗}
+
+某种病的患病率是 1\%。一种检测方法：病人检测为阳性的概率是 90\%，没病的人被误判为阳性的概率是 5\%。如果你检测为阳性，真的有病的可能有多大？
+
+很多人会说“90\% 左右”。用 10000 个人来算一遍（图~\ref{fig:es-tree-test}）：
+\begin{itemize}
+  \item 100 人有病，其中 90 人阳性；
+  \item 9900 人没病，其中 $9900\times5\%=495$ 人阳性。
+\end{itemize}
+阳性的人共 $90+495=585$ 人，其中真正有病的只有 90 人，占 $\frac{90}{585}\approx15\%$。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+    box/.style={draw=mjInk!50, rounded corners=2pt, font=\small, inner sep=4pt, fill=white, align=center},
+    posbox/.style={box, draw=mjSecond, fill=mjSecond!10, line width=.9pt},
+    e/.style={draw=mjInk!50, line width=.6pt}]
+  \node[box] (all) at (0,0) {10000 人};
+  \node[box] (s) at (-3.2,-1.4) {有病 100 人\\{\footnotesize 患病率 1\%}};
+  \node[box] (h) at (3.2,-1.4) {没病 9900 人};
+  \node[posbox] (sp) at (-4.6,-3.1) {阳性 90};
+  \node[box] (sn) at (-1.8,-3.1) {阴性 10};
+  \node[posbox] (hp) at (1.8,-3.1) {阳性 495};
+  \node[box] (hn) at (4.6,-3.1) {阴性 9405};
+  \draw[e] (all) -- (s); \draw[e] (all) -- (h);
+  \draw[e] (s) -- node[left, slab] {90\%} (sp); \draw[e] (s) -- (sn);
+  \draw[e] (h) -- node[left, slab] {5\%} (hp); \draw[e] (h) -- (hn);
+  \node[slab, mjSecond] at (0,-4.3) {阳性共 $90+495=585$ 人，其中有病的只占 $90/585\approx15\%$};
+\end{tikzpicture}
+\caption{用“自然频数”算条件概率：把百分比换成具体的人数}
+\label{fig:es-tree-test}
+\end{figure}
+
+原因是：没病的人太多了（9900 人），哪怕只有 5\% 被误判，人数（495）也远远超过真正的病人（90）。这个“原本有多少人有病”的比例叫\textbf{基础比率}，忽略它就会犯\textbf{基础比率谬误}。
+同样的道理适用于很多“筛查”：用人脸识别在人群中找逃犯、用软件判断作业是否抄袭、用检测筛查罕见病……对象越罕见，误报所占的比例就越大。
+
+\begin{remark}
+这就是条件概率的贝叶斯公式：
+\[
+  P(\text{有病}\mid\text{阳性})=\frac{P(\text{有病})\,P(\text{阳性}\mid\text{有病})}{P(\text{阳性})}
+  =\frac{0.01\times0.9}{0.01\times0.9+0.99\times0.05}\approx0.15 .
+\]
+用具体人数来算，和用公式算是一回事，但更不容易出错。
+\end{remark}
+
+\section{平均数与中位数}
+
+一家小公司 10 个人，9 人月薪 5000 元，老板月薪 100 万元。平均月薪是 $(9\times5000+1000000)\div10=104500$ 元，可 10 个人里有 9 个人的月薪只是平均数的二十分之一。
+这时\textbf{中位数}（排在正中间的数，这里是 5000 元）更能代表“一般人”。
+
+收入、房价、网络视频的播放量，这类数据大多是\textbf{右偏}的：大多数人集中在较低处，少数极高的值拖出一条长尾巴，把平均数拉到中位数的右边（图~\ref{fig:es-skew}）。
+所以看到“人均收入”，最好也问一问中位数是多少。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing, width=10cm, height=5.4cm, xmin=0, xmax=20, ymin=0, ymax=.19,
+    xlabel={月收入（千元）}, ylabel={人数比例}, ytick=\empty, xtick={0,5,10,15,20}]
+  \addplot[mjAccent, fill=mjAccent!10, domain=.05:20, samples=150, line width=1pt]
+    {exp(-(ln(x)-ln(5))^2/(2*0.36))/(x*0.6*sqrt(2*pi))} \closedcycle;
+  \draw[mjInk, line width=.7pt] (axis cs:3.49,0) -- (axis cs:3.49,.1592);
+  \draw[mjPine, line width=.9pt] (axis cs:5,0) -- (axis cs:5,.133);
+  \draw[mjSecond, line width=.9pt] (axis cs:5.99,0) -- (axis cs:5.99,.1062);
+  \node[slab, anchor=south west] at (axis cs:3.3,.163) {最多的人在这里};
+  \node[slab, mjPine, anchor=west] at (axis cs:7,.14) {中位数：一半人在它以下};
+  \draw[mjPine, line width=.4pt] (axis cs:7,.14) -- (axis cs:5.1,.128);
+  \node[slab, mjSecond, anchor=west] at (axis cs:8.5,.1) {平均数：被右边的长尾拉高};
+  \draw[mjSecond, line width=.4pt] (axis cs:8.5,.1) -- (axis cs:6.1,.095);
+\end{axis}
+\end{tikzpicture}
+\caption{右偏分布：平均数 $>$ 中位数}
+\label{fig:es-skew}
+\end{figure}
+
+\section{图表的常见陷阱}
+
+同一组数据，换一种画法，给人的印象可以完全不同。图~\ref{fig:es-axis} 中两个品牌的满意度是 96\% 和 98\%：
+左图纵轴从 0 开始，两根柱子几乎一样高；右图纵轴从 95\% 开始，B 的柱子看起来是 A 的 3 倍。
+
+\begin{figure}[!htbp]
+\centering
+\pgfplotsset{axbar/.style={mojing box, ybar, bar width=20pt, width=5.6cm, height=5cm,
+    symbolic x coords={A,B}, xtick=data, enlarge x limits=.5, nodes near coords={\pgfmathprintnumber\pgfplotspointmeta\%},
+    nodes near coords style={font=\footnotesize}}}
+\begin{tikzpicture}
+\begin{axis}[axbar, ymin=0, ymax=105, title={\small 纵轴从 0 开始}]
+  \addplot[fill=mjAccent!55, draw=none] coordinates {(A,96) (B,98)};
+\end{axis}
+\end{tikzpicture}\qquad
+\begin{tikzpicture}
+\begin{axis}[axbar, ymin=95, ymax=98.6, title={\small 纵轴从 95\% 开始}, ytick={95,96,97,98}]
+  \addplot[fill=mjSecond!55, draw=none] coordinates {(A,96) (B,98)};
+\end{axis}
+\end{tikzpicture}
+\caption{截断纵轴会夸大差别}
+\label{fig:es-axis}
+\end{figure}
+
+其他常见陷阱：
+\begin{itemize}
+  \item \textbf{只给增长率，不给基数}：“销量翻了三倍”，可能是从 1 件变成 3 件；
+  \item \textbf{挑选时间段}：只截取上涨的那几个月；
+  \item \textbf{用面积或体积表示数量}：数量翻倍，把图标的长和宽都放大一倍，面积变成 4 倍，看起来像是翻了两番；
+  \item \textbf{两个纵轴}：左右两边刻度不同，可以让任意两条曲线看起来“同步”。
+\end{itemize}
+
+\begin{pitfall}
+\begin{itemize}
+  \item 合并的数据和分组的数据结论相反时，不要急着说哪个“对”，先找出各组人数构成的差别。
+  \item 算条件概率时，分清“有病的人中阳性的比例”和“阳性的人中有病的比例”，这两个数可能差很多。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+先问分母，再问权重：总比率是加权平均，构成不同就可能出现辛普森悖论；罕见事件要先看基础比率。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 1986 年一项肾结石治疗研究常被用来说明辛普森悖论。A 法：小结石 87 人中治愈 81 人，大结石 263 人中治愈 192 人；B 法：小结石 270 人中治愈 234 人，大结石 80 人中治愈 55 人。
+        分别计算两种方法在小结石、大结石和全部病人中的治愈率，并解释结果。
+  \item 某病的患病率为 0.1\%，检测灵敏度为 99\%（病人阳性的概率），误报率为 1\%（没病的人阳性的概率）。(1) 检测阳性的人真正有病的概率是多少？
+        (2) 若阳性者再独立地检测一次，仍为阳性，这时有病的概率是多少？
+  \item 某公司招聘广告写着“员工平均月薪 2 万元”。你会追问哪些问题？
+\end{exercises}

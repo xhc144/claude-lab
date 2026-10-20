@@ -1,0 +1,254 @@
+% =============================================================================
+\lecture[number=2, short=弹性与剩余]{弹性与剩余：谁更在乎价格，谁占了便宜}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item \textbf{弹性}衡量“对价格有多敏感”：价格变化 1\%，数量变化百分之几。用百分比而不用斜率，是为了不受单位影响。
+  \item 需求缺乏弹性时，降价会使总收入减少（“谷贱伤农”）；需求富有弹性时，降价会使总收入增加（“薄利多销”）。
+  \item \textbf{消费者剩余} = 愿意付的 $-$ 实际付的；\textbf{生产者剩余} = 实际得到的 $-$ 最低肯接受的。在供求图上它们都是三角形的面积。
+  \item 没有干预的竞争市场在均衡处成交，这时两种剩余之和最大。
+\end{itemize}
+\end{keypoints}
+
+\section{弹性：对价格有多敏感}
+
+食盐涨价一倍，你家买盐的量几乎不变；某个牌子的矿泉水涨价一倍，很多人就换别的牌子了。同样的涨价，数量的反应差别很大。
+图~\ref{fig:es-elastic-two} 画出了两条需求曲线：价格同样从 30 元涨到 38 元，陡的那条只少卖 2 单位，平的那条少卖 16 单位。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{70}{52}{$Q$}{$P$}
+  \draw[dem] (25.5,48) -- (36.5,4) node[right, slab, mjAccent] {陡：缺乏弹性};
+  \draw[guide] (0,38) node[left, slab] {38} -- (28,38) -- (28,0);
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0);
+  \node[eqpt] at (30,30) {}; \node[eqpt] at (28,38) {};
+  \draw[decorate, decoration={brace, amplitude=3pt, mirror}, mjOchre, line width=.7pt] (28,-4) -- (30,-4)
+    node[midway, below=4pt, slab, mjOchre] {只少 2};
+\end{tikzpicture}
+\caption{食盐、常用药品}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{70}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {平：富有弹性};
+  \draw[guide] (0,38) node[left, slab] {38} -- (14,38) -- (14,0);
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0);
+  \node[eqpt] at (30,30) {}; \node[eqpt] at (14,38) {};
+  \draw[decorate, decoration={brace, amplitude=3pt, mirror}, mjOchre, line width=.7pt] (14,-4) -- (30,-4)
+    node[midway, below=4pt, slab, mjOchre] {少 16};
+\end{tikzpicture}
+\caption{某个牌子的矿泉水}
+\end{subfigure}
+\caption{同样涨价 8 元，两种商品的需求量反应差别很大}
+\label{fig:es-elastic-two}
+\end{figure}
+
+\begin{definition}[需求价格弹性]
+\[
+  \text{弹性}\ |E|=\frac{\text{需求量变化的百分比}}{\text{价格变化的百分比}}\quad\text{（取绝对值）}.
+\]
+$|E|>1$ 叫\textbf{富有弹性}（数量反应比价格变化更剧烈），$|E|<1$ 叫\textbf{缺乏弹性}，$|E|=1$ 叫单位弹性。
+\end{definition}
+
+为什么用百分比，而不直接用斜率？因为斜率和单位有关：价格用“元”还是“分”，数量用“杯”还是“箱”，斜率会差几十上百倍；百分比之比则不受单位影响，不同商品之间才能比较。
+
+\paragraph{同一条直线上，弹性处处不同}
+以第 1 讲的需求 $Q=90-2P$ 为例。
+\begin{itemize}
+  \item 在 $P=30$、$Q=30$ 处：价格涨 1 元（涨 $3.3\%$），数量从 30 降到 28（降 $6.7\%$），$|E|\approx2$，富有弹性。
+  \item 在 $P=10$、$Q=70$ 处：价格同样涨 1 元（涨 $10\%$），数量从 70 降到 68（只降 $2.9\%$），$|E|\approx0.29$，缺乏弹性。
+\end{itemize}
+同样是“涨 1 元少卖 2 杯”，在高价处这 2 杯占比大，在低价处占比小。对直线需求 $Q=a-bP$，某一点的弹性是 $|E|=b\cdot\dfrac PQ$，
+直线的中点处 $|E|=1$，中点以上富有弹性，以下缺乏弹性（图~\ref{fig:es-elastic-line}）。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.085cm, y=.085cm]
+  \econaxes{98}{50}{$Q$}{$P$}
+  \draw[dem, line width=2.4pt, mjAccent] (0,45) -- (45,22.5);
+  \draw[dem, line width=2.4pt, mjAccent!40] (45,22.5) -- (90,0);
+  \node[eqpt] at (45,22.5) {};
+  \node[slab, anchor=south west] at (46,23) {中点：$|E|=1$};
+  \node[slab, mjAccent, anchor=south west] at (12,40.5) {上半段：$|E|>1$，富有弹性};
+  \node[slab, mjAccent!70, anchor=south west] at (62,12) {下半段：$|E|<1$，缺乏弹性};
+  \node[eqpt] at (30,30) {}; \node[slab, anchor=north east] at (29.5,29.5) {$|E|=2$};
+  \node[eqpt] at (70,10) {}; \node[slab, anchor=north east] at (69.5,9.5) {$|E|\approx0.29$};
+  \draw[guide] (0,22.5) node[left, slab] {22.5} -- (45,22.5) -- (45,0) node[below, slab] {45};
+  \node[slab, left] at (0,45) {45}; \node[slab, below] at (90,0) {90};
+\end{tikzpicture}
+\caption{直线需求 $Q=90-2P$ 上弹性的变化}
+\label{fig:es-elastic-line}
+\end{figure}
+
+\paragraph{什么决定弹性}
+\begin{itemize}
+  \item \textbf{替代品多不多}：某个牌子的矿泉水有很多替代品，弹性大；食盐几乎没有替代品，弹性小。
+  \item \textbf{是必需品还是可有可无}：药品、粮食弹性小，旅游、奢侈品弹性大。
+  \item \textbf{占收入的比重}：铅笔涨价一倍你不在乎，房租涨价一倍你会想办法。
+  \item \textbf{时间长短}：油价上涨，短期内只能照样开车（弹性小）；长期可以换小排量的车、搬家（弹性大）。
+\end{itemize}
+
+\section{弹性与总收入：谷贱伤农}
+
+卖家的总收入等于价格乘数量，$P\times Q$，在图上就是一个矩形的面积。降价时，单价变低（矩形变矮），卖出更多（矩形变宽），总收入是升是降取决于弹性。
+
+粮食是典型的缺乏弹性的商品：粮价降一半，人们也不会多吃一倍的饭。图~\ref{fig:es-grain} 中，需求曲线为 $P=6-0.04Q$，粮食收获后产量固定，供给是一条竖线。
+正常年景产量 100，价格 2，农民总收入 200；丰收年产量增加到 120（多 20\%），价格却跌到 1.2（跌 40\%），总收入只剩 144。
+多出来的粮食只能靠大幅降价才卖得出去，这就是“谷贱伤农”。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.031cm, y=.75cm]
+  \fill[taxfill] (0,0) rectangle (100,2);
+  \econaxes{160}{5.2}{产量 $Q$}{价格 $P$}
+  \draw[dem] (25,5) -- (145,0.2) node[above right=-2pt, slab, mjAccent] {$D$};
+  \draw[sup] (100,0) -- (100,4.6) node[above, slab, mjSecond] {$S_1$};
+  \node[eqpt] at (100,2) {};
+  \node[slab, left] at (0,2) {2};
+  \node[slab, below] at (100,0) {100};
+  \node[lab] at (50,1) {收入 200};
+\end{tikzpicture}
+\caption{正常年景}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.031cm, y=.75cm]
+  \fill[taxfill] (0,0) rectangle (120,1.2);
+  \econaxes{160}{5.2}{产量 $Q$}{价格 $P$}
+  \draw[dem] (25,5) -- (145,0.2) node[above right=-2pt, slab, mjAccent] {$D$};
+  \draw[sup] (120,0) -- (120,4.6) node[above, slab, mjSecond] {$S_2$};
+  \draw[guide] (100,0) -- (100,2) -- (0,2);
+  \node[eqpt] at (120,1.2) {};
+  \node[slab, left] at (0,1.2) {1.2};
+  \node[slab, below] at (120,0) {120};
+  \node[lab] at (55,.6) {收入 144};
+\end{tikzpicture}
+\caption{丰收年}
+\end{subfigure}
+\caption{谷贱伤农：需求缺乏弹性时，产量增加反而使总收入减少}
+\label{fig:es-grain}
+\end{figure}
+
+一般规律：
+\begin{center}
+\small
+\begin{tabular}{lll}
+  \toprule
+  需求 & 降价时总收入 & 例子 \\
+  \midrule
+  缺乏弹性（$|E|<1$） & 减少 & 谷贱伤农；药品、门票涨价能增收 \\
+  富有弹性（$|E|>1$） & 增加 & 薄利多销；促销打折 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\section{消费者剩余}
+
+假设有 5 位顾客，各自最多愿意为一杯奶茶付 50、40、30、20、10 元。现在价格是 25 元：
+\begin{itemize}
+  \item 前三位会买。第一位本来肯付 50 元，只付了 25 元，等于“省下”25 元；第二位省下 15 元；第三位省下 5 元。
+  \item 后两位不买，什么也没省下，也没损失。
+\end{itemize}
+这些“省下的钱”加起来是 $25+15+5=45$ 元，叫\textbf{消费者剩余}。在图~\ref{fig:es-stair} 中，它就是台阶高出价格线的那几块面积。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1.15cm, y=.068cm]
+  \foreach \i/\h/\n in {0/50/甲, 1/40/乙, 2/30/丙, 3/20/丁, 4/10/戊}{
+    \draw[mj thin, fill=mjAccent!6] (\i,0) rectangle (\i+1,\h);
+    \node[slab, below] at (\i+.5,0) {\n};
+    \node[slab, above] at (\i+.5,\h) {\h};
+  }
+  \foreach \i/\h in {0/50, 1/40, 2/30}
+    \fill[csfill] (\i,25) rectangle (\i+1,\h);
+  \foreach \i/\h in {0/50, 1/40, 2/30}
+    \draw[mj thin] (\i,0) rectangle (\i+1,\h);
+  \draw[mj axis] (0,0) -- (5.8,0) node[right, lab] {顾客};
+  \draw[mj axis] (0,0) -- (0,58) node[above, lab] {最多愿付（元）};
+  \draw[mjSecond, line width=1pt] (0,25) -- (5.5,25) node[right, slab, mjSecond] {价格 25};
+  \node[slab] at (.5,37.5) {25}; \node[slab] at (1.5,32.5) {15}; \node[slab] at (2.5,27.5) {5};
+\end{tikzpicture}
+\caption{消费者剩余：每位买家“愿意付的”减去“实际付的”，加起来 $25+15+5=45$}
+\label{fig:es-stair}
+\end{figure}
+
+顾客很多时，台阶变得很细，连成一条光滑的需求曲线，消费者剩余就是\textbf{需求曲线以下、价格线以上}的面积。直线需求时，它是一个三角形。
+
+\section{生产者剩余}
+
+卖方这边完全对称。供给曲线竖着读，是每一杯的最低要价（成本）。价格 30 元时，成本 10 元的那一杯净赚 20 元，成本 25 元的那一杯净赚 5 元……
+把这些“多得到的”加起来，就是\textbf{生产者剩余}：\textbf{价格线以下、供给曲线以上}的面积。
+
+图~\ref{fig:es-surplus}(a) 画出了第 1 讲的市场在均衡时的两块剩余：
+\[
+  \text{消费者剩余}=\tfrac12\times30\times(45-30)=225,\qquad
+  \text{生产者剩余}=\tfrac12\times30\times30=450 .
+\]
+两者之和 675 叫\textbf{总剩余}，表示这个市场的交易给买卖双方一共带来了多少好处。
+
+\section{为什么说均衡“有效率”}
+
+假设由于某种原因，每天只能卖 20 杯（图~\ref{fig:es-surplus}(b)）。第 21 到第 30 杯本来是“值得做”的：
+买家愿意付的（需求曲线的高度）高于做它的成本（供给曲线的高度）。不做这 10 杯，中间那块三角形的好处就消失了，面积是
+$\frac12\times(35-20)\times(30-20)=75$。
+
+反过来，如果卖到 30 杯以上，多出的那些杯成本高于买家愿意付的价格，也是浪费。所以\textbf{均衡数量使总剩余最大}。
+这块因为成交量偏离均衡而消失的三角形，叫\textbf{无谓损失}，第 3 讲会反复用到它。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \fill[csfill] (0,45) -- (30,30) -- (0,30) -- cycle;
+  \fill[psfill] (0,0) -- (30,30) -- (0,30) -- cycle;
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (46,46) node[above, slab, mjSecond] {$S$};
+  \draw[guide] (30,30) -- (30,0) node[below, slab] {30};
+  \node[slab, left] at (0,30) {30}; \node[slab, left] at (0,45) {45};
+  \node[eqpt] at (30,30) {};
+  \node[slab, mjAccent] at (10,35) {225};
+  \node[slab, mjSecond] at (10,22) {450};
+\end{tikzpicture}
+\caption{蓝：消费者剩余；红：生产者剩余}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \fill[mjLight] (0,45) -- (20,35) -- (20,20) -- (0,0) -- cycle;
+  \fill[dwlfill] (20,35) -- (30,30) -- (20,20) -- cycle;
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (46,46) node[above, slab, mjSecond] {$S$};
+  \draw[guide] (20,35) -- (20,0) node[below, slab] {20};
+  \draw[guide] (30,30) -- (30,0) node[below, slab] {30};
+  \draw[guide] (0,35) node[left, slab] {35} -- (20,35);
+  \draw[guide] (0,20) node[left, slab] {20} -- (20,20);
+  \node[slab] at (8,22) {600};
+  \node[slab, anchor=west, mjPine] at (36,8) {损失 75};
+  \draw[mjPine, line width=.4pt] (36,9) -- (24,27);
+\end{tikzpicture}
+\caption{只卖 20 杯：总剩余只剩 600}
+\end{subfigure}
+\caption{总剩余在均衡处最大。偏离均衡，就会损失一块三角形。}
+\label{fig:es-surplus}
+\end{figure}
+
+\begin{pitfall}
+\begin{itemize}
+  \item 剩余是“多得到的好处”，不是花了多少钱、赚了多少钱。消费者剩余不是消费者的支出，生产者剩余也不等于利润（固定成本没有扣除）。
+  \item “总剩余最大”说的是\textbf{效率}，不是\textbf{公平}。蛋糕最大，不代表分得合理；这是两个不同的问题。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+弹性看百分比，剩余看面积；交易创造的好处是需求曲线和供给曲线之间的那块面积。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 需求 $Q_d=120-4P$，供给 $Q_s=2P$（与练习 1.1 相同）。求均衡时的消费者剩余和生产者剩余。
+  \item 某景区门票 100 元时每天 2000 名游客，涨到 120 元后每天 1800 名。用“变化量 $\div$ 原值”估算需求弹性。涨价后门票总收入是增加还是减少？
+  \item 同一航班，提前一个月订票和起飞前一天订票，价格常常差很多。用弹性解释航空公司为什么这样定价。
+\end{exercises}

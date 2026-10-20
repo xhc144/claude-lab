@@ -1,0 +1,83 @@
+% =============================================================================
+% 使用说明
+% =============================================================================
+\clearpage
+\section*{怎么用这份讲义}
+\addcontentsline{toc}{lecture}{\protect\makebox[4.6em][l]{\protect\color{mjAccent}导读}怎么用这份讲义}
+
+这份讲义配合本套预测训练卷中的二试综合“经济”“社科”两卷。它不是逐题讲解，而是把做这两卷要用到的\textbf{基本模型和思考方法}从头讲一遍，
+再往外多走一步：卷子里没有直接考、但和这些题目同一类的内容，也一并讲到。
+
+\paragraph{需要什么基础}
+高中数学就够了：会解一次方程组、会算三角形面积、知道等比数列求和、会算简单概率。经济学和社会科学的名词全部从头解释。
+
+\paragraph{每一讲怎么读}
+\begin{itemize}
+  \item 先读开头的\textbf{本讲要点}，知道这一讲要解决什么问题；
+  \item 正文每讲一个概念都配一张图。\textbf{先看图，再看文字}，大部分结论在图上一眼就能看出来；
+  \item \textcolor{mjVermilion}{\textbf{易错提醒}}是考试中最常见的失分点；\textcolor{mjPine}{\textbf{一句话记住}}是这一讲最该带走的结论；
+  \item 讲末有 2--4 道“练一练”，答案在第 12 讲。
+\end{itemize}
+每讲正文大约需要 30--40 分钟。时间很紧时，可以只读要点、图和“一句话记住”。
+
+\paragraph{各讲之间的关系}
+下图是全部 12 讲的地图。箭头表示“后一讲要用到前一讲的东西”，虚线表示两讲之间有联系但不互相依赖。
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  every node/.style={node box, minimum width=3.3cm, minimum height=.8cm},
+  link/.style={-{Stealth[length=2.2mm,width=1.6mm]}, draw=mjInk!70, line width=.6pt},
+  soft/.style={draw=mjGray, line width=.5pt, dash pattern=on 2.5pt off 1.8pt}]
+  % 经济
+  \node[draw=none, fill=none, font=\sffamily\bfseries\color{mjAccent}] at (0,0.9) {经济};
+  \node (L1) at (0,0)    {1\ 供给与需求};
+  \node (L2) at (0,-1.3) {2\ 弹性与剩余};
+  \node (L3) at (0,-2.6) {3\ 税收};
+  \node (L4) at (0,-3.9) {4\ 价格管制与外部性};
+  \node (L5) at (4.2,0)    {5\ 博弈论入门};
+  \node (L6) at (4.2,-1.3) {6\ 钱的时间价值};
+  \node (L7) at (4.2,-3.9) {7\ 比较优势与贸易};
+  % 社科
+  \node[draw=none, fill=none, font=\sffamily\bfseries\color{mjSecond}] at (9.2,0.9) {社科};
+  \node (L8)  at (9.2,0)    {8\ 投票与集体决策};
+  \node (L9)  at (9.2,-1.3) {9\ 读懂数字};
+  \node (L10) at (9.2,-2.6) {10\ 抽样调查};
+  \node (L11) at (9.2,-3.9) {11\ 相关与因果};
+  \node[minimum width=5cm] (L12) at (4.6,-5.4) {12\ 答题方法与练一练答案};
+  \draw[link] (L1) -- (L2);
+  \draw[link] (L2) -- (L3);
+  \draw[link] (L3) -- (L4);
+  \draw[link] (L6) -- node[draw=none, fill=none, minimum width=0pt, right, font=\footnotesize, inner sep=2pt] {贴现因子 $\delta$} (L5);
+  \draw[link] (L9) -- (L10);
+  \draw[link] (L10) -- (L11);
+  \draw[soft] (L5) -- node[draw=none, fill=none, minimum width=0pt, above, font=\footnotesize, inner sep=2pt] {策略性投票} (L8);
+  \draw[soft] (L4.north east) -- node[draw=none, fill=none, minimum width=0pt, right, font=\footnotesize, inner sep=2pt, pos=.35] {公地悲剧} (L5.south west);
+  \draw[soft] (L9.west) to[bend right=18] node[draw=none, fill=none, minimum width=0pt, left, font=\footnotesize, inner sep=2pt, pos=.62] {辛普森悖论} (L11.west);
+\end{tikzpicture}
+\caption*{12 讲的关系}
+\end{figure}
+
+\noindent\begin{minipage}{\linewidth}
+{\mojingheadfont\color{mjAccent}和训练卷的对应}\par
+\begin{center}
+\small
+\begin{tabular}{lll}
+  \toprule
+  训练卷题目 & 主要用到 & 延伸阅读 \\
+  \midrule
+  经济第 1 题（税收由谁负担） & 第 1、2、3 讲 & 第 4 讲 \\
+  经济第 2 题（囚徒困境与重复博弈） & 第 5 讲 & 第 6 讲的贴现 \\
+  经济第 3 题（贷款的两种还款方式） & 第 6 讲 & — \\
+  经济第 4 题（比较优势） & 第 7 讲 & — \\
+  社科第 1 题（集体如何做决定） & 第 8 讲 & 第 5 讲 \\
+  社科第 2 题（数据中的“悖论”） & 第 9 讲 & 第 11 讲 \\
+  社科第 3 题（抽样调查） & 第 10 讲 & — \\
+  社科第 4 题（相关与因果） & 第 11 讲 & 第 9 讲 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\end{minipage}
+
+\paragraph{说明}
+官方只公布了二试综合六选二的科目名称，没有公布经济、社科的考纲和题型。这份讲义的范围是按训练卷和高中《经济与社会》等课程的内容来定的，属于训练资料，不是官方材料。

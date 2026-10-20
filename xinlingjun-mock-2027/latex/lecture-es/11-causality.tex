@@ -1,0 +1,246 @@
+% =============================================================================
+\lecture[number=11, short=相关与因果]{相关与因果：一起变，不等于谁导致谁}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 相关系数 $r$ 衡量两个量之间\textbf{直线关系}的强弱和方向。$r\approx0$ 不代表没关系，可能是曲线关系。
+  \item 相关不等于因果，常见的原因有：\textbf{共同原因}（混杂）、\textbf{因果倒置}、\textbf{自我选择}、巧合。
+  \item \textbf{随机对照实验}用抽签分组，让两组在各方面（包括看不见的方面）平均相同，是判断因果的“金标准”。
+  \item 做不了实验时，\textbf{双重差分}、\textbf{断点回归}、\textbf{自然实验}都在设法找“像抽签一样”的比较。
+\end{itemize}
+\end{keypoints}
+
+\section{相关：两个量一起变}
+
+身高高的人体重往往也大，气温高的日子冰淇淋卖得多，这叫两个量\textbf{相关}。把每个人（每一天）画成一个点，就得到\textbf{散点图}（图~\ref{fig:es-scatter}）。
+衡量相关程度的常用指标是\textbf{相关系数} $r$：
+\begin{itemize}
+  \item $r$ 在 $-1$ 和 $1$ 之间。$r>0$ 叫正相关（一个大另一个也大），$r<0$ 叫负相关；
+  \item $|r|$ 越接近 1，点越紧密地排在一条直线附近；
+  \item $r$ 只衡量\textbf{直线}关系。图~\ref{fig:es-scatter}(d) 中两个量的关系非常明显（U 形），$r$ 却几乎是 0。
+\end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\pgfplotsset{sc/.style={mojing box, width=5.2cm, height=4.4cm, xmin=0, xmax=10, ymin=0, ymax=10,
+    xtick=\empty, ytick=\empty, every axis plot/.append style={only marks, mark=*, mark size=1.3pt}}}
+\begin{subfigure}{.24\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[sc, width=4.3cm, height=4.1cm]
+\addplot[mjAccent] coordinates {(8.01,6.85) (5.87,4.63) (3.10,3.52) (0.89,4.42) (9.26,7.45) (5.87,5.33) (7.61,7.28) (8.69,8.08) (6.69,7.44) (2.21,2.58) (9.33,8.98) (3.06,3.45) (6.16,4.31) (5.73,4.27) (5.90,6.30) (5.32,5.63) (9.46,8.57) (5.02,3.85) (7.44,5.84) (4.95,3.55) (9.48,5.49) (9.31,7.24) (4.04,5.65) (3.40,4.83) (8.26,5.91) (7.69,7.42) (6.72,5.19) (4.18,4.53) (4.01,4.92) (1.68,2.38) (6.13,4.55) (1.24,3.12) (2.97,3.35) (6.41,5.02) (0.63,2.74) (8.01,6.29) (1.15,2.81) (5.22,3.93) (5.42,5.65) (2.55,2.37)};
+\end{axis}
+\end{tikzpicture}
+\caption{$r\approx0.85$}
+\end{subfigure}\hfill
+\begin{subfigure}{.24\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[sc, width=4.3cm, height=4.1cm]
+\addplot[mjAccent] coordinates {(1.16,7.60) (3.70,7.11) (3.80,4.98) (1.95,6.99) (2.07,4.61) (9.18,6.63) (5.31,4.29) (0.79,5.77) (1.42,4.71) (1.13,6.39) (1.87,6.26) (8.28,2.59) (0.50,6.00) (8.20,7.39) (6.43,4.16) (7.35,6.52) (4.49,6.81) (9.09,5.96) (3.54,2.58) (4.66,5.69) (6.65,7.66) (8.33,5.44) (3.92,4.50) (3.77,3.57) (3.90,5.81) (8.86,9.33) (7.19,3.69) (4.16,6.08) (2.64,5.25) (0.76,2.29) (4.59,3.78) (5.33,6.64) (6.68,4.84) (4.44,5.79) (2.72,5.04) (3.11,7.26) (9.01,1.36) (4.09,6.23) (2.23,3.70) (2.50,7.29)};
+\end{axis}
+\end{tikzpicture}
+\caption{$r\approx0$}
+\end{subfigure}\hfill
+\begin{subfigure}{.24\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[sc, width=4.3cm, height=4.1cm]
+\addplot[mjSecond] coordinates {(6.64,5.51) (0.98,4.98) (2.48,8.24) (2.16,6.09) (2.08,5.37) (7.81,3.05) (8.81,3.47) (2.99,5.40) (7.88,7.24) (8.51,2.65) (5.12,5.14) (2.70,6.13) (7.92,3.97) (2.42,6.28) (7.17,3.54) (6.17,3.81) (8.85,2.30) (2.59,3.99) (7.69,4.33) (5.16,6.49) (2.58,5.35) (1.99,5.58) (4.98,4.69) (5.74,4.17) (2.16,4.24) (0.63,8.91) (4.74,5.88) (7.05,3.26) (8.77,4.01) (6.13,4.04) (8.75,3.28) (8.28,4.30) (2.46,7.56) (8.30,5.96) (7.08,6.73) (3.00,5.60) (7.67,3.31) (8.29,3.92) (3.19,6.07) (5.24,3.98)};
+\end{axis}
+\end{tikzpicture}
+\caption{$r\approx-0.6$}
+\end{subfigure}\hfill
+\begin{subfigure}{.24\textwidth}\centering
+\begin{tikzpicture}
+\begin{axis}[sc, width=4.3cm, height=4.1cm]
+\addplot[mjPine] coordinates {(6.13,1.81) (8.57,5.40) (7.48,3.39) (2.53,2.60) (3.20,2.52) (8.36,5.71) (0.55,6.52) (7.89,4.52) (7.67,3.72) (4.71,1.14) (3.23,3.64) (3.01,3.15) (2.79,2.24) (4.51,1.62) (5.04,1.85) (5.48,1.46) (9.46,7.88) (7.63,3.54) (6.10,2.26) (9.40,8.17) (2.44,3.06) (1.94,4.43) (6.01,1.53) (0.90,6.63) (0.82,6.03) (5.13,1.16) (4.70,1.41) (8.75,6.27) (6.16,2.59) (5.13,0.71) (4.97,1.02) (2.73,3.44) (0.61,6.10) (2.23,3.52) (6.73,2.34) (2.31,4.43) (3.83,2.33) (0.53,7.29) (7.97,3.93) (1.89,4.25)};
+\end{axis}
+\end{tikzpicture}
+\caption{U 形，$r\approx0$}
+\end{subfigure}
+\caption{四组数据的散点图与相关系数}
+\label{fig:es-scatter}
+\end{figure}
+
+\begin{remark}
+相关系数的公式是
+$r=\dfrac{\sum(x_k-\bar x)(y_k-\bar y)}{\sqrt{\sum(x_k-\bar x)^2}\sqrt{\sum(y_k-\bar y)^2}}$。
+分子里，点落在“$x$ 和 $y$ 都高于平均”或“都低于平均”的区域时贡献正数，否则贡献负数。由柯西不等式可知 $|r|\le1$。
+\end{remark}
+
+\section{相关为什么不等于因果}
+
+“冰淇淋卖得多的月份，溺水事故也多，所以应该限制卖冰淇淋。”这显然荒唐。可是换一个包装，同样的错误就不那么容易看出来了。常见的原因有四种（图~\ref{fig:es-dag}）。
+
+\begin{figure}[!htbp]
+\centering
+\tikzset{v/.style={node box, minimum width=1.9cm, minimum height=.75cm},
+         q/.style={-{Stealth[length=2.4mm,width=1.8mm]}, draw=mjSecond, line width=.8pt, dash pattern=on 3pt off 2pt}}
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}
+  \node[v, fill=mjOchre!15] (t) at (0,1.5) {气温};
+  \node[v] (i) at (-1.25,0) {冰淇淋销量};
+  \node[v] (d) at (1.25,0) {溺水事故};
+  \draw[cause] (t) -- (i); \draw[cause] (t) -- (d);
+  \draw[q] (i) -- node[below, slab, mjSecond] {?} (d);
+\end{tikzpicture}
+\caption{共同原因（混杂）}
+\end{subfigure}\hfill
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}
+  \node[v] (p) at (-1.25,.75) {警察人数};
+  \node[v] (c) at (1.25,.75) {犯罪数量};
+  \draw[cause] (c.north) to[bend right=35] node[above, slab] {真实方向} (p.north);
+  \draw[q] (p.south) to[bend right=35] node[below, slab, mjSecond] {误读的方向} (c.south);
+\end{tikzpicture}
+\caption{因果倒置}
+\end{subfigure}\hfill
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}
+  \node[v, fill=mjOchre!15] (m) at (0,1.5) {学习动力};
+  \node[v] (b) at (-1.25,0) {参加补习};
+  \node[v] (s) at (1.25,0) {成绩};
+  \draw[cause] (m) -- node[left, slab] {自己选择} (b); \draw[cause] (m) -- (s);
+  \draw[q] (b) -- node[below, slab, mjSecond] {?} (s);
+\end{tikzpicture}
+\caption{自我选择}
+\end{subfigure}
+\caption{三种常见的“假因果”。黑箭头是真实的影响，红色虚线是容易被误读的因果。}
+\label{fig:es-dag}
+\end{figure}
+
+\begin{enumerate}
+  \item \textbf{共同原因（混杂因素）}：气温高时，买冰淇淋的人多，去游泳的人也多。冰淇淋和溺水之间没有因果关系，是气温同时影响了两者。
+  \item \textbf{因果倒置}：犯罪多的街区警察也多，不是警察导致了犯罪，而是犯罪多才派了更多警察。
+  \item \textbf{自我选择}：参加补习的学生成绩更好，可能只是因为学习动力强的学生更愿意去补习，而动力本身就会提高成绩。
+  \item \textbf{巧合}：比较的变量足够多时，总能找到一些毫无关系却“高度相关”的数据，例如某国人均奶酪消费量和某种意外死亡人数。
+\end{enumerate}
+
+还有一种和自我选择相近的\textbf{幸存者偏差}：二战时，有人统计返航飞机身上的弹孔，发现机翼上多、发动机上少，于是建议加固机翼。
+统计学家沃尔德指出，应该加固的恰恰是发动机：发动机中弹的飞机大多没能飞回来，所以在返航的飞机上看不到。我们只看到了“幸存”下来的样本。
+
+\section{随机对照实验}
+
+要知道“参加补习能不能提高成绩”，最可靠的办法是\textbf{随机对照实验}（图~\ref{fig:es-rct}）：
+\begin{enumerate}
+  \item 招募愿意参加的学生，比如 200 人；
+  \item \textbf{抽签}决定谁参加（实验组 100 人）、谁暂时不参加（对照组 100 人）；
+  \item 一段时间后，比较两组成绩的变化。
+\end{enumerate}
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[st/.style={node box, minimum height=.85cm, minimum width=2.5cm},
+    fl/.style={-{Stealth[length=2.4mm,width=1.8mm]}, draw=mjInk!70, line width=.8pt}]
+  \node[st] (a) at (0,0) {招募 200 名\\ 自愿者};
+  \node[st, draw=mjOchre, fill=mjOchre!12, minimum width=1.5cm] (b) at (3.1,0) {抽签};
+  \node[st, draw=mjSecond, fill=mjSecond!8] (c) at (6.3,.85) {实验组 100 人\\ 参加补习};
+  \node[st, draw=mjAccent, fill=mjAccent!8] (d) at (6.3,-.85) {对照组 100 人\\ 不参加};
+  \node[st, minimum width=2.2cm] (e) at (9.6,0) {比较两组\\ 成绩变化};
+  \draw[fl] (a) -- (b); \draw[fl] (b) -- (c.west); \draw[fl] (b) -- (d.west);
+  \draw[fl] (c.east) -- (e); \draw[fl] (d.east) -- (e);
+  \node[slab, align=center, mjOchre] at (3.1,-1.55) {两组在动力、基础等\\ 各方面平均相同};
+\end{tikzpicture}
+\caption{随机对照实验：抽签让两组除了“是否参加”之外，在其他方面都差不多}
+\label{fig:es-rct}
+\end{figure}
+
+为什么要抽签？因为抽签和学生的动力、基础、家庭背景都没有关系。只要人数够多，两组在这些方面\textbf{平均相同}，包括那些我们想不到、测不出来的因素。
+于是两组之间的差别，只能归因于“是否参加补习”。
+
+医学试验还会加上两样东西：
+\begin{itemize}
+  \item \textbf{安慰剂}：对照组也吃一片外观相同但没有药效的药片，因为“以为自己在治疗”本身就会让人感觉变好；
+  \item \textbf{双盲}：病人和医生都不知道谁在哪一组，避免有意无意的影响。
+\end{itemize}
+
+\begin{pitfall}
+\textbf{随机抽样}和\textbf{随机分组}是两回事：
+\begin{itemize}
+  \item 随机\textbf{抽样}（第 10 讲）是为了让样本\textbf{代表总体}，结论能推广到全体；
+  \item 随机\textbf{分组}是为了让两组\textbf{可以比较}，结论能说明因果。
+\end{itemize}
+一项研究可以只做到其中一样：从全国随机抽了 1000 名学生，却让他们自己选择是否参加训练营，结论能代表全国，却不能说明训练营的效果。
+\end{pitfall}
+
+\section{做不了实验怎么办}
+
+很多问题不能做实验：不能抽签让一些人抽烟，也不能抽签决定哪个城市遭受经济危机。这时研究者会寻找“\textbf{像抽签一样}”的情形。
+
+\paragraph{双重差分}
+某市部分学校从今年起推行一项新的教学方法，另一部分学校没有。只比较今年两类学校的成绩不行，它们原本就可能不一样；
+只比较试点学校今年和去年的成绩也不行，今年的题目可能更容易。\textbf{双重差分}把两种比较合在一起（图~\ref{fig:es-did}）：
+\[
+  \text{效果}=(\text{试点校的变化})-(\text{对照校的变化})=(80-70)-(70-65)=5 .
+\]
+对照校的变化（$+5$）代表“就算不推行新方法也会发生的变化”。这个方法依赖一个假设：如果没有新方法，两类学校的成绩会\textbf{平行地}变化（\textbf{平行趋势}）。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, width=8.6cm, height=6cm, xmin=-.4, xmax=1.4, ymin=60, ymax=85,
+    xtick={0,1}, xticklabels={推行前,推行后}, ylabel={平均成绩}, ytick={65,70,75,80}, legend pos=north west]
+  \addplot[mjSecond, mark=*, line width=1.1pt] coordinates {(0,70) (1,80)};
+  \addplot[mjAccent, mark=*, line width=1.1pt] coordinates {(0,65) (1,70)};
+  \addplot[mjSecond, dashed, line width=.8pt] coordinates {(0,70) (1,75)};
+  \legend{试点学校,对照学校,试点校若不推行（推测）}
+  \draw[decorate, decoration={brace, amplitude=4pt}, mjPine, line width=.9pt] (axis cs:1.04,80) -- (axis cs:1.04,75)
+    node[midway, right=5pt, slab, mjPine] {效果 5};
+\end{axis}
+\end{tikzpicture}
+\caption{双重差分：用对照学校的变化推测试点学校“如果不推行”会怎样}
+\label{fig:es-did}
+\end{figure}
+
+\paragraph{断点回归}
+某奖学金规定考试 500 分以上才能获得。考 501 分和考 499 分的学生，能力几乎没有差别，差别只在于是否拿到了奖学金。
+比较刚好过线和刚好没过线的学生后来的情况，就像做了一次抽签实验（图~\ref{fig:es-rd}）：如果在 500 分处出现了一个“跳跃”，跳跃的高度就是奖学金的效果。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, width=9.5cm, height=6cm, xmin=468, xmax=532, ymin=22, ymax=62,
+    xlabel={考试分数}, ylabel={后来的某项结果}, xtick={470,480,490,500,510,520,530}, ytick=\empty]
+  \addplot[only marks, mark=*, mark size=1.3pt, mjAccent!70] coordinates {(475.14,32.38) (484.21,30.87) (475.65,33.14) (495.99,34.12) (498.74,37.55) (479.58,34.42) (476.82,27.14) (493.47,36.62) (495.84,37.20) (487.05,33.16) (487.56,34.83) (470.09,25.75) (487.90,37.42) (488.84,37.75) (498.28,37.99) (471.82,28.38) (492.45,34.15) (475.45,30.10) (482.43,35.12) (487.89,31.96) (483.12,35.76) (495.71,40.30) (476.14,31.41) (493.64,38.27) (498.78,45.18) (478.78,35.87) (487.52,31.14) (486.52,33.94) (493.98,32.88) (481.80,35.98)};
+  \addplot[only marks, mark=*, mark size=1.3pt, mjSecond!80] coordinates {(518.08,52.46) (504.93,45.60) (514.07,53.47) (501.00,47.07) (505.21,51.32) (514.27,48.37) (527.38,56.36) (508.91,52.21) (511.77,50.07) (528.41,59.64) (523.50,56.73) (505.11,48.56) (516.40,49.98) (512.42,53.36) (509.63,48.66) (525.89,55.55) (507.81,45.98) (514.51,51.07) (513.33,53.34) (519.79,53.40) (509.46,48.61) (510.97,50.48) (519.20,52.19) (515.52,49.69) (522.71,54.24) (520.99,54.54) (511.91,53.46) (522.27,53.05) (503.71,48.47) (506.77,50.95)};
+  \addplot[mjAccent, line width=1.1pt, domain=470:500, samples=2] {40+0.35*(x-500)};
+  \addplot[mjSecond, line width=1.1pt, domain=500:530, samples=2] {46+0.35*(x-500)};
+  \draw[mjInk!60, dashed] (axis cs:500,22) -- (axis cs:500,62);
+  \node[slab, anchor=south west] at (axis cs:500.5,23) {500 分线};
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, mjPine, line width=.9pt] (axis cs:501.5,40) -- (axis cs:501.5,46)
+    node[midway, right=5pt, slab, mjPine] {跳跃 = 效果};
+  \node[slab, mjAccent, anchor=west] at (axis cs:470,56) {蓝：没拿到奖学金};
+  \node[slab, mjSecond, anchor=west] at (axis cs:470,52) {红：拿到奖学金};
+\end{axis}
+\end{tikzpicture}
+\caption{断点回归：分数线两侧的学生几乎一样，结果在分数线处的跳跃就是奖学金的效果}
+\label{fig:es-rd}
+\end{figure}
+
+\paragraph{自然实验}
+有时现实本身就提供了“抽签”：热门学校用摇号决定录取，摇中和没摇中的学生可以比较；某项政策先在一部分地区试点，而试点地区的选择与要研究的结果无关……
+这些都叫\textbf{自然实验}。
+
+\paragraph{控制变量}
+最常见的做法是在比较时“控制”可以观测到的因素，例如比较前测成绩、家庭背景相同的学生。它比什么都不做好，但\textbf{控制不了没有观测到的因素}（比如学习动力），
+所以结论要说明这一局限。
+
+\section{判断一项因果说法的清单}
+
+\begin{enumerate}
+  \item 有没有\textbf{对照}？只看一组人的变化，说明不了什么。
+  \item 两组是怎么分的？是\textbf{随机分组}，还是自己选择的？
+  \item 有没有可能的\textbf{共同原因}？
+  \item 因果的\textbf{方向}会不会反过来？
+  \item 样本能不能\textbf{代表}要推广的人群？
+  \item 效果有\textbf{多大}？在统计上可靠吗？有没有被其他研究重复验证？
+\end{enumerate}
+
+\begin{oneline}
+相关不等于因果：先找共同原因、反向因果和自我选择；要说因果，最好抽签分组，做不到就找“像抽签一样”的比较。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item “研究发现，每天吃早餐的学生成绩更好，所以学校应该强制所有学生吃早餐。”指出这个推理可能存在的问题，并设计一个能检验因果关系的方案。
+  \item 某市从 2025 年起在部分学校推行“每天户外活动 2 小时”。试点学校学生的近视率从 30\% 变为 32\%，非试点学校从 28\% 变为 33\%。用双重差分估计这项措施的效果，并说明这个估计依赖什么假设。
+  \item 一项研究从全国随机抽取了 1000 名高中生，让他们自己决定是否参加一个暑期训练营，结果参加者的成绩提高得更多。这项研究的结论能推广到全国吗？能说明训练营的效果吗？
+\end{exercises}
