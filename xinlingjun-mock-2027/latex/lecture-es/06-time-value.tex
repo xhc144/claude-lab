@@ -6,7 +6,7 @@
 \begin{itemize}
   \item 今天的 1 元比明年的 1 元值钱，因为今天的钱可以生利息。年利率为 $r$ 时，$n$ 年后的 $F$ 元，今天只值 $\dfrac{F}{(1+r)^n}$，这叫\textbf{现值}。
   \item 复利是指数增长。“72 法则”：翻倍所需年数约为 $72\div$（年利率的百分数）。
-  \item 每期付 $A$、共付 $n$ 期，现值是一个等比数列的和：$A\cdot\dfrac{1-(1+i)^{-n}}{i}$；一直付下去，现值是 $\dfrac Ai$。
+  \item 每期付 $A$、共付 $n$ 期、每期利率为 $i$，现值是一个等比数列的和：$A\cdot\dfrac{1-(1+i)^{-n}}{i}$；一直付下去，现值是 $\dfrac Ai$。
   \item 比较不同的付款方式，要把所有现金流折算到同一时刻。“总利息少”不等于“更划算”。
 \end{itemize}
 \end{keypoints}
@@ -103,7 +103,7 @@
 \[
   10000=A\cdot\frac{1-1.01^{-12}}{0.01}\quad\Longrightarrow\quad A\approx888.49\ \text{元}.
 \]
-12 个月共还 $12\times888.49\approx10661.85$ 元，总利息约 661.85 元。每月的 888.49 元里，先付当月利息（欠款 $\times1\%$），剩下的才用来还本金。
+12 个月共还 $12A\approx10661.85$ 元，总利息约 661.85 元。每月的 888.49 元里，先付当月利息（欠款 $\times1\%$），剩下的才用来还本金。
 开始时欠得多，利息占的比例大；越往后，利息越少，还的本金越多。
 
 \paragraph{等额本金}
@@ -156,7 +156,7 @@
 \[
   12000=1072\cdot\frac{1-(1+i)^{-12}}{i},
 \]
-数值求解得 $i\approx1.09\%$，折合年利率约 $13\%$，接近名义费率的两倍。
+数值求解得 $i\approx1.09\%$，按 12 个月简单相加折合年利率约 $13\%$（按复利算约 $13.8\%$），接近名义费率的两倍。
 
 \begin{figure}[!htbp]
 \centering
@@ -172,7 +172,9 @@
   \foreach \k in {1,6,12} \node[slab, below] at (\k-.5,0) {\k};
   \node[slab, left] at (0,120) {120};
   \node[slab, left] at (0,10) {10};
-  \node[slab, mjAccent!80!black, anchor=west] at (7.2,80) {实际欠款};
+  \node[slab, mjAccent!80!black, anchor=west] (ow) at (12.2,35) {实际欠款};
+  \draw[mjAccent!80!black, line width=.3pt] (ow.west) -- (11.5,6);
+  \node[slab, mjSecond!80!black] at (8.6,95) {已还掉，却仍被收手续费};
 \end{tikzpicture}
 \caption{分期手续费的陷阱：蓝色是每月实际欠的钱，红色区域是被收了手续费、你却早已还掉的部分}
 \label{fig:es-fee}

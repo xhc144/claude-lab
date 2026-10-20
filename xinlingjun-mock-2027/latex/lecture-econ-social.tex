@@ -12,13 +12,13 @@
 % 讲义专用的小盒子
 % ---------------------------------------------------------------------------
 \NewDocumentEnvironment{pitfall}{}
-  {\begin{tcolorbox}[mojing/base, frame hidden, colback=mjVermilion!5,
+  {\begin{tcolorbox}[mojing/base, unbreakable, frame hidden, colback=mjVermilion!5,
      left=9pt, right=8pt, top=6pt, bottom=6pt,
      borderline west={1.1pt}{0pt}{mjVermilion}]
    {\mojingheadfont\color{mjVermilion}易错提醒}\par\vspace{.25\baselineskip}}
   {\end{tcolorbox}}
 \NewDocumentEnvironment{oneline}{}
-  {\begin{tcolorbox}[mojing/base, frame hidden, colback=mjPine!6,
+  {\begin{tcolorbox}[mojing/base, unbreakable, frame hidden, colback=mjPine!6,
      left=9pt, right=8pt, top=6pt, bottom=6pt,
      borderline west={1.1pt}{0pt}{mjPine}]
    {\mojingheadfont\color{mjPine}一句话记住}\quad}
@@ -55,6 +55,7 @@
 \newcommand{\upayA}[2]{$(\textcolor{mjAccent}{\underline{#1}},\,\textcolor{mjSecond}{#2})$}
 \newcommand{\upayB}[2]{$(\textcolor{mjAccent}{#1},\,\textcolor{mjSecond}{\underline{#2}})$}
 
+\tcbset{mojing/tint/.append style={unbreakable}}  % 定义框较短，不跨页
 \setlength{\parskip}{.35\baselineskip}
 \captionsetup{font=small}
 

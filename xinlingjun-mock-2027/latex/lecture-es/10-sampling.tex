@@ -28,20 +28,24 @@
 \begin{tikzpicture}
   \fill[mjAccent!7] (0,0) ellipse (4.1 and 2.1);
   \draw[mjAccent, line width=1pt] (0,0) ellipse (4.1 and 2.1);
-  \fill[mjOchre!14, opacity=.9] (.9,-.1) ellipse (3.6 and 1.6);
-  \draw[mjOchre, line width=1pt, dash pattern=on 4pt off 2pt] (.9,-.1) ellipse (3.6 and 1.6);
-  \fill[mjPine!20] (1.2,-.2) circle (1.0);
-  \draw[mjPine, line width=1pt] (1.2,-.2) circle (1.0);
-  \fill[mjSecond!35] (1.45,-.35) circle (.55);
-  \draw[mjSecond, line width=1pt] (1.45,-.35) circle (.55);
-  \node[lab, mjAccent] at (-2.6,1.2) {目标总体};
-  \node[lab, mjOchre] at (3.1,1.3) {抽样框（名单）};
-  \node[slab, mjPine] at (1.2,.55) {样本};
-  \node[slab, mjSecond] at (1.45,-.35) {回答者};
-  \node[slab, align=center] at (-2.6,-.3) {名单漏掉的人\\（覆盖不足）};
-  \node[slab, align=center] at (4.85,-1.95) {名单里多出来的人\\（不属于总体）};
-  \draw[mjInk!50, line width=.3pt] (4.1,-1.6) -- (4.0,-1.2);
-  \draw[mjInk!50, line width=.3pt] (2.6,.7) -- (5.2,1.5) node[right, slab, align=left] {抽中却没回答\\（无回答）};
+  \fill[mjOchre!14, opacity=.9] (1.5,-.1) ellipse (3.4 and 1.55);
+  \draw[mjOchre, line width=1pt, dash pattern=on 4pt off 2pt] (1.5,-.1) ellipse (3.4 and 1.55);
+  \fill[mjPine!20] (1.3,-.2) circle (.95);
+  \draw[mjPine, line width=1pt] (1.3,-.2) circle (.95);
+  \fill[mjSecond!35] (1.5,-.35) circle (.5);
+  \draw[mjSecond, line width=1pt] (1.5,-.35) circle (.5);
+  \node[lab, mjAccent] at (-2.9,1.15) {目标总体};
+  \node[slab, mjPine] at (1.3,.4) {样本};
+  \node[slab, mjSecond] at (1.5,-.35) {回答者};
+  \node[slab, align=center] at (-3.0,-.35) {名单漏掉的人\\（覆盖不足）};
+  \node[lab, mjOchre, anchor=west] (fr) at (5.0,1.55) {抽样框（名单）};
+  \draw[mjOchre, line width=.3pt] (fr.west) -- (4.3,.75);
+  \node[slab, align=left, anchor=west] (ex) at (5.0,-1.2) {名单里多出来的人\\（不属于总体）};
+  \draw[mjInk!50, line width=.3pt] (ex.west) -- (4.55,-.1);
+  \fill[mjInk!60] (4.55,-.1) circle (1.2pt);
+  \node[slab, align=center, anchor=north] (nr) at (-.6,-2.35) {抽中却没回答（无回答）};
+  \draw[mjInk!50, line width=.3pt] (nr.north) -- (.6,-.3);
+  \fill[mjInk!60] (.6,-.3) circle (1.2pt);
 \end{tikzpicture}
 \caption{目标总体、抽样框、样本与回答者：每一层的差别都可能带来偏差}
 \label{fig:es-frame}
@@ -120,9 +124,10 @@
 \paragraph{两个著名的失败}
 \begin{itemize}
   \item \textbf{1936 年}，美国《文学文摘》杂志收回两百多万份模拟选票，预测兰登将击败罗斯福，结果罗斯福大胜。名单来自电话簿、汽车登记等，在大萧条时期偏向富裕人群；
-        寄回选票的人也只是一部分。盖洛普用规模小得多但设计得当的样本预测对了。
+        寄回选票的人也只是一部分。盖洛普用规模小得多、按人口构成分配名额的样本（配额抽样）猜对了胜者。
   \item \textbf{1948 年}，多家民调机构预测杜威将击败杜鲁门，有报纸甚至提前印出了“杜威击败杜鲁门”的标题，结果杜鲁门获胜。
-        原因之一是当时使用\textbf{配额抽样}：只规定访问多少男性、多少城市居民等，具体访问谁由访员自己挑，访员往往挑了更容易接触的人。
+        原因之一正是 1936 年立了功的\textbf{配额抽样}：只规定访问多少男性、多少城市居民等，具体访问谁由访员自己挑，访员往往挑了更容易接触的人。
+        两个故事合起来的教训是：不是概率抽样，就可能在某一次突然失灵。此后民调逐渐改用概率抽样。
 \end{itemize}
 
 \section{概率抽样的四种方法}
@@ -183,7 +188,7 @@
   简单随机 & 最简单，理论最清楚 & 需要完整名单；可能碰巧某个年级抽得太少 \\
   分层 & 各层都有代表，层间差别大时更精确 & 要事先知道每个人属于哪一层 \\
   整群 & 省时省钱，不需要全体名单，只要班级名单 & 同一个班的人往往相似，精度较低 \\
-  系统 & 操作方便 & 名单有周期性时可能出问题（例如每 6 人恰好是一个寝室） \\
+  系统 & 操作方便 & 名单有周期性时可能出问题（例如名单按寝室排，每寝室 6 人且寝室长总排第 3 位，每 6 人抽 1 人就只会抽到寝室长） \\
   \bottomrule
 \end{tabular}
 \end{center}

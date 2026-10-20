@@ -7,7 +7,7 @@
   \item 每件征税 $t$ 元，相当于在“买方付的价格”和“卖方得到的价格”之间打进一个宽 $t$ 的\textbf{楔子}。
   \item 法律上向谁征税不影响结果：向买方征和向卖方征，最终的价格和成交量完全一样。
   \item 税负更多地落在\textbf{弹性小}（对价格不敏感、“跑不掉”）的一方。
-  \item 征税使成交量减少，损失一块三角形（无谓损失）。税率翻倍，这块三角形变成 4 倍。
+  \item 征税使成交量减少，损失一块三角形（无谓损失）。每件的税额翻倍，这块三角形变成 4 倍。
 \end{itemize}
 \end{keypoints}
 
@@ -29,7 +29,7 @@
 
 \begin{figure}[!htbp]
 \centering
-\begin{tikzpicture}[x=.13cm, y=.105cm]
+\begin{tikzpicture}[x=.13cm, y=.094cm]
   \fill[csfill] (0,45) -- (26,32) -- (0,32) -- cycle;
   \fill[taxfill] (0,26) rectangle (26,32);
   \fill[psfill] (0,0) -- (26,26) -- (0,26) -- cycle;
@@ -52,7 +52,7 @@
   \node[slab, anchor=west, mjPine] at (50,30) {无谓损失 12};
   \draw[mjPine, line width=.4pt] (50,30) -- (28.5,29.5);
 \end{tikzpicture}
-\caption{对卖方每件征税 6 元。黄色矩形是税收，绿色三角形是无谓损失。}
+\caption{对卖方每件征税 6 元。浅棕色矩形是税收，绿色三角形是无谓损失。}
 \label{fig:es-tax}
 \end{figure}
 
@@ -117,12 +117,13 @@
 检验：$b=2$，$d=1$，$t=6$ 时，$x=2$，$y=4$，和上一节一致。
 
 \textbf{怎么理解}：$b$ 大表示买方对价格敏感，稍一涨价就不买了（容易“跑掉”），于是 $x$ 小，买方负担少。
-所以\textbf{谁对价格越不敏感，谁负担越多}。图~\ref{fig:es-incidence} 画出了两种极端情形。
+所以\textbf{谁对价格越不敏感，谁负担越多}。严格地说，比较的是弹性：在原均衡点，需求弹性是 $b\cdot\frac PQ$，供给弹性是 $d\cdot\frac PQ$，
+两者之比正好是 $b:d$，所以 $x:y=d:b$ 就是“供给弹性 : 需求弹性”。重要的是两边弹性的\textbf{相对}大小。图~\ref{fig:es-incidence} 画出了两种情形。
 
 \begin{figure}[!htbp]
 \centering
 \begin{subfigure}{.48\textwidth}\centering
-\begin{tikzpicture}[x=.075cm, y=.075cm]
+\begin{tikzpicture}[x=.075cm, y=.066cm]
   \econaxes{66}{56}{$Q$}{$P$}
   \draw[dem] (22,49.2) node[left, slab, mjAccent] {$D$（陡）} -- (40,6);
   \draw[sup] (0,12) -- (60,48) node[right, slab, mjSecond] {$S$};
@@ -134,10 +135,10 @@
   \draw[mjSecond, line width=3pt] (25,27) -- (25,30);
   \node[slab, mjAccent, anchor=west] at (44,10) {买方负担大};
 \end{tikzpicture}
-\caption{需求缺乏弹性：买方负担大部分}
+\caption{需求比供给更缺乏弹性：买方负担大部分}
 \end{subfigure}\hfill
 \begin{subfigure}{.48\textwidth}\centering
-\begin{tikzpicture}[x=.075cm, y=.075cm]
+\begin{tikzpicture}[x=.075cm, y=.066cm]
   \econaxes{66}{56}{$Q$}{$P$}
   \draw[dem] (0,48) -- (65,9) node[below, slab, mjAccent] {$D$};
   \draw[sup] (19,3.6) -- (38,49.2) node[right, slab, mjSecond] {$S$（陡）};
@@ -149,7 +150,7 @@
   \draw[mjSecond, line width=3pt] (25,18) -- (25,30);
   \node[slab, mjSecond, anchor=west] at (42,44) {卖方负担大};
 \end{tikzpicture}
-\caption{需求富有弹性：卖方负担大部分}
+\caption{需求比供给更富有弹性：卖方负担大部分}
 \end{subfigure}
 \caption{税负的分配。粗线中，蓝色段是买方多付的，红色段是卖方少得的，两段加起来正好是 $t$。}
 \label{fig:es-incidence}
@@ -174,15 +175,15 @@
 \[
   \text{无谓损失}=\frac12\,t\cdot\frac{bd}{b+d}\,t=\frac{bd}{2(b+d)}\,t^2 .
 \]
-无谓损失和\textbf{税率的平方}成正比：税率翻倍，损失变成 4 倍。图~\ref{fig:es-laffer} 画出了例子中的税收和无谓损失随税率 $t$ 的变化：
+无谓损失和\textbf{每件税额的平方}成正比：税额翻倍，损失变成 4 倍。图~\ref{fig:es-laffer} 画出了例子中的税收和无谓损失随每杯税额 $t$ 的变化：
 税收 $R(t)=t\left(30-\frac23t\right)$，无谓损失 $\frac13t^2$。
 
 \begin{figure}[!htbp]
 \centering
 \begin{tikzpicture}
-\begin{axis}[mojing, width=9.5cm, height=6cm, xmin=0, xmax=48, ymin=0, ymax=420,
-    xlabel={税率 $t$（元/杯）}, ylabel={元}, xtick={6,22.5,30,45}, xticklabels={6,22.5,30,45},
-    ytick={156,337.5}, yticklabels={156,337.5}, legend pos=north west]
+\begin{axis}[mojing, width=9.5cm, height=5.2cm, xmin=0, xmax=48, ymin=0, ymax=420,
+    xlabel={每杯税额 $t$（元）}, ylabel={元}, xtick={6,22.5,30,45}, xticklabels={6,22.5,30,45},
+    ytick={156,337.5}, yticklabels={156,337.5}, legend style={at={(1.03,.5)}, anchor=west}]
   \addplot[mjOchre, domain=0:45, samples=60, line width=1pt] {x*(30-2*x/3)};
   \addplot[mjPine, domain=0:34.6, samples=60, line width=1pt] {x^2/3};
   \legend{税收,无谓损失}
@@ -194,13 +195,13 @@
   \node[slab, anchor=west] at (axis cs:31,300) {$t=30$ 时两者相等};
 \end{axis}
 \end{tikzpicture}
-\caption{税率提高时，税收先增后减，无谓损失却一直加速增长}
+\caption{每杯税额提高时，税收先增后减，无谓损失却一直加速增长}
 \label{fig:es-laffer}
 \end{figure}
 
 图上有两个值得记住的现象：
 \begin{itemize}
-  \item 税收在 $t=22.5$ 时最多。税率再高，成交量萎缩得太厉害，税收反而减少；$t=45$ 时没人交易，税收为零（这就是“拉弗曲线”的想法）。
+  \item 税收在 $t=22.5$ 时最多。税额再高，成交量萎缩得太厉害，税收反而减少；$t=45$ 时没人交易，税收为零（这就是“拉弗曲线”的想法）。
   \item 无谓损失增长得比税收快。所以经济学家通常认为：\textbf{税基宽、税率低}，比税基窄、税率高的效率损失小。
 \end{itemize}
 
@@ -223,6 +224,6 @@
 
 \begin{exercises}[练一练]
   \item 需求 $Q_d=120-4P$，供给 $Q_s=2P$。政府对\textbf{买方}每件征税 3 元。求买方付出的总价格、卖方到手的价格、成交量、税收、双方各负担多少，以及无谓损失。
-  \item 证明：在直线供求下，税率从 $t$ 提高到 $2t$（成交量仍为正）时，无谓损失变为原来的 4 倍，而税收不到原来的 2 倍。
+  \item 证明：在直线供求下，每件税额从 $t$ 提高到 $2t$（成交量仍为正）时，无谓损失变为原来的 4 倍，而税收不到原来的 2 倍。
   \item 有人建议：“为了让富人多交税，应该对豪华跑车征收重税。”用本讲的知识分析，这项税的负担可能落在谁身上？还需要知道什么才能判断？
 \end{exercises}

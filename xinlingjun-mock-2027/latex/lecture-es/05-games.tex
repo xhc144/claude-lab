@@ -20,7 +20,7 @@
   \item 一个博弈由三样东西组成：参与人、各自可选的策略、每种策略组合下各自的收益。
   \item \textbf{纳什均衡}：给定别人的选择，谁也不想单独改变自己的选择。用“划线法”或“偏离箭头”来找。
   \item \textbf{囚徒困境}：每个人都有不论对方怎么做都更好的选择（背叛），结果却对大家都不好。
-  \item 博弈重复进行时，未来的惩罚可以维持合作：冷酷策略要求贴现因子 $\delta\ge\dfrac{T-R}{T-P}$。
+  \item 博弈重复进行时，未来的惩罚可以维持合作：只要足够看重未来（贴现因子足够大，门槛见 5.4 节），“冷酷策略”就能让双方一直合作。
   \item 先后行动的博弈用\textbf{逆向归纳}（从最后一步往回推）；不可信的威胁吓不住人。
 \end{itemize}
 \end{keypoints}
@@ -227,9 +227,9 @@ $\delta$ 越大，越看重未来。
 
 图~\ref{fig:es-repeat} 比较了两条路：
 \begin{itemize}
-  \item 一直合作：$R+\delta R+\delta^2R+\cdots=\dfrac{R}{1-\delta}$；
+  \item 一直合作：\[R+\delta R+\delta^2R+\cdots=\frac{R}{1-\delta};\]
   \item 第 1 期背叛：当期得 $T$，此后对方永远背叛，自己最好也只能每期得 $P$，合计
-        $T+\delta P+\delta^2P+\cdots=T+\dfrac{\delta P}{1-\delta}$。
+        \[T+\delta P+\delta^2P+\cdots=T+\frac{\delta P}{1-\delta}.\]
 \end{itemize}
 不背叛的条件是
 \[
