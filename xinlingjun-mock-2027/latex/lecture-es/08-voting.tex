@@ -1,0 +1,250 @@
+% =============================================================================
+\lecture[number=8, short=投票与集体决策]{投票与集体决策：“多数人的意见”存在吗}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 两两多数表决可能出现循环（A 胜 B，B 胜 C，C 又胜 A），这叫\textbf{孔多塞悖论}。出现循环时，谁赢取决于表决的顺序。
+  \item 不同的投票规则（相对多数、两轮决选、波达计数……）对同一组选票可能选出不同的赢家。
+  \item 人们可能不按真实偏好投票（\textbf{策略性投票}）。
+  \item \textbf{阿罗不可能定理}：方案有三个或更多时，没有一种规则能同时满足几条看起来都应该满足的要求。
+  \item 如果大家的偏好都是“单峰”的，多数表决不会循环，\textbf{中位选民}的理想方案获胜。
+\end{itemize}
+\end{keypoints}
+
+\section{两两多数表决与孔多塞悖论}
+
+一个人做选择很简单：选自己最喜欢的。一群人呢？最自然的想法是\textbf{两两比较，多数说了算}。
+
+\begin{definition}[孔多塞赢家]
+如果某个方案和其他\textbf{每一个}方案两两表决时都能获得多数，就称它为\textbf{孔多塞赢家}。
+\end{definition}
+
+孔多塞赢家看起来是“多数人的意见”最理想的代表。可惜它不一定存在。班委会 5 人要从 A（植物园）、B（科技馆）、C（郊野公园）中选春游地点，各人的排序（从最喜欢到最不喜欢）是：
+\begin{center}
+\small
+\begin{tabular}{lc}
+  \toprule
+  人数 & 排序 \\
+  \midrule
+  2 人 & A，B，C \\
+  2 人 & B，C，A \\
+  1 人 & C，A，B \\
+  \bottomrule
+\end{tabular}
+\end{center}
+两两表决：A 对 B，3 比 2，A 胜；B 对 C，4 比 1，B 胜；C 对 A，3 比 2，C 胜。结果是一个圈（图~\ref{fig:es-cycle}）：
+\[
+  \text{A 胜 B},\quad \text{B 胜 C},\quad \text{C 胜 A}.
+\]
+每个人自己的排序都是有条理的（喜欢 A 胜过 B、B 胜过 C，就一定喜欢 A 胜过 C，这叫\textbf{传递性}），合起来的“多数意见”却没有传递性。这就是\textbf{孔多塞悖论}。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[opt/.style={circle, draw=mjAccent, line width=1pt, fill=mjAccent!8, minimum size=1.15cm, font=\small, align=center},
+    win/.style={-{Stealth[length=2.6mm,width=2mm]}, draw=mjSecond, line width=1.1pt}]
+  \node[opt] (A) at (90:1.9) {A\\[-2pt]{\scriptsize 植物园}};
+  \node[opt] (B) at (210:1.9) {B\\[-2pt]{\scriptsize 科技馆}};
+  \node[opt] (C) at (330:1.9) {C\\[-2pt]{\scriptsize 郊野公园}};
+  \draw[win] (A) -- node[left=2pt, slab] {3:2} (B);
+  \draw[win] (B) -- node[below=2pt, slab] {4:1} (C);
+  \draw[win] (C) -- node[right=2pt, slab] {3:2} (A);
+  \node[slab, align=left, anchor=west] at (3.2,.3) {箭头从胜者指向败者\\ 三个箭头首尾相接，没有“最好”的方案};
+\end{tikzpicture}
+\caption{孔多塞循环}
+\label{fig:es-cycle}
+\end{figure}
+
+\section{议程决定结果}
+
+出现循环时，规则的细节就变得很要紧。设主席安排两轮表决：先在两个方案中表决，胜者再与第三个方案表决。图~\ref{fig:es-agenda} 列出了三种议程：
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1cm, y=.75cm,
+    o/.style={draw=mjInk!60, rounded corners=1.5pt, minimum width=.7cm, minimum height=.5cm, font=\small, fill=white},
+    w/.style={draw=mjSecond, line width=1pt, rounded corners=1.5pt, minimum width=.7cm, minimum height=.5cm, font=\small\bfseries, fill=mjSecond!10},
+    l/.style={draw=mjInk!50, line width=.6pt}]
+  \foreach \dx/\a/\b/\c/\r/\f in {0/A/B/C/A/C, 4.6/B/C/A/B/A, 9.2/A/C/B/C/B} {
+    \begin{scope}[xshift=\dx cm]
+      \node[o] (a) at (0,2) {\a}; \node[o] (b) at (0,1) {\b}; \node[o] (c) at (0,0) {\c};
+      \node[o] (r) at (1.4,1.5) {\r};
+      \node[w] (f) at (2.8,.75) {\f};
+      \draw[l] (a.east) -- ++(.3,0) |- (r.west); \draw[l] (b.east) -- ++(.3,0) |- (r.west);
+      \draw[l] (r.east) -- ++(.3,0) |- (f.west); \draw[l] (c.east) -- ++(1.7,0) |- (f.west);
+      \node[slab] at (1.4,-1) {先 \a 对 \b，胜者对 \c};
+    \end{scope}}
+\end{tikzpicture}
+\caption{三种议程，三个不同的赢家：最后才上场的方案获胜}
+\label{fig:es-agenda}
+\end{figure}
+
+道理很简单：在循环中，每个方案都恰好能赢一个、输一个。最后上场的方案只需打败第一轮的胜者；而它正好能打败的那个方案，主席总可以安排它在第一轮胜出。
+所以\textbf{控制议程的人，就能控制结果}。这也是为什么很多组织要预先公开、固定表决程序。
+
+\section{不同的规则，不同的赢家}
+
+除了两两表决，常见的投票规则还有：
+\begin{itemize}
+  \item \textbf{相对多数制}：每人投一票给最喜欢的方案，得票最多者胜；
+  \item \textbf{两轮决选制}：先按相对多数，取前两名再进行一轮二选一；
+  \item \textbf{波达计数}：$m$ 个方案时，每人给第 1 名 $m-1$ 分，第 2 名 $m-2$ 分……最后一名 0 分，总分最高者胜。
+\end{itemize}
+
+看一个 15 人的例子：
+\begin{center}
+\small
+\begin{tabular}{lc}
+  \toprule
+  人数 & 排序 \\
+  \midrule
+  6 人 & A，B，C \\
+  5 人 & C，B，A \\
+  4 人 & B，C，A \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item 相对多数：A 得 6 票，C 得 5 票，B 得 4 票，\textbf{A 胜}。
+  \item 两轮决选：A、C 进入第二轮。原来投 B 的 4 人更喜欢 C，C 以 $5+4=9$ 比 6 胜，\textbf{C 胜}。
+  \item 波达计数：A 得 $6\times2=12$ 分；B 得 $6\times1+5\times1+4\times2=19$ 分；C 得 $5\times2+4\times1=14$ 分，\textbf{B 胜}。
+\end{itemize}
+同一组选票，三种规则，三个赢家（图~\ref{fig:es-rules}）。再用两两表决检查：B 对 A 是 9 比 6，B 对 C 是 10 比 5，\textbf{B 是孔多塞赢家}；
+而相对多数选出的 A，和 B、C 两两表决都会输，是“孔多塞输家”。
+
+\begin{figure}[!htbp]
+\centering
+\pgfplotsset{rulebar/.style={mojing box, ybar, bar width=13pt, width=4.9cm, height=4.4cm, ymin=0,
+    symbolic x coords={A,B,C}, xtick={A,B,C}, bar shift=0pt, enlarge x limits=.3, nodes near coords,
+    nodes near coords style={font=\footnotesize}, ytick=\empty, axis line style={draw=mjInk!40}}}
+\begin{tikzpicture}
+\begin{axis}[rulebar, ymax=8, title={\small 相对多数：A 胜}]
+  \addplot[fill=mjGray!35, draw=none] coordinates {(B,4) (C,5)};
+  \addplot[fill=mjSecond!70, draw=none] coordinates {(A,6)};
+\end{axis}
+\end{tikzpicture}\hfill
+\begin{tikzpicture}
+\begin{axis}[rulebar, ymax=12, title={\small 两轮决选：C 胜}]
+  \addplot[fill=mjGray!35, draw=none] coordinates {(A,6)};
+  \addplot[fill=mjSecond!70, draw=none] coordinates {(C,9)};
+  \addplot[fill=mjGray!12, draw=mjGray!50, dashed, nodes near coords={淘汰}] coordinates {(B,0.6)};
+\end{axis}
+\end{tikzpicture}\hfill
+\begin{tikzpicture}
+\begin{axis}[rulebar, ymax=24, title={\small 波达计数：B 胜}]
+  \addplot[fill=mjGray!35, draw=none] coordinates {(A,12) (C,14)};
+  \addplot[fill=mjSecond!70, draw=none] coordinates {(B,19)};
+\end{axis}
+\end{tikzpicture}
+\caption{同一组选票（6 人 A>B>C，5 人 C>B>A，4 人 B>C>A），三种规则选出三个不同的赢家}
+\label{fig:es-rules}
+\end{figure}
+
+相对多数制的毛病在这里看得很清楚：B、C 的支持者都不喜欢 A，但他们的票被 B、C 两个相近的方案\textbf{分散}了，于是 A 以少数票胜出。
+
+\section{策略性投票}
+
+上面的例子里，最喜欢 B 的 4 个人（排序 B，C，A）如果在相对多数制下照实投 B，结果是他们最不喜欢的 A 胜出。
+如果他们改投 C，C 得 9 票胜出——对他们来说，C 比 A 好。\textbf{不按真实偏好投票，反而得到对自己更好的结果}，这叫\textbf{策略性投票}。
+“不想浪费选票”就是这个意思。
+
+在第二节的分轮表决中，同样可能出现策略性投票：委员预见到第二轮的结果，第一轮就故意投给自己不是最喜欢的方案。
+数学上已经证明（吉巴德—萨特斯韦特定理）：方案有三个或更多时，任何一种不是“独裁”、每个方案都有可能胜出的规则，都会在某些情况下给人策略性投票的机会。
+
+\section{阿罗不可能定理}
+
+能不能设计一个“完美”的规则？经济学家阿罗（1951）证明了：方案有三个或更多时，不存在一种把个人排序汇总为集体排序的规则，能同时满足下面四条：
+\begin{enumerate}
+  \item \textbf{无限制}：每个人可以有任意的排序，规则都能给出一个有传递性的集体排序；
+  \item \textbf{一致性（帕累托原则）}：如果人人都认为 X 比 Y 好，集体也认为 X 比 Y 好；
+  \item \textbf{无关方案独立}：集体对 X、Y 的排序，只取决于每个人对 X、Y 谁好谁坏的看法，不受第三个方案排在哪里的影响；
+  \item \textbf{非独裁}：没有哪一个人的排序总是直接成为集体排序。
+\end{enumerate}
+
+两两多数表决违反第 1 条（会出现循环）；波达计数违反第 3 条。看一个例子：5 个人中，3 人排序 A，B，C，2 人排序 B，C，A。
+波达计数下 A 得 6 分，B 得 7 分，B 排在 A 前面。现在这 3 人把排序改成 A，C，B——他们对 A、B 的看法没变（仍然是 A 比 B 好），只是把 C 往前挪了。
+重新计分：A 6 分，B 4 分，C 5 分，A 跑到了 B 前面。没有人改变对 A、B 的看法，集体对 A、B 的排序却反过来了。
+
+阿罗定理的意思\textbf{不是}“民主不可能”，而是：\textbf{每种规则都有代价}，选择规则就是在几条好的性质之间做取舍。
+
+\section{单峰偏好与中位选民}
+
+循环并不总会出现。很多问题的方案可以排在一条线上：班费收多少、空调温度定几度、税率定多高。这时每个人通常有一个最理想的位置，离它越远越不满意。
+这样的偏好叫\textbf{单峰偏好}：画出来只有一个“山峰”。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.105cm, y=1.6cm]
+  \draw[mj axis] (0,0) -- (106,0) node[right, slab] {班费（元）};
+  \draw[mj axis] (0,0) -- (0,1.35) node[above, slab] {满意程度};
+  \begin{scope}
+    \clip (0,0) rectangle (106,1.3);
+    \foreach \p/\c in {10/mjAccent, 25/mjAccent, 40/mjPine, 70/mjSecond, 90/mjSecond}
+      \draw[\c, line width=.9pt] (\p-40,{1-40/45}) -- (\p,1) -- (\p+40,{1-40/45});
+  \end{scope}
+  \foreach \p/\c/\n in {10/mjAccent/1, 25/mjAccent/2, 40/mjPine/3, 70/mjSecond/4, 90/mjSecond/5} {
+    \node[slab, \c, above] at (\p,1) {\n 号};
+    \draw[\c!60, line width=.4pt, dash pattern=on 1.5pt off 1.2pt] (\p,0) -- (\p,1);
+    \node[slab, below] at (\p,0) {\p};
+  }
+  \fill[mjPine] (40,0) circle (2.2pt);
+  \node[slab, mjPine, align=center] at (40,-.42) {中位数 40};
+\end{tikzpicture}
+\caption{5 个人的单峰偏好：各自理想的班费是 10、25、40、70、90 元，中位数是 40 元}
+\label{fig:es-single-peak}
+\end{figure}
+
+\begin{theorem}[中位选民定理]
+如果方案排在一条线上，每个人的偏好都是单峰的，人数为奇数，那么所有人理想位置的\textbf{中位数}是孔多塞赢家：它和任何其他方案两两表决都会胜出。
+\end{theorem}
+
+\begin{proof}[理由]
+设中位数是 $m$，拿它和任意一个更大的方案 $x>m$ 比较。理想位置不超过 $m$ 的人（超过半数）都在 $m$ 的同一侧，对他们来说 $x$ 比 $m$ 更远，所以都投 $m$，$m$ 胜。
+$x<m$ 的情况同理。
+\end{proof}
+
+图~\ref{fig:es-single-peak} 中，40 元对 60 元：理想位置在 10、25、40 的三个人都更喜欢 40，40 以 3 比 2 胜。
+这个定理解释了一个政治现象：两党竞争时，为了赢得中间的选民，双方的政策主张常常向中间靠拢。
+
+\paragraph{为什么前面会出现循环}
+回到第一节的循环例子。把 A、B、C 按某种顺序排成一行，画出三类人对它们的评价（图~\ref{fig:es-not-single}）：总有一类人把\textbf{中间}的方案排在最后，他的偏好“两头高、中间低”，有两个峰。
+换任何一种排列都是这样，因为 A、B、C 各是某一类人的最后一名。偏好不是单峰的，中位选民定理就不适用，循环才有了可能。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1.5cm, y=.9cm]
+  \draw[mj axis] (0,0) -- (3.6,0);
+  \draw[mj axis] (0,0) -- (0,3.6) node[above, slab] {排名（越高越喜欢）};
+  \foreach \x/\l in {1/A, 2/B, 3/C} \node[slab, below] at (\x,0) {\l};
+  \foreach \y/\l in {1/第 3, 2/第 2, 3/第 1} \node[slab, left] at (0,\y) {\l};
+  \draw[mjAccent, line width=1pt] (1,3) -- (2,2) -- (3,1);
+  \draw[mjPine, line width=1pt] (1,1) -- (2,3) -- (3,2);
+  \draw[mjSecond, line width=1.4pt] (1,2) -- (2,1) -- (3,3);
+  \foreach \p in {(1,3),(2,2),(3,1)} \fill[mjAccent] \p circle (2pt);
+  \foreach \p in {(1,1),(2,3),(3,2)} \fill[mjPine] \p circle (2pt);
+  \foreach \p in {(1,2),(2,1),(3,3)} \fill[mjSecond] \p circle (2pt);
+  \node[slab, mjAccent, anchor=west] at (3.9,3) {A，B，C：单峰};
+  \node[slab, mjPine, anchor=west] at (3.9,2.3) {B，C，A：单峰};
+  \node[slab, mjSecond, anchor=west] at (3.9,1.6) {C，A，B：两个峰（中间最差）};
+\end{tikzpicture}
+\caption{循环例子中，按 A、B、C 排列时，第三类人的偏好不是单峰的}
+\label{fig:es-not-single}
+\end{figure}
+
+\begin{pitfall}
+\begin{itemize}
+  \item “多数人的意见”不一定存在：两两表决可能循环，这时说“多数人支持某方案”要看是怎么表决的。
+  \item 投票结果是\textbf{偏好和规则共同}决定的，换一种规则可能换一个赢家。分析题里要说清用的是什么规则。
+  \item 算波达计数时，注意 $m$ 个方案时第一名是 $m-1$ 分，最后一名是 0 分。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+集体的选择取决于规则：循环让议程说了算，规则不同赢家不同；偏好单峰时，中位选民说了算。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 9 人对 A、B、C 的排序为：4 人 A，B，C；3 人 B，C，A；2 人 C，B，A。分别求相对多数制、两轮决选制、波达计数的赢家，并判断是否存在孔多塞赢家。
+  \item 举例说明：孔多塞赢家不一定是波达计数的赢家。
+  \item 5 名同学按距离排列的出游地点理想位置分别为 2、3、5、9、10 公里，偏好都是单峰的。多数表决会选哪里？如果又加入两位理想位置都是 10 公里的同学呢？
+\end{exercises}

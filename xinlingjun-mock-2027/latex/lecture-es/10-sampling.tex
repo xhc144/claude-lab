@@ -1,0 +1,272 @@
+% =============================================================================
+\lecture[number=10, short=抽样调查]{抽样调查：一小部分人为什么能代表全体}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 抽样是用一小部分人推断全体。关键不在人数多，而在\textbf{有没有代表性}。
+  \item 误差分两种：\textbf{随机误差}（运气，样本越大越小）和\textbf{系统偏差}（方法有毛病，样本再大也消不掉）。
+  \item 估计一个比例时，误差范围大约是 $\dfrac1{\sqrt n}$：1000 人约 $\pm3\%$。误差减半，样本要变成 4 倍。
+  \item \textbf{概率抽样}（每个人被抽中的概率已知）是避免偏差的基础：简单随机、分层、整群、系统抽样。
+  \item 不回答、问题的措辞、“想显得好一点”都会造成偏差；敏感问题可以用随机化回答。
+\end{itemize}
+\end{keypoints}
+
+\section{从总体到样本}
+
+想知道全市高中生每天睡几个小时，不可能把每个人都问一遍。我们问其中一部分人，用他们的情况推断全体。几个名词：
+\begin{itemize}
+  \item \textbf{目标总体}：想了解的全体，例如全市所有高中生；
+  \item \textbf{抽样框}：实际用来抽人的名单，例如各校提供的学生名册；
+  \item \textbf{样本}：从名单中抽出来的人；
+  \item \textbf{回答者}：样本中真正回答了问卷的人。
+\end{itemize}
+从目标总体到最终的回答者，每一步都可能出偏差（图~\ref{fig:es-frame}）：名单漏掉了一些人（例如借读生），抽样时运气不好，抽中的人不愿回答……
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+  \fill[mjAccent!7] (0,0) ellipse (4.1 and 2.1);
+  \draw[mjAccent, line width=1pt] (0,0) ellipse (4.1 and 2.1);
+  \fill[mjOchre!14, opacity=.9] (1.5,-.1) ellipse (3.4 and 1.55);
+  \draw[mjOchre, line width=1pt, dash pattern=on 4pt off 2pt] (1.5,-.1) ellipse (3.4 and 1.55);
+  \fill[mjPine!20] (1.3,-.2) circle (.95);
+  \draw[mjPine, line width=1pt] (1.3,-.2) circle (.95);
+  \fill[mjSecond!35] (1.5,-.35) circle (.5);
+  \draw[mjSecond, line width=1pt] (1.5,-.35) circle (.5);
+  \node[lab, mjAccent] at (-2.9,1.15) {目标总体};
+  \node[slab, mjPine] at (1.3,.4) {样本};
+  \node[slab, mjSecond] at (1.5,-.35) {回答者};
+  \node[slab, align=center] at (-3.0,-.35) {名单漏掉的人\\（覆盖不足）};
+  \node[lab, mjOchre, anchor=west] (fr) at (5.0,1.55) {抽样框（名单）};
+  \draw[mjOchre, line width=.3pt] (fr.west) -- (4.3,.75);
+  \node[slab, align=left, anchor=west] (ex) at (5.0,-1.2) {名单里多出来的人\\（不属于总体）};
+  \draw[mjInk!50, line width=.3pt] (ex.west) -- (4.55,-.1);
+  \fill[mjInk!60] (4.55,-.1) circle (1.2pt);
+  \node[slab, align=center, anchor=north] (nr) at (-.6,-2.35) {抽中却没回答（无回答）};
+  \draw[mjInk!50, line width=.3pt] (nr.north) -- (.6,-.3);
+  \fill[mjInk!60] (.6,-.3) circle (1.2pt);
+\end{tikzpicture}
+\caption{目标总体、抽样框、样本与回答者：每一层的差别都可能带来偏差}
+\label{fig:es-frame}
+\end{figure}
+
+\section{两种误差：准不准与稳不稳}
+
+抽样调查的误差有两种性质完全不同的来源，用打靶来比喻最清楚（图~\ref{fig:es-target}）：
+\begin{itemize}
+  \item \textbf{系统偏差}：方法本身有毛病，每次都朝同一个方向偏。就像瞄准器歪了，打得再多也打不中靶心。偏差说的是“准不准”。
+  \item \textbf{随机误差}：只是运气不同，这次偏高、下次偏低，平均起来在靶心附近。样本越大，随机误差越小。它说的是“稳不稳”。
+\end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\newcommand{\target}[4]{% x 偏移, y 偏移, 散布, 标题
+  \begin{tikzpicture}
+    \foreach \r/\c in {1.15/mjLight, .8/white, .45/mjLight} \fill[\c] (0,0) circle (\r);
+    \foreach \r in {1.15,.8,.45} \draw[mjInk!45, line width=.4pt] (0,0) circle (\r);
+    \fill[mjInk!70] (0,0) circle (1.5pt);
+    \foreach \a/\b in {-0.45/1.45, 0.74/-0.42, -0.78/-0.44, 0.09/0.03, 0.27/-1.76, 1.08/-0.01, 0.20/-0.05, -0.86/0.55, 0.34/-0.12, -0.63/0.77}
+      \fill[mjSecond] ({#1+#3*\a},{#2+#3*\b}) circle (1.6pt);
+    \node[slab, align=center] at (0,-1.55) {#4};
+  \end{tikzpicture}}
+\target{0}{0}{.1}{偏差小，随机误差小\\ \textbf{又准又稳}}\hfill
+\target{0}{0}{.36}{偏差小，随机误差大\\ 准而不稳}\hfill
+\target{.5}{.42}{.1}{偏差大，随机误差小\\ 稳而不准}\hfill
+\target{.5}{.42}{.36}{偏差大，随机误差大\\ 又不准又不稳}
+\caption{偏差与随机误差。红点是多次调查的结果，靶心是真实值。}
+\label{fig:es-target}
+\end{figure}
+
+\section{样本量有多大用}
+
+估计一个比例（例如支持率）时，如果抽样是随机的，\textbf{95\% 的情况下误差不超过约 $\dfrac1{\sqrt n}$}：
+\begin{center}
+\small
+\begin{tabular}{l*{5}{c}}
+  \toprule
+  样本量 $n$ & 100 & 400 & 1000 & 2500 & 10000 \\
+  误差范围约 & $\pm10\%$ & $\pm5\%$ & $\pm3.2\%$ & $\pm2\%$ & $\pm1\%$ \\
+  \bottomrule
+\end{tabular}
+\end{center}
+两个值得记住的事实：
+\begin{itemize}
+  \item 误差和 $\sqrt n$ 成反比：误差减半，样本要变成 4 倍。样本量到了一两千以后，再增加的作用就不大了。
+  \item 只要总体比样本大得多，误差几乎\textbf{和总体有多大无关}：调查一个城市和调查全国，需要的样本量差不多。好比尝一勺汤就知道咸淡，不管锅有多大——前提是汤\textbf{搅匀了}（随机抽样）。
+\end{itemize}
+
+但样本量只能减小随机误差，\textbf{对系统偏差无能为力}。图~\ref{fig:es-n-bias} 中，真实支持率是 50\%。无偏的调查，样本越大，结果越集中在 50\% 附近；
+有偏的调查，样本越大，结果越集中在一个错误的值（58\%）附近——精度越高，错得越“有把握”。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, xmode=log, width=10cm, height=6cm, xmin=100, xmax=10000, ymin=35, ymax=72,
+    xlabel={样本量 $n$（对数刻度）}, ylabel={调查结果（\%）}, xtick={100,1000,10000}, xticklabels={100,1000,10000},
+    ytick={40,50,58,65}, legend pos=north east, legend style={fill=white}]
+  \addplot[name path=u1, draw=none, domain=100:10000, samples=40] {50+100/sqrt(x)};
+  \addplot[name path=l1, draw=none, domain=100:10000, samples=40] {50-100/sqrt(x)};
+  \addplot[mjAccent!25] fill between[of=u1 and l1];
+  \addplot[name path=u2, draw=none, domain=100:10000, samples=40] {58+100/sqrt(x)};
+  \addplot[name path=l2, draw=none, domain=100:10000, samples=40] {58-100/sqrt(x)};
+  \addplot[mjSecond!25] fill between[of=u2 and l2];
+  \addplot[mjAccent, domain=100:10000, samples=2, line width=1pt] {50};
+  \addplot[mjSecond, domain=100:10000, samples=2, line width=1pt, dashed] {58};
+  \node[slab, mjAccent, anchor=north east] at (axis cs:9500,48.6) {无偏：收缩到真实值 50\%};
+  \node[slab, mjSecond, anchor=south east] at (axis cs:9500,60.4) {有偏：收缩到错误的 58\%};
+\end{axis}
+\end{tikzpicture}
+\caption{样本越大，结果的波动范围越窄；但有偏的调查只会越来越确定地给出错误的答案}
+\label{fig:es-n-bias}
+\end{figure}
+
+\paragraph{两个著名的失败}
+\begin{itemize}
+  \item \textbf{1936 年}，美国《文学文摘》杂志收回两百多万份模拟选票，预测兰登将击败罗斯福，结果罗斯福大胜。名单来自电话簿、汽车登记等，在大萧条时期偏向富裕人群；
+        寄回选票的人也只是一部分。盖洛普用规模小得多、按人口构成分配名额的样本（配额抽样）猜对了胜者。
+  \item \textbf{1948 年}，多家民调机构预测杜威将击败杜鲁门，有报纸甚至提前印出了“杜威击败杜鲁门”的标题，结果杜鲁门获胜。
+        原因之一正是 1936 年立了功的\textbf{配额抽样}：只规定访问多少男性、多少城市居民等，具体访问谁由访员自己挑，访员往往挑了更容易接触的人。
+        两个故事合起来的教训是：不是概率抽样，就可能在某一次突然失灵。此后民调逐渐改用概率抽样。
+\end{itemize}
+
+\section{概率抽样的四种方法}
+
+避免偏差的关键是\textbf{让“谁被抽中”由概率决定，而不是由人决定}。常用的四种方法见图~\ref{fig:es-sampling}（60 名学生，每两行是一个年级）。
+
+\begin{figure}[!htbp]
+\centering
+\newcommand{\popgrid}{%
+  \fill[mjAccent!7] (-.3,-.3) rectangle (9.3,1.3);
+  \fill[mjPine!8] (-.3,1.7) rectangle (9.3,3.3);
+  \fill[mjOchre!10] (-.3,3.7) rectangle (9.3,5.3);
+  \foreach \x in {0,...,9} \foreach \y in {0,...,5} \fill[mjInk!30] (\x,\y) circle (2.6pt);}
+\newcommand{\pick}[1]{\foreach \x/\y in {#1} \fill[mjSecond] (\x,5-\y) circle (4.2pt);}
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.5cm, y=.42cm]
+  \popgrid
+  \pick{1/0, 3/0, 6/1, 3/2, 4/2, 7/2, 2/3, 4/3, 0/4, 2/4, 5/5, 8/5}
+\end{tikzpicture}
+\caption{简单随机：每人被抽中的机会相同}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.5cm, y=.42cm]
+  \popgrid
+  \pick{4/0, 5/0, 2/1, 9/1, 0/2, 1/3, 3/3, 6/3, 0/4, 2/4, 6/4, 7/5}
+  \foreach \y/\l in {4.5/高一, 2.5/高二, .5/高三} \node[slab, right] at (9.4,\y) {\l};
+\end{tikzpicture}
+\caption{分层：每个年级各随机抽 4 人}
+\end{subfigure}
+
+\vspace{.6\baselineskip}
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.5cm, y=.42cm]
+  \popgrid
+  \foreach \y in {0,...,5} { \draw[mjInk!35, line width=.4pt, rounded corners=2pt] (-.35,\y-.35) rectangle (4.35,\y+.35);
+                             \draw[mjInk!35, line width=.4pt, rounded corners=2pt] (4.65,\y-.35) rectangle (9.35,\y+.35); }
+  \pick{5/1, 6/1, 7/1, 8/1, 9/1, 0/4, 1/4, 2/4, 3/4, 4/4}
+\end{tikzpicture}
+\caption{整群：随机抽 2 个班（框），班里全部调查}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.5cm, y=.42cm]
+  \popgrid
+  \pick{2/0, 8/0, 4/1, 0/2, 6/2, 2/3, 8/3, 4/4, 0/5, 6/5}
+\end{tikzpicture}
+\caption{系统：按名单顺序，从第 3 人起每 6 人抽 1 人}
+\end{subfigure}
+\caption{四种概率抽样（红点为被抽中的学生）}
+\label{fig:es-sampling}
+\end{figure}
+
+\begin{center}
+\small
+\begin{tabular}{p{2cm}p{5.3cm}p{5.3cm}}
+  \toprule
+  方法 & 优点 & 缺点 \\
+  \midrule
+  简单随机 & 最简单，理论最清楚 & 需要完整名单；可能碰巧某个年级抽得太少 \\
+  分层 & 各层都有代表，层间差别大时更精确 & 要事先知道每个人属于哪一层 \\
+  整群 & 省时省钱，不需要全体名单，只要班级名单 & 同一个班的人往往相似，精度较低 \\
+  系统 & 操作方便 & 名单有周期性时可能出问题（例如名单按寝室排，每寝室 6 人且寝室长总排第 3 位，每 6 人抽 1 人就只会抽到寝室长） \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+实际调查常把几种方法组合起来，例如先分区、再抽学校、再抽班级。各层抽样比例不同时，最后要\textbf{按比例加权}还原全体的情况。
+
+\section{问卷本身带来的偏差}
+
+即使抽样完美，问的方式也会造成偏差：
+\begin{itemize}
+  \item \textbf{措辞}：“你是否支持增加对困难家庭的帮助？”和“你是否支持增加福利开支？”说的是同一件事，支持率却可能差很多。
+  \item \textbf{顺序}：前面的问题会影响后面问题的回答。
+  \item \textbf{社会期望}：人们倾向于少报不光彩的行为（作弊、抽烟），多报体面的行为（读书、锻炼、投票）。
+  \item \textbf{回忆误差}：“上周你平均每天睡几个小时？”很难答准，改用每天记录的睡眠日志会好得多。
+\end{itemize}
+
+\paragraph{随机化回答：让人放心说真话}
+想知道“考试中作过弊的学生占多少”，直接问很难得到真话。一个巧妙的设计是：每人先私下抛一枚硬币，
+\begin{itemize}
+  \item 正面：如实回答“你作过弊吗？”；
+  \item 反面：再抛一次，正面答“是”，反面答“否”。
+\end{itemize}
+调查者看不到硬币，单个人回答“是”什么也说明不了，大家就敢说真话。设真实比例为 $p$，由图~\ref{fig:es-rr}，
+\[
+  P(\text{答“是”})=\tfrac12p+\tfrac14 .
+\]
+若 35\% 的人答“是”，则 $\frac12p+\frac14=0.35$，$p=0.2$，即约 20\% 的人作过弊。代价是随机性带来了额外的误差，需要更大的样本。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+    box/.style={draw=mjInk!50, rounded corners=2pt, font=\small, inner sep=4pt, fill=white, align=center},
+    yes/.style={box, draw=mjSecond, fill=mjSecond!10, line width=.9pt},
+    e/.style={draw=mjInk!50, line width=.6pt}]
+  \node[box] (s) at (0,0) {抛硬币};
+  \node[box] (t) at (-3,-1.3) {如实回答};
+  \node[box] (f) at (3,-1.3) {再抛一次};
+  \node[yes] (ty) at (-4.3,-2.9) {答“是”\\{\footnotesize 概率 $\frac12p$}};
+  \node[box] (tn) at (-1.7,-2.9) {答“否”};
+  \node[yes] (fy) at (1.7,-2.9) {答“是”\\{\footnotesize 概率 $\frac14$}};
+  \node[box] (fn) at (4.3,-2.9) {答“否”};
+  \draw[e] (s) -- node[above left, slab] {正面 $\frac12$} (t);
+  \draw[e] (s) -- node[above right, slab] {反面 $\frac12$} (f);
+  \draw[e] (t) -- node[left, slab] {$p$} (ty);
+  \draw[e] (t) -- node[right, slab] {$1-p$} (tn);
+  \draw[e] (f) -- node[left, slab] {$\frac12$} (fy);
+  \draw[e] (f) -- node[right, slab] {$\frac12$} (fn);
+\end{tikzpicture}
+\caption{随机化回答：答“是”的总概率为 $\frac12p+\frac14$}
+\label{fig:es-rr}
+\end{figure}
+
+\section{设计一项调查的清单}
+
+\begin{enumerate}
+  \item \textbf{明确总体和指标}：调查谁？要估计什么（平均数、比例）？
+  \item \textbf{找抽样框}：名单是否完整？漏了谁、多了谁？
+  \item \textbf{用概率抽样}：简单随机、分层、整群或组合；不要“方便抽样”（街头随便拦人、网上自愿填写）。
+  \item \textbf{提高回答率}：匿名、简短、追访没回答的人，并比较回答者与不回答者的差别。
+  \item \textbf{设计问题}：措辞中立，避免诱导；敏感问题考虑随机化回答；能测量就不靠回忆。
+  \item \textbf{加权与报告}：按各层比例加权，报告样本量、回答率和误差范围。
+\end{enumerate}
+
+\begin{pitfall}
+\begin{itemize}
+  \item “样本量大就可靠”——错。样本量只管随机误差，管不了偏差。
+  \item “网上投票有十万人参加，很有代表性”——错。自愿参加的人往往是对话题特别有兴趣或特别有意见的人（自愿回应偏差）。
+  \item 回答“如何减少偏差”时，要针对具体的偏差来源给出具体做法，而不是笼统地说“扩大样本”。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+代表性比数量重要：样本量治随机误差，概率抽样和好问卷治系统偏差。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 某 App 在首页弹窗询问“你对本 App 满意吗？”，95\% 的人选“满意”。指出这个调查中至少两种偏差。
+  \item 想把误差范围从 $\pm4\%$ 缩小到 $\pm2\%$，样本量要变为原来的多少倍？
+  \item 用骰子做随机化回答：掷出 1--4 点如实回答，5 点答“是”，6 点答“否”。若 40\% 的人答“是”，估计真实比例 $p$。
+  \item 学校想了解全校 3000 名学生每天的睡眠时间。有同学建议“晚自习后在宿舍楼门口随机拦 100 个人问”。评价这个方案，并提出改进办法。
+\end{exercises}

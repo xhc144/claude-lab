@@ -22,11 +22,13 @@
 
 [设计说明](dist/notes.pdf)：卷子的身份与依据、历年 48 道一试真题的“经典结论”归类、各卷逐题设计、二试与三试的不确定性、独立审核记录与使用建议。
 
+[经济与社科速成讲义](dist/lecture-econ-social.pdf)：配合二试综合经济、社科两卷的备考讲义，共 12 讲（供求、弹性与剩余、税收、价格管制与外部性、博弈论、钱的时间价值、比较优势；投票与集体决策、读懂数字、抽样调查、相关与因果；答题方法），约 50 幅 TikZ 图，每讲附练习，答案在最后一讲。
+
 二试综合六科中按规定只需选考两科。建议先只打印试题卷，按建议用时独立完成，再对照答案。
 
 ## 重新编译
 
-源文件在 `latex/`，使用墨经 Mojing 的 `mojing-exam`（试卷）与 `mojing-notes`（设计说明）文档类。需要 TeX Live 2023+（XeLaTeX、latexmk、ctex）和 Noto CJK 字体。
+源文件在 `latex/`，使用墨经 Mojing 的 `mojing-exam`（试卷）与 `mojing-notes`（设计说明、速成讲义）文档类。速成讲义的各讲在 `latex/lecture-es/`。需要 TeX Live 2023+（XeLaTeX、latexmk、ctex）和 Noto CJK 字体。
 
 ```bash
 cd latex

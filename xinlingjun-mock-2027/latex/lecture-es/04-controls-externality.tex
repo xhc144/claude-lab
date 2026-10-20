@@ -1,0 +1,174 @@
+% =============================================================================
+\lecture[number=4, short=价格管制与外部性]{价格管制与外部性：政府什么时候该出手}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item \textbf{最高限价}（低于均衡价）造成短缺：排队、托关系、黑市、质量下降。
+  \item \textbf{最低限价}（高于均衡价）造成过剩：卖不掉的商品、找不到工作的人。
+  \item \textbf{外部性}：交易影响了没有参与交易的第三方。污染使社会成本高于企业自己的成本，市场会生产得太多。
+  \item 对每件产品征收等于外部成本的税（\textbf{庇古税}），能把产量拉回到对社会最好的水平。这时税收不但不造成损失，反而消除了损失。
+\end{itemize}
+\end{keypoints}
+
+\section{最高限价：便宜了，却买不到}
+
+政府有时担心价格太高，规定“不许超过某个价格”，这叫\textbf{最高限价}。只有当限价\textbf{低于}均衡价格时，它才起作用。
+
+还是奶茶市场（需求 $Q=90-2P$，供给 $Q=P$）。若规定每杯最多卖 24 元（图~\ref{fig:es-control}(a)）：
+\begin{itemize}
+  \item 顾客想买 42 杯，店家只肯做 24 杯，\textbf{短缺} 18 杯；
+  \item 成交量由少的一方决定，只成交 24 杯，比均衡少 6 杯。少成交的这 6 杯造成无谓损失（图中绿色三角形），面积为 $\frac12\times9\times6=27$。这是假定这 24 杯恰好卖给了最想要的顾客；
+        如果靠排队、碰运气分配，有些杯落到并不那么想要的人手里，实际损失还要更大；
+  \item 谁能买到这 24 杯？只能靠排队、先到先得、关系或抽签。排队的时间也是成本；有人会高价倒卖（黑市）；店家可能偷偷减料（质量下降）。
+\end{itemize}
+节假日的热门车票、门票“一票难求”，背后就是价格被压在均衡价之下，于是只好用排队、抢票来分配。
+
+\section{最低限价：贵了，却卖不掉}
+
+反过来，规定“不许低于某个价格”叫\textbf{最低限价}，只有\textbf{高于}均衡价格时才起作用。若规定每杯最低 36 元（图~\ref{fig:es-control}(b)），
+店家想卖 36 杯，顾客只买 18 杯，\textbf{过剩} 18 杯。
+
+最低限价的例子：
+\begin{itemize}
+  \item \textbf{粮食最低收购价}：为保护农民收入，政府常常要按这个价格把卖不掉的粮食收购下来，并承担储存的成本。
+  \item \textbf{最低工资}：在劳动市场里，“价格”是工资，“过剩的劳动”就是失业。按这个简单模型，最低工资定得高于市场工资时，会使一部分人找不到工作。
+        但现实中的实证研究结论并不一致，影响大小取决于最低工资比市场工资高多少，以及雇主在劳动市场中的地位等。模型告诉我们应当关注哪种力量，影响多大还要看数据。
+\end{itemize}
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \fill[dwlfill] (24,33) -- (30,30) -- (24,24) -- cycle;
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (46,46) node[right, slab, mjSecond] {$S$};
+  \draw[mjOchre, line width=1.1pt] (0,24) -- (60,24) node[above, slab, mjOchre] {限价 24};
+  \draw[guide] (24,24) -- (24,0) node[below, slab] {24};
+  \draw[guide] (42,24) -- (42,0) node[below, slab] {42};
+  \draw[decorate, decoration={brace, amplitude=4pt, mirror}, mjOchre, line width=.7pt] (24,21.5) -- (42,21.5)
+    node[midway, below=4pt, slab, mjOchre] {短缺 18};
+  \node[circle, draw=mjInk, fill=white, inner sep=1.3pt] at (30,30) {};
+\end{tikzpicture}
+\caption{最高限价 24 元：短缺}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \fill[dwlfill] (18,36) -- (30,30) -- (18,18) -- cycle;
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (46,46) node[right, slab, mjSecond] {$S$};
+  \draw[mjOchre, line width=1.1pt] (0,36) -- (60,36) node[above, slab, mjOchre] {限价 36};
+  \draw[guide] (18,36) -- (18,0) node[below, slab] {18};
+  \draw[guide] (36,36) -- (36,0) node[below, slab] {36};
+  \draw[decorate, decoration={brace, amplitude=4pt}, mjOchre, line width=.7pt] (18,38.5) -- (36,38.5)
+    node[midway, above=4pt, slab, mjOchre] {过剩 18};
+  \node[circle, draw=mjInk, fill=white, inner sep=1.3pt] at (30,30) {};
+\end{tikzpicture}
+\caption{最低限价 36 元：过剩}
+\end{subfigure}
+\caption{价格管制。空心点是原来的均衡，绿色三角形是成交量减少造成的无谓损失。}
+\label{fig:es-control}
+\end{figure}
+
+\begin{pitfall}
+限价只有在“有约束”时才起作用：最高限价定在均衡价\textbf{以上}、最低限价定在均衡价\textbf{以下}时，市场照常在均衡处成交，什么也不会发生。答题时先判断限价在均衡价的哪一侧。
+\end{pitfall}
+
+\section{外部性：没有写进价格的成本}
+
+\begin{definition}[外部性]
+一项经济活动给\textbf{没有参与交易}的人带来了成本或好处，而这些成本或好处没有反映在价格里，就叫外部性。带来成本的叫负外部性，带来好处的叫正外部性。
+\end{definition}
+
+\begin{itemize}
+  \item 负外部性：工厂排污、深夜装修的噪声、开车造成的拥堵。
+  \item 正外部性：接种疫苗（也保护了身边的人）、基础科学研究、养蜂人的蜜蜂给邻近果园授粉。
+\end{itemize}
+
+\paragraph{为什么市场会生产过多}
+假设奶茶店每做一杯奶茶，会给周围居民带来 6 元的垃圾和噪声成本，但店家不用为此付钱。店家只按自己的成本（供给曲线 $P=Q$）决定产量，
+可对整个社会来说，每一杯的真实成本是 $Q+6$，这条线叫\textbf{社会成本曲线}（图~\ref{fig:es-extern}）。
+\begin{itemize}
+  \item 市场均衡：需求与店家成本相交，$Q=30$。
+  \item 对社会最好的产量：需求与社会成本相交，$45-\frac12Q=Q+6$，$Q=26$。
+\end{itemize}
+第 27 到第 30 杯，买家愿意付的钱低于它们的社会成本，却还是被生产出来了。多生产造成的损失是图中的绿色三角形，面积
+$\frac12\times(36-30)\times(30-26)=12$。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.12cm, y=.1cm]
+  \fill[dwlfill] (26,32) -- (30,36) -- (30,30) -- cycle;
+  \econaxes{72}{52}{数量 $Q$}{价格 $P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {需求 $D$};
+  \draw[sup] (0,0) -- (47,47) node[right, slab, mjSecond] {店家自己的成本};
+  \draw[sup2] (0,6) -- (41,47) node[above, slab, mjSecond] {社会成本（多 6 元）};
+  \draw[guide] (26,32) -- (26,0) node[below, slab] {26};
+  \draw[guide] (30,36) -- (30,0) node[below, slab] {30};
+  \node[eqpt] at (30,30) {}; \node[eqpt] at (26,32) {};
+  \node[slab, anchor=west] (me) at (40,14) {市场均衡}; \draw[mjInk!60, line width=.3pt] (me.west) -- (30.6,29.4);
+  \node[slab, anchor=east] (so) at (14,49) {社会最优}; \draw[mjInk!60, line width=.3pt] (so.east) -- (25.6,32.6);
+  \node[slab, anchor=west, mjPine] at (50,31) {多生产的损失 12};
+  \draw[mjPine, line width=.4pt] (50,31) -- (29,32.5);
+\end{tikzpicture}
+\caption{负外部性：市场的产量（30）超过对社会最好的产量（26）}
+\label{fig:es-extern}
+\end{figure}
+
+\paragraph{庇古税：让成本回到价格里}
+如果政府对每杯征收 6 元税，店家的成本曲线正好上移到社会成本曲线，市场自己就会停在 $Q=26$。
+请注意：这和第 3 讲的数字一模一样，同样是每杯 6 元的税、成交量从 30 降到 26。区别在于：
+\begin{itemize}
+  \item 第 3 讲的市场\textbf{没有}外部性，原来的 30 杯本来就是最好的，税造成了 12 的损失；
+  \item 这里的市场\textbf{有}外部性，原来的 30 杯太多了，税\textbf{消除}了 12 的损失。
+\end{itemize}
+同一种政策是好是坏，要看市场原来有没有问题。按外部成本征收的税叫\textbf{庇古税}，碳税、排污费都是这个思路。
+
+\paragraph{其他解决办法}
+\begin{itemize}
+  \item \textbf{排污许可交易}：政府定下排放总量，把许可证发给企业，允许买卖。减排成本低的企业多减排、卖出许可证，总量控制住了，减排的总成本也最低。碳排放权交易就是这样设计的。
+  \item \textbf{明确产权、自行协商}：如果法律明确规定居民有权不受噪声干扰，店家要么赔偿，要么减产。反过来，即使法律允许店家照常营业，居民也可以凑钱请店家少做一些；
+        只要协商的成本很低，不论权利给了哪一方，双方都能谈出同样有效率的产量，权利归谁只影响谁付钱给谁（经济学家科斯的思想）。
+  \item \textbf{补贴正外部性}：疫苗、基础研究的社会好处大于个人好处，个人自愿付费时会做得太少，所以常由政府补贴或免费提供。
+\end{itemize}
+
+\section{公共物品与公地悲剧（了解）}
+
+物品可以按两个问题分类：能不能阻止不付钱的人使用（\textbf{排他性}）？一个人用了，会不会减少别人能用的（\textbf{竞争性}）？
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=4.2cm, y=1.6cm]
+  \fill[mjSecond!8] (0,0) rectangle (1,1);
+  \fill[mjAccent!8] (1,0) rectangle (2,1);
+  \draw[mj thin] (0,0) rectangle (2,2);
+  \draw[mj thin] (1,0) -- (1,2) (0,1) -- (2,1);
+  \node[lab, above] at (.5,2) {有竞争性}; \node[lab, above] at (1.5,2) {无竞争性};
+  \node[lab, left] at (0,1.5) {有排他性}; \node[lab, left] at (0,.5) {无排他性};
+  \node[align=center, font=\small] at (.5,1.5) {\textbf{私人物品}\\ 奶茶、衣服};
+  \node[align=center, font=\small] at (1.5,1.5) {\textbf{俱乐部物品}\\ 视频会员、收费公路};
+  \node[align=center, font=\small] at (.5,.5) {\textbf{公共资源}\\ 公海的鱼、草场};
+  \node[align=center, font=\small] at (1.5,.5) {\textbf{公共物品}\\ 国防、路灯、天气预报};
+\end{tikzpicture}
+\caption{四类物品。下面一行没有排他性，市场难以自己解决。}
+\label{fig:es-goods}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{公共物品}：不付钱也能用，人人都想“搭便车”，私人不愿提供，所以通常由政府用税收提供。
+  \item \textbf{公共资源}：谁都能用，但用一点就少一点。每个牧民都想多放一只羊，好处归自己，草场退化的代价大家分担，最后草场被过度放牧，这叫\textbf{公地悲剧}。
+        它和第 5 讲的“囚徒困境”是同一种结构：每个人的最优选择，合起来对大家都不好。
+\end{itemize}
+
+\begin{oneline}
+限价制造短缺或过剩；外部性让价格“说错了话”，好的税收能把它纠正过来。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 需求 $Q_d=120-4P$，供给 $Q_s=2P$。(1) 规定最低价 25 元，会过剩多少？(2) 若政府承诺按 25 元收购全部剩余，要花多少钱？
+  \item 某工厂每生产 1 吨产品，会给下游渔民造成 50 元损失。(1) 不加干预时，为什么产量会过多？(2) 为什么每吨征税 50 元能纠正这一点？
+        (3) 若法律规定渔民有权要求工厂赔偿全部损失，结果会怎样？
+  \item 接种流感疫苗有正外部性。如果完全由个人自愿付费接种，接种人数会比对社会最好的人数多还是少？为什么？
+\end{exercises}

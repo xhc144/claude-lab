@@ -1,0 +1,204 @@
+% =============================================================================
+\lecture[number=7, short=比较优势与贸易]{比较优势：为什么“样样都强”也要分工}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item \textbf{机会成本}：为了多得到一样东西，必须放弃的另一样东西的数量。
+  \item \textbf{绝对优势}看谁效率高，\textbf{比较优势}看谁的机会成本低。分工应当按比较优势，而不是按绝对优势。
+  \item 只要两国的机会成本不同，就存在双方都获益的交换比例，它落在两国的机会成本之间。
+  \item 贸易使国家整体获益，但国内会有受损的人。“总收益大于总损失”不等于“每个人都获益”。
+\end{itemize}
+\end{keypoints}
+
+\section{机会成本}
+
+你用一个晚上做数学题，就不能用这个晚上背单词。这个晚上的“成本”，不是花了多少钱，而是\textbf{放弃了什么}。这叫\textbf{机会成本}。
+
+设甲、乙两国都只生产布和粮，劳动是唯一的投入。每单位劳动能生产：
+\begin{center}
+\small
+\begin{tabular}{lcc|cc}
+  \toprule
+  & 布 & 粮 & 1 单位粮的机会成本 & 1 单位布的机会成本 \\
+  \midrule
+  甲国 & 4 & 2 & 2 单位布 & $\frac12$ 单位粮 \\
+  乙国 & 1 & 1 & 1 单位布 & 1 单位粮 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+\begin{itemize}
+  \item 甲国两样都比乙国做得快，在两种产品上都有\textbf{绝对优势}。
+  \item 甲国多生产 1 单位粮，要少生产 2 单位布；乙国只要少生产 1 单位布。所以乙国生产粮的机会成本更低，乙国在\textbf{粮}上有比较优势。
+  \item 反过来，甲国生产布的机会成本（$\frac12$ 单位粮）低于乙国（1 单位粮），甲国在\textbf{布}上有比较优势。
+\end{itemize}
+注意\textbf{同一个国家}两种产品的机会成本互为倒数（甲国：1 单位粮要 2 单位布，1 单位布要 $\frac12$ 单位粮）。所以一国在粮上的机会成本比别国高，在布上就一定比别国低，
+\textbf{一个国家不可能在两种产品上都有比较优势}（除非两国的机会成本恰好相同，那样就没有分工的好处）。
+
+\section{生产可能性边界}
+
+设甲国有 50 单位劳动，乙国有 60 单位劳动。甲国全部生产布能得 200，全部生产粮能得 100，也可以按比例兼顾，所有可能的组合构成一条线段，
+叫\textbf{生产可能性边界}（图~\ref{fig:es-ppf}）。线段的斜率就是机会成本：甲国沿边界每多要 1 单位粮，要少 2 单位布。
+
+没有贸易时，一国只能消费自己生产的东西，消费点只能在边界上或边界内。假设两国各自要 30 单位粮：甲国用 15 单位劳动种粮，剩 35 单位劳动织布 140；乙国用 30 单位劳动种粮，剩 30 单位劳动织布 30。
+两国合计：布 170，粮 60。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.036cm, y=.021cm]
+  \fill[mjAccent!8] (0,0) -- (0,200) -- (100,0) -- cycle;
+  \econaxes{150}{230}{粮}{布}
+  \draw[mjAccent, line width=1.1pt] (0,200) -- (100,0);
+  \node[slab, left] at (0,200) {200}; \node[slab, below] at (100,0) {100};
+  \node[eqpt] at (30,140) {};
+  \draw[guide] (0,140) node[left, slab] {140} -- (30,140) -- (30,0) node[below, slab] {30};
+  \node[slab, anchor=south west] at (31,141) {自给时的消费};
+  \node[slab, mjAccent] at (62,120) {斜率 $-2$};
+\end{tikzpicture}
+\caption{甲国（50 单位劳动）}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.064cm, y=.07cm]
+  \fill[mjSecond!8] (0,0) -- (0,60) -- (60,0) -- cycle;
+  \econaxes{85}{70}{粮}{布}
+  \draw[mjSecond, line width=1.1pt] (0,60) -- (60,0);
+  \node[slab, left] at (0,60) {60}; \node[slab, below] at (60,0) {60};
+  \node[eqpt] at (30,30) {};
+  \draw[guide] (0,30) node[left, slab] {30} -- (30,30) -- (30,0) node[below, slab] {30};
+  \node[slab, anchor=south west] at (31,31) {自给时的消费};
+  \node[slab, mjSecond] at (50,22) {斜率 $-1$};
+\end{tikzpicture}
+\caption{乙国（60 单位劳动）}
+\end{subfigure}
+\caption{两国的生产可能性边界（两图刻度不同）。斜率的绝对值是 1 单位粮的机会成本。}
+\label{fig:es-ppf}
+\end{figure}
+
+\section{分工与交换}
+
+现在按比较优势分工：甲国全部织布，得 200；乙国全部种粮，得 60。两国合计：\textbf{布 200，粮 60}。
+和自给时（布 170，粮 60）相比，粮一样多，布多了 30（图~\ref{fig:es-total}）。劳动没有增加，只是换了分工方式，总产量就增加了。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing box, ybar, bar width=16pt, width=8cm, height=5.2cm, ymin=0, ymax=235,
+    symbolic x coords={布,粮}, xtick=data, enlarge x limits=.45, ylabel={两国合计},
+    nodes near coords, nodes near coords style={font=\footnotesize},
+    legend style={at={(.98,.97)}, anchor=north east, draw=none}, area legend]
+  \addplot[fill=mjGray!35, draw=none] coordinates {(布,170) (粮,60)};
+  \addplot[fill=mjPine!60, draw=none] coordinates {(布,200) (粮,60)};
+  \legend{各自生产,按比较优势分工}
+\end{axis}
+\end{tikzpicture}
+\caption{分工使两国的总产量增加：布多了 30}
+\label{fig:es-total}
+\end{figure}
+
+多出来的产品怎样分？设两国按“1 单位粮换 1.5 单位布”交换，乙国用 30 单位粮换甲国 45 单位布：
+\begin{center}
+\small
+\begin{tabular}{lcc|cc}
+  \toprule
+  & \multicolumn{2}{c|}{自给时消费} & \multicolumn{2}{c}{分工并交换后消费} \\
+  & 粮 & 布 & 粮 & 布 \\
+  \midrule
+  甲国 & 30 & 140 & 30 & $200-45=155$ \\
+  乙国 & 30 & 30 & $60-30=30$ & 45 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+两国的粮都和原来一样，布都多了 15。更重要的是，两国消费的组合都落在了\textbf{自己的生产可能性边界以外}，这是闭关自守时做不到的（图~\ref{fig:es-trade}）。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.036cm, y=.021cm]
+  \econaxes{150}{230}{粮}{布}
+  \draw[mjAccent, line width=1.1pt] (0,200) -- (100,0);
+  \draw[mjPine, line width=1pt, dash pattern=on 4pt off 2pt] (0,200) -- node[pos=.62, anchor=south west, slab, mjPine] {交换线，斜率 $-1.5$} (125,12.5);
+  \node[eqpt] at (30,140) {}; \node[slab, anchor=north east] at (29,139) {自给};
+  \node[eqpt, fill=mjPine] at (30,155) {}; \node[slab, anchor=south west, mjPine] at (31,156) {贸易后 $(30,155)$};
+  \draw[shiftarrow] (30,141) -- (30,153);
+  \node[eqpt, fill=mjSecond] at (0,200) {}; \node[slab, anchor=west] at (3,205) {只生产布};
+\end{tikzpicture}
+\caption{甲国：生产 $(0,200)$，消费 $(30,155)$}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.064cm, y=.07cm]
+  \econaxes{85}{80}{粮}{布}
+  \draw[mjSecond, line width=1.1pt] (0,60) -- (60,0);
+  \draw[mjPine, line width=1pt, dash pattern=on 4pt off 2pt] (60,0) -- node[pos=.82, anchor=west, slab, mjPine, xshift=3pt] {交换线，斜率 $-1.5$} (13.3,70);
+  \node[eqpt] at (30,30) {}; \node[slab, anchor=north east] at (29,29) {自给};
+  \node[eqpt, fill=mjPine] at (30,45) {}; \node[slab, anchor=west, mjPine] at (31.5,46) {贸易后 $(30,45)$};
+  \draw[shiftarrow] (30,31) -- (30,43.5);
+  \node[eqpt, fill=mjSecond] at (60,0) {}; \node[slab, anchor=south west] at (61,1) {只生产粮};
+\end{tikzpicture}
+\caption{乙国：生产 $(60,0)$，消费 $(30,45)$}
+\end{subfigure}
+\caption{贸易让两国的消费点都跑到了生产可能性边界之外}
+\label{fig:es-trade}
+\end{figure}
+
+\section{交换比例的范围}
+
+交换比例不是随便定的。设 1 单位粮换 $p$ 单位布：
+\begin{itemize}
+  \item 乙国自己生产，放弃 1 单位粮能换来 1 单位布。只有 $p>1$，乙国用粮去换布才比自己织布划算；
+  \item 甲国自己生产，1 单位粮要放弃 2 单位布。只有 $p<2$，甲国用布去换粮才比自己种粮划算。
+\end{itemize}
+所以\textbf{双方都获益的交换比例在两国的机会成本之间}：$1<p<2$（图~\ref{fig:es-tot}）。比例越靠近 2，乙国得到的好处越多；越靠近 1，甲国得到的越多。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=4cm]
+  \fill[mjPine!18] (1,-.18) rectangle (2,.18);
+  \draw[mj axis] (0.2,0) -- (2.85,0) node[right, slab] {1 单位粮换多少布};
+  \foreach \x in {1,2} { \draw[line width=.8pt] (\x,-.12) -- (\x,.12); }
+  \node[slab, below=3pt] at (1,-.12) {1};
+  \node[slab, below=3pt] at (2,-.12) {2};
+  \node[slab, above=3pt, mjSecond] at (1,.12) {乙国的机会成本};
+  \node[slab, above=3pt, mjAccent] at (2,.12) {甲国的机会成本};
+  \node[slab, mjPine] at (1.5,-.33) {双方都获益};
+  \node[slab, align=center] at (.55,-.65) {乙国宁可自己织布\\（不愿卖粮）};
+  \node[slab, align=center] at (2.45,-.65) {甲国宁可自己种粮\\（不愿买粮）};
+\end{tikzpicture}
+\caption{互利的交换比例落在两国的机会成本之间}
+\label{fig:es-tot}
+\end{figure}
+
+\section{比较优势从哪里来？谁会受损？}
+
+\paragraph{来源}
+\begin{itemize}
+  \item \textbf{技术差异}：本讲的模型，两国的生产效率不同（经济学家李嘉图的思路）；
+  \item \textbf{资源禀赋}：劳动力多的国家，劳动密集型产品的机会成本低；土地多的国家，农产品的机会成本低；
+  \item \textbf{规模经济}：产量越大、单位成本越低时，即使两国原本一样，专门生产一种产品也有好处。
+\end{itemize}
+
+\paragraph{模型的假设}
+劳动可以在两个行业之间自由、无成本地转移；没有运输成本和关税；充分就业；两国生产的布、粮完全一样；每单位劳动的产量不随产量变化。
+
+\paragraph{分配问题}
+分工以后，甲国种粮的人要改行织布。现实中，改行要重新学技能、可能要搬家，有人会失业或收入下降。贸易带来的\textbf{总}收益大于这些人的损失，
+理论上获益者可以补偿受损者，使每个人都不比原来差；但这种补偿不会自动发生，需要政策来做，例如转岗培训、失业保险。
+所以“贸易对国家有利”和“有人反对贸易”可以同时成立。
+
+\begin{pitfall}
+\begin{itemize}
+  \item “乙国样样不如甲国，没法和甲国做生意”——错。决定分工的是比较优势，不是绝对优势。
+  \item “贸易是零和的，一方赚了另一方就亏了”——错。分工增加了总产量，双方都能获益。
+  \item 计算机会成本时要看清表中给的是“每单位劳动的产量”还是“每单位产品需要的劳动”，两种表格的算法正好相反。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+比较的是机会成本，不是效率；交换比例落在两国机会成本之间，双方都赚；国家赚了，不代表每个人都赚。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 一小时内，小王能做 6 道数学题或写 3 页作文，小李能做 2 道数学题或写 2 页作文。两人合作完成一份作业（既有数学题又有作文），应当怎样分工？
+  \item 在本讲的例子中，如果交换比例是“1 单位粮换 2.5 单位布”，两国还会交换吗？为什么？
+  \item 有人说：“某国工资很低，什么产品都比我们便宜，和它做贸易我们只会吃亏。”用比较优势的道理分析这句话。
+\end{exercises}
