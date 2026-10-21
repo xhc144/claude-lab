@@ -218,3 +218,4 @@ git push origin recovered-project
 - 新收录《线性回归：从一条直线，到一次投影》（`linear-regression-video/`），共 23 个项目。成片尚未配音生成，所以只有介绍卡片（“待配音”），链接到说明与源码，没有播放器页面；`build-site.mjs` 现在只为带 `versions` 的影片生成播放器。
 - 桌面软件栏目说明改为：签名安装包发布在 GitHub Releases，装好后自动更新（五个软件都已有 `<软件>-v*` 发布）。
 - `node scripts/check-pages.mjs` 通过（179 个白名单文件、493 个相对引用）；桌面与 390px 宽度下新卡片无脚本错误、无横向滚动。
+- Pages 自 2026-10-14 之后没有再部署（最后一次「pages build and deployment」是 `c649733`），之后的 `main` 推送都没有触发构建；Ship 用内置令牌推送的合并也不会触发 Pages。新增「Pages · 部署」工作流（`.github/workflows/pages.yml`）：读取 Pages 发布来源，GitHub Actions 来源时打包 `docs/` 并用 `actions/deploy-pages` 部署，「Deploy from a branch」时请求重新构建 `main:/docs` 并等待结果，未启用时报错并说明去哪里打开。`main` 上 `docs/` 改动时自动运行，Ship 合并分支后用 workflow_dispatch 触发，也可手动运行。

@@ -97,7 +97,7 @@ python3 -m http.server 8080 --directory docs
 node scripts/build-site.mjs   # 只重新生成主页、影片播放器、封面与墨经页面，不需要各项目的构建依赖
 ```
 
-`build-pages.mjs` 先重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack、星枢 Tensora 与数学知识星图的静态文件，再调用 `build-site.mjs`，最后运行检查；只把白名单产物写入 `docs/`。GitHub Pages 使用 `main` 分支的 `/docs`；部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；影片只复制成片、字幕、讲稿与播放器（成片与仓库内文件内容相同，Git 中不额外占用空间）。绝不把整个仓库作为发布目录。
+`build-pages.mjs` 先重新生成 MathScape、Myriad、交互实验室、薪火纪 Emberstack、星枢 Tensora 与数学知识星图的静态文件，再调用 `build-site.mjs`，最后运行检查；只把白名单产物写入 `docs/`。GitHub Pages 发布 `main` 分支的 `/docs`，由「Pages · 部署」工作流（`.github/workflows/pages.yml`）部署：`main` 上 `docs/` 有改动、Ship 合并分支后都会自动运行，也可以在 Actions 里手动运行；发布来源（Settings → Pages → Source）建议选 GitHub Actions。部署与验证证据详见整合记录。Echowild 复制 HTML/CSS/源码和重新构建的单文件版；墨经只复制展示页、十份 PDF、预览图与六个 ZIP；影片只复制成片、字幕、讲稿与播放器（成片与仓库内文件内容相同，Git 中不额外占用空间）。绝不把整个仓库作为发布目录。
 
 `node scripts/check-pages.mjs` 检查静态链接、资源与发布边界；部署后还需浏览器验证主要交互和影片播放。测试与部署证据、分支原 tip 与恢复方式见 [整合记录](docs/INTEGRATION.md)。
 

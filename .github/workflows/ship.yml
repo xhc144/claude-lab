@@ -245,6 +245,12 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           node scripts/windows-release/land.mjs
+      # A push made with the built-in token triggers neither the Pages build nor pages.yml's push event.
+      - name: Refresh GitHub Pages
+        if: steps.land.outputs.landed != '' && env.BRANCH != 'main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run pages.yml --ref main || echo "::warning::could not start 「Pages · 部署」; run it by hand"
 
   release:
     needs: [plan, land, phonica, motif, particle-universe, moteng, hongyan-mail]
