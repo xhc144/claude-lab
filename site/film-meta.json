@@ -129,6 +129,49 @@
   "height": 1080,
   "chapters": []
  },
+ "linear-regression-video/output/linear-regression.mp4": {
+  "size": 27373660,
+  "duration": 708.833,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "开场：哪条线最好"
+   },
+   {
+    "t": 38.5,
+    "title": "一 · 残差与最小二乘"
+   },
+   {
+    "t": 180.133,
+    "title": "二 · 求导：两个条件"
+   },
+   {
+    "t": 293.166,
+    "title": "三 · 换个角度：数据是一个向量"
+   },
+   {
+    "t": 335.833,
+    "title": "三 · 正交投影与正规方程"
+   },
+   {
+    "t": 467.933,
+    "title": "三 · 勾股定理与 R²"
+   },
+   {
+    "t": 518.333,
+    "title": "四 · 多列与弯曲的线"
+   },
+   {
+    "t": 585.666,
+    "title": "五 · 为什么叫回归"
+   },
+   {
+    "t": 662.633,
+    "title": "尾声"
+   }
+  ]
+ },
  "optimization-film/output/optimization_essence_1080p.mp4": {
   "size": 63866095,
   "duration": 1136,
@@ -140,6 +183,93 @@
   "duration": 71.018,
   "height": 1080,
   "chapters": []
+ },
+ "stats-notation-video/output/stats-notation.mp4": {
+  "size": 85594853,
+  "duration": 2175.766667,
+  "height": 1080,
+  "chapters": [
+   {
+    "t": 0,
+    "title": "开场：论文里的一段记号"
+   },
+   {
+    "t": 48.766,
+    "title": "一 · 总体与样本"
+   },
+   {
+    "t": 225.766,
+    "title": "二 · 描述统计：集中与形状"
+   },
+   {
+    "t": 349.9,
+    "title": "二 · 描述统计：分散程度"
+   },
+   {
+    "t": 494.099,
+    "title": "三 · 概率：集合记号与条件概率"
+   },
+   {
+    "t": 583.599,
+    "title": "三 · 概率：贝叶斯公式与独立"
+   },
+   {
+    "t": 678.3,
+    "title": "四 · 随机变量"
+   },
+   {
+    "t": 845.099,
+    "title": "五 · 常见分布：正态"
+   },
+   {
+    "t": 946.666,
+    "title": "五 · 常见分布：二项、泊松及其他"
+   },
+   {
+    "t": 1025.266,
+    "title": "五 · 常见分布：χ²、t、F"
+   },
+   {
+    "t": 1094.266,
+    "title": "六 · 抽样分布"
+   },
+   {
+    "t": 1229.433,
+    "title": "七 · 参数估计：偏差与最大似然"
+   },
+   {
+    "t": 1376.366,
+    "title": "七 · 参数估计：置信区间"
+   },
+   {
+    "t": 1441.666,
+    "title": "八 · 假设检验：H₀、p 值与拒绝域"
+   },
+   {
+    "t": 1577.199,
+    "title": "八 · 假设检验：两类错误与报告"
+   },
+   {
+    "t": 1692.1,
+    "title": "九 · 回归"
+   },
+   {
+    "t": 1832.366,
+    "title": "九 · 回归：方差分析表与逻辑回归"
+   },
+   {
+    "t": 1917.5,
+    "title": "十 · 容易混淆的记号"
+   },
+   {
+    "t": 2018.633,
+    "title": "十 · 贝叶斯、写法变体与缩写"
+   },
+   {
+    "t": 2102.3,
+    "title": "尾声"
+   }
+  ]
  },
  "symmetry-film/output/abstract_algebra_promo_web.mp4": {
   "size": 94941117,
@@ -187,14 +317,14 @@
   ]
  },
  "windmill-theorem/output/windmill_theorem_en.mp4": {
-  "size": 84601897,
-  "duration": 1704.733,
+  "size": 91455331,
+  "duration": 1494.099,
   "height": 1080,
   "chapters": []
  },
  "windmill-theorem/output/windmill_theorem_zh.mp4": {
-  "size": 67334381,
-  "duration": 1096.3,
+  "size": 70969862,
+  "duration": 1180.266667,
   "height": 1080,
   "chapters": []
  }

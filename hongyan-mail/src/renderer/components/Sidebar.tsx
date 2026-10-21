@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import {
-  AlertTriangle, Archive, ChevronDown, Clock3, FileText, Folder, FolderPlus, Inbox, Mails, MailOpen, Moon, OctagonAlert,
+  AlertTriangle, Archive, ChevronDown, Clock3, Copy, FileText, Folder, FolderPlus, Inbox, Mails, MailOpen, Moon, OctagonAlert,
   Paperclip, PenLine, Plus, RefreshCw, Send, Settings as SettingsIcon, Star, Sun, Trash2, WifiOff, PanelLeftClose, PanelLeftOpen, Stethoscope,
   BrushCleaning
 } from 'lucide-react';
@@ -10,6 +10,7 @@ import { useApp, persistUi } from '../store';
 import { api, errorMessage } from '../api';
 import { folderName, folderTree, flattenTree, sameView } from '../lib/folders';
 import { number } from '../lib/format';
+import { copyOnClick, copyWithFeedback } from '../lib/copy';
 import { cx, IconButton, LogoMark, showContextMenu, Spinner, Wordmark, type MenuItem } from './ui';
 
 export const SPECIAL_ICONS: Record<SpecialUse | 'folder', React.ComponentType<{ size?: number; strokeWidth?: number }>> = {
@@ -125,13 +126,14 @@ export function Sidebar() {
     onSubmit: (name) => api.createFolder(a.id, name, parent?.path).then(() => s.toast({ kind: 'success', message: `已创建文件夹「${name}」` })).catch((e) => s.toast({ kind: 'error', message: '无法创建文件夹', detail: errorMessage(e).title }))
   });
 
-  const accountMenu = (a: AccountSummary): MenuItem[] => {
+  const accountMenu = (a: AccountSummary, anchor?: Element): MenuItem[] => {
     const inbox = foldersByAccount.get(a.id)?.find((f) => f.specialUse === 'inbox');
     return [
       { label: '立即收取', icon: <RefreshCw size={15} />, onSelect: () => api.syncNow(a.id) },
       { label: '收件箱全部标为已读', icon: <MailOpen size={15} />, disabled: !inbox?.unread, onSelect: () => inbox && void markRead(inbox) },
       { label: '新建文件夹', icon: <FolderPlus size={15} />, onSelect: () => newFolder(a) },
       { separator: true },
+      { label: '复制邮箱地址', icon: <Copy size={15} />, onSelect: () => void copyWithFeedback(a.email, anchor && document.body.contains(anchor) ? anchor : { x: 140, y: 120 }, '已复制邮箱地址') },
       { label: '用此账户写邮件', icon: <PenLine size={15} />, onSelect: () => s.compose({ accountId: a.id }) },
       { label: '诊断连接', icon: <Stethoscope size={15} />, onSelect: () => s.openModal({ type: 'diagnose', accountId: a.id }) },
       { label: '账户设置', icon: <SettingsIcon size={15} />, onSelect: () => s.openModal({ type: 'settings', section: 'accounts', accountId: a.id }) }
@@ -209,14 +211,16 @@ export function Sidebar() {
           return (
             <div key={a.id} className={cx('nav-group', 'account-group', !a.enabled && 'is-disabled')}>
               {collapsed ? (
-                <button className="acct-chip" style={{ ['--acct' as any]: a.color }} data-tip={a.email} data-tip-side="right" onClick={() => { const inbox = folders.find((f) => f.specialUse === 'inbox'); if (inbox) s.setView({ kind: 'folder', accountId: a.id, folderId: inbox.id }); }} onContextMenu={(e) => showContextMenu(e, accountMenu(a))}>
+                <button className="acct-chip" style={{ ['--acct' as any]: a.color }} data-tip={a.email} data-tip-side="right" onClick={() => { const inbox = folders.find((f) => f.specialUse === 'inbox'); if (inbox) s.setView({ kind: 'folder', accountId: a.id, folderId: inbox.id }); }} onContextMenu={(e) => showContextMenu(e, accountMenu(a, e.currentTarget))}>
                   {(a.label || a.email)[0].toUpperCase()}
                   {inboxUnread > 0 && <span className="acct-chip-dot" />}
                 </button>
               ) : (
-                <button className="acct-head" onClick={() => toggleAccount(a.id)} onContextMenu={(e) => showContextMenu(e, accountMenu(a))}>
+                <button className="acct-head" onClick={() => toggleAccount(a.id)} onContextMenu={(e) => showContextMenu(e, accountMenu(a, e.currentTarget))}>
                   <span className="acct-dot" style={{ background: a.color }} />
-                  <span className="acct-name" title={a.email}>{a.label || a.email}</span>
+                  {/* Clicking the name copies the address; the rest of the row (dot, chevron) folds the account. */}
+                  <span className="acct-name" {...copyOnClick(a.email, { label: '已复制邮箱地址', tip: a.label ? `${a.email} · 点击复制` : '点击复制邮箱地址', focusable: false })}>{a.label || a.email}</span>
+                  <span className="acct-spacer" />
                   <AccountStatusIcon a={a} />
                   {isCollapsed && inboxUnread > 0 && <span className="nav-count">{number(inboxUnread)}</span>}
                   <ChevronDown size={14} className={cx('acct-chevron', isCollapsed && 'is-collapsed')} />

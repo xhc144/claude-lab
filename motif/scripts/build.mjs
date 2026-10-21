@@ -31,13 +31,32 @@ if (fs.existsSync(pdfSrc)) {
   for (const f of ['pdf.mjs', 'pdf.worker.mjs']) fs.copyFileSync(path.join(pdfSrc, f), path.join(dist, 'vendor/pdfjs', f));
 }
 
+// koffi (MIT) lets the recorder read mouse buttons and cursor shapes on Windows. It is a native
+// module: ship its loader and this platform's binary next to main.cjs (unpacked from the asar).
+{
+  const kSrc = path.join(root, 'node_modules/koffi');
+  // the packaged platform (dist-win passes --native=win32-x64 when cross-building)
+  const plat = process.argv.find((a) => a.startsWith('--native='))?.slice(9) || `${process.platform}-${process.arch}`;
+  const kBin = path.join(root, 'node_modules/@koromix', `koffi-${plat}`);
+  const kDst = path.join(dist, 'node_modules/koffi');
+  fs.rmSync(path.join(dist, 'node_modules'), { recursive: true, force: true });
+  if (fs.existsSync(kSrc) && fs.existsSync(kBin)) {
+    for (const f of ['package.json', 'index.cjs', 'LICENSE.txt']) { fs.mkdirSync(kDst, { recursive: true }); fs.copyFileSync(path.join(kSrc, f), path.join(kDst, f)); }
+    fs.mkdirSync(path.join(kDst, 'src/koffi/src'), { recursive: true });
+    fs.copyFileSync(path.join(kSrc, 'src/koffi/index.cjs'), path.join(kDst, 'src/koffi/index.cjs'));
+    for (const f of fs.readdirSync(path.join(kSrc, 'src/koffi/src'))) if (f.endsWith('.cjs')) fs.copyFileSync(path.join(kSrc, 'src/koffi/src', f), path.join(kDst, 'src/koffi/src', f));
+    fs.cpSync(kBin, path.join(dist, 'node_modules/@koromix', `koffi-${plat}`), { recursive: true });
+  } else console.warn(`koffi for ${plat} not installed: clicks will not be recorded`);
+}
+
 const define = { __VERSION__: JSON.stringify(pkg.version), 'process.env.NODE_ENV': JSON.stringify(prod ? 'production' : 'development') };
 const common = { bundle: true, sourcemap: prod ? false : 'inline', minify: prod, legalComments: 'none', logLevel: 'warning', define, loader: { '.json': 'json' } };
 
 const targets = {
   render: { ...common, entryPoints: [path.join(root, 'src/engine/runtime.js')], outfile: path.join(dist, 'render.js'), format: 'iife', platform: 'browser', target: 'chrome120' },
   editor: { ...common, entryPoints: [path.join(root, 'src/app/renderer/main.jsx')], outfile: path.join(dist, 'editor.js'), format: 'iife', platform: 'browser', target: 'chrome120', jsx: 'automatic', loader: { ...common.loader, '.css': 'css', '.woff2': 'file' } },
-  main: { ...common, entryPoints: [path.join(root, 'src/app/main/index.js')], outfile: path.join(dist, 'main.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'], logOverride: { 'empty-import-meta': 'silent' } },
+  recorder: { ...common, entryPoints: [path.join(root, 'src/app/recorder/index.js')], outfile: path.join(dist, 'recorder.js'), format: 'iife', platform: 'browser', target: 'chrome120', loader: { ...common.loader, '.css': 'css' } },
+  main: { ...common, entryPoints: [path.join(root, 'src/app/main/index.js')], outfile: path.join(dist, 'main.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron', 'koffi'], logOverride: { 'empty-import-meta': 'silent' } },
   preload: { ...common, entryPoints: [path.join(root, 'src/app/preload/index.js')], outfile: path.join(dist, 'preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   workerPreload: { ...common, entryPoints: [path.join(root, 'src/app/worker/preload.js')], outfile: path.join(dist, 'worker-preload.cjs'), format: 'cjs', platform: 'node', target: 'node22', external: ['electron'] },
   cli: { ...common, minify: false, entryPoints: [path.join(root, 'src/cli/index.js')], outfile: path.join(dist, 'cli.mjs'), format: 'esm', platform: 'node', target: 'node22', banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" }, external: ['electron'] },

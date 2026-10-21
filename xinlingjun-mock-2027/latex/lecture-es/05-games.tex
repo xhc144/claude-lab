@@ -1,0 +1,302 @@
+% =============================================================================
+\lecture[number=5, short=博弈论入门]{博弈论入门：当你的最优选择取决于别人}
+% =============================================================================
+
+% 2×2 收益表：\gm{行1}{行2}{列1}{列2}{左上}{右上}{左下}{右下}
+\newcommand{\gm}[8]{%
+  \draw[mj thin] (0,0) rectangle (2,2); \draw[mj thin] (1,0) -- (1,2) (0,1) -- (2,1);
+  \node[slab, left, mjAccent] at (0,1.5) {#1}; \node[slab, left, mjAccent] at (0,.5) {#2};
+  \node[slab, above, mjSecond] at (.5,2) {#3}; \node[slab, above, mjSecond] at (1.5,2) {#4};
+  \node[font=\small] at (.5,1.5) {#5}; \node[font=\small] at (1.5,1.5) {#6};
+  \node[font=\small] at (.5,.5) {#7}; \node[font=\small] at (1.5,.5) {#8};}
+\tikzset{
+  devA/.style={-{Stealth[length=2mm,width=1.5mm]}, draw=mjAccent, line width=.9pt},
+  devB/.style={-{Stealth[length=2mm,width=1.5mm]}, draw=mjSecond, line width=.9pt},
+  nebox/.style={draw=mjPine, line width=1.4pt, rounded corners=2pt},
+}
+
+\begin{keypoints}
+\begin{itemize}
+  \item 一个博弈由三样东西组成：参与人、各自可选的策略、每种策略组合下各自的收益。
+  \item \textbf{纳什均衡}：给定别人的选择，谁也不想单独改变自己的选择。用“划线法”或“偏离箭头”来找。
+  \item \textbf{囚徒困境}：每个人都有不论对方怎么做都更好的选择（背叛），结果却对大家都不好。
+  \item 博弈重复进行时，未来的惩罚可以维持合作：只要足够看重未来（贴现因子足够大，门槛见 5.4 节），“冷酷策略”就能让双方一直合作。
+  \item 先后行动的博弈用\textbf{逆向归纳}（从最后一步往回推）；不可信的威胁吓不住人。
+\end{itemize}
+\end{keypoints}
+
+\section{怎么读收益表}
+
+前几讲里，买家、卖家各自面对价格做决定，不用考虑别人会怎么做。但很多场合，你的最好选择取决于别人的选择：两家企业定价、两国谈判、班上同学要不要都去补课。
+研究这类问题的工具叫\textbf{博弈论}。
+
+经典例子是\textbf{囚徒困境}。两名嫌疑人甲、乙被分开审讯，各自可以选择“抵赖”或“坦白”：
+\begin{itemize}
+  \item 两人都抵赖：证据不足，各判 1 年；
+  \item 两人都坦白：各判 5 年；
+  \item 一人坦白、一人抵赖：坦白的人立功释放，抵赖的人判 10 年。
+\end{itemize}
+把“判几年”写成负数作为收益（越大越好），就得到图~\ref{fig:es-pd}。规定：\textbf{行}是甲的选择，\textbf{列}是乙的选择，每格括号里\textbf{先写甲的收益，后写乙的}。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=2.6cm, y=1.2cm]
+  \gm{抵赖}{坦白}{抵赖}{坦白}{\pay{-1}{-1}}{\pay{-10}{0}}{\pay{0}{-10}}{\pay{-5}{-5}}
+  \node[lab, mjAccent] at (-.75,1) {甲};
+  \node[lab, mjSecond] at (1,2.65) {乙};
+  \draw[mjAccent, line width=.4pt] (2.15,1.6) -- (2.45,1.85) node[right, slab, mjAccent] {甲的收益（第一个数）};
+  \draw[mjSecond, line width=.4pt] (2.15,1.4) -- (2.45,1.2) node[right, slab, mjSecond] {乙的收益（第二个数）};
+\end{tikzpicture}
+\caption{囚徒困境的收益表（收益 $=-$ 刑期）}
+\label{fig:es-pd}
+\end{figure}
+
+\section{占优策略：不管你怎么做，我都这样做}
+
+站在甲的角度想：
+\begin{itemize}
+  \item 如果乙抵赖：我抵赖得 $-1$，坦白得 $0$，坦白更好；
+  \item 如果乙坦白：我抵赖得 $-10$，坦白得 $-5$，还是坦白更好。
+\end{itemize}
+无论乙怎么做，坦白都更好。这样的策略叫\textbf{占优策略}。乙的处境完全对称，也会坦白。结果两人都坦白，各判 5 年；可如果两人都抵赖，只各判 1 年。
+
+\textbf{每个人都做了对自己最好的选择，结果却对两人都不好。}这就是囚徒困境：个人理性和集体理性发生了冲突。
+现实中，同样的结构到处都是：
+\begin{itemize}
+  \item 两家企业打价格战：都维持高价对双方最好，但各自都想降价抢市场；
+  \item 国家间的军备竞赛、企业间的广告大战；
+  \item 第 4 讲的公地悲剧：每个牧民都多放羊；
+  \item 考前大家都去补课：每个人都怕落后，结果相对名次没变，大家都更累。
+\end{itemize}
+
+\section{纳什均衡与划线法}
+
+不是每个博弈都有占优策略，更一般的概念是：
+
+\begin{definition}[纳什均衡]
+一组策略，使得\textbf{在别人的策略给定时，任何一个人单独改变自己的策略都不能使自己的收益增加}。
+\end{definition}
+
+找纳什均衡的\textbf{划线法}：
+\begin{enumerate}
+  \item 对乙的每一个选择（每一列），找出甲收益最大的那格，在\textcolor{mjAccent}{甲的收益}下面划线；
+  \item 对甲的每一个选择（每一行），找出乙收益最大的那格，在\textcolor{mjSecond}{乙的收益}下面划线；
+  \item 两个数都被划线的格子，就是纳什均衡。
+\end{enumerate}
+
+图~\ref{fig:es-underline}(b) 是一个\textbf{协调博弈}：甲、乙约好周末见面，但忘了约在哪里，手机也联系不上。甲更想去图书馆，乙更想去咖啡馆，但两人都最怕走散（收益为 0）。
+划线后有\textbf{两个}纳什均衡：都去图书馆，或者都去咖啡馆。一旦两人到了同一个地方，谁也不想单独换地方。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=1.9cm, y=1.05cm]
+  \gm{抵赖}{坦白}{抵赖}{坦白}{\pay{-1}{-1}}{\upayB{-10}{0}}{\upayA{0}{-10}}{\upay{-5}{-5}}
+  \draw[nebox] (1.05,.07) rectangle (1.95,.93);
+  \node[lab, mjAccent] at (-.75,1) {甲}; \node[lab, mjSecond] at (1,2.6) {乙};
+\end{tikzpicture}
+\caption{囚徒困境：唯一均衡（坦白，坦白）}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=1.9cm, y=1.05cm]
+  \gm{图书馆}{咖啡馆}{图书馆}{咖啡馆}{\upay{3}{2}}{\pay{0}{0}}{\pay{0}{0}}{\upay{2}{3}}
+  \draw[nebox] (.05,1.07) rectangle (.95,1.93);
+  \draw[nebox] (1.05,.07) rectangle (1.95,.93);
+  \node[lab, mjAccent] at (-.85,1) {甲}; \node[lab, mjSecond] at (1,2.6) {乙};
+\end{tikzpicture}
+\caption{协调博弈：两个均衡}
+\end{subfigure}
+\caption{划线法。绿框是两个数都被划线的格子，即纳什均衡。}
+\label{fig:es-underline}
+\end{figure}
+
+\paragraph{另一种看法：偏离箭头}
+在每个格子里问：有没有人想单独换？如果甲想换行，就画一个从这格指向另一行的\textcolor{mjAccent}{蓝箭头}；如果乙想换列，就画\textcolor{mjSecond}{红箭头}。
+\textbf{没有箭头射出的格子就是纳什均衡}（图~\ref{fig:es-arrows}）。
+\begin{itemize}
+  \item 囚徒困境：所有箭头最后都流向（坦白，坦白）。
+  \item 协调博弈：箭头流向两个角，两个均衡。
+  \item 猜硬币：甲、乙同时出硬币的正面或反面，相同则甲赢 1 分，不同则乙赢 1 分。箭头绕成一圈，每一格都有人想换，\textbf{没有}这种“确定选一个”的纳什均衡。
+\end{itemize}
+猜硬币中，最好的办法是让对方猜不到：各以 $\frac12$ 的概率随机出正反。这叫\textbf{混合策略}，足球点球时罚球员和守门员的选择就是这样。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}[x=1.45cm, y=1cm, every node/.append style={font=\footnotesize}]
+  \gm{抵赖}{坦白}{抵赖}{坦白}{\pay{-1}{-1}}{\pay{-10}{0}}{\pay{0}{-10}}{\pay{-5}{-5}}
+  \draw[devB] (.72,1.83) -- (1.28,1.83);
+  \draw[devB] (.72,.83) -- (1.28,.83);
+  \draw[devA] (.1,1.3) -- (.1,.7);
+  \draw[devA] (1.1,1.3) -- (1.1,.7);
+  \draw[nebox] (1.04,.05) rectangle (1.96,.95);
+\end{tikzpicture}
+\caption{囚徒困境}
+\end{subfigure}\hfill
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}[x=1.45cm, y=1cm, every node/.append style={font=\footnotesize}]
+  \gm{图书馆}{咖啡馆}{图}{咖}{\pay{3}{2}}{\pay{0}{0}}{\pay{0}{0}}{\pay{2}{3}}
+  \draw[devB] (1.28,1.83) -- (.72,1.83);
+  \draw[devB] (.72,.83) -- (1.28,.83);
+  \draw[devA] (.1,.7) -- (.1,1.3);
+  \draw[devA] (1.1,1.3) -- (1.1,.7);
+  \draw[nebox] (.04,1.05) rectangle (.96,1.95);
+  \draw[nebox] (1.04,.05) rectangle (1.96,.95);
+\end{tikzpicture}
+\caption{协调博弈}
+\end{subfigure}\hfill
+\begin{subfigure}{.32\textwidth}\centering
+\begin{tikzpicture}[x=1.45cm, y=1cm, every node/.append style={font=\footnotesize}]
+  \gm{正}{反}{正}{反}{\pay{1}{-1}}{\pay{-1}{1}}{\pay{-1}{1}}{\pay{1}{-1}}
+  \draw[devB] (.72,1.83) -- (1.28,1.83);
+  \draw[devB] (1.28,.83) -- (.72,.83);
+  \draw[devA] (.1,.7) -- (.1,1.3);
+  \draw[devA] (1.1,1.3) -- (1.1,.7);
+\end{tikzpicture}
+\caption{猜硬币}
+\end{subfigure}
+\caption{偏离箭头：蓝箭头表示甲想换行，红箭头表示乙想换列。没有箭头射出的格子（绿框）是纳什均衡。}
+\label{fig:es-arrows}
+\end{figure}
+
+\begin{pitfall}
+\begin{itemize}
+  \item 纳什均衡\textbf{不一定}是对大家最好的结果（囚徒困境），也\textbf{不一定}唯一（协调博弈）。
+  \item “占优策略”是“不论对方怎么做都更好”的策略，不是“结果最好”的策略。
+  \item 检查纳什均衡时，每次只让\textbf{一个人}改变，另一个人的选择保持不动。
+\end{itemize}
+\end{pitfall}
+
+\section{重复博弈：未来的影子}
+
+如果两家企业不是只打一次交道，而是年年都在同一个市场里竞争呢？今天背叛，明天对方可能报复。未来的报复能不能让双方今天就合作？
+
+\paragraph{收益的记号}
+把囚徒困境的四种收益记为：
+\begin{center}
+\small
+\begin{tabular}{llc}
+  \toprule
+  记号 & 含义 & 大小关系 \\
+  \midrule
+  $T$（诱惑） & 我背叛、对方合作时我的收益 & 最大 \\
+  $R$（奖励） & 双方合作时我的收益 & 第二 \\
+  $P$（惩罚） & 双方背叛时我的收益 & 第三 \\
+  $S$（吃亏） & 我合作、对方背叛时我的收益 & 最小 \\
+  \bottomrule
+\end{tabular}
+\end{center}
+下面用 $T=4$，$R=3$，$P=1$，$S=0$ 作例子。
+
+\paragraph{贴现因子}
+明天的 1 分收益，今天看来只值 $\delta$ 分（$0<\delta<1$），后天的只值 $\delta^2$ 分，依此类推。$\delta$ 叫\textbf{贴现因子}，有两种理解：
+\begin{itemize}
+  \item \textbf{耐心}：钱可以生利息，明天的钱不如今天的钱值钱。年利率为 $r$ 时，$\delta=\frac1{1+r}$（见第 6 讲）；
+  \item \textbf{博弈继续的概率}：每一轮结束后，有 $\delta$ 的概率还有下一轮。
+\end{itemize}
+$\delta$ 越大，越看重未来。
+
+\paragraph{冷酷策略}
+“先合作；只要对方背叛过一次，从此永远背叛。”双方都用这个策略时，会一直合作下去。问题是：会不会有人想偷偷背叛一次？
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=1.25cm, y=.42cm]
+  % 一直合作
+  \node[lab, anchor=east] at (-.2,6.4) {一直合作};
+  \foreach \t in {1,...,6} \fill[mjAccent!55] (\t-.35,5) rectangle (\t+.35,8);
+  \foreach \t in {1,...,6} \node[slab] at (\t,8.6) {3};
+  % 背叛一次
+  \node[lab, anchor=east] at (-.2,1.4) {第 1 期背叛};
+  \fill[mjSecond!65] (1-.35,0) rectangle (1+.35,4);
+  \node[slab] at (1,4.6) {4};
+  \foreach \t in {2,...,6} \fill[mjSecond!30] (\t-.35,0) rectangle (\t+.35,1);
+  \foreach \t in {2,...,6} \node[slab] at (\t,1.6) {1};
+  \draw[mj thin] (.4,0) -- (6.9,0); \draw[mj thin] (.4,5) -- (6.9,5);
+  \node[slab] at (7.45,6.4) {$\cdots$}; \node[slab] at (7.45,1) {$\cdots$};
+  \foreach \t/\w in {1/1, 2/\delta, 3/\delta^2, 4/\delta^3, 5/\delta^4, 6/\delta^5}
+    \node[slab] at (\t,-1) {$\w$};
+  \node[slab, anchor=east] at (-.2,-1) {折算系数};
+  \node[slab, mjSecond] at (1,-2.5) {多得 1};
+  \foreach \t in {2,...,6} \node[slab, mjAccent] at (\t,-2.5) {少得 2};
+  \node[slab, anchor=east] at (-.2,-2.5) {背叛比合作};
+\end{tikzpicture}
+\caption{背叛一次：当期多得 $T-R=1$，此后每期少得 $R-P=2$}
+\label{fig:es-repeat}
+\end{figure}
+
+图~\ref{fig:es-repeat} 比较了两条路：
+\begin{itemize}
+  \item 一直合作：\[R+\delta R+\delta^2R+\cdots=\frac{R}{1-\delta};\]
+  \item 第 1 期背叛：当期得 $T$，此后对方永远背叛，自己最好也只能每期得 $P$，合计
+        \[T+\delta P+\delta^2P+\cdots=T+\frac{\delta P}{1-\delta}.\]
+\end{itemize}
+不背叛的条件是
+\[
+  \frac{R}{1-\delta}\ \ge\ T+\frac{\delta P}{1-\delta}
+  \quad\Longleftrightarrow\quad R\ge(1-\delta)T+\delta P
+  \quad\Longleftrightarrow\quad \boxed{\ \delta\ \ge\ \frac{T-R}{T-P}\ } .
+\]
+例子中 $\delta\ge\frac{4-3}{4-1}=\frac13$。
+
+\textbf{怎么理解}：背叛的好处是一次性的（$T-R$），代价却是以后每一期都少得 $R-P$。只要足够看重未来，未来损失的总和就会超过眼前的好处。
+从公式还能读出：诱惑 $T$ 越大，要求的 $\delta$ 越大；惩罚 $P$ 越重（越小），合作越容易维持。
+
+\paragraph{几点补充}
+\begin{itemize}
+  \item \textbf{有限次重复不行}：如果大家都知道博弈恰好进行 10 轮，第 10 轮就是一次性博弈，双方都会背叛；那么第 9 轮的合作也换不来未来的回报……一路倒推，每一轮都背叛。
+        合作需要“没有确定的终点”。
+  \item \textbf{以牙还牙}：“先合作，之后每一轮都照搬对方上一轮的做法”。在政治学家阿克塞尔罗德 1980 年前后组织的计算机博弈比赛中，这个简单策略总成绩最好。
+        它的特点是：善良（不先背叛）、会报复、肯原谅、容易被对方看懂。
+  \item \textbf{现实例子}：少数几家企业长期共处一个市场，容易形成“心照不宣”的高价，所以反垄断机构特别留意这种默契；
+        老店重视回头客，商誉值钱；人与人之间的信任，也常常建立在“以后还要打交道”之上。
+\end{itemize}
+
+\section{先后行动：博弈树与逆向归纳}
+
+有些博弈是一方先动、另一方看到后再动。例如：一家新企业考虑是否进入某个市场，原来独占市场的企业（在位者）看到后，再决定是打价格战还是容忍。
+这样的博弈用\textbf{博弈树}表示（图~\ref{fig:es-tree}），叶子上的括号先写进入者的收益，后写在位者的。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[
+    dec/.style={circle, draw=mjInk, fill=white, line width=.6pt, inner sep=2.2pt},
+    leaf/.style={font=\small},
+    br/.style={draw=mjInk!60, line width=.7pt},
+    pick/.style={draw=mjPine, line width=2.2pt}]
+  \node[dec, label={[lab]above:进入者}] (A) at (0,0) {};
+  \node[dec, label={[lab]right:在位者}] (B) at (2.6,-1.6) {};
+  \node[leaf] (L0) at (-2.6,-1.9) {\pay{0}{10}};
+  \node[leaf] (L1) at (0.8,-3.6) {\pay{-2}{2}};
+  \node[leaf] (L2) at (4.4,-3.6) {\pay{3}{5}};
+  \draw[br] (A) -- node[above left, slab] {不进入} (L0);
+  \draw[pick] (A) -- node[above right, slab] {进入} (B);
+  \draw[br] (B) -- node[left, slab] {打价格战} (L1);
+  \draw[pick] (B) -- node[right, slab] {容忍} (L2);
+  \node[slab, anchor=west, mjPine, align=left] at (5.2,-1.2) {第一步：在位者比较 5 和 2，选“容忍”\\ 第二步：进入者知道这一点，比较 3 和 0，选“进入”};
+\end{tikzpicture}
+\caption{进入博弈。粗绿线是逆向归纳选出的路径。}
+\label{fig:es-tree}
+\end{figure}
+
+\textbf{逆向归纳}：从最后一步往回推。
+\begin{enumerate}
+  \item 如果新企业已经进入了，在位者打价格战得 2，容忍得 5，它会容忍；
+  \item 新企业预见到这一点：进入得 3，不进入得 0，所以进入。
+\end{enumerate}
+结果是（进入，容忍）。在位者事前可以放话“你敢进来我就打价格战”，但这是\textbf{不可信的威胁}：真到那一步，打价格战对它自己也不利。
+
+怎样让威胁变得可信？办法是\textbf{事先把自己的退路堵死}。比如在位者预先建好大量产能，一旦有人进入，打价格战反而对它更有利；
+“破釜沉舟”也是这个道理：把船凿沉，让后退变得不可能，“死战”的决心就可信了。
+
+\begin{oneline}
+找均衡就是找“谁都不想单独改变”的格子；重复让合作有了未来的回报，逆向归纳让空口威胁失效。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item （猎鹿博弈）两名猎人可以合作猎鹿，也可以各自去抓兔子。收益为：都猎鹿 $(4,4)$；甲猎鹿、乙抓兔 $(0,3)$；甲抓兔、乙猎鹿 $(3,0)$；都抓兔 $(3,3)$。
+        画出收益表，找出所有纳什均衡。哪个均衡对双方更好？哪个更“保险”？
+  \item 囚徒困境中 $T=6$，$R=4$，$P=2$，$S=0$。(1) 冷酷策略维持合作需要 $\delta$ 满足什么条件？
+        (2) 若双方不考虑利息，但每一轮结束后有 80\% 的概率进行下一轮，合作能否维持？
+  \item 在图~\ref{fig:es-tree} 的进入博弈中，若在位者事先扩建了产能，使“打价格战”时它的收益从 2 变为 6，其他收益不变。用逆向归纳求新的结果，并说明扩建产能起了什么作用。
+\end{exercises}

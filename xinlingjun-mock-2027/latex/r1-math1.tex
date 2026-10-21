@@ -1,0 +1,366 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力一试 · 数学 1（预测训练卷）
+% 试题卷：latexmk r1-math1.tex
+% 答案版：latexmk -jobname=r1-math1-answers -usepretex='\def\MojingAnswers{true}' r1-math1.tex
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 3 小时（训练设置）}, full=150]{一试 · 数学 1}
+
+\begin{instructions}
+  \item 本卷共 6 题，满分 150 分，建议用时 3 小时。官方未公布一试的题量、时长与分值，本卷安排均为训练设置。
+  \item 数学 1 对应 2027 年考纲中的分析、代数（线性代数、群论）、几何与拓扑，并以中学数学为基础。
+  \item 解答应写出完整的推理、证明与计算过程；只写结果而无论证的，不能得到相应分数。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准，不是官方评分细则。分值标在关键步骤之后，表示做到该步骤累计可得的分数。
+  \item 考生方法与本解答不同时，只要论证严格完整，参照相应步骤的分值给分。
+\end{gradingnotes}
+
+\scoretable{1,2,3,4,5,6}
+
+\begin{questions}
+
+% =============================================================================
+\question[25]
+设 $a>b>0$，椭圆 $E\colon\dfrac{x^2}{a^2}+\dfrac{y^2}{b^2}=1$ 所围的闭区域为 $K$。对 $E$ 上的点 $P$，令 $r(P)$
+为满足“$D\subseteq K$，且 $P$ 在 $D$ 的边界圆上”的闭圆盘 $D$ 的半径的最大值。
+\begin{enumerate}
+  \item 对 $P=(a\cos t,\ b\sin t)$，求 $r(P)$；
+  \item 设 $C$ 是一条二阶连续可微的正则简单闭曲线（切向量处处不为零），它所围的闭区域 $K_C$ 是凸集。对 $C$ 上的点 $P$，
+        令 $r_C(P)$ 为满足“$D\subseteq K_C$，且 $P$ 在 $D$ 的边界圆上”的闭圆盘 $D$ 的半径的上确界，$\rho_C(P)$ 为 $C$ 在 $P$
+        处的曲率半径（曲率为 $0$ 时规定 $\rho_C(P)=+\infty$）。证明 $r_C(P)\le\rho_C(P)$；
+  \item 记 $\rho_E(P)$ 为椭圆 $E$ 在 $P$ 处的曲率半径，求 $E$ 上所有满足 $r(P)=\rho_E(P)$ 的点 $P$；
+  \item 半径为正的闭圆盘 $D\subseteq K$ 称为\emph{极大圆盘}，如果不存在闭圆盘 $D'$ 使 $D\subsetneq D'\subseteq K$。
+        求所有极大圆盘的圆心构成的集合。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+记 $c^2=a^2-b^2$，$S(t)=\sqrt{a^2\sin^2t+b^2\cos^2t}$。答案：(1) $r(P)=\dfrac ba S(t)$；(3) $P=(\pm a,0)$；(4) 线段 $\bigl\{(x,0):\abs x\le\frac{c^2}a\bigr\}$。
+
+(1)~\textbf{圆心在内法线上。} $K$ 是凸集，$E$ 在 $P$ 处的切线 $\ell$ 是支撑线，$K$ 在 $\ell$ 一侧的闭半平面 $H$ 内。
+若合格圆盘 $D$ 的边界圆在 $P$ 处不以 $\ell$ 为切线，则 $\ell$ 穿过 $D$ 的内部，$D$ 含有 $\ell$ 两侧的点，与 $D\subseteq H$ 矛盾。
+外法向与 $(b\cos t,\ a\sin t)$ 同向，故半径为 $r$ 的合格圆盘的圆心只能是
+$O_r=P-\dfrac{r}{S}(b\cos t,\ a\sin t)$。\score{3}
+
+\textbf{候选圆盘。} $O_r$ 的纵坐标为 $\sin t\,(b-ra/S)$。取 $r_0=bS/a$，圆心落在长轴上：$O^*=\bigl(\tfrac{c^2}{a}\cos t,\,0\bigr)$。
+对 $E$ 上的点 $Q=(a\cos s,b\sin s)$，记 $u=\cos s$，$x_0=\tfrac{c^2}{a}\cos t$，则
+\[
+  \abs{QO^*}^2=(au-x_0)^2+b^2(1-u^2)=c^2(u-\cos t)^2+\bigl(b^2+x_0^2-c^2\cos^2t\bigr)\ \ge\ \abs{PO^*}^2=r_0^2 .
+\]
+$O^*$ 在 $K$ 内部，开圆盘 $B(O^*,r_0)$ 连通、不与 $E=\partial K$ 相交，故含于 $K$；于是 $r(P)\ge r_0$。\score{7}
+
+\textbf{不能更大。} 设合格圆盘半径 $r>r_0$。若 $\sin t\ne0$，$O_r$ 的纵坐标 $y_O$ 与 $b\sin t$ 异号；取 $E$ 上的
+$P'=(a\cos t,-b\sin t)\ne P$，则 $\abs{O_rP'}^2-\abs{O_rP}^2=4\,y_O\,b\sin t<0$，$P'\in\partial K$ 落在圆盘内部，
+圆盘含有 $K$ 外的点，矛盾。若 $\sin t=0$，不妨 $P=(a,0)$，圆心 $(a-r,0)$，
+$\varphi(u)=\abs{QO_r}^2=c^2u^2-2a(a-r)u+(a-r)^2+b^2$ 满足 $\varphi(1)=r^2$，$\varphi'(1)=2(ar-b^2)>0$，
+故 $u$ 略小于 $1$ 时 $\varphi(u)<r^2$，同样矛盾。所以 $r(P)=r_0=\dfrac ba\sqrt{a^2\sin^2t+b^2\cos^2t}$。\score{10}
+
+(2)~设 $D\subseteq K_C$ 是半径为 $r>0$ 的合格闭圆盘。凸集 $K_C$ 在 $P$ 处有支撑线，它必是切线 $\ell$（否则正则曲线经过 $P$ 时
+会穿到支撑线两侧），于是圆心在内法线上。取坐标使 $P$ 为原点、$\ell$ 为 $x$ 轴、圆心为 $(0,r)$，$K_C\subseteq\{y\ge0\}$。
+取足够小的矩形 $U=(-\delta,\delta)\times(-\eta,\eta)$，使 $C\cap U$ 恰为二阶连续可微函数 $y=h(x)$ 的图像，
+$h(0)=h'(0)=0$。$U$ 中图像下方的部分连通、含 $(0,-\varepsilon)\notin K_C$ 且不与 $C$ 相交，故整个在 $K_C$ 外；
+所以 $U\cap K_C$ 的点满足 $y\ge h(x)$。\score{13}
+圆的下半弧上的点 $\bigl(x,\ r-\sqrt{r^2-x^2}\bigr)$ 属于 $D\subseteq K_C$，$\abs{x}$ 小时落在 $U$ 中，故
+$r-\sqrt{r^2-x^2}\ge h(x)$。两边除以 $x^2$ 并令 $x\to0$，得 $\dfrac1{2r}\ge\dfrac{h''(0)}2=\dfrac{\kappa}{2}$
+（$h'(0)=0$ 时曲率 $\kappa=\abs{h''(0)}=h''(0)$）。所以 $r\le\rho_C(P)$，取上确界即得结论。\score{16}
+
+(3)~对 $\gamma(t)=(a\cos t,b\sin t)$，$\kappa=\dfrac{\abs{x'y''-x''y'}}{(x'^2+y'^2)^{3/2}}=\dfrac{ab}{S^3}$，
+$\rho_E=\dfrac{S^3}{ab}$。于是
+\[
+  \frac{r(P)}{\rho_E(P)}=\frac{b^2}{S^2}=\frac{b^2}{b^2+c^2\sin^2t},
+\]
+等于 $1$ 当且仅当 $\sin t=0$，即 $P=(\pm a,0)$。\score{20}
+
+(4)~\textbf{极大圆盘必是某个 $D_P$。} 记 $D_P$ 为 (1) 中以 $O^*$ 为圆心、半径 $r(P)$ 的圆盘。设 $D$ 为极大圆盘。
+若 $D\cap E=\varnothing$，则 $D$ 含于 $K$ 的内部，它到 $E$ 的距离 $\delta>0$，同心、半径大 $\frac\delta2$ 的圆盘仍在 $K$ 内且真包含 $D$，矛盾。
+故有 $P\in D\cap E$；$D$ 的内部含于 $K$ 的内部，所以 $P$ 在 $D$ 的边界圆上，$D$ 是 $P$ 处的合格圆盘，圆心为 $O_r$，$r\le r(P)$。\score{22}
+对 $r<r'$，$X\in D(O_r,r)$ 时 $\abs{XO_{r'}}\le\abs{XO_r}+\abs{O_rO_{r'}}\le r+(r'-r)=r'$，即这些圆盘嵌套。所以 $D\subseteq D_P\subseteq K$，
+由极大性 $D=D_P$。\textbf{反之}，若 $D_P\subsetneq D'\subseteq K$，同理 $P$ 在 $D'$ 的边界圆上，$D'$ 是 $P$ 处的合格圆盘；
+它真包含 $D_P$，半径大于 $r(P)$（半径相同而有包含关系的两个圆盘必相同），矛盾。故每个 $D_P$ 都是极大圆盘。
+圆心集合为 $\bigl\{\bigl(\frac{c^2}a\cos t,0\bigr):t\in\R\bigr\}$，即长轴上的闭线段 $\abs x\le\frac{c^2}a$；
+端点对应 $P=(\pm a,0)$ 处的圆盘，也是极大圆盘，必须包含在内（只写开线段的扣 1 分）。\score{25}
+
+\emph{评注}　短轴端点处 $r=b<\rho_E=a^2/b$：曲率给出的只是局部上界，真正挡住圆盘的是对称点 $P'$ 这一整体障碍。
+(4) 的线段端点 $(\pm\frac{c^2}a,0)$ 恰为长轴端点处的曲率中心，与 (3) 中 $r=\rho_E$ 的两点相对应。
+另有 $r(P)=\dfrac ba\sqrt{\abs{PF_1}\abs{PF_2}}$（$F_1,F_2$ 为焦点）。
+\end{solution}
+
+% =============================================================================
+\question[20]
+记 $V$ 为全体以 $2\pi$ 为周期的连续可微实函数构成的集合。对 $f\in V$，记
+$\norm{f}_\infty=\max\limits_{x\in\R}\abs{f(x)}$，$\mathcal E(f)=\displaystyle\int_0^{2\pi}f'(x)^2\,\dd x$。
+\begin{enumerate}
+  \item 求最小的常数 $C_1$，使对一切满足 $f(0)=0$ 的 $f\in V$，都有 $\norm{f}_\infty^2\le C_1\,\mathcal E(f)$；
+  \item 求最小的常数 $C_2$，使对一切满足 $\displaystyle\int_0^{2\pi}f(x)\,\dd x=0$ 的 $f\in V$，都有
+        $\norm{f}_\infty^2\le C_2\,\mathcal E(f)$。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：$C_1=\dfrac\pi2$，$C_2=\dfrac\pi6$。
+
+(1)~对 $x\in(0,2\pi)$，$f(x)=\int_0^xf'=-\int_x^{2\pi}f'$。记 $A=\int_0^xf'^2$，$B=\int_x^{2\pi}f'^2$，由柯西不等式
+$f(x)^2\le xA$，$f(x)^2\le(2\pi-x)B$，所以
+\[
+  f(x)^2\Bigl(\frac1x+\frac1{2\pi-x}\Bigr)\le A+B=\mathcal E(f),\qquad
+  f(x)^2\le\frac{x(2\pi-x)}{2\pi}\,\mathcal E(f)\le\frac\pi2\,\mathcal E(f).
+\]
+\score{6}
+最优性：“帐篷函数” $g(x)=\pi-\abs{x-\pi}$（$x\in[0,2\pi]$，周期延拓）使上式取等：$g(\pi)^2=\pi^2$，$\mathcal E(g)=2\pi$。
+$g$ 只在两个角点处不可导；取连续的周期函数 $\varphi_\varepsilon$，在 $[\varepsilon,\pi-\varepsilon]$ 上为 $1$、在
+$[\pi+\varepsilon,2\pi-\varepsilon]$ 上为 $-1$、其余处线性连接，令 $g_\varepsilon(x)=\int_0^x\varphi_\varepsilon$，则
+$g_\varepsilon\in V$，$g_\varepsilon(0)=0$，且 $g_\varepsilon(\pi)\to\pi$，$\mathcal E(g_\varepsilon)\to2\pi$。故比值可任意接近
+$\pi/2$，$C_1=\pi/2$。\score{10}
+
+(2)~\textbf{表示公式。} 设 $\int_0^{2\pi}f=0$。分部积分：
+\[
+  \int_0^{2\pi}\frac{u-\pi}{2\pi}\,f'(x+u)\,\dd u=\Bigl[\frac{u-\pi}{2\pi}f(x+u)\Bigr]_0^{2\pi}-\frac1{2\pi}\int_0^{2\pi}f(x+u)\,\dd u=f(x).
+\]
+\score{14}
+由柯西不等式，
+\[
+  f(x)^2\le\int_0^{2\pi}\Bigl(\frac{u-\pi}{2\pi}\Bigr)^2\dd u\cdot\mathcal E(f)=\frac{1}{4\pi^2}\cdot\frac{2\pi^3}{3}\,\mathcal E(f)=\frac\pi6\,\mathcal E(f).
+\]
+\score{17}
+取等要求 $f'(x+u)$ 与 $u-\pi$ 成比例，对应的 $f$ 是在一点有角的周期二次样条，均值为零；与 (1) 同样用连续可微函数逼近其导数
+（保持均值为零），比值可任意接近 $\pi/6$，故 $C_2=\pi/6$。\score{20}
+
+\emph{另解}　写 $f=\sum_{k\ne0}c_k\ee^{\ii kx}$，则 $\abs{f(x)}\le\sum\abs{c_k}\le\bigl(\sum k^2\abs{c_k}^2\bigr)^{1/2}\bigl(\sum_{k\ne0}k^{-2}\bigr)^{1/2}$，
+由 Parseval 等式与 $\sum_{k\ne0}k^{-2}=\pi^2/3$ 同样得到 $\pi/6$。两种归一化下常数之比恰为 $3$。
+\end{solution}
+
+% =============================================================================
+\question[25]
+设 $A,B$ 为 $n$ 阶实对称正定矩阵。
+\begin{enumerate}
+  \item 证明：$\displaystyle\int_{\R^n}\ee^{-x\T Ax}\,\dd x=\frac{\pi^{n/2}}{\sqrt{\det A}}$；
+  \item 证明：对任意 $t\in(0,1)$，$\det\bigl(tA+(1-t)B\bigr)\ge(\det A)^t(\det B)^{1-t}$，且 $A\ne B$ 时不等号严格成立；
+  \item 设 $n\ge2$，$e_1,\dots,e_n$ 为 $\R^n$ 的标准基，$s=e_1+\dots+e_n$。对满足 $w_i\ge0$、$\sum_{i=0}^{n}w_i=1$ 的实数
+        $w_0,w_1,\dots,w_n$，令 $M(w)=w_0\,ss\T+\sum_{i=1}^{n}w_i\,e_ie_i\T$。求 $\det M(w)$ 的最大值，并证明取到最大值的 $w$ 唯一。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(3) 最大值为 $(n+1)^{1-n}$，唯一的最大值点是 $w_0=w_1=\dots=w_n=\frac1{n+1}$。
+
+(1)~由谱定理，$A=Q\Lambda Q\T$，$Q$ 正交，$\Lambda=\diag(\lambda_1,\dots,\lambda_n)$，$\lambda_i>0$。作变量替换 $x=Qy$
+（$\abs{\det Q}=1$），积分化为 $\prod_i\int_{\R}\ee^{-\lambda_iy_i^2}\dd y_i=\prod_i\sqrt{\pi/\lambda_i}=\pi^{n/2}/\sqrt{\det A}$。\score{6}
+
+(2)~$tA+(1-t)B$ 正定。由 (1) 及 Hölder 不等式（指数 $\frac1t$ 与 $\frac1{1-t}$），
+\begin{align*}
+  \frac{\pi^{n/2}}{\sqrt{\det(tA+(1-t)B)}}&=\int_{\R^n}\bigl(\ee^{-x\T Ax}\bigr)^t\bigl(\ee^{-x\T Bx}\bigr)^{1-t}\dd x\\
+  &\le\Bigl(\int_{\R^n}\ee^{-x\T Ax}\dd x\Bigr)^t\Bigl(\int_{\R^n}\ee^{-x\T Bx}\dd x\Bigr)^{1-t}
+  =\frac{\pi^{n/2}}{(\det A)^{t/2}(\det B)^{(1-t)/2}} .
+\end{align*}
+整理即得不等式。\score{11}
+Hölder 不等式取等当且仅当两个被积函数几乎处处成比例；它们连续，故 $\ee^{-x\T Ax}=\lambda\ee^{-x\T Bx}$ 处处成立。
+令 $x=0$ 得 $\lambda=1$，于是 $x\T Ax=x\T Bx$ 对一切 $x$ 成立，由极化恒等式 $A=B$。所以 $A\ne B$ 时不等号严格。\score{13}
+（也可写 $A=B^{1/2}CB^{1/2}$，把 $C$ 正交对角化后对特征值用加权均值不等式 $t\lambda+1-t\ge\lambda^t$，取等当且仅当特征值全为 $1$；同样给满分。）
+
+(3)~记 $\Delta=\{w:w_i\ge0,\sum w_i=1\}$。$\det M(w)$ 在紧集 $\Delta$ 上连续，有最大值点 $w^*$；由下面的计算，
+$\det M(w^*)\ge\det M(\bar w)>0$（$\bar w$ 为均匀权重），故 $M(w^*)$ 正定。\score{15}
+
+\textbf{对称性。} 对 $\{1,\dots,n\}$ 的置换 $\sigma$，置换矩阵 $P_\sigma$ 满足 $P_\sigma e_i=e_{\sigma(i)}$，$P_\sigma s=s$。
+记 $\sigma\cdot w$ 为把 $w_1,\dots,w_n$ 按 $\sigma$ 重排、$w_0$ 不动所得的权重，则 $M(\sigma\cdot w)=P_\sigma M(w)P_\sigma\T$，行列式不变。\score{17}
+
+\textbf{严格凹性。} $\Omega=\{w\in\Delta:M(w)\text{ 正定}\}$ 是凸集，由 (2)，$F(w)=\ln\det M(w)$ 在 $\Omega$ 上是凹函数。
+映射 $w\mapsto M(w)$ 是单射（非对角元给出 $w_0$，再由对角元给出 $w_i$），故 $w\ne w'$ 时 $M(w)\ne M(w')$，$F$ 严格凹。
+若 $w^*$ 的 $w_1^*,\dots,w_n^*$ 不全相等，则 $n!$ 个点 $\sigma\cdot w^*$ 不全相同，它们都是最大值点，其平均 $\tilde w$ 满足
+$F(\tilde w)>\frac1{n!}\sum_\sigma F(\sigma\cdot w^*)=F(w^*)$，矛盾。故 $w^*=(1-nu,u,\dots,u)$，$0\le u\le\frac1n$。\score{21}
+
+\textbf{计算。} 此时 $M=uI+(1-nu)\,ss\T$，在 $s^\perp$ 上特征值为 $u$（$n-1$ 重），在 $s$ 方向为 $u+n(1-nu)$。所以
+\[
+  \det M=g(u)=u^{n-1}\bigl(n-(n^2-1)u\bigr),\qquad g'(u)=n(n-1)\,u^{n-2}\bigl(1-(n+1)u\bigr).
+\]
+$g$ 在 $[0,\frac1{n+1}]$ 上递增、在 $[\frac1{n+1},\frac1n]$ 上递减，唯一最大值点 $u=\frac1{n+1}$，此时 $w_0=\frac1{n+1}$，
+最大值 $g\bigl(\frac1{n+1}\bigr)=(n+1)^{1-n}$。\score{25}
+
+\emph{另解}　由矩阵行列式引理（或 Cauchy–Binet 公式），$\det M(w)=\prod_{i\ge1}w_i+w_0\sum_{j\ge1}\prod_{i\ne j}w_i=e_n(w_0,\dots,w_n)$，
+即 $n+1$ 个权重的 $n$ 次初等对称多项式（$[s,e_1,\dots,e_n]$ 的每个 $n$ 阶子式都是 $\pm1$）。再由 Maclaurin 不等式
+$e_n\le\binom{n+1}{n}\bigl(\frac1{n+1}\bigr)^n$，等号当且仅当各 $w_i$ 相等。
+
+\emph{评注}　$\operatorname{tr}M(w)=1+(n-1)w_0$ 随 $w$ 变化，直接对特征值用均值不等式得不到最优界；向量组本身也不对称（$s$ 的长度是 $\sqrt n$），
+最优权重却是均匀的，原因正是“另解”中各子式相等。
+\end{solution}
+
+% =============================================================================
+\question[25]
+对正整数 $n$，$n$ 维立方体图 $Q_n$ 的顶点集为 $\{0,1\}^n$，两个顶点相邻当且仅当它们恰有一个坐标不同。
+
+已知（矩阵树定理）：对有 $N$ 个顶点的连通图 $\Gamma$，记 $D$ 为顶点度数构成的对角矩阵，$A$ 为邻接矩阵，则 $L=D-A$
+的特征值可排成 $0=\mu_1<\mu_2\le\dots\le\mu_N$，且 $\Gamma$ 的生成树个数等于 $\dfrac{\mu_2\mu_3\cdots\mu_N}{N}$。
+\begin{enumerate}
+  \item 求 $Q_n$ 的生成树个数 $\tau_n$；
+  \item 求 $\displaystyle\lim_{n\to\infty}\bigl(\tau_n^{1/2^n}-n\bigr)$。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $\tau_n=2^{2^n-n-1}\prod_{k=1}^nk^{\binom nk}$；(2) $-\dfrac12$。
+
+(1)~对 $S\subseteq\{1,\dots,n\}$，令 $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$。记 $e_i$ 为第 $i$ 个坐标向量，则
+\[
+  (A\chi_S)(x)=\sum_{i=1}^n\chi_S(x+e_i)=\sum_{i=1}^n(-1)^{[i\in S]}\chi_S(x)=(n-2\abs S)\chi_S(x),
+\]
+所以 $L\chi_S=2\abs S\,\chi_S$。\score{8}
+$\sum_x\chi_S(x)\chi_T(x)=2^n[S=T]$，$2^n$ 个 $\chi_S$ 两两正交，构成一组基；故 $L$ 的特征值为 $2k$，重数 $\binom nk$
+（$k=0,\dots,n$）。\score{12}
+由矩阵树定理，$\tau_n=\dfrac{1}{2^n}\prod_{k=1}^n(2k)^{\binom nk}=2^{2^n-n-1}\prod_{k=1}^nk^{\binom nk}$。\score{15}
+
+(2)~\textbf{化为二项分布的对数矩。} 设 $K\sim B(n,\frac12)$，$X=\frac{2K-n}{n}$，则 $\frac{2K}n=1+X$。由 (1)，
+\[
+  L_n:=\frac{\ln\tau_n}{2^n}-\ln n=\Bigl(1-\frac{n+1}{2^n}\Bigr)\ln2+E\bigl[\ln K;\,K\ge1\bigr]-\ln n
+  =E\bigl[\ln(1+X);\,K\ge1\bigr]-\frac{n\ln2+\ln n}{2^n}.
+\]
+\score{17}
+$2K-n$ 是 $n$ 个独立、等可能取 $\pm1$ 的变量之和，所以 $EX=EX^3=0$，$EX^2=\frac1n$，$EX^4=\frac{3n^2-2n}{n^4}\le\frac3{n^2}$。\score{19}
+
+\textbf{Taylor 估计。} 对 $x>-1$，$\ln(1+x)=x-\frac{x^2}2+\frac{x^3}3+h(x)$，$h(x)=-\int_0^x\frac{t^3}{1+t}\dd t$；$x\ge-\frac12$ 时
+$\abs{h(x)}\le\frac{x^4}2$。令 $G=\{X\ge-\frac12\}$，由 Markov 不等式 $P(G^c)\le16\,EX^4\le\frac{48}{n^2}$。
+在 $G^c\cap\{K\ge1\}$ 上 $\frac2n\le1+X<1$，$\abs{\ln(1+X)}\le\ln n$；又 $\abs X\le1$ 时 $\abs{X-\frac{X^2}2+\frac{X^3}3}\le2$。于是
+\[
+  E\bigl[\ln(1+X);K\ge1\bigr]=E\Bigl[X-\frac{X^2}2+\frac{X^3}3\Bigr]+R_n=-\frac1{2n}+R_n,\qquad
+  \abs{R_n}\le\frac{96}{n^2}+\frac{3}{2n^2}+\frac{48\ln n}{n^2}.
+\]
+所以 $L_n=-\frac1{2n}+O\bigl(\frac{\ln n}{n^2}\bigr)$。\score{23}
+
+\textbf{结论。} $\tau_n^{1/2^n}-n=n\bigl(\ee^{L_n}-1\bigr)$，$L_n\to0$ 时 $\ee^{L_n}-1=L_n+O(L_n^2)$，故
+$\tau_n^{1/2^n}-n=nL_n+O(nL_n^2)=-\frac12+O\bigl(\frac{\ln n}{n}\bigr)\to-\frac12$。\score{25}
+
+\emph{评注}　一阶结论 $\tau_n^{1/2^n}\sim n$ 说生成树数“按每个顶点平均”约为 $n$ 个选择，凭印象也能猜到；本题要的是下一项 $-\frac12$，
+它来自 $E\ln(1+X)\approx-\frac12EX^2$，即二项分布的方差。数值上 $n=1000$ 时 $\tau_n^{1/2^n}-n\approx-0.5006$；再下一项为 $-\frac5{8n}$。
+\end{solution}
+
+% =============================================================================
+\question[25]
+设 $G$ 为有限群，$Z(G)$ 为其中心。从 $G$ 中独立、均匀地随机选取两个元素 $x,y$，记 $P(G)$ 为 $xy=yx$ 的概率。
+\begin{enumerate}
+  \item 设 $G$ 共有 $k(G)$ 个共轭类，证明 $P(G)=\dfrac{k(G)}{\abs G}$；
+  \item 设 $p$ 为素数。考虑所有满足“$G$ 不是交换群，且 $\abs G$ 的每个素因子都不小于 $p$”的有限群 $G$。求 $P(G)$ 的最大值（用 $p$ 表示），
+        并证明：这样的 $G$ 使 $P(G)$ 取到最大值，当且仅当 $[G:Z(G)]=p^2$；
+  \item 设 $G$ 满足 (2) 的条件且 $P(G)$ 取到最大值。证明：$G$ 的换位子群 $G'$（由全体 $x^{-1}y^{-1}xy$ 生成的子群）是 $p$ 阶群，
+        且 $G'\subseteq Z(G)$；并对每个素因子都不小于 $p$、且被 $p^3$ 整除的正整数 $N$，构造一个取到最大值的 $N$ 阶群。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(2) 最大值为 $\dfrac{p^2+p-1}{p^3}$；$p=2$ 时为 $\frac58$，$p=3$ 时为 $\frac{11}{27}$。
+
+(1)~满足 $xy=yx$ 的有序对个数为 $\sum_x\abs{C(x)}$，$C(x)$ 为中心化子。$G$ 以共轭作用于自身，$x$ 的轨道为共轭类
+$\mathrm{cl}(x)$，稳定子为 $C(x)$，故 $\abs{C(x)}=\abs G/\abs{\mathrm{cl}(x)}$，
+\[
+  \sum_{x\in G}\abs{C(x)}=\abs G\sum_{\text{共轭类 }\mathcal K}\ \sum_{x\in\mathcal K}\frac1{\abs{\mathcal K}}=\abs G\,k(G).
+\]
+除以 $\abs G^2$ 即得。\score{5}
+
+(2)~记 $Z=Z(G)$，$z=\abs Z/\abs G$。
+
+\textbf{引理}：若 $G/Z$ 为循环群，则 $G$ 交换。设 $G/Z=\langle gZ\rangle$，则每个元素形如 $g^iz$（$z\in Z$），两两可交换。\score{8}
+
+$G$ 不交换，故 $G/Z$ 不循环，$\abs{G/Z}\ne1$ 且不是素数；它的素因子都 $\ge p$，所以 $\abs{G/Z}\ge p^2$，$z\le\frac1{p^2}$。
+非中心元素的共轭类大小大于 $1$ 且整除 $\abs G$，故 $\ge p$。于是
+\[
+  k(G)\le\abs Z+\frac{\abs G-\abs Z}{p},\qquad P(G)\le z+\frac{1-z}{p}=\frac1p+z\Bigl(1-\frac1p\Bigr)\le\frac1p+\frac1{p^2}\Bigl(1-\frac1p\Bigr)=\frac{p^2+p-1}{p^3}.
+\]
+\score{13}
+\textbf{取等条件。} 若 $P(G)$ 等于上界，最后一步要求 $z=\frac1{p^2}$，即 $[G:Z]=p^2$。反之设 $[G:Z]=p^2$。对非中心元 $x$，
+$Z\subsetneq C(x)\subsetneq G$（$x\in C(x)\setminus Z$），$[G:C(x)]\cdot[C(x):Z]=p^2$ 且两个因子都大于 $1$，故 $[G:C(x)]=p$，
+共轭类大小都是 $p$，两处不等号都取等。\score{16}
+\textbf{最大值确能取到}：见 (3) 中的 $H_p$，故最大值为 $\frac{p^2+p-1}{p^3}$。\score{17}
+
+(3)~\textbf{$G'\subseteq Z$。} 由 (2)，$[G:Z]=p^2$，$G/Z$ 是 $p^2$ 阶非循环群，从而交换，且每个元素的 $p$ 次方在 $Z$ 中。
+记 $[a,b]=a^{-1}b^{-1}ab$。$G/Z$ 交换，故一切 $[a,b]\in Z$，$G'\subseteq Z$。\score{19}
+\textbf{双线性。} 换位子都在中心时，$[ab,c]=b^{-1}(a^{-1}c^{-1}a)bc=b^{-1}[a,c]c^{-1}bc=[a,c][b,c]$，同理 $[a,bc]=[a,b][a,c]$；
+又中心元与一切元素的换位子为 $1$。取 $x,y$ 使 $xZ,yZ$ 生成 $G/Z$，则每个元素形如 $x^iy^jz$（$z\in Z$），于是
+$[x^iy^jz,\ x^ky^lz']=[x,y]^{il-jk}$：所有换位子都是 $[x,y]$ 的幂，$G'=\langle[x,y]\rangle$。\score{22}
+\textbf{阶为 $p$。} $[x,y]^p=[x^p,y]=1$（$x^p\in Z$）。又 $[x,y]\ne1$，否则 $G'=\{1\}$，$G$ 交换。所以 $\abs{G'}=p$。\score{23}
+
+\textbf{构造。} $H_p=\Bigl\{\begin{psmallmatrix}1&a&c\\0&1&b\\0&0&1\end{psmallmatrix}:a,b,c\in\F_p\Bigr\}$，$\abs{H_p}=p^3$。
+记为 $(a,b,c)$，则 $(a,b,c)(a',b',c')=(a+a',b+b',c+c'+ab')$，两元可交换当且仅当 $ab'=a'b$，中心为 $\{a=b=0\}$，阶 $p$。
+令 $G=H_p\times C_{N/p^3}$（$C_m$ 为 $m$ 阶循环群），则 $\abs G=N$，$G$ 不交换，$Z(G)=Z(H_p)\times C_{N/p^3}$，$[G:Z(G)]=p^2$，
+由 (2) 取到最大值。\score{25}
+
+\emph{评注}　$p=2$ 是 Gustafson 的“$\frac58$ 定理”。由 (1)，取到最大值时 $p^3k(G)=(p^2+p-1)\abs G$，而 $p\nmid p^2+p-1$，
+所以 $p^3\mid\abs G$ 只是算术推论；(3) 要的是结构：换位子群恰为 $p$ 阶中心子群。
+例如 $p=2$ 时 $12$ 阶群都达不到 $\frac58$（其中非交换群的 $P$ 为 $\frac13$ 或 $\frac12$），$24$ 阶群 $D_4\times C_3$ 达到。
+\end{solution}
+
+% =============================================================================
+\question[30]
+把正方形 $[0,1]\times[0,1]$ 的对边按 $(x,0)\sim(x,1)$、$(0,y)\sim(1,y)$ 粘合，得到环面 $\mathbb T$。称有限简单图 $\Gamma$
+可以嵌入 $\mathbb T$，如果能把 $\Gamma$ 的顶点画成 $\mathbb T$ 上互不相同的点，把每条边画成 $\mathbb T$ 上连接其两个端点的简单曲线，
+每条边的内部不经过任何顶点，并且任意两条边除公共端点外不相交。
+
+已知：若连通图 $\Gamma$ 有 $V$ 个顶点、$E$ 条边，嵌入 $\mathbb T$ 后把 $\mathbb T$ 分成 $F$ 个连通区域，则 $V-E+F\ge0$。
+\begin{enumerate}
+  \item 对整数 $n\ge7$，求 $n$ 个顶点的、可以嵌入 $\mathbb T$ 的简单图的边数的最大值 $e(n)$；
+  \item 若图的顶点可以分成两组，使每条边的两个端点分属两组，称它为二部图。对整数 $n\ge8$，求 $n$ 个顶点的、可以嵌入 $\mathbb T$
+        的简单二部图的边数的最大值 $b(n)$；
+  \item 求最小的正整数 $k$，使每个可以嵌入 $\mathbb T$ 的有限简单图都能用 $k$ 种颜色给顶点正常染色（有边相连的两顶点颜色不同）。
+\end{enumerate}
+\answerspace{2cm}
+\begin{solution}
+答案：(1) $e(n)=3n$；(2) $b(n)=2n$；(3) $k=7$。
+
+(1)~\textbf{上界 $E\le3V$。} 设图嵌入 $\mathbb T$。对每个连通分支 $\Gamma_0$（$V_0$ 个顶点、$E_0$ 条边、单独嵌入时把 $\mathbb T$
+分成 $F$ 个区域）证明 $E_0\le3V_0$ 即可。若 $\Gamma_0$ 是树，$E_0=V_0-1$。否则 $\Gamma_0$ 含圈。设区域 $f$ 的边界组成子图 $H$；
+若 $H$ 是森林，则 $\mathbb T\setminus H$ 连通（每棵树有圆盘状小邻域，圆盘去掉树仍连通且与圆盘边界相连，环面挖去若干小圆盘仍连通），
+而 $f$ 在 $\mathbb T\setminus H$ 中既开又闭，于是 $f=\mathbb T\setminus H$，$\Gamma_0\subseteq H$，矛盾。故每个区域的边界含圈，
+至少含 $3$ 条边；每条边至多在两个区域的边界上，所以 $3F\le2E_0$。代入 $V_0-E_0+F\ge0$ 得 $E_0\le3V_0$。\score{7}
+
+\textbf{构造。} 在平面上取以 $\Z^2$ 为顶点、以向量 $(1,0),(0,1),(1,1)$ 方向的单位线段为边的三角剖分（每个单位正方形沿对角线切开）。
+给顶点 $(x,y)$ 标号 $x+2y\bmod n$，并令 $\Lambda_n=\{(x,y)\in\Z^2:x+2y\equiv0\pmod n\}$，它以 $(n,0),(-2,1)$ 为基，指数为 $n$。
+剖分在 $\Lambda_n$ 平移下不变，故投影到环面 $\R^2/\Lambda_n$（经把 $(n,0),(-2,1)$ 分别映为 $(1,0),(0,1)$ 的线性变换，它同胚于 $\mathbb T$）。
+投影后顶点恰为 $\Z_n$ 中 $n$ 个点，顶点 $v$ 与 $v\pm1,v\pm2,v\pm3$ 相邻；$n\ge7$ 时这 $6$ 个数模 $n$ 互不相同且非零，
+所以无自环、无重边，每个顶点度数为 $6$，共 $3n$ 条边，且各边只在端点相交。故 $e(n)=3n$。\score{12}
+
+(2)~\textbf{上界 $E\le2V$。} 二部图中的圈长度都是偶数，简单图中圈长 $\ge3$，故二部图的圈长 $\ge4$。沿用 (1) 的论证：
+每个区域的边界含圈，至少含 $4$ 条边，$4F\le2E_0$，代入 $V_0-E_0+F\ge0$ 得 $E_0\le2V_0$（树的分支 $E_0=V_0-1$）。\score{16}
+\textbf{构造（$n$ 为偶数）。} 改用正方形格：以 $\Z^2$ 为顶点、$(1,0),(0,1)$ 方向的单位线段为边。顶点 $(x,y)$ 标号 $x+3y\bmod n$，
+$\Lambda'_n=\{x+3y\equiv0\pmod n\}$ 以 $(n,0),(-3,1)$ 为基，同 (1) 投影到环面。顶点 $v$ 与 $v\pm1,v\pm3$ 相邻，$n\ge8$ 时这 $4$ 个数模 $n$
+互不相同且非零，得到 $4$ 正则简单图，共 $2n$ 条边；相邻顶点标号之差为奇数而 $n$ 为偶数，按标号奇偶分组即知是二部图。
+每个单位正方形投影为四边形区域 $v,v+1,v+4,v+3$。$n=8$ 时它就是 $K_{4,4}$。\score{20}
+\textbf{构造（$n$ 为奇数，$n\ge9$）。} 取 $n-1$ 个顶点的上述图，在某个四边形区域 $v,v+1,v+4,v+3$ 内放一个新顶点，连向对角的 $v$ 与 $v+4$
+（二者同奇偶）。新边在区域内部、互不相交，图仍是简单二部图，边数 $2(n-1)+2=2n$。故 $b(n)=2n$。\score{22}
+
+(3)~\textbf{上界。} 由 (1) 的 $E\le3V$，每个可嵌入的图都有度数 $\le6$ 的顶点；去掉它后仍可嵌入，按顶点数归纳，
+先用 $7$ 色染其余顶点，该顶点的邻点至多用 $6$ 色，留一种给它。\score{27}
+\textbf{下界。} $n=7$ 时 (1) 的构造有 $21=\binom72$ 条边，就是完全图 $K_7$，它需要 $7$ 种颜色。故 $k=7$。\score{30}
+
+\emph{评注}　(1)(3) 是 Heawood 关于环面的经典结论；(2) 把同一个“面至少几条边”的计数换到二部图上，构造也从三角格换成正方形格。
+$n=7$ 时 $b(7)\le3\times4=12<14$，所以 (2) 要求 $n\ge8$。
+
+\begin{center}
+\begin{minipage}{\linewidth}
+\centering
+\begin{tikzpicture}[scale=4.2]
+  \draw[mj aux] (0,0) rectangle (1,1);
+  \begin{scope}
+    \clip (0,0) rectangle (1,1);
+    \foreach \k in {0,...,6} {
+      \pgfmathsetmacro{\px}{mod(\k,7)/7}
+      \pgfmathsetmacro{\py}{mod(3*\k,7)/7}
+      \foreach \a in {-1,0,1} { \foreach \b in {-1,0,1} {
+        \draw[mjIndigo, line width=.6pt] (\px+\a,\py+\b) -- ++(1/7,3/7);
+        \draw[mjPine, line width=.6pt] (\px+\a,\py+\b) -- ++(2/7,-1/7);
+        \draw[mjVermilion, line width=.6pt] (\px+\a,\py+\b) -- ++(3/7,2/7);
+      }}
+    }
+  \end{scope}
+  \foreach \k in {0,...,6} {
+    \pgfmathsetmacro{\px}{mod(\k,7)/7}
+    \pgfmathsetmacro{\py}{mod(3*\k,7)/7}
+    \fill (\px,\py) circle (.012) node[above right, font=\scriptsize, inner sep=1pt] {$\k$};
+  }
+\end{tikzpicture}
+
+{\small $n=7$ 的情形：$P_k=(\{\frac k7\},\{\frac{3k}7\})$，三种颜色分别连到 $P_{k+1},P_{k+2},P_{k+3}$，得到 $K_7$}
+\end{minipage}
+\end{center}
+\end{solution}
+
+\end{questions}
+\end{paper}
+\end{document}

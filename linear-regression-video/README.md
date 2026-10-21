@@ -1,6 +1,8 @@
 # 线性回归：从一条直线，到一次投影
 
-一支讲线性回归的中文教学视频：最小二乘为什么取平方、两个偏导条件从哪来、为什么它其实是一次正交投影、R² 的几何意义、“线性”指什么、“回归”这个名字从哪来。画面、字幕、铺底音乐全部由本目录的代码生成；配音用通义千问语音合成接口（默认模型 `Qwen-Audio-3.0-TTS-Plus`）。
+一支讲线性回归的中文教学视频：最小二乘为什么取平方、两个偏导条件从哪来、为什么它其实是一次正交投影、R² 的几何意义、“线性”指什么、“回归”这个名字从哪来。画面、字幕、铺底音乐全部由本目录的代码生成；配音用阿里云百炼的通义千问语音合成（模型 `qwen-audio-3.0-tts-plus`，音色龙安灵心）。
+
+成片：[`output/linear-regression.mp4`](output/linear-regression.mp4)（11 分 49 秒，1080p30，H.264 + AAC，约 27 MB，带章节，中文配音，字幕压在画面里），字幕另附 [`output/linear-regression.srt`](output/linear-regression.srt)。
 
 讲法沿用仓库里 [`explain-concepts-clearly`](../.claude/skills/explain-concepts-clearly/SKILL.md) 和 [`math-lecture-writing`](../.claude/skills/math-lecture-writing/SKILL.md) 两个技能的要求：先说清对象（残差、残差平方和、拟合值向量），再从定义推出关键公式（两个偏导条件 → 斜率公式 → 正规方程），分清对象与表示（拟合值 ŷ 是平面上的点，a、b 只是它在一组基下的坐标），历史只保留能解释定义的转折，并标出关联不等于因果、平方对离群点敏感这两条边界。
 
@@ -16,11 +18,11 @@
 | 五 · 为什么叫回归 | `Galton` | 高尔顿的身高研究；标准化后斜率是 r，|r| < 1，预测值向平均收；y 对 x 与 x 对 y 是两条不同的线 |
 | 尾声 | `Finale` | 三句话总结；一个离群点把斜率从 4 拽到 1.8 |
 
-画面里的数都由 [`src/data.py`](src/data.py) 算出（`python src/data.py` 打印核对表）：x̄ = 6.5，ȳ = 77，Sxx = 82.5，Sxy = 330，b = 4，a = 51，残差为 3, −6, 10, −4, −3, −9, 4, 6, 2, −3；SST = 1636，SSR = 1320，SSE = 316，R² = 0.807，r = 0.898。三点例子 a = 1.5，b = 0.5，残差 (−0.5, 1, −0.5)。
+画面里的数都由 [`src/data.py`](src/data.py) 算出（`python src/data.py` 打印核对表）：x̄ = 6.5，ȳ = 77，Sxx = 82.5，Sxy = 330，b = 4，a = 51，残差为 3, −6, 10, −4, −3, −9, 4, 6, 2, −3；SST = 1636，SSR = 1320，SSE = 316，R² = 0.807，r = 0.898。三点例子 (0, 0)、(1, 4)、(2, 2)：a = 1，b = 1，拟合值 (1, 2, 3)，残差 (−1, 2, −1)。
 
 ## 配音
 
-`src/tts.py` 逐句调用通义千问语音合成，句子文字、模型、音色都没变时复用缓存。密钥只从环境变量或本目录的 `.env` 读取，`.env` 已被 `.gitignore` 排除，不要提交：
+`src/tts.py` 逐句调用百炼的 SpeechSynthesizer 流式接口，句子文字、模型、音色、语速都没变时复用缓存。音频以 base64 分块直接放在流式事件里返回，不需要再去 OSS 下载；同时取回逐字时间戳，合成时用它决定每段字幕何时出现。密钥只从环境变量或本目录的 `.env` 读取，`.env` 已被 `.gitignore` 排除，不要提交：
 
 ```bash
 cp .env.example .env      # 填入 QWEN_TTS_API_KEY
@@ -29,14 +31,25 @@ cp .env.example .env      # 填入 QWEN_TTS_API_KEY
 | 变量 | 默认值 | 说明 |
 | --- | --- | --- |
 | `QWEN_TTS_API_KEY` | —— | 必填，也认 `DASHSCOPE_API_KEY` |
-| `QWEN_TTS_MODEL` | `Qwen-Audio-3.0-TTS-Plus` | |
-| `QWEN_TTS_VOICE` | `Cherry` | |
-| `QWEN_TTS_BASE_URL` | `https://dashscope.aliyuncs.com` | |
-| `QWEN_TTS_PROTOCOL` | `dashscope` | `dashscope` 为百炼原生多模态生成接口；`openai` 为 `/v1/audio/speech` 兼容接口 |
+| `QWEN_TTS_MODEL` | `qwen-audio-3.0-tts-plus` | 每万字符 1.4 元（一个汉字算 2 个字符），全片约 5800 字符，合成一遍不到 1 元 |
+| `QWEN_TTS_VOICE` | `longanlingxin` | 龙安灵心，plus 模型的系统音色；音色必须属于所选模型 |
+| `QWEN_TTS_RATE` | `0.95` | 语速，0.5–2.0 |
+| `QWEN_TTS_BASE_URL` | `https://dashscope.aliyuncs.com` | 中国内地的密钥；国际站密钥用 `https://dashscope-intl.aliyuncs.com` |
+| `QWEN_TTS_PROTOCOL` | `speech` | `speech` 为 SpeechSynthesizer 流式接口（Qwen-Audio-TTS、CosyVoice）；`dashscope` 为多模态生成接口（`qwen3-tts-flash` 等，返回 OSS 下载链接，运行环境还要能访问 OSS 域名）；`openai` 为 `/v1/audio/speech` 兼容接口 |
 
-百炼原生接口返回的是音频下载链接，运行环境除了能访问接口域名，还要能访问返回链接所在的 OSS 域名。
+运行环境需要能访问 `dashscope.aliyuncs.com`。
 
-旁白稿在 [`src/narration.py`](src/narration.py)，每句分字幕文字和配音文字两份：字幕里可以写 ŷ、Xᵀ、1805，配音文字写成“y 帽”“X 转置”“一八零五”。
+旁白稿在 [`src/narration.py`](src/narration.py)，每句分字幕文字和配音文字两份：字幕里可以写 ŷ、Xᵀ、1805、x²，配音文字写成“y 帽”“X 转置”“一八零五”“x 平方”。这一步不能省：语音接口会把上下标直接丢掉（e₁² 念成“e”、R² 念成“R”），β 前后会多出停顿。两份文字的标点要一一对应（数字、记号的写法可以不同），字幕按标点断开，每段的出现时间按配音文字里对应标点之后第一个字的时间戳定。
+
+多音字写在 `narration.PINYIN` 里，按拼音固定读音（残差、离差、标准差的“差”，得先的“得”，时长的“长”，转动的“转”……）。只写带声调的音节，轻声音节（如 `le5`）会被读成别的字。
+
+合成之后用语音识别回听：
+
+```bash
+cd src && ../.venv/bin/python check.py      # 每句送进 qwen3-asr-flash，和配音文字对照，按字错误率列出可疑的句子
+```
+
+当前 96 句平均字错误率约 0.4%，剩下的差异都是同音字（全一 / 权一、他 / 它）。多音字读错时识别结果仍是同一个字，查不出来，所以由 PINYIN 固定。
 
 ## 制作方式
 

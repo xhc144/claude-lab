@@ -6,6 +6,7 @@ import {
 import type { AccentId, AccountSummary, BlockedSender, Settings as SettingsT } from '@shared/types';
 import { useApp } from '../store';
 import { api, errorMessage } from '../api';
+import { copyOnClick } from '../lib/copy';
 import { Button, cx, Field, LogoMark, Modal, Segmented, Switch } from './ui';
 import { AddAccount } from './AddAccount';
 import { SHORTCUTS } from '../lib/shortcuts';
@@ -91,7 +92,7 @@ function AccountDetail({ account, onReauth }: { account: AccountSummary; onReaut
       <div className="acct-detail-head">
         <span className="acct-avatar" style={{ background: account.color }}>{account.email[0].toUpperCase()}</span>
         <div>
-          <h3>{account.email}</h3>
+          <h3><span {...copyOnClick(account.email, { label: '已复制邮箱地址' })}>{account.email}</span></h3>
           <span className="muted">{account.providerName} · {account.authType === 'oauth2' ? 'OAuth2 登录' : '密码登录'} · {account.status.state === 'error' ? <span className="text-danger">{account.status.diagnosis?.title || '连接异常'}</span> : account.enabled ? '正常' : '已停用'}</span>
         </div>
       </div>
@@ -119,9 +120,9 @@ function AccountDetail({ account, onReauth }: { account: AccountSummary; onReaut
         <SignatureEditor account={account} />
       </Group>
       <Group title="服务器">
-        <Row title="收信 (IMAP)"><span className="mono">{account.imap.host}:{account.imap.port} · {account.imap.security.toUpperCase()}</span></Row>
-        <Row title="发信 (SMTP)"><span className="mono">{account.smtp.host}:{account.smtp.port} · {account.smtp.security.toUpperCase()}</span></Row>
-        <Row title="用户名"><span className="mono">{account.username}</span></Row>
+        <Row title="收信 (IMAP)"><span className="mono"><span {...copyOnClick(account.imap.host, { label: '已复制服务器地址' })}>{account.imap.host}</span>:{account.imap.port} · {account.imap.security.toUpperCase()}</span></Row>
+        <Row title="发信 (SMTP)"><span className="mono"><span {...copyOnClick(account.smtp.host, { label: '已复制服务器地址' })}>{account.smtp.host}</span>:{account.smtp.port} · {account.smtp.security.toUpperCase()}</span></Row>
+        <Row title="用户名"><span className="mono" {...copyOnClick(account.username, { label: '已复制用户名' })}>{account.username}</span></Row>
         <div className="set-actions">
           <Button icon={<KeyRound size={15} />} onClick={onReauth}>{account.authType === 'oauth2' ? '重新授权 / 修改设置' : '修改密码 / 服务器设置'}</Button>
           <Button icon={<Stethoscope size={15} />} onClick={() => s.openModal({ type: 'diagnose', accountId: account.id })}>诊断连接</Button>

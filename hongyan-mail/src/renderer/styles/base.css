@@ -576,6 +576,50 @@ mark {
   }
 }
 
+/* One-click copy: copyable text shows a pointer and a soft hover; the bubble confirms where the user clicked. */
+[data-copyable] {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color var(--t-fast, 0.12s), color var(--t-fast, 0.12s);
+}
+[data-copyable]:hover {
+  color: var(--text);
+  background: var(--hover);
+}
+[data-copyable]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+[data-copyable]:active {
+  background: var(--accent-soft);
+}
+.copied-bubble {
+  position: fixed;
+  z-index: 1100;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 9px 4px 7px;
+  border-radius: 999px;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: #fff;
+  background: color-mix(in srgb, var(--success, #2f9e6b) 92%, black);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.16);
+  white-space: nowrap;
+  opacity: 0;
+  transform: translateY(4px) scale(0.96);
+  transition: opacity 0.16s var(--ease-out), transform 0.2s var(--ease-out);
+}
+.copied-bubble.is-below {
+  transform: translateY(-4px) scale(0.96);
+}
+.copied-bubble.is-shown {
+  opacity: 1;
+  transform: none;
+}
+
 .menu-layer {
   position: fixed;
   inset: 0;

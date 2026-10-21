@@ -112,7 +112,7 @@ function run(cmd, args, opts) {
     child.stdout.on('data', (d) => { out += d; opts.onData?.(String(d)); });
     child.stderr.on('data', (d) => { out += d; opts.onData?.(String(d)); });
     child.on('error', (e) => { clearTimeout(timer); resolve({ code: -1, out: out + '\n' + e.message, killed }); });
-    child.on('close', (code) => { clearTimeout(timer); resolve({ code, out, killed }); });
+    child.on('close', (code, signal) => { clearTimeout(timer); resolve({ code: code ?? -1, signal: signal || null, out, killed }); });
   });
 }
 
@@ -130,7 +130,10 @@ export async function compileOnce(engine, dir, { passes = 1, onData, timeout, of
     args.push('main.tex');
     result = await run(engine.path, args, { cwd: dir, env, onData, timeout });
     // A package missing from the bundled cache: try once more online.
-    if (result.code !== 0 && offline && engine.cache && /not (found|available)|only-cached|cached/i.test(result.out) && !/main\.tex:\d+:/.test(result.out)) {
+    // A package or font metric missing from the bundled cache: try once more online.
+    const missing = /not loadable: Metric \(TFM\)|could not be found in the bundle|not found in the cache|only-cached/i.test(result.out)
+      || (/not (found|available)|cached/i.test(result.out) && !/main\.tex:\d+:/.test(result.out));
+    if (result.code !== 0 && offline && engine.cache && missing) {
       result = await run(engine.path, ['--keep-logs', '--chatter', 'minimal', 'main.tex'], { cwd: dir, env, onData, timeout });
     }
   } else {
@@ -148,7 +151,7 @@ export async function compileOnce(engine, dir, { passes = 1, onData, timeout, of
   const pdf = path.join(dir, 'main.pdf');
   const ok = result.code === 0 && exists(pdf);
   const errors = ok ? [] : parseLog(log + '\n' + result.out);
-  return { ok, pdf: ok ? pdf : null, log, out: result.out, errors, killed: result.killed };
+  return { ok, pdf: ok ? pdf : null, log, out: result.out, errors, killed: result.killed, code: result.code, signal: result.signal || null };
 }
 
 export function cleanAux(dir) {

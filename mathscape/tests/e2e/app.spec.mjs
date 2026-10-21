@@ -1,12 +1,13 @@
 import { test, expect } from '@playwright/test';
 import { watchErrors, open, canvasStats, state, APP } from './helpers.mjs';
 
-test('loads, shows four modules and switches by click, hash and keyboard', async ({ page }) => {
+test('loads, shows all modules and switches by click, hash and keyboard', async ({ page }) => {
   const check = watchErrors(page);
   await open(page, '');
-  await expect(page).toHaveURL(/#\/matrix$/);
+  await expect(page).toHaveURL(/#\/$/); // the start page
   const items = page.locator('.nav-item');
-  await expect(items).toHaveCount(4);
+  await expect(items).toHaveCount(12);
+  await page.locator('#home-modules .mcard').first().click();
   await expect(page.locator('#module-title')).toHaveText('矩阵线性变换');
 
   await items.nth(1).click();
@@ -97,7 +98,7 @@ test('a shared link opened in the same tab applies its state even within the sam
 test('mobile layout: panel stacks under the stage without horizontal overflow', async ({ browser }) => {
   const page = await browser.newPage({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2 });
   const check = watchErrors(page);
-  for (const hash of ['#/matrix', '#/complex', '#/ode', '#/threebody']) {
+  for (const hash of ['#/matrix', '#/complex', '#/ode', '#/threebody', '#/fractal', '#/fourier', '#/chaos', '#/life', '#/symmetry', '#/probability', '#/waves', '#/primes', '#/primes?v=count']) {
     await open(page, hash);
     const m = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, w: innerWidth, stage: document.querySelector('#stage').getBoundingClientRect().height, panelTop: document.querySelector('#panel').getBoundingClientRect().top }));
     expect(m.sw, hash).toBeLessThanOrEqual(m.w + 1);

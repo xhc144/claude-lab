@@ -13,7 +13,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(path.join(root, 'package.json'));
 const run = (script, ...args) => execFileSync(process.execPath, [path.join(root, script), ...args], { stdio: 'inherit', cwd: root });
 
-run('scripts/build.mjs');
+run('scripts/build.mjs', '--native=win32-x64');
 run('scripts/gen-skill-docs.mjs');
 run('scripts/fetch-ffmpeg.mjs', '--platform', 'win32', '--arch', 'x64');
 

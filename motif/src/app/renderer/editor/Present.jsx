@@ -32,7 +32,7 @@ export function Present({ onClose, startScene }) {
         const dpr = Math.min(2, devicePixelRatio || 1);
         const cw = Math.round(W * k * dpr), ch = Math.round(H * k * dpr);
         if (c.width !== cw) { c.width = cw; c.height = ch; c.style.width = `${W * k}px`; c.style.height = `${H * k}px`; }
-        editor.engine.render(s.t, c.getContext('2d'), { scale: cw / W });
+        editor.engine.render(s.t, c.getContext('2d'), { scale: cw / W, live: true, playing: true });
       }
       const idx = Math.max(0, scenes.findIndex((x) => s.t >= x.start && s.t < x.end));
       if (idx !== s.idx) { s.idx = idx; force((n) => n + 1); }

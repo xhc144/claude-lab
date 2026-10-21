@@ -1,0 +1,229 @@
+% =============================================================================
+\lecture[number=3, short=税收]{税收：谁真正掏了钱}
+% =============================================================================
+
+\begin{keypoints}
+\begin{itemize}
+  \item 每件征税 $t$ 元，相当于在“买方付的价格”和“卖方得到的价格”之间打进一个宽 $t$ 的\textbf{楔子}。
+  \item 法律上向谁征税不影响结果：向买方征和向卖方征，最终的价格和成交量完全一样。
+  \item 税负更多地落在\textbf{弹性小}（对价格不敏感、“跑不掉”）的一方。
+  \item 征税使成交量减少，损失一块三角形（无谓损失）。每件的税额翻倍，这块三角形变成 4 倍。
+\end{itemize}
+\end{keypoints}
+
+\section{征税以后发生了什么}
+
+仍用第 1 讲的奶茶市场：需求 $Q=90-2P$，供给 $Q=P$，原来的均衡是 $P=30$，$Q=30$。
+现在政府规定，卖方每卖一杯要交 6 元税。
+
+卖方关心的是\textbf{到手价}。标价 $P$ 时，卖方到手只有 $P-6$，所以供给变为 $Q=P-6$。新的均衡满足
+\[
+  90-2P=P-6 \quad\Longrightarrow\quad P=32,\qquad Q=26 .
+\]
+\begin{itemize}
+  \item 买方每杯付 32 元，比原来多付 \textbf{2 元}；
+  \item 卖方每杯到手 $32-6=26$ 元，比原来少得 \textbf{4 元}；
+  \item 政府每杯收 6 元，共收税 $6\times26=156$ 元。
+\end{itemize}
+6 元的税，买方负担了 2 元，卖方负担了 4 元。虽然税是卖方交的，买方也分担了一部分。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}[x=.13cm, y=.094cm]
+  \fill[csfill] (0,45) -- (26,32) -- (0,32) -- cycle;
+  \fill[taxfill] (0,26) rectangle (26,32);
+  \fill[psfill] (0,0) -- (26,26) -- (0,26) -- cycle;
+  \fill[dwlfill] (26,32) -- (30,30) -- (26,26) -- cycle;
+  \econaxes{72}{52}{数量 $Q$}{价格 $P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {需求 $D$};
+  \draw[sup] (0,0) -- (47,47) node[right, slab, mjSecond] {供给 $S$};
+  \draw[sup2] (0,6) -- (41,47) node[above, slab, mjSecond] {$S+6$（含税）};
+  \draw[shiftarrow] (40,40) -- (36,46) node[pos=.1, right=3pt, slab] {上移 6};
+  \draw[guide] (0,30) -- (30,30) -- (30,0) node[below, slab] {30};
+  \draw[guide] (26,26) -- (26,0) node[below, slab] {26};
+  \node[slab, left] (lb) at (-2,37) {买方付 32}; \draw[mjInk!60, line width=.3pt] (lb.east) -- (0,32);
+  \node[slab, left] at (-2,30) {原价 30};       \draw[mjInk!60, line width=.3pt] (-2,30) -- (0,30);
+  \node[slab, left] (ls) at (-2,21) {卖方得 26}; \draw[mjInk!60, line width=.3pt] (ls.east) -- (0,26);
+  \node[slab, left] at (0,45) {45};
+  \node[eqpt] at (26,32) {}; \node[eqpt] at (26,26) {}; \node[circle, draw=mjInk, fill=white, inner sep=1.3pt] at (30,30) {};
+  \node[slab] at (13,29) {税收 156};
+  \node[slab, mjAccent] at (7,35.5) {消费者剩余};
+  \node[slab, mjSecond] at (8,19) {生产者剩余};
+  \node[slab, anchor=west, mjPine] at (50,30) {无谓损失 12};
+  \draw[mjPine, line width=.4pt] (50,30) -- (28.5,29.5);
+\end{tikzpicture}
+\caption{对卖方每件征税 6 元。浅棕色矩形是税收，绿色三角形是无谓损失。}
+\label{fig:es-tax}
+\end{figure}
+
+图~\ref{fig:es-tax} 是这件事的全貌：
+\begin{itemize}
+  \item 含税供给曲线比原来\textbf{高出 6 元}：要让卖方到手同样多，标价必须高 6 元；
+  \item 买方价格 32 和卖方价格 26 之间隔着 6 元，就是“楔子”；
+  \item 原来的总剩余（675）现在分成了四块：消费者剩余 169、生产者剩余 338、税收 156、无谓损失 12。$169+338+156+12=675$。
+\end{itemize}
+
+\section{向买方征税，结果完全一样}
+
+如果改为买方每买一杯交 6 元税呢？买方付的总代价是“标价 $+6$”，愿意买的量变为 $Q=90-2(P+6)$，需求曲线\textbf{向下}移 6 元。新均衡：
+\[
+  90-2(P+6)=P \quad\Longrightarrow\quad P=26 .
+\]
+这里的 $P=26$ 是标价，也就是卖方到手的钱；买方另付 6 元税，总共付 32 元。和向卖方征税的结果\textbf{一模一样}（图~\ref{fig:es-tax-who}）。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (0,0) -- (46,46) node[right, slab, mjSecond] {$S$};
+  \draw[sup2] (0,6) -- (40,46) node[above, slab, mjSecond] {$S+6$};
+  \draw[guide] (0,32) node[left, slab] {32} -- (26,32) -- (26,0) node[below, slab] {26};
+  \draw[guide] (0,26) node[left, slab] {26} -- (26,26);
+  \node[eqpt] at (26,32) {}; \node[eqpt] at (26,26) {};
+\end{tikzpicture}
+\caption{向卖方征税：供给曲线上移 6}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.075cm]
+  \econaxes{72}{52}{$Q$}{$P$}
+  \draw[dem] (0,45) -- (66,12) node[above right=-2pt, slab, mjAccent] {$D$};
+  \draw[dem2] (0,39) -- (66,6) node[below, slab, mjAccent] {$D-6$};
+  \draw[sup] (0,0) -- (46,46) node[right, slab, mjSecond] {$S$};
+  \draw[guide] (0,32) node[left, slab] {32} -- (26,32) -- (26,0) node[below, slab] {26};
+  \draw[guide] (0,26) node[left, slab] {26} -- (26,26);
+  \node[eqpt] at (26,32) {}; \node[eqpt] at (26,26) {};
+\end{tikzpicture}
+\caption{向买方征税：需求曲线下移 6}
+\end{subfigure}
+\caption{两种征税方式得到同样的买方价格 32、卖方价格 26、成交量 26}
+\label{fig:es-tax-who}
+\end{figure}
+
+道理很简单：真正起作用的只有一件事——\textbf{买方付的比卖方得的多出 $t$ 元}。至于这 $t$ 元由谁递给税务局，只是手续问题。
+
+\section{谁负担得多：看谁“跑得掉”}
+
+一般地，设需求 $Q=a-bP$，供给 $Q=c+dP$（$b,d>0$），每件征税 $t$。设买方价格比原来\textbf{上升} $x$，卖方价格比原来\textbf{下降} $y$。
+\begin{itemize}
+  \item 楔子的宽度是 $t$：$x+y=t$；
+  \item 买方因涨价少买 $bx$，卖方因降价少卖 $dy$，新的成交量对双方相同，所以 $bx=dy$。
+\end{itemize}
+解得
+\[
+  \boxed{\ x=\frac{d}{b+d}\,t,\qquad y=\frac{b}{b+d}\,t\ } .
+\]
+检验：$b=2$，$d=1$，$t=6$ 时，$x=2$，$y=4$，和上一节一致。
+
+\textbf{怎么理解}：$b$ 大表示买方对价格敏感，稍一涨价就不买了（容易“跑掉”），于是 $x$ 小，买方负担少。
+所以\textbf{谁对价格越不敏感，谁负担越多}。严格地说，比较的是弹性：在原均衡点，需求弹性是 $b\cdot\frac PQ$，供给弹性是 $d\cdot\frac PQ$，
+两者之比正好是 $b:d$，所以 $x:y=d:b$ 就是“供给弹性 : 需求弹性”。重要的是两边弹性的\textbf{相对}大小。图~\ref{fig:es-incidence} 画出了两种情形。
+
+\begin{figure}[!htbp]
+\centering
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.066cm]
+  \econaxes{66}{56}{$Q$}{$P$}
+  \draw[dem] (22,49.2) node[left, slab, mjAccent] {$D$（陡）} -- (40,6);
+  \draw[sup] (0,12) -- (60,48) node[right, slab, mjSecond] {$S$};
+  \draw[sup2] (0,27) -- (41.7,52) node[right, slab, mjSecond] {$S+t$};
+  \draw[guide] (0,42) node[left, slab] {$P_{\text{买}}$} -- (25,42);
+  \draw[guide] (0,30) node[left, slab, anchor=south east] {$P^*$} -- (30,30);
+  \draw[guide] (0,27) node[left, slab, anchor=north east] {$P_{\text{卖}}$} -- (25,27);
+  \draw[mjAccent, line width=3pt] (25,30) -- (25,42);
+  \draw[mjSecond, line width=3pt] (25,27) -- (25,30);
+  \node[slab, mjAccent, anchor=west] at (44,10) {买方负担大};
+\end{tikzpicture}
+\caption{需求比供给更缺乏弹性：买方负担大部分}
+\end{subfigure}\hfill
+\begin{subfigure}{.48\textwidth}\centering
+\begin{tikzpicture}[x=.075cm, y=.066cm]
+  \econaxes{66}{56}{$Q$}{$P$}
+  \draw[dem] (0,48) -- (65,9) node[below, slab, mjAccent] {$D$};
+  \draw[sup] (19,3.6) -- (38,49.2) node[right, slab, mjSecond] {$S$（陡）};
+  \draw[sup2] (12.5,3) -- (32.9,52) node[left, slab, mjSecond] {$S+t$};
+  \draw[guide] (0,33) node[left, slab, anchor=south east] {$P_{\text{买}}$} -- (25,33);
+  \draw[guide] (0,30) node[left, slab, anchor=north east] {$P^*$} -- (30,30);
+  \draw[guide] (0,18) node[left, slab] {$P_{\text{卖}}$} -- (25,18);
+  \draw[mjAccent, line width=3pt] (25,30) -- (25,33);
+  \draw[mjSecond, line width=3pt] (25,18) -- (25,30);
+  \node[slab, mjSecond, anchor=west] at (42,44) {卖方负担大};
+\end{tikzpicture}
+\caption{需求比供给更富有弹性：卖方负担大部分}
+\end{subfigure}
+\caption{税负的分配。粗线中，蓝色段是买方多付的，红色段是卖方少得的，两段加起来正好是 $t$。}
+\label{fig:es-incidence}
+\end{figure}
+
+两个常被引用的例子：
+\begin{itemize}
+  \item \textbf{香烟税}：吸烟者对价格不敏感（成瘾），税负主要落在吸烟者身上。
+  \item \textbf{奢侈品税}：美国 1990 年对游艇等奢侈品加征消费税。富人很容易把钱花在别处或到国外买（弹性大），游艇销量大跌，
+        税负很大程度上落到了造船厂和工人身上；对游艇等的这部分税在 1993 年就被废除了。这是教科书里常用的例子。
+\end{itemize}
+
+\section{无谓损失：税收的“隐形成本”}
+
+税收本身不是社会的损失：买卖双方少了的那部分钱，政府收走了，可以用来修路、办学校。真正的损失是图~\ref{fig:es-tax} 中的\textbf{绿色三角形}：
+因为加了税，第 27 到第 30 杯不再成交了，而这几杯本来是买家觉得值、卖家也愿意做的。在例子中，它的面积是
+\[
+  \text{无谓损失}=\tfrac12\times6\times(30-26)=12 .
+\]
+
+一般地，成交量减少 $bx=\dfrac{bd}{b+d}\,t$，所以
+\[
+  \text{无谓损失}=\frac12\,t\cdot\frac{bd}{b+d}\,t=\frac{bd}{2(b+d)}\,t^2 .
+\]
+无谓损失和\textbf{每件税额的平方}成正比：税额翻倍，损失变成 4 倍。图~\ref{fig:es-laffer} 画出了例子中的税收和无谓损失随每杯税额 $t$ 的变化：
+税收 $R(t)=t\left(30-\frac23t\right)$，无谓损失 $\frac13t^2$。
+
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}
+\begin{axis}[mojing, width=9.5cm, height=5.2cm, xmin=0, xmax=48, ymin=0, ymax=420,
+    xlabel={每杯税额 $t$（元）}, ylabel={元}, xtick={6,22.5,30,45}, xticklabels={6,22.5,30,45},
+    ytick={156,337.5}, yticklabels={156,337.5}, legend style={at={(1.03,.5)}, anchor=west}]
+  \addplot[mjOchre, domain=0:45, samples=60, line width=1pt] {x*(30-2*x/3)};
+  \addplot[mjPine, domain=0:34.6, samples=60, line width=1pt] {x^2/3};
+  \legend{税收,无谓损失}
+  \draw[guide] (axis cs:22.5,0) -- (axis cs:22.5,337.5) -- (axis cs:0,337.5);
+  \draw[guide] (axis cs:6,0) -- (axis cs:6,156) -- (axis cs:0,156);
+  \node[eqpt] at (axis cs:22.5,337.5) {};
+  \node[eqpt] at (axis cs:6,156) {};
+  \node[eqpt] at (axis cs:30,300) {};
+  \node[slab, anchor=west] at (axis cs:31,300) {$t=30$ 时两者相等};
+\end{axis}
+\end{tikzpicture}
+\caption{每杯税额提高时，税收先增后减，无谓损失却一直加速增长}
+\label{fig:es-laffer}
+\end{figure}
+
+图上有两个值得记住的现象：
+\begin{itemize}
+  \item 税收在 $t=22.5$ 时最多。税额再高，成交量萎缩得太厉害，税收反而减少；$t=45$ 时没人交易，税收为零（这就是“拉弗曲线”的想法）。
+  \item 无谓损失增长得比税收快。所以经济学家通常认为：\textbf{税基宽、税率低}，比税基窄、税率高的效率损失小。
+\end{itemize}
+
+\begin{remark}
+\textbf{补贴}可以看作“负的税”：买方价格下降、卖方价格上升，成交量超过均衡量。多生产的那部分成本高于买家的评价，同样会产生无谓损失。
+不过，如果市场本身有问题（例如第 4 讲的外部性），税收和补贴反而能把成交量拉回到合适的位置。
+\end{remark}
+
+\begin{pitfall}
+\begin{itemize}
+  \item “税是向卖方征的，所以卖方负担”——错。税负分配只取决于供求两边的弹性，与法律上谁交税无关。
+  \item “政府收的税就是社会的损失”——错。税收是从买卖双方转给政府的，只是换了主人；真正消失的只有无谓损失那块三角形。
+  \item 算税负时，买方多付的 $x$ 和卖方少得的 $y$ 加起来一定等于 $t$，可以用来检查计算。
+\end{itemize}
+\end{pitfall}
+
+\begin{oneline}
+税是一个楔子：谁对价格越不敏感，谁负担越多；损失的是楔子挤掉的那块三角形。
+\end{oneline}
+
+\begin{exercises}[练一练]
+  \item 需求 $Q_d=120-4P$，供给 $Q_s=2P$。政府对\textbf{买方}每件征税 3 元。求买方付出的总价格、卖方到手的价格、成交量、税收、双方各负担多少，以及无谓损失。
+  \item 证明：在直线供求下，每件税额从 $t$ 提高到 $2t$（成交量仍为正）时，无谓损失变为原来的 4 倍，而税收不到原来的 2 倍。
+  \item 有人建议：“为了让富人多交税，应该对豪华跑车征收重税。”用本讲的知识分析，这项税的负担可能落在谁身上？还需要知道什么才能判断？
+\end{exercises}

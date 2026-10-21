@@ -1,7 +1,7 @@
 {
   "name": "hongyan-mail",
   "productName": "Hongyan Mail",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "鸿雁邮箱 — 本地运行的 Windows 多账户邮件客户端",
   "main": "dist/main/index.js",
   "author": "Hongyan Mail",

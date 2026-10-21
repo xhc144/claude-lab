@@ -1,7 +1,7 @@
 {
   "name": "motif",
   "productName": "Motif",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "description": "律影 Motif — 动态视觉创作软件：人类可视化编辑与 AI Skill/CLI/MCP 共用同一套项目、设计系统与渲染引擎",
   "main": "dist/main.cjs",
   "author": "Motif",
@@ -41,6 +41,7 @@
     "electron-updater": "6.8.9",
     "esbuild": "0.28.2",
     "fflate": "0.8.2",
+    "koffi": "3.3.1",
     "lucide": "1.49.0",
     "mathjax-full": "3.2.2",
     "pdfjs-dist": "6.3.289",
@@ -74,7 +75,8 @@
     "asar": true,
     "asarUnpack": [
       "dist/cli.mjs",
-      "dist/vendor/**"
+      "dist/vendor/**",
+      "dist/node_modules/@koromix/**"
     ],
     "extraResources": [
       {

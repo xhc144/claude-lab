@@ -177,7 +177,7 @@
   font-size: var(--fs-base);
   white-space: nowrap;
   user-select: text;
-  cursor: text;
+  cursor: pointer;
 }
 .mc-addr {
   font-size: var(--fs-s);
@@ -186,7 +186,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   user-select: text;
-  cursor: text;
+  cursor: pointer;
 }
 .mc-to {
   display: inline-flex;
@@ -647,4 +647,12 @@
   display: flex;
   align-items: flex-start;
   gap: 6px;
+}
+.subject[data-copyable] {
+  margin: 0 -6px;
+  padding: 0 6px;
+  border-radius: 8px;
+}
+.subject[data-copyable]:hover {
+  background: var(--hover);
 }

@@ -169,16 +169,84 @@ def split_sub(text, limit=22):
     return split_sub(text[:c], limit) + split_sub(text[c:], limit)
 
 
+_CUT = re.compile(r"[，；：。？！]")
+_MARKS = set("，。、：；！？")
+_SKIP = re.compile(r"[\s“”‘’（）()·\"'—…\-\[\]]")
+
+
+def _events(s, tokens=False):
+    """把文字拆成 'm'（标点）/'c'（字）序列。时间戳里热修复的拼音块（如 [ch][ā]）算一个字；
+    稿子里两个汉字之间的空格，引擎会读成停顿并在时间戳里记成“、”，这里也照样算。"""
+    if tokens:
+        s = re.sub(r"(\[[^\]]*\])+", "#", s)
+    else:
+        s = re.sub(r"(?<=[\u4e00-\u9fff])\s+(?=[\u4e00-\u9fff])", "、", s)
+    return ["m" if ch in _MARKS else "c" for ch in s if not _SKIP.match(ch)]
+
+
+def boundary_time(prefix, full, words):
+    """配音文字 full 里，前缀 prefix 之后第一个字的开口时间（秒）。
+
+    逐字时间戳的文字是引擎展开数字之后的念法，字数和稿子未必一样，标点却一一保留：
+    先数到第 k 个标点，再往后数 r 个字。标点个数对不上时退回按字数比例。"""
+    pre, tot = _events(prefix), _events(full)
+    seq = [(e, i) for i, w in enumerate(words) for e in _events(w[0], tokens=True)]
+    if not seq:
+        return None
+    if tot.count("m") == sum(e == "m" for e, _ in seq):
+        k = pre.count("m")
+        r = pre[len(pre) - pre[::-1].index("m"):].count("c") if k else pre.count("c")
+        seen_m = seen_c = 0
+        for e, i in seq:
+            if seen_m < k:
+                seen_m += e == "m"
+            elif e == "c":
+                if seen_c == r:
+                    return words[i][1]
+                seen_c += 1
+        return words[-1][2]
+    cs = [i for e, i in seq if e == "c"]
+    f = pre.count("c") / max(1, tot.count("c"))
+    return words[cs[min(len(cs) - 1, round(f * len(cs)))]][1]
+
+
+def part_starts(sub, say, parts, words, dur):
+    """每段字幕在这句配音里的起始秒数。
+
+    字幕断在标点处；配音文字和字幕的句读一一对应（只是数字、记号写法不同），
+    所以第 k 个标点之后的字幕，对应配音文字第 k 个标点之后的内容，再按逐字时间戳找到开口时间。
+    没有时间戳时（旧缓存）按字数比例分。
+    """
+    pos, prefixes = 0, []
+    say_marks = [m.end() for m in _CUT.finditer(say)]
+    same = len(say_marks) == len(_CUT.findall(sub))
+    for p in parts:
+        i = sub.find(p, pos)
+        i = pos if i < 0 else i
+        k = len(_CUT.findall(sub[:i]))
+        if same:
+            prefixes.append(say[:say_marks[k - 1]] if k else "")
+        else:
+            prefixes.append(say[:round(len(say) * i / max(1, len(sub)))])
+        pos = i + len(p)
+    out = []
+    for pre in prefixes:
+        t = boundary_time(pre, say, words) if (pre and words) else None
+        if t is None:
+            t = dur * len(pre) / max(1, len(say))
+        out.append(0.0 if not out else max(out[-1], t))
+    return out
+
+
 def subtitle_events(events):
+    voice = json.load(open(os.path.join(BUILD, "voice", "durations.json"), encoding="utf-8"))
     out = []
     for e in events:
+        v = voice[e["key"]]
         parts = split_sub(e["sub"])
-        w = [max(1, len(p)) for p in parts]
-        t = e["t"]
-        for p, k in zip(parts, w):
-            d = e["dur"] * k / sum(w)
-            out.append((t, t + d, p.rstrip("。，；：")))
-            t += d
+        st = part_starts(e["sub"], v["say"], parts, v.get("words"), e["dur"]) + [e["dur"]]
+        for i, p in enumerate(parts):
+            out.append((e["t"] + st[i], e["t"] + st[i + 1], p.rstrip("。，；：")))
     # 相邻两条之间留空不足 0.3 秒就接上，避免闪烁
     fixed = []
     for i, (a, b, s) in enumerate(out):
@@ -199,7 +267,8 @@ def ts_srt(t):
 
 
 def write_subs(subs, ass_path, srt_path, scale):
-    fs = int(52 * scale); outline = max(1, round(3 * scale)); mv = int(34 * scale)
+    # 底色框（BorderStyle 3）：字幕落在坐标轴标签上时也看得清
+    fs = int(52 * scale); pad = max(2, round(10 * scale)); mv = int(34 * scale)
     head = f"""[Script Info]
 ScriptType: v4.00+
 PlayResX: {int(1920 * scale)}
@@ -208,7 +277,7 @@ WrapStyle: 2
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,Noto Sans CJK SC,{fs},&H00282A2B,&H000000FF,&H00E8F1F5,&H00000000,0,0,0,0,100,100,1,0,1,{outline},0,2,60,60,{mv},1
+Style: Default,Noto Sans CJK SC,{fs},&H00282A2B,&H000000FF,&H1AE8F1F5,&H00000000,0,0,0,0,100,100,1,0,3,{pad},0,2,60,60,{mv},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

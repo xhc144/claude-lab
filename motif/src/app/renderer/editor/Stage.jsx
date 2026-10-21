@@ -52,7 +52,7 @@ export function Stage({ zoom = 'fit', showSafe }) {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const cw = Math.round(a.vw * dpr), ch = Math.round(a.vh * dpr);
       if (c.width !== cw || c.height !== ch) { c.width = cw; c.height = ch; }
-      editor.engine.render(a.time, c.getContext('2d'), { scale: cw / a.W, noCamera: !a.playing });
+      editor.engine.render(a.time, c.getContext('2d'), { scale: cw / a.W, noCamera: !a.playing, live: true, playing: a.playing });
     });
   }, [time, version, vw, vh, W, playing]);
   useEffect(() => () => { cancelAnimationFrame(drawRef.current); drawRef.current = 0; }, []);

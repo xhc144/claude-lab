@@ -21,7 +21,9 @@ export function findTool(name = 'ffmpeg', config = {}) {
   if (process.resourcesPath) cands.push(path.join(process.resourcesPath, 'ffmpeg', name + EXE));
   const h = here();
   // dev checkout (vendor/), packaged app (resources/ffmpeg next to app.asar.unpacked/dist/cli.mjs)
-  for (const up of ['..', '../..', '../../..']) cands.push(path.join(h, up, 'vendor', 'ffmpeg', name + EXE), path.join(h, up, 'resources', 'ffmpeg', name + EXE), path.join(h, up, 'ffmpeg', name + EXE));
+  // (vendor/ffmpeg/<platform>-<arch>/ is where scripts/fetch-ffmpeg.mjs puts it)
+  const plat = `${process.platform}-${process.arch}`;
+  for (const up of ['.', '..', '../..', '../../..']) cands.push(path.join(h, up, 'vendor', 'ffmpeg', name + EXE), path.join(h, up, 'vendor', 'ffmpeg', plat, name + EXE), path.join(h, up, 'resources', 'ffmpeg', name + EXE), path.join(h, up, 'ffmpeg', name + EXE));
   for (const c of cands) if (c && fs.existsSync(c)) return c;
   try {
     const out = execFileSync(process.platform === 'win32' ? 'where' : 'which', [name], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).split(/\r?\n/)[0].trim();

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>数学知识星图 · Math Starmap</title>
+<meta name="description" content="以清华大学 2027 新领军考纲为纲的数学与物理知识星图：706 颗知识星、1452 条关系，覆盖高中数学、数学分析、代数、几何与拓扑、概率统计、应用数学与物理。可缩放拖动的星系，点击无限展开的知识星链，LaTeX 公式、交互动画、学习路径与进度。">
+<meta name="theme-color" content="#03040b">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&display=swap">
+<link rel="stylesheet" href="katex/katex.min.css?v=3bf3ea4778">
+<link rel="stylesheet" href="app.css?v=3bf3ea4778">
+</head>
+<body>
+<div id="app" class="booting">
+  <canvas id="sky" aria-label="知识星图画布：拖动平移，滚轮或双指缩放，点击一颗星打开知识卡片"></canvas>
+  <div id="boot" aria-live="polite"><div class="boot-star"></div><p>正在点亮星图…</p></div>
+</div>
+<noscript><p class="noscript">数学知识星图需要启用 JavaScript。</p></noscript>
+<script src="katex/katex.min.js?v=3bf3ea4778" defer></script>
+<script src="data/graph.js?v=3bf3ea4778" defer></script>
+<script src="app.js?v=3bf3ea4778" defer data-content="data/content.js?v=3bf3ea4778"></script>
+</body>
+</html>

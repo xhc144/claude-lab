@@ -137,16 +137,93 @@ export function polar(M) {
   return { Q, P, rotation: det(Q) > 0, angle: Math.atan2(Q.c, Q.a) };
 }
 
+// For 2×2 matrices both exp and log have closed forms. Write M = m·I + K with m = tr M / 2;
+// the traceless part satisfies K² = p·I with p = m² − det M (Cayley–Hamilton), so every power
+// series in M collapses to α·I + β·K.
+
+/**
+ * Real principal logarithm L (exp L = M), or null when M has none: det M ≤ 0, or a negative
+ * eigenvalue — except M = −k·I = k·R(π), whose logarithm is ln k·I + π·J.
+ */
+export function logm(M) {
+  const D = det(M);
+  if (!(D > 0)) return null;
+  const m = trace(M) / 2;
+  const K = mat(M.a - m, M.b, M.c, M.d - m);
+  const p = m * m - D;
+  const tol = 1e-12 * Math.max(m * m, D);
+  const comb = (alpha, beta) => mat(alpha + beta * K.a, beta * K.b, beta * K.c, alpha + beta * K.d);
+  if (p > tol) {
+    // real eigenvalues m ± s; both positive is required
+    const s = Math.sqrt(p);
+    if (m - s <= 0) return null;
+    return comb(0.5 * Math.log(D), Math.atanh(s / m) / s);
+  }
+  if (p < -tol) {
+    // m ± i·s = r·e^{±iθ}
+    const s = Math.sqrt(-p);
+    return comb(0.5 * Math.log(D), Math.atan2(s, m) / s);
+  }
+  if (m > 0) return comb(Math.log(m), 1 / m); // K² = 0: log(m(I + K/m)) = ln m·I + K/m
+  if (norm(K) <= 1e-9 * Math.abs(m)) return mat(Math.log(-m), -Math.PI, Math.PI, Math.log(-m));
+  return null;
+}
+
+/** Matrix exponential. */
+export function expm(L) {
+  const m = trace(L) / 2;
+  const K = mat(L.a - m, L.b, L.c, L.d - m);
+  const p = m * m - det(L); // K² = p·I, so exp K = cosh√p·I + (sinh√p/√p)·K
+  let c, s;
+  if (Math.abs(p) < 1e-8) { c = 1 + p / 2; s = 1 + p / 6; }
+  else if (p > 0) { const r = Math.sqrt(p); c = Math.cosh(r); s = Math.sinh(r) / r; }
+  else { const r = Math.sqrt(-p); c = Math.cos(r); s = Math.sin(r) / r; }
+  const e = Math.exp(m);
+  return mat(e * (c + s * K.a), e * s * K.b, e * s * K.c, e * (c + s * K.d));
+}
+
+/** Real power Mᵗ = exp(t·log M) for real t, or null when M has no real logarithm. */
+export function powReal(M, t, L = logm(M)) {
+  return L ? expm(scale(L, t)) : null;
+}
+
+/**
+ * M = U·Σ·Vᵀ as three steps for t ∈ [0, 1]: rotate by Vᵀ (t ≤ ⅓), stretch along the axes to Σ
+ * (⅓ … ⅔), rotate by U (⅔ … 1). With det M < 0 the reflection is put into Σ as a negative
+ * second singular value, so the stretch step passes through a singular matrix.
+ */
+export function svdPath(M, t) {
+  const { sigma, phi, theta, flip } = svd(M);
+  const s1 = sigma[0];
+  const s2 = flip ? -sigma[1] : sigma[1];
+  const u = 3 * Math.min(1, Math.max(0, t));
+  if (u <= 1) return rotation(u * theta);
+  if (u <= 2) {
+    const k = u - 1;
+    return mul(mat(1 + k * (s1 - 1), 0, 0, 1 + k * (s2 - 1)), rotation(theta));
+  }
+  return mul(rotation((u - 2) * phi), mul(mat(s1, 0, 0, s2), rotation(theta)));
+}
+
 /**
  * Path from I to M used by the transform animation.
  *  - 'linear': (1 − t)·I + t·M  (straight line in matrix space; passes through singular
  *              matrices when det M < 0, which is unavoidable for orientation reversal)
  *  - 'polar' : R(t·θ)·((1 − t)·I + t·P) when M = R(θ)·P has det > 0, so the rotation part turns
  *              rigidly instead of collapsing; falls back to linear otherwise.
+ *  - 'exp'   : Mᵗ = exp(t·log M), the one-parameter group through M (needs a real logarithm;
+ *              falls back to 'polar').
+ *  - 'svd'   : rotate, stretch, rotate (see svdPath).
  */
 export function interpolate(M, t, mode = 'linear') {
   if (t >= 1) return { ...M };
   if (t <= 0) return { ...IDENTITY };
+  if (mode === 'svd') return svdPath(M, t);
+  if (mode === 'exp') {
+    const P = powReal(M, t);
+    if (P) return P;
+    mode = 'polar';
+  }
   if (mode === 'polar' && det(M) > 0) {
     const { P, angle } = polar(M);
     return mul(rotation(t * angle), lerp(IDENTITY, P, t));

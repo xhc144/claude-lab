@@ -19,13 +19,23 @@ export const projects = [
   // ─── 浏览器交互 ───
   {
     id: 'mathscape', category: 'play', title: '数境', en: 'MathScape', cover: 'mathscape', status: { kind: 'online', label: '在线体验' },
-    summary: '拖动矩阵与复函数的参数，实时观察线性变换、定义域着色、常微分方程相轨线和三体运动。',
-    tags: ['数学可视化', '复变函数', 'ODE', '三体', '离线单文件'],
-    keywords: 'matrix linear transform complex ode lorenz three body 矩阵 线性代数 微分方程 洛伦茨',
+    summary: '12 个实时计算的数学实验室：矩阵、复变、微分方程、三体、可放大到 10⁻²⁸⁰ 的分形、傅里叶本轮、混沌、生命游戏、对称、概率、水波槽与素数；可开启高精度：精确分数、根式与最高 1000 位小数。',
+    tags: ['12 个模块', '数学可视化', '分形深度放大', '任意精度', '离线单文件'],
+    keywords: 'matrix linear transform complex ode lorenz three body mandelbrot fractal deep zoom perturbation fourier epicycles chaos bifurcation feigenbaum game of life cellular automaton wallpaper group symmetry probability galton buffon wave equation interference chladni primes ulam spiral riemann zeta high precision arbitrary precision 矩阵 线性代数 微分方程 洛伦茨 三体 分形 曼德博 傅里叶 本轮 混沌 分岔 生命游戏 元胞自动机 壁纸群 对称 概率 高尔顿 蒲丰 波动 干涉 克拉尼 素数 乌拉姆 黎曼 高精度 任意精度',
     links: [
       { label: '打开数境', href: 'mathscape/', primary: true },
       { label: '下载单文件', href: 'mathscape/index.html', download: 'mathscape.html' },
       { label: '源码', href: tree('mathscape') },
+    ],
+  },
+  {
+    id: 'math-starmap', category: 'play', title: '数学知识星图', en: 'Math Starmap', cover: 'math-starmap', status: { kind: 'online', label: '在线体验' },
+    summary: '以 2027 新领军考纲为纲的知识宇宙：706 颗知识星分布在高中数学、分析、代数、几何与拓扑、概率统计、应用数学与物理七个星系，1452 条前置、推导、推广、等价、应用关系连成星座；点开一颗星就能无限展开定义、定理、证明、例题与应用，配 37 个交互动画、学习路径与 15 条精选航线。',
+    tags: ['706 颗知识星', '考纲 152/152', '37 个交互动画', '学习路径', '拼音搜索'],
+    keywords: 'knowledge graph star map mathematics physics syllabus learning path prerequisite derivation generalization equivalence latex katex animation search favorites progress tour obsidian 知识图谱 星图 考纲 新领军 高中数学 数学分析 代数 几何 拓扑 概率 统计 应用数学 物理 前置 推导 推广 等价 学习路径 航线 定理 证明 例题 动画 拼音',
+    links: [
+      { label: '进入星图', href: 'math-starmap/', primary: true },
+      { label: '源码', href: tree('math-starmap') },
     ],
   },
   {
@@ -176,13 +186,12 @@ export const projects = [
   {
     id: 'windmill-theorem', category: 'film', title: '一句话的证明，一架风车', en: 'The Windmill Theorem', cover: 'windmill-theorem',
     summary: '同一主题的另一个独立版本：费马平方和定理、扎吉尔对合与风车图，英文版为旁白 / 考官 / 考生三人对话的面试章节。',
-    tags: ['数论', '中文版 / 英文版', '双语字幕'],
+    tags: ['数论', '中文版 / 英文版', '通义千问配音', '双语字幕'],
     keywords: 'fermat two squares zagier windmill interview 费马 平方和 风车 扎吉尔 面试',
-    tools: 'Manim · TeX · FFmpeg', build: 'bash build.sh',
-    notice: '当前成片带字幕与背景音乐，尚未加入旁白配音。',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'TTS=qwen bash build.sh',
     versions: [
-      { id: 'zh', label: '中文版', src: 'windmill-theorem/output/windmill_theorem_zh.mp4', srt: 'windmill-theorem/output/windmill_theorem_zh.srt', note: '中文字幕（烧录）' },
-      { id: 'en', label: 'English', src: 'windmill-theorem/output/windmill_theorem_en.mp4', srt: 'windmill-theorem/output/windmill_theorem_en.en-zh.srt', note: '英文字幕 + 逐句中文释义，难词标注音标' },
+      { id: 'zh', label: '中文版', src: 'windmill-theorem/output/windmill_theorem_zh.mp4', srt: 'windmill-theorem/output/windmill_theorem_zh.srt', note: '中文配音（龙安鲁风），中文字幕（烧录）' },
+      { id: 'en', label: 'English', src: 'windmill-theorem/output/windmill_theorem_en.mp4', srt: 'windmill-theorem/output/windmill_theorem_en.en-zh.srt', note: '英文配音（旁白 / 考官 / 考生三个声音），英文字幕 + 逐句中文释义，难词标注音标' },
     ],
   },
   {
@@ -217,16 +226,23 @@ export const projects = [
     ],
   },
   {
-    id: 'linear-regression-video', category: 'film', title: '线性回归：从一条直线，到一次投影', en: 'Linear Regression', status: { kind: 'source', label: '待配音' },
-    art: { glyph: 'Xᵀy', hue: 150 },
+    id: 'linear-regression-video', category: 'film', title: '线性回归：从一条直线，到一次投影', en: 'Linear Regression', cover: 'linear-regression-video',
     summary: '最小二乘为什么取平方、两个偏导条件从哪来、为什么它其实是一次正交投影，再讲 R² 的几何意义、“线性”指什么、“回归”这个名字从哪来。',
-    tags: ['统计', '线性代数', '约 13 分钟', '通义千问配音'],
-    keywords: 'linear regression least squares projection normal equation r squared galton 线性回归 最小二乘 投影 正规方程 回归',
-    tools: 'Manim · Qwen TTS · FFmpeg', build: 'bash build.sh',
-    notice: '画面与旁白稿已完成；成片需要用通义千问语音合成配音后在本地生成，暂未接入播放器。',
-    links: [
-      { label: '查看说明', href: blob('linear-regression-video/README.md'), primary: true },
-      { label: '制作源码', href: tree('linear-regression-video') },
+    tags: ['统计', '线性代数', '9 个章节', '通义千问配音'],
+    keywords: 'linear regression least squares projection normal equation r squared galton 线性回归 最小二乘 投影 正规方程 回归 qwen tts',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'bash build.sh',
+    versions: [
+      { id: 'zh', label: '中文版', src: 'linear-regression-video/output/linear-regression.mp4', srt: 'linear-regression-video/output/linear-regression.srt', note: '中文配音（龙安灵心），字幕压在画面里' },
+    ],
+  },
+  {
+    id: 'stats-notation-video', category: 'film', title: '统计的符号与术语', en: 'Statistical Notation', cover: 'stats-notation-video',
+    summary: '把统计里的符号和专有名词逐个讲清楚：怎么读、是什么意思、为什么这样写。从“参数用希腊字母、统计量用拉丁字母、帽子表示估计”讲起，经过描述统计、概率、分布、抽样、估计、检验与回归，最后整理一字多义的记号和常见缩写。',
+    tags: ['统计', '符号与术语', '20 个章节', '通义千问配音'],
+    keywords: 'statistics notation symbols terminology glossary greek letters mu sigma hat bar estimator likelihood p-value hypothesis test confidence interval standard error regression anova odds ratio bayes 统计 符号 术语 希腊字母 参数 统计量 估计 检验 p值 置信区间 标准误 回归 方差分析 缩写 qwen tts',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· FFmpeg', build: 'bash build.sh',
+    versions: [
+      { id: 'zh', label: '中文版', src: 'stats-notation-video/output/stats-notation.mp4', srt: 'stats-notation-video/output/stats-notation.srt', note: '中文配音（龙安灵心），字幕压在画面里' },
     ],
   },
   {

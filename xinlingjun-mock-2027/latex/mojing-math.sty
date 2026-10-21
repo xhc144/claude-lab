@@ -1,0 +1,83 @@
+%% mojing-math.sty
+%% 墨经 Mojing —— 数学记号
+%%
+%% 遵循国内数学出版的通行惯例（参照 GB 3102.11）：
+%%   * 不等号使用 ⩽ ⩾（\leqslant / \geqslant），空集使用 ∅（\varnothing）；
+%%   * 微分号 d、自然对数底 e、虚数单位 i 用正体：\dd \ee \ii；
+%%   * 转置用正体 T：A\T；向量用黑斜体：\vb{x}。
+%%
+%% 本文件以 LPPL 1.3c 发布。
+\NeedsTeXFormat{LaTeX2e}[2022/06/01]
+\ProvidesExplPackage{mojing-math}{2026/10/13}{1.0}{Mojing: math notation}
+
+\RequirePackage { mathtools }
+\RequirePackage { extarrows }
+
+%% 数集
+\NewDocumentCommand \N { } { \mathbb{N} }
+\NewDocumentCommand \Z { } { \mathbb{Z} }
+\NewDocumentCommand \Q { } { \mathbb{Q} }
+\NewDocumentCommand \R { } { \mathbb{R} }
+\NewDocumentCommand \C { } { \mathbb{C} }
+\NewDocumentCommand \F { } { \mathbb{F} }
+\NewDocumentCommand \K { } { \mathbb{K} }
+
+%% 正体常数与微分
+\NewDocumentCommand \dd { } { \mathop{}\!\mathrm{d} }
+\NewDocumentCommand \ee { } { \mathrm{e} }
+\NewDocumentCommand \ii { } { \mathrm{i} }
+\NewDocumentCommand \pdiff { m m } { \frac { \partial #1 } { \partial #2 } }
+\NewDocumentCommand \diff  { o m m }
+  {
+    \IfValueTF {#1}
+      { \frac { \mathrm{d}^{#1} #2 } { \mathrm{d} #3^{#1} } }
+      { \frac { \mathrm{d} #2 } { \mathrm{d} #3 } }
+  }
+
+%% 向量、转置
+\NewDocumentCommand \vb { m } { \symbfit{#1} }
+\NewDocumentCommand \T { } { ^{\mathrm{T}} }
+
+%% 成对定界符（带 * 自动伸缩，带 [\big] 等手动指定）
+\DeclarePairedDelimiter \abs   { \lvert  } { \rvert  }
+\DeclarePairedDelimiter \norm  { \lVert  } { \rVert  }
+\DeclarePairedDelimiter \floor { \lfloor } { \rfloor }
+\DeclarePairedDelimiter \ceil  { \lceil  } { \rceil  }
+\DeclarePairedDelimiterX \inner [2] { \langle } { \rangle } { #1 , #2 }
+\ProvideDocumentCommand \given { } { }
+\cs_new_protected:Npn \__mojing_set_symbol:n #1
+  { \nonscript \: #1 \vert \allowbreak \nonscript \: \mathopen{} }
+\DeclarePairedDelimiterX \set [1] { \{ } { \} }
+  { \RenewDocumentCommand \given { } { \__mojing_set_symbol:n { \delimsize } } #1 }
+
+%% 运算符
+\DeclareMathOperator \Res   { Res }
+\DeclareMathOperator \Arg   { Arg }
+\DeclareMathOperator \tr    { tr }
+\DeclareMathOperator \rank  { rank }
+\DeclareMathOperator \diag  { diag }
+\DeclareMathOperator \sgn   { sgn }
+\DeclareMathOperator \id    { id }
+\DeclareMathOperator \Span  { span }
+\DeclareMathOperator \Ker   { Ker }
+\DeclareMathOperator \Img   { Im }
+\DeclareMathOperator \supp  { supp }
+\DeclareMathOperator \dist  { dist }
+\DeclareMathOperator \ord   { ord }
+\DeclareMathOperator* \argmin { arg\,min }
+\DeclareMathOperator* \argmax { arg\,max }
+
+%% 国标惯例：斜的小于等于号、空集符号
+\AtBeginDocument
+  {
+    \cs_set_eq:NN \le  \leqslant
+    \cs_set_eq:NN \leq \leqslant
+    \cs_set_eq:NN \ge  \geqslant
+    \cs_set_eq:NN \geq \geqslant
+    \cs_set_eq:NN \emptyset \varnothing
+    \cs_set_protected:Npn \Re { \operatorname{Re} }
+    \cs_set_protected:Npn \Im { \operatorname{Im} }
+  }
+
+%% 公式编号前缀与样式保持 amsmath 默认的 (1.1)
+\endinput

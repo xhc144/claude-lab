@@ -16,7 +16,7 @@ export function watchErrors(page) {
 export const APP = process.env.MATHSCAPE_APP || '/';
 
 export async function open(page, hash) {
-  const expected = hash || '#/matrix';
+  const expected = hash || '#/'; // no hash: the start page
   await page.goto(`${APP}${hash}`, { waitUntil: 'commit' });
   await page.waitForFunction((h) => window.__mathscape?.mountedFor === h && window.__mathscape.current != null, expected);
   // let ResizeObserver + first animation frames settle

@@ -6,6 +6,7 @@ import { Modal, Field, Segmented, Select, Spinner, toast, openMenu, confirmDialo
 import { BUILTIN_TEMPLATES } from '../../../core/templates/index.js';
 import { THEMES } from '../../../core/themes/index.js';
 import { renderThumb, playPreview } from './preview.js';
+import { RecordDialog } from '../record/RecordDialog.jsx';
 
 export function Home({ onOpen, request, clearRequest }) {
   const [projects, setProjects] = useState(null);
@@ -62,6 +63,11 @@ export function Home({ onOpen, request, clearRequest }) {
               <h3>导入素材，自动设计</h3>
               <p>PPT、Word、Excel、PDF、Markdown、图片 → 专业动态视觉</p>
             </div>
+            <div className="hero-card record" onClick={() => setModal('record')}>
+              <span className="hico"><Icon name="monitor-dot" size={20} /></span>
+              <h3>录制屏幕</h3>
+              <p>录屏自动运镜、平滑光标、点击特效、背景美化与摄像头画中画</p>
+            </div>
             <div className="hero-card ai" onClick={() => setModal('ai')}>
               <span className="hico"><Icon name="sparkles" size={20} /></span>
               <h3>用 AI 创作</h3>
@@ -108,6 +114,7 @@ export function Home({ onOpen, request, clearRequest }) {
       </div>
       {modal === 'new' ? <NewProject onClose={() => setModal(null)} onCreated={(id) => { setModal(null); onOpen(id); }} /> : null}
       {modal === 'import' ? <ImportWizard initial={importFiles} onClose={() => setModal(null)} onCreated={(id) => { setModal(null); onOpen(id); }} /> : null}
+      {modal === 'record' ? <RecordDialog onClose={() => setModal(null)} /> : null}
       {modal === 'ai' ? <AICreate onClose={() => setModal(null)} onCreated={(id) => { setModal(null); onOpen(id); }} /> : null}
     </div>
   );

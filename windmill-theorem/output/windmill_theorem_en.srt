@@ -1,1399 +1,1399 @@
 1
-00:00:00,000 --> 00:00:04,229
+00:00:00,000 --> 00:00:02,678
 In the Tsinghua interview, you may well be asked:
 
 2
-00:00:04,229 --> 00:00:06,359
+00:00:02,678 --> 00:00:04,365
 what's your favorite theorem?
 
 3
-00:00:06,433 --> 00:00:08,769
+00:00:04,433 --> 00:00:05,837
 It sounds like small talk,
 
 4
-00:00:08,769 --> 00:00:14,156
+00:00:05,837 --> 00:00:08,656
 but it's really the start of a chain of follow-up questions.
 
 5
-00:00:14,306 --> 00:00:18,479
+00:00:08,806 --> 00:00:11,441
 Can you state it precisely? Can you prove it?
 
 6
-00:00:18,479 --> 00:00:21,724
+00:00:11,441 --> 00:00:14,401
 Are the conditions necessary? Does it generalize?
 
 7
-00:00:21,724 --> 00:00:24,756
+00:00:14,401 --> 00:00:16,158
 What does it mean to you?
 
 8
-00:00:24,833 --> 00:00:30,851
+00:00:16,233 --> 00:00:20,441
 In this video, I want to share a theorem that I genuinely love,
 
 9
-00:00:30,851 --> 00:00:36,192
+00:00:20,441 --> 00:00:24,130
 and one that holds up under exactly this kind of questioning.
 
 10
-00:00:36,342 --> 00:00:39,520
+00:00:24,280 --> 00:00:26,346
 Let's start with a small experiment.
 
 11
-00:00:39,600 --> 00:00:46,606
-Write down the primes, and try to split each one into a sum of two
+00:00:26,433 --> 00:00:28,649
+Write down the primes, and try to split
 
 12
-00:00:46,606 --> 00:00:47,323
-squares.
+00:00:28,649 --> 00:00:31,338
+each one into a sum of two squares.
 
 13
-00:00:47,473 --> 00:00:52,118
+00:00:31,488 --> 00:00:37,227
 Five is one plus four. Thirteen is four plus nine.
 
 14
-00:00:52,118 --> 00:00:57,014
+00:00:37,227 --> 00:00:43,210
 Seventeen is one plus sixteen. Twenty-nine is four plus twenty-five.
 
 15
-00:00:57,100 --> 00:00:59,913
+00:00:43,300 --> 00:00:47,117
 But three, seven, eleven, nineteen, twenty-three:
 
 16
-00:00:59,913 --> 00:01:03,914
+00:00:47,117 --> 00:00:49,445
 no matter how hard you try, they refuse.
 
 17
-00:01:04,000 --> 00:01:08,086
+00:00:49,533 --> 00:00:53,105
 The pattern hides in the remainder mod four.
 
 18
-00:01:08,236 --> 00:01:14,269
+00:00:53,255 --> 00:00:57,525
 The odd primes that work all leave remainder one when divided by four.
 
 19
-00:01:14,269 --> 00:01:18,232
+00:00:57,525 --> 00:01:00,443
 The ones that fail all leave remainder three.
 
 20
-00:01:18,300 --> 00:01:23,416
+00:01:00,533 --> 00:01:05,222
 How can a prime 'know', just from its remainder mod four,
 
 21
-00:01:23,416 --> 00:01:27,386
+00:01:05,222 --> 00:01:07,792
 whether it is a sum of two squares?
 
 22
-00:01:27,536 --> 00:01:30,259
+00:01:07,942 --> 00:01:10,765
 This is Fermat's two-square theorem.
 
 23
-00:01:30,409 --> 00:01:36,442
-Today we'll answer the question with a proof that is only one sentence
+00:01:10,915 --> 00:01:14,401
+Today we'll answer the question with a proof that is only
 
 24
-00:01:36,442 --> 00:01:40,405
-long, and with the windmill hiding behind it.
+00:01:14,401 --> 00:01:18,699
+one sentence long, and with the windmill hiding behind it.
 
 25
-00:01:44,000 --> 00:01:50,095
-On Christmas Day, 1640, Fermat announced this result in a letter to Marin
+00:01:22,267 --> 00:01:25,668
+On Christmas Day, 1640, Fermat announced
 
 26
-00:01:50,095 --> 00:01:50,814
-Mersenne.
+00:01:25,668 --> 00:01:28,465
+this result in a letter to Marin Mersenne.
 
 27
-00:01:50,964 --> 00:01:55,050
+00:01:28,615 --> 00:01:32,995
 That's why it's sometimes called Fermat's Christmas theorem.
 
 28
-00:01:55,200 --> 00:02:01,559
+00:01:33,145 --> 00:01:37,390
 As usual, Fermat claimed he had a proof, but never wrote it down.
 
 29
-00:02:01,633 --> 00:02:05,265
+00:01:37,467 --> 00:01:40,364
 The first published proof came from Euler.
 
 30
-00:02:05,415 --> 00:02:09,131
+00:01:40,514 --> 00:01:44,171
 It took him several years, until around 1749,
 
 31
-00:02:09,131 --> 00:02:14,956
+00:01:44,171 --> 00:01:49,448
 and he used Fermat's own favorite tool: the method of infinite descent.
 
 32
-00:02:15,033 --> 00:02:19,733
+00:01:49,533 --> 00:01:53,242
 Later, Gauss placed the theorem inside a much bigger picture:
 
 33
-00:02:19,733 --> 00:02:21,392
+00:01:53,242 --> 00:01:54,818
 the Gaussian integers.
 
 34
-00:02:21,542 --> 00:02:26,083
+00:01:54,968 --> 00:02:00,333
 Minkowski gave another proof using the geometry of lattices.
 
 35
-00:02:26,233 --> 00:02:31,683
+00:02:00,483 --> 00:02:03,823
 Each new proof revealed a new side of the same fact.
 
 36
-00:02:31,767 --> 00:02:36,858
-Then in 1990, Don Zagier condensed an earlier argument of Roger
+00:02:03,900 --> 00:02:08,168
+Then in 1990, Don Zagier condensed an earlier argument
 
 37
-00:02:36,858 --> 00:02:39,173
-Heath-Brown into a single sentence,
+00:02:08,168 --> 00:02:10,648
+of Roger Heath-Brown into a single sentence,
 
 38
-00:02:39,173 --> 00:02:43,126
+00:02:10,648 --> 00:02:13,644
 and published it in the American Mathematical Monthly.
 
 39
-00:02:43,200 --> 00:02:46,832
+00:02:13,733 --> 00:02:16,010
 That sentence looks like a magic trick.
 
 40
-00:02:46,982 --> 00:02:49,784
+00:02:16,160 --> 00:02:17,708
 You can check that it's correct,
 
 41
-00:02:49,784 --> 00:02:54,705
+00:02:17,708 --> 00:02:20,607
 but you have no idea how anyone thought of it.
 
 42
-00:02:54,855 --> 00:02:59,395
+00:02:20,757 --> 00:02:23,760
 Our job today is to take the trick apart.
 
 43
-00:03:02,867 --> 00:03:05,589
+00:02:27,233 --> 00:02:29,549
 First, let's state it precisely.
 
 44
-00:03:05,739 --> 00:03:13,584
-Let p be an odd prime. Then p can be written as a sum of two integer
+00:02:29,699 --> 00:02:34,932
+Let p be an odd prime. Then p can be written as a sum of two
 
 45
-00:03:13,584 --> 00:03:19,371
-squares if and only if p is congruent to one mod four.
+00:02:34,932 --> 00:02:40,740
+integer squares if and only if p is congruent to one mod four.
 
 46
-00:03:19,467 --> 00:03:26,280
+00:02:40,833 --> 00:02:47,456
 Two small remarks. The prime two also works, since two is one plus one.
 
 47
-00:03:26,430 --> 00:03:31,880
+00:02:47,606 --> 00:02:52,716
 And the representation is essentially unique, up to order and signs.
 
 48
-00:03:31,967 --> 00:03:35,598
+00:02:52,800 --> 00:02:57,080
 'If and only if' means two directions.
 
 49
-00:03:35,748 --> 00:03:41,811
-Going from 'sum of two squares' to 'one mod four' is the necessary
+00:02:57,230 --> 00:03:01,798
+Going from 'sum of two squares' to 'one mod
 
 50
-00:03:41,811 --> 00:03:43,926
-condition, and it's easy.
+00:03:01,798 --> 00:03:04,910
+four' is the necessary condition, and it's easy.
 
 51
-00:03:44,076 --> 00:03:50,567
+00:03:05,060 --> 00:03:10,798
 Going the other way, from 'one mod four' to 'a and b must exist',
 
 52
-00:03:50,567 --> 00:03:54,526
+00:03:10,798 --> 00:03:14,303
 is the sufficient condition. That's the real challenge.
 
 53
-00:03:58,000 --> 00:04:02,086
+00:03:17,800 --> 00:03:20,710
 Let's take care of the easy direction first.
 
 54
-00:04:02,236 --> 00:04:07,686
+00:03:20,860 --> 00:03:26,826
 Any square leaves remainder zero or one when divided by four.
 
 55
-00:04:07,836 --> 00:04:15,677
+00:03:26,976 --> 00:03:34,221
 If n is even, n squared is a multiple of four. If n is odd, n squared,
 
 56
-00:04:15,677 --> 00:04:21,923
+00:03:34,221 --> 00:03:38,963
 like nine, twenty-five or forty-nine, is one more than a multiple of four.
 
 57
-00:04:22,000 --> 00:04:27,138
+00:03:39,033 --> 00:03:44,036
 So a sum of two squares can only leave remainder zero,
 
 58
-00:04:27,138 --> 00:04:29,723
+00:03:44,036 --> 00:03:47,396
 one, or two. Never three.
 
 59
-00:04:29,800 --> 00:04:33,886
+00:03:47,467 --> 00:03:52,173
 An odd prime leaves remainder one or three.
 
 60
-00:04:34,036 --> 00:04:39,486
+00:03:52,323 --> 00:03:55,858
 The ones with remainder three are ruled out from the start.
 
 61
-00:04:39,636 --> 00:04:45,541
+00:03:56,008 --> 00:04:01,228
 That's the necessary direction, and all it needs is arithmetic mod four.
 
 62
-00:04:45,633 --> 00:04:48,431
+00:04:01,300 --> 00:04:03,548
 The real question is the converse:
 
 63
-00:04:48,431 --> 00:04:53,811
+00:04:03,548 --> 00:04:08,619
 why must every prime that is one mod four actually split?
 
 64
-00:04:53,961 --> 00:04:58,047
+00:04:08,769 --> 00:04:12,773
 For that, we need a completely different idea.
 
 65
-00:05:01,533 --> 00:05:04,803
+00:04:16,267 --> 00:04:19,944
 Constructing a and b directly is hard,
 
 66
-00:05:04,803 --> 00:05:09,256
+00:04:19,944 --> 00:04:22,535
 because we have no idea what they look like.
 
 67
-00:05:09,406 --> 00:05:12,213
+00:04:22,685 --> 00:04:25,243
 Zagier's idea is: don't search, count.
 
 68
-00:05:12,213 --> 00:05:16,674
+00:04:25,243 --> 00:04:30,575
 And not even count exactly, just count mod two.
 
 69
-00:05:17,267 --> 00:05:23,626
+00:04:31,167 --> 00:04:36,341
 Imagine a dance. Everyone either pairs up with a partner, or stands alone.
 
 70
-00:05:23,776 --> 00:05:30,135
+00:04:36,491 --> 00:04:41,324
 If the total number of people is odd, someone must be standing alone.
 
 71
-00:05:30,233 --> 00:05:33,946
+00:04:41,400 --> 00:04:45,208
 In mathematics, this pairing is called an involution:
 
 72
-00:05:33,946 --> 00:05:40,229
+00:04:45,208 --> 00:04:49,616
 a map f which, applied twice, brings you back to where you started.
 
 73
-00:05:40,379 --> 00:05:43,163
+00:04:49,766 --> 00:04:52,455
 It splits a set into pairs,
 
 74
-00:05:43,163 --> 00:05:50,374
+00:04:52,455 --> 00:04:58,153
 and the elements left alone are the fixed points, where f of s equals s.
 
 75
-00:05:50,467 --> 00:05:53,709
+00:04:58,233 --> 00:05:01,139
 This gives a simple but powerful fact:
 
 76
-00:05:53,709 --> 00:06:00,658
-the size of the set and the number of fixed points always have the same
+00:05:01,139 --> 00:05:04,819
+the size of the set and the number of fixed points always
 
 77
-00:06:00,658 --> 00:06:01,371
-parity.
+00:05:04,819 --> 00:05:06,379
+have the same parity.
 
 78
-00:06:02,267 --> 00:06:05,069
+00:05:07,267 --> 00:05:10,416
 Now the whole strategy is clear.
 
 79
-00:06:05,069 --> 00:06:09,989
+00:05:10,416 --> 00:05:14,694
 Find a finite set S with two involutions on it.
 
 80
-00:06:10,139 --> 00:06:14,336
+00:05:14,844 --> 00:05:18,952
 If the first one has exactly one fixed point,
 
 81
-00:06:14,336 --> 00:06:18,317
+00:05:18,952 --> 00:05:21,778
 then S has an odd number of elements.
 
 82
-00:06:18,467 --> 00:06:24,520
+00:05:21,928 --> 00:05:28,297
 So the second involution must also have an odd number of fixed points.
 
 83
-00:06:24,520 --> 00:06:27,098
+00:05:28,297 --> 00:05:30,466
 In particular, at least one.
 
 84
-00:06:27,167 --> 00:06:33,678
-If the fixed points of the second involution are exactly the sums of two
+00:05:30,533 --> 00:05:34,402
+If the fixed points of the second involution are
 
 85
-00:06:33,678 --> 00:06:36,253
-squares we want, we're done.
+00:05:34,402 --> 00:05:38,101
+exactly the sums of two squares we want, we're done.
 
 86
-00:06:36,403 --> 00:06:42,762
+00:05:38,251 --> 00:05:43,174
 So the questions are: what is S, and what are the two involutions?
 
 87
-00:06:46,233 --> 00:06:55,774
+00:05:46,667 --> 00:05:54,708
 We want p = x² + (2y)². That is, x² + 4·y·y.
 
 88
-00:06:55,867 --> 00:06:59,498
+00:05:54,800 --> 00:05:58,691
 Here's the key move: relax the condition.
 
 89
-00:06:59,648 --> 00:07:03,861
+00:05:58,841 --> 00:06:02,173
 Replace y times y by y times z,
 
 90
-00:07:03,861 --> 00:07:08,601
+00:06:02,173 --> 00:06:05,453
 and consider all triples of positive integers (x, y,
 
 91
-00:07:08,601 --> 00:07:14,644
+00:06:05,453 --> 00:06:11,871
 z) with x² + 4yz = p. Call this set S.
 
 92
-00:07:14,733 --> 00:07:21,547
+00:06:11,967 --> 00:06:18,238
 Since x, y and z are positive and bounded by p, S is finite.
 
 93
-00:07:21,697 --> 00:07:26,342
+00:06:18,388 --> 00:06:22,738
 For p equal to thirteen, S has just three elements:
 
 94
-00:07:26,342 --> 00:07:31,238
+00:06:22,738 --> 00:06:27,349
 (1, 1, 3), (1, 3, 1), and (3, 1, 1).
 
 95
-00:07:31,333 --> 00:07:37,238
+00:06:27,433 --> 00:06:32,630
 The first involution is almost a gift: just swap y and z.
 
 96
-00:07:37,388 --> 00:07:43,343
+00:06:32,780 --> 00:06:36,748
 Its fixed points are the triples with y equal to z,
 
 97
-00:07:43,343 --> 00:07:47,383
+00:06:36,748 --> 00:06:41,415
 and then p = x² + (2y)².
 
 98
-00:07:47,467 --> 00:07:49,798
+00:06:41,500 --> 00:06:45,545
 That's the beauty of relaxing:
 
 99
-00:07:49,798 --> 00:07:55,644
+00:06:45,545 --> 00:06:50,726
 the thing we want has become the fixed point of a symmetry.
 
 100
-00:07:55,794 --> 00:07:59,985
+00:06:50,876 --> 00:06:55,222
 For thirteen, the fixed point is (3, 1, 1),
 
 101
-00:07:59,985 --> 00:08:04,426
+00:06:55,222 --> 00:06:59,479
 which gives thirteen equals three squared plus two squared.
 
 102
-00:08:04,500 --> 00:08:09,950
+00:06:59,567 --> 00:07:03,758
 Now we need a second involution with exactly one fixed point.
 
 103
-00:08:10,100 --> 00:08:13,732
+00:07:03,908 --> 00:07:06,878
 Here is Zagier's formula, in three cases.
 
 104
-00:08:13,800 --> 00:08:20,159
+00:07:06,967 --> 00:07:10,439
 At first glance, it looks like it was pulled out of thin air.
 
 105
-00:08:20,309 --> 00:08:23,032
+00:07:10,589 --> 00:07:12,327
 But actually, it's a picture.
 
 106
-00:08:26,500 --> 00:08:34,815
+00:07:15,800 --> 00:07:22,893
 Think of x² + 4yz as an area: a square of side x in the middle,
 
 107
-00:08:34,815 --> 00:08:39,223
+00:07:22,893 --> 00:07:26,933
 surrounded by four y-by-z rectangles, like a windmill.
 
 108
-00:08:39,373 --> 00:08:43,914
+00:07:27,083 --> 00:07:31,227
 The total area of the windmill is exactly p.
 
 109
-00:08:44,000 --> 00:08:50,359
+00:07:31,300 --> 00:07:37,274
 For example, take p equal to forty-one and the triple (3, 2, 4).
 
 110
-00:08:50,509 --> 00:08:52,853
+00:07:37,424 --> 00:07:38,886
 Nine cells in the middle,
 
 111
-00:08:52,853 --> 00:08:57,323
+00:07:38,886 --> 00:07:42,310
 four blades of eight cells each: forty-one in total.
 
 112
-00:08:57,473 --> 00:09:02,468
+00:07:42,460 --> 00:07:46,583
 Every element of S is a windmill of area p.
 
 113
-00:09:03,067 --> 00:09:09,880
+00:07:47,166 --> 00:07:53,173
 What does swapping y and z mean? It flips every blade over its diagonal.
 
 114
-00:09:10,030 --> 00:09:15,480
+00:07:53,323 --> 00:07:58,425
 The windmill stays the same only when the blades are squares.
 
 115
-00:09:15,567 --> 00:09:20,562
+00:07:58,500 --> 00:08:03,304
 And four square blades fit together into one big square.
 
 116
-00:09:20,712 --> 00:09:23,525
+00:08:03,454 --> 00:08:08,617
 For forty-one, that's (5, 2, 2):
 
 117
-00:09:23,525 --> 00:09:27,526
+00:08:08,617 --> 00:08:13,799
 twenty-five plus sixteen, five squared plus four squared.
 
 118
-00:09:28,200 --> 00:09:33,305
+00:08:14,466 --> 00:08:18,415
 Now for Zagier's map. Go back to the windmill (3, 2,
 
 119
-00:09:33,305 --> 00:09:38,195
+00:08:18,415 --> 00:08:22,290
 4), erase the inner cuts, and keep only the outline.
 
 120
-00:09:38,267 --> 00:09:41,444
+00:08:22,366 --> 00:08:25,194
 The outline has four inward corners.
 
 121
-00:09:41,594 --> 00:09:47,640
+00:08:25,344 --> 00:08:30,428
 At each one, two edges meet. Extend one of them into the shape,
 
 122
-00:09:47,640 --> 00:09:50,680
+00:08:30,428 --> 00:08:33,050
 and you recover the original windmill.
 
 123
-00:09:50,830 --> 00:09:53,166
+00:08:33,200 --> 00:08:35,010
 Extend the other one instead,
 
 124
-00:09:53,166 --> 00:09:58,553
+00:08:35,010 --> 00:08:38,375
 and you cut out a new square with four new blades.
 
 125
-00:09:58,633 --> 00:10:03,304
+00:08:38,466 --> 00:08:43,529
 The new windmill is (1, 2, 5): the same outline,
 
 126
-00:10:03,304 --> 00:10:06,356
+00:08:43,529 --> 00:08:46,168
 the same area, just cut differently.
 
 127
-00:10:06,506 --> 00:10:12,865
+00:08:46,318 --> 00:08:50,845
 It happens to spin the other way, but that doesn't change the triple.
 
 128
-00:10:12,933 --> 00:10:18,056
+00:08:50,933 --> 00:08:55,941
 So every windmill outline can be cut in exactly two ways,
 
 129
-00:10:18,056 --> 00:10:21,565
+00:08:55,941 --> 00:08:59,553
 and Zagier's map simply switches between them.
 
 130
-00:10:21,715 --> 00:10:27,620
+00:08:59,703 --> 00:09:04,350
 Switch twice, and you are back where you started. That's an involution.
 
 131
-00:10:28,300 --> 00:10:31,560
+00:09:05,033 --> 00:09:07,872
 When are the two cuts the same?
 
 132
-00:10:31,560 --> 00:10:36,932
+00:09:07,872 --> 00:09:12,593
 When the inward corners are exactly the corners of the square.
 
 133
-00:10:37,082 --> 00:10:40,201
+00:09:12,743 --> 00:09:14,955
 Then the windmill is a cross:
 
 134
-00:10:40,201 --> 00:10:46,168
+00:09:14,955 --> 00:09:19,400
 a unit square with four arms of length (p − 1)/4.
 
 135
-00:10:46,318 --> 00:10:49,041
+00:09:19,550 --> 00:09:21,829
 That's the unique fixed point.
 
 136
-00:10:49,733 --> 00:10:54,274
+00:09:22,500 --> 00:09:26,934
 The three cases in the formula are just bookkeeping.
 
 137
-00:10:54,424 --> 00:10:58,751
+00:09:27,084 --> 00:09:29,833
 Depending on how the square compares with the blades,
 
 138
-00:10:58,751 --> 00:11:04,519
+00:09:29,833 --> 00:09:33,673
 the new square gets bigger, gets smaller, or, in the middle case,
 
 139
-00:11:04,519 --> 00:11:06,692
+00:09:33,673 --> 00:09:35,786
 becomes 2y − x.
 
 140
-00:11:10,167 --> 00:11:16,526
+00:09:39,266 --> 00:09:44,328
 The picture gives us intuition. Now let's turn it into a rigorous proof.
 
 141
-00:11:16,676 --> 00:11:20,308
+00:09:44,478 --> 00:09:46,487
 There are only five things to check.
 
 142
-00:11:20,400 --> 00:11:24,486
+00:09:46,566 --> 00:09:50,629
 One: S is finite, and it's not empty.
 
 143
-00:11:24,636 --> 00:11:32,359
+00:09:50,779 --> 00:09:59,001
 Since p equals 4k + 1, the triple (1, 1, k) is always in S.
 
 144
-00:11:32,833 --> 00:11:36,011
+00:09:59,500 --> 00:10:03,304
 Two: the three cases cover everything.
 
 145
-00:11:36,161 --> 00:11:40,046
+00:10:03,454 --> 00:10:06,522
 The only possible trouble is on the boundaries:
 
 146
-00:11:40,046 --> 00:11:46,611
+00:10:06,522 --> 00:10:11,523
 x exactly equal to y − z, or x exactly equal to 2y.
 
 147
-00:11:46,700 --> 00:11:53,514
+00:10:11,600 --> 00:10:19,637
 If x equals y − z, substituting gives p = (y + z)².
 
 148
-00:11:53,664 --> 00:12:00,932
+00:10:19,787 --> 00:10:27,061
 If x equals 2y, we get p = 4y(y + z).
 
 149
-00:12:01,082 --> 00:12:06,670
+00:10:27,211 --> 00:10:32,006
 A prime is neither a perfect square nor a multiple of four,
 
 150
-00:12:06,670 --> 00:12:09,714
+00:10:32,006 --> 00:10:35,071
 so the boundary cases never happen.
 
 151
-00:12:09,864 --> 00:12:14,859
+00:10:35,221 --> 00:10:38,699
 That's the first place we use that p is prime.
 
 152
-00:12:15,433 --> 00:12:19,520
+00:10:39,266 --> 00:10:43,619
 Three: the map really sends S into S.
 
 153
-00:12:19,670 --> 00:12:25,906
+00:10:43,769 --> 00:10:49,977
 Expanding the squares, x² + 4yz stays the same in every case,
 
 154
-00:12:25,906 --> 00:12:31,103
+00:10:49,977 --> 00:10:54,244
 and the inequalities guarantee that the new coordinates are still
 
 155
-00:12:31,103 --> 00:12:32,392
+00:10:54,244 --> 00:10:55,151
 positive integers.
 
 156
-00:12:32,967 --> 00:12:35,235
+00:10:55,733 --> 00:10:59,544
 Four: it's an involution.
 
 157
-00:12:35,385 --> 00:12:39,548
+00:10:59,694 --> 00:11:02,481
 Case one and case three swap with each other,
 
 158
-00:12:39,548 --> 00:12:43,711
+00:11:02,481 --> 00:11:05,681
 and case two maps to itself. Apply it twice,
 
 159
-00:12:43,711 --> 00:12:47,198
+00:11:05,681 --> 00:11:07,662
 and you're back to the original triple.
 
 160
-00:12:47,767 --> 00:12:50,944
+00:11:08,233 --> 00:11:13,312
 Five, the crucial one: fixed points.
 
 161
-00:12:51,094 --> 00:12:54,315
+00:11:13,462 --> 00:11:15,523
 Only case two can be fixed,
 
 162
-00:12:54,315 --> 00:13:01,544
+00:11:15,523 --> 00:11:23,291
 and that forces x to equal y. Then p = x(x + 4z).
 
 163
-00:13:01,694 --> 00:13:09,417
+00:11:23,441 --> 00:11:30,767
 Since p is prime, x must be one, and z is (p − 1)/4.
 
 164
-00:13:09,567 --> 00:13:12,342
+00:11:30,917 --> 00:11:33,105
 That's the second use of primality,
 
 165
-00:13:12,342 --> 00:13:16,967
+00:11:33,105 --> 00:11:37,105
 and the only place where 'one mod four' is needed:
 
 166
-00:13:16,967 --> 00:13:21,380
+00:11:37,105 --> 00:11:41,441
 it guarantees that this unique fixed point actually exists.
 
 167
-00:13:21,467 --> 00:13:27,924
+00:11:41,533 --> 00:11:47,315
 So Zagier's map has exactly one fixed point, the size of S is odd,
 
 168
-00:13:27,924 --> 00:13:35,553
+00:11:47,315 --> 00:11:53,221
 the swap has at least one fixed point, and p is a sum of two squares.
 
 169
-00:13:35,703 --> 00:13:37,517
+00:11:53,371 --> 00:11:55,098
 Q.E.D.
 
 170
-00:13:37,600 --> 00:13:40,869
+00:11:55,166 --> 00:11:57,046
 Compress all of this into one sentence,
 
 171
-00:13:40,869 --> 00:13:45,323
+00:11:57,046 --> 00:12:00,338
 and you get the entire text of Zagier's paper.
 
 172
-00:13:48,800 --> 00:13:55,159
+00:12:04,066 --> 00:12:08,037
 Looking back, there are three ideas in this proof worth taking with you.
 
 173
-00:13:55,309 --> 00:13:58,599
+00:12:08,187 --> 00:12:10,933
 They also answer the interviewer's favorite question:
 
 174
-00:13:58,599 --> 00:14:01,668
+00:12:10,933 --> 00:12:12,854
 how would anyone think of this?
 
 175
-00:14:01,767 --> 00:14:04,489
+00:12:12,933 --> 00:12:16,659
 First: count instead of construct.
 
 176
-00:14:04,639 --> 00:14:10,638
+00:12:16,809 --> 00:12:21,639
 Searching for a and b directly gives us nothing to hold on to.
 
 177
-00:14:10,638 --> 00:14:17,098
+00:12:21,639 --> 00:12:26,919
 But a statement like 'this number is odd' can often be proved by pairing
 
 178
-00:14:17,098 --> 00:14:18,271
+00:12:26,919 --> 00:12:27,781
 things up.
 
 179
-00:14:18,421 --> 00:14:22,164
+00:12:27,931 --> 00:12:30,779
 It's the same spirit as the handshake lemma,
 
 180
-00:14:22,164 --> 00:14:25,689
+00:12:30,779 --> 00:12:33,559
 or the parity argument in Sperner's lemma.
 
 181
-00:14:25,767 --> 00:14:31,671
+00:12:33,633 --> 00:12:38,895
 Second: turn what you want into the fixed points of a symmetry.
 
 182
-00:14:31,821 --> 00:14:39,201
+00:12:39,045 --> 00:12:46,213
 We wanted y equal to z, so we relaxed y times y to y times z,
 
 183
-00:14:39,201 --> 00:14:45,908
+00:12:46,213 --> 00:12:52,810
 and used the symmetry 'swap y and z' to pick out exactly our target.
 
 184
-00:14:46,000 --> 00:14:50,086
+00:12:52,900 --> 00:12:57,362
 Third: let geometry discover the formula for you.
 
 185
-00:14:50,236 --> 00:14:55,783
+00:12:57,512 --> 00:13:02,600
 As a formula, Zagier's map looks like it came from outer space.
 
 186
-00:14:55,783 --> 00:15:02,505
+00:13:02,600 --> 00:13:06,571
 In the windmill picture, it's just the other way to cut the same outline.
 
 187
-00:15:03,200 --> 00:15:05,923
+00:13:07,266 --> 00:13:09,126
 And there's a beautiful bonus.
 
 188
-00:15:06,073 --> 00:15:09,301
+00:13:09,276 --> 00:13:13,084
 If we apply the two involutions alternately,
 
 189
-00:15:09,301 --> 00:15:12,068
+00:13:13,084 --> 00:13:16,044
 starting from the unique cross-shaped windmill,
 
 190
-00:15:12,068 --> 00:15:20,159
+00:13:16,044 --> 00:13:21,788
 we walk along a path, and that path must end at a fixed point of the swap.
 
 191
-00:15:20,233 --> 00:15:23,411
+00:13:21,866 --> 00:13:25,461
 Take forty-one. S has eleven elements.
 
 192
-00:15:23,561 --> 00:15:28,661
+00:13:25,610 --> 00:13:30,279
 Starting from (1, 1, 10) and alternating swaps and windmill moves,
 
 193
-00:15:28,661 --> 00:15:34,011
+00:13:30,279 --> 00:13:33,814
 we walk the whole path and stop at (5, 2, 2).
 
 194
-00:15:34,161 --> 00:15:38,247
+00:13:33,964 --> 00:13:38,648
 That's forty-one equals five squared plus four squared.
 
 195
-00:15:38,397 --> 00:15:42,483
+00:13:38,798 --> 00:13:42,342
 An existence proof has turned into an algorithm.
 
 196
-00:15:45,967 --> 00:15:51,417
+00:13:45,833 --> 00:13:49,346
 Part of what makes a theorem great is where it leads.
 
 197
-00:15:51,567 --> 00:15:55,653
+00:13:49,496 --> 00:13:54,293
 The first natural question: what about composite numbers?
 
 198
-00:15:56,433 --> 00:16:03,866
-The key is an identity: a product of two sums of two squares is again a
+00:13:55,066 --> 00:13:58,775
+The key is an identity: a product of two sums
 
 199
-00:16:03,866 --> 00:16:05,974
-sum of two squares.
+00:13:58,775 --> 00:14:02,847
+of two squares is again a sum of two squares.
 
 200
-00:16:06,124 --> 00:16:09,362
+00:14:02,997 --> 00:14:06,791
 It's really just multiplication of complex numbers:
 
 201
-00:16:09,362 --> 00:16:15,838
+00:14:06,791 --> 00:14:10,591
 the squared length of z times the squared length of w equals the squared
 
 202
-00:16:15,838 --> 00:16:17,938
+00:14:10,591 --> 00:14:12,323
 length of z w.
 
 203
-00:16:18,633 --> 00:16:22,776
+00:14:13,000 --> 00:14:17,254
 Combined with Fermat's theorem, this gives the complete answer:
 
 204
-00:16:22,776 --> 00:16:29,680
-a positive integer is a sum of two squares if and only if every prime
+00:14:17,254 --> 00:14:22,134
+a positive integer is a sum of two squares if and only if every
 
 205
-00:16:29,680 --> 00:16:34,992
-factor that is three mod four appears to an even power.
+00:14:22,134 --> 00:14:26,870
+prime factor that is three mod four appears to an even power.
 
 206
-00:16:35,142 --> 00:16:39,570
+00:14:27,020 --> 00:14:31,442
 For example, 2026 is two times 1013,
 
 207
-00:16:39,570 --> 00:16:47,411
+00:14:31,442 --> 00:14:39,893
 a prime that's one mod four. So 2026 = 45² + 1².
 
 208
-00:16:47,561 --> 00:16:55,738
+00:14:40,043 --> 00:14:48,136
 But 2027 is itself a prime that is three mod four, so it can't be done.
 
 209
-00:16:56,933 --> 00:17:00,385
+00:14:49,333 --> 00:14:52,419
 The second direction is the Gaussian integers:
 
 210
-00:17:00,385 --> 00:17:05,565
+00:14:52,419 --> 00:14:56,585
 complex numbers a + bi, with a and b integers.
 
 211
-00:17:05,715 --> 00:17:16,670
-In this world, p = a² + b² means exactly that p factors as (a + bi)(a −
+00:14:56,735 --> 00:15:01,817
+In this world, p = a² + b² means exactly
 
 212
-00:17:16,670 --> 00:17:17,529
-bi).
+00:15:01,817 --> 00:15:06,544
+that p factors as (a + bi)(a − bi).
 
 213
-00:17:17,679 --> 00:17:25,541
+00:15:06,694 --> 00:15:13,181
 Primes that are one mod four split, like 13 = (3 + 2i)(3 − 2i).
 
 214
-00:17:25,541 --> 00:17:33,129
+00:15:13,181 --> 00:15:18,571
 Primes that are three mod four stay prime. And two is a special case.
 
 215
-00:17:33,200 --> 00:17:36,448
+00:15:18,666 --> 00:15:22,371
 The Gaussian integers also have unique factorization,
 
 216
-00:17:36,448 --> 00:17:42,481
-and that's exactly why the representation as a sum of two squares is
+00:15:22,371 --> 00:15:26,371
+and that's exactly why the representation as a sum of two squares
 
 217
-00:17:42,481 --> 00:17:43,195
-unique.
+00:15:26,371 --> 00:15:27,831
+is unique.
 
 218
-00:17:44,367 --> 00:17:47,998
+00:15:29,000 --> 00:15:32,837
 The third direction is other quadratic forms.
 
 219
-00:17:48,148 --> 00:17:56,186
-Apart from two, the primes of the form x² + 2y² are exactly those that
+00:15:32,987 --> 00:15:37,754
+Apart from two, the primes of the form x² + 2y² are exactly
 
 220
-00:17:56,186 --> 00:18:01,545
-are one or three mod eight. Apart from three itself,
+00:15:37,754 --> 00:15:41,994
+those that are one or three mod eight. Apart from three itself,
 
 221
-00:18:01,545 --> 00:18:07,689
+00:15:41,994 --> 00:15:46,400
 x² + 3y² gives the primes that are one mod three.
 
 222
-00:18:07,839 --> 00:18:15,355
-Going further, the question of x² + ny² leads all the way to quadratic
+00:15:46,550 --> 00:15:50,621
+Going further, the question of x² + ny² leads all the
 
 223
-00:18:15,355 --> 00:18:18,289
-reciprocity and class field theory.
+00:15:50,621 --> 00:15:54,101
+way to quadratic reciprocity and class field theory.
 
 224
-00:18:18,439 --> 00:18:20,784
+00:15:54,251 --> 00:15:57,018
 And there's Lagrange's four-square theorem:
 
 225
-00:18:20,784 --> 00:18:25,253
+00:15:57,018 --> 00:16:00,568
 every positive integer is a sum of four squares.
 
 226
-00:18:26,433 --> 00:18:28,745
+00:16:01,766 --> 00:16:06,276
 Now applications. First, Pythagorean triples:
 
 227
-00:18:28,745 --> 00:18:35,216
+00:16:06,276 --> 00:16:10,356
 a prime can be the hypotenuse of a right triangle with integer sides if
 
 228
-00:18:35,216 --> 00:18:38,702
+00:16:10,356 --> 00:16:12,800
 and only if it's one mod four.
 
 229
-00:18:38,852 --> 00:18:43,055
+00:16:12,950 --> 00:16:17,711
 For example, thirteen equals three squared plus two squared,
 
 230
-00:18:43,055 --> 00:18:46,574
+00:16:17,711 --> 00:16:21,523
 which gives the triangle five, twelve, thirteen.
 
 231
-00:18:47,267 --> 00:18:50,444
+00:16:22,200 --> 00:16:24,368
 The most surprising one is pi.
 
 232
-00:18:50,594 --> 00:18:54,847
+00:16:24,518 --> 00:16:27,923
 If you count lattice points inside a circle,
 
 233
-00:18:54,847 --> 00:19:03,352
-using the formula for the number of ways to write n as a sum of two
+00:16:27,923 --> 00:16:30,723
+using the formula for the number of ways to write n
 
 234
-00:19:03,352 --> 00:19:11,044
-squares, you get π/4 = 1 − 1/3 + 1/5 − 1/7 + ….
+00:16:30,723 --> 00:16:41,546
+as a sum of two squares, you get π/4 = 1 − 1/3 + 1/5 − 1/7 + ….
 
 235
-00:19:11,194 --> 00:19:17,098
+00:16:41,696 --> 00:16:46,335
 Remainders of primes mod four turn out to be connected to pi.
 
 236
-00:19:20,567 --> 00:19:25,562
+00:16:49,833 --> 00:16:54,046
 Now let's put it all together in a mock interview.
 
 237
-00:19:25,712 --> 00:19:28,548
+00:16:54,196 --> 00:16:57,343
 The questions come in four layers:
 
 238
-00:19:28,548 --> 00:19:31,162
+00:16:57,343 --> 00:17:01,953
 statement, proof, conditions, and beyond.
 
 239
-00:19:31,312 --> 00:19:35,489
+00:17:02,103 --> 00:17:05,490
 Listen to how each answer gives a conclusion first,
 
 240
-00:19:35,489 --> 00:19:41,308
+00:17:05,490 --> 00:17:08,995
 then a reason, and then leaves a hook for the next question.
 
 241
-00:19:41,800 --> 00:19:44,523
+00:17:09,466 --> 00:17:11,780
 Q: So, what's your favorite theorem?
 
 242
-00:19:44,600 --> 00:19:47,323
+00:17:11,866 --> 00:17:14,749
 A: I'd say Fermat's two-square theorem.
 
 243
-00:19:47,473 --> 00:19:54,923
-A: It says that an odd prime is a sum of two squares exactly when it's one
+00:17:14,899 --> 00:17:17,726
+A: It says that an odd prime is a sum of two
 
 244
-00:19:54,923 --> 00:19:56,105
-A: mod four.
+00:17:17,726 --> 00:17:20,680
+A: squares exactly when it's one mod four.
 
 245
-00:19:56,255 --> 00:19:59,026
+00:17:20,830 --> 00:17:23,230
 A: What I love is the contrast:
 
 246
-00:19:59,026 --> 00:20:04,108
+00:17:23,230 --> 00:17:27,230
 A: the statement is something you could explain to a middle-school student,
 
 247
-00:20:04,108 --> 00:20:08,977
+00:17:27,230 --> 00:17:32,421
 A: but the proofs touch number theory, geometry, and even combinatorics.
 
 248
-00:20:09,067 --> 00:20:11,416
+00:17:32,500 --> 00:17:34,429
 Q: Can you state it precisely?
 
 249
-00:20:11,416 --> 00:20:15,426
+00:17:34,429 --> 00:17:37,410
 Q: What happens with two, or with composite numbers?
 
 250
-00:20:15,500 --> 00:20:18,465
+00:17:37,500 --> 00:17:40,109
 A: Sure. For an odd prime p,
 
 251
-00:20:18,465 --> 00:20:27,854
-A: p = a² + b² for some integers a and b if and only if p is congruent to
+00:17:40,109 --> 00:17:46,630
+A: p = a² + b² for some integers a and b if and only if p
 
 252
-00:20:27,854 --> 00:20:29,586
-A: one mod four.
+00:17:46,630 --> 00:17:49,177
+A: is congruent to one mod four.
 
 253
-00:20:29,736 --> 00:20:34,277
+00:17:49,327 --> 00:17:52,338
 A: Two is also fine, since it's one plus one.
 
 254
-00:20:34,427 --> 00:20:37,201
+00:17:52,488 --> 00:17:56,095
 A: For composite numbers, the rule is:
 
 255
-00:20:37,201 --> 00:20:43,672
+00:17:56,095 --> 00:18:02,791
 A: every prime factor that's three mod four has to appear to an even power.
 
 256
-00:20:43,672 --> 00:20:46,695
+00:18:02,791 --> 00:18:06,382
 A: So forty-five works, but twenty-one doesn't.
 
 257
-00:20:46,767 --> 00:20:49,944
+00:18:06,466 --> 00:18:08,843
 Q: Why is 'one mod four' necessary?
 
 258
-00:20:50,033 --> 00:20:54,574
+00:18:08,933 --> 00:18:12,512
 A: Because squares are only zero or one mod four.
 
 259
-00:20:54,724 --> 00:21:01,992
+00:18:12,662 --> 00:18:18,880
 A: So a sum of two squares is zero, one, or two mod four, never three.
 
 260
-00:21:02,142 --> 00:21:07,592
+00:18:19,030 --> 00:18:24,354
 A: That direction takes one line. The interesting part is the converse.
 
 261
-00:21:07,667 --> 00:21:14,026
+00:18:24,433 --> 00:18:28,498
 Q: Okay. Can you sketch a proof of the converse, in about a minute?
 
 262
-00:21:14,100 --> 00:21:20,765
-A: I'll use Zagier's proof. Consider the set S of positive integer triples
+00:18:28,566 --> 00:18:33,021
+A: I'll use Zagier's proof. Consider the set S of
 
 263
-00:21:20,765 --> 00:21:25,459
-A: with x² + 4yz = p. It's finite.
+00:18:33,021 --> 00:18:40,996
+A: positive integer triples with x² + 4yz = p. It's finite.
 
 264
-00:21:25,609 --> 00:21:30,738
+00:18:41,146 --> 00:18:45,922
 A: On S there's an obvious involution: swap y and z.
 
 265
-00:21:30,738 --> 00:21:35,605
+00:18:45,922 --> 00:18:51,363
 A: Its fixed points give p = x² + (2y)².
 
 266
-00:21:35,755 --> 00:21:41,277
+00:18:51,513 --> 00:18:56,346
 A: Zagier found a second involution with exactly one fixed point,
 
 267
-00:21:41,277 --> 00:21:44,841
+00:18:56,346 --> 00:19:01,358
 A: namely (1, 1, (p − 1)/4).
 
 268
-00:21:44,991 --> 00:21:47,753
+00:19:01,508 --> 00:19:04,298
 A: Since an involution pairs up elements,
 
 269
-00:21:47,753 --> 00:21:54,199
+00:19:04,298 --> 00:19:09,428
 A: the size of S has the same parity as its number of fixed points.
 
 270
-00:21:54,199 --> 00:22:00,895
+00:19:09,428 --> 00:19:14,456
 A: So S has odd size, and the swap must have a fixed point too.
 
 271
-00:22:00,967 --> 00:22:05,508
+00:19:14,533 --> 00:19:17,121
 Q: Where exactly did you use that p is prime?
 
 272
-00:22:05,600 --> 00:22:07,414
+00:19:17,200 --> 00:19:18,658
 A: In two places.
 
 273
-00:22:07,564 --> 00:22:12,664
+00:19:18,808 --> 00:19:24,949
 A: First, to make Zagier's map well defined: in the boundary cases,
 
 274
-00:22:12,664 --> 00:22:18,014
+00:19:24,949 --> 00:19:28,927
 A: p would be a perfect square or a multiple of four.
 
 275
-00:22:18,164 --> 00:22:22,321
+00:19:29,077 --> 00:19:32,364
 A: Second, to show the fixed point is unique:
 
 276
-00:22:22,321 --> 00:22:30,886
+00:19:32,364 --> 00:19:40,905
 A: a fixed point means p = x(x + 4z), and primality forces x to be one.
 
 277
-00:22:31,036 --> 00:22:35,217
+00:19:41,055 --> 00:19:46,573
 A: For example, with twenty-one there are two fixed points,
 
 278
-00:22:35,217 --> 00:22:40,577
+00:19:46,573 --> 00:19:53,067
 A: coming from 21 = 1 × 21 = 3 × 7.
 
 279
-00:22:40,727 --> 00:22:44,464
+00:19:53,217 --> 00:19:57,580
 A: So the parity argument breaks down, and indeed,
 
 280
-00:22:44,464 --> 00:22:48,450
+00:19:57,580 --> 00:20:00,829
 A: twenty-one is not a sum of two squares.
 
 281
-00:22:48,533 --> 00:22:54,892
+00:20:00,900 --> 00:20:04,978
 Q: That map looks like a trick. How would anyone come up with it?
 
 282
-00:22:54,967 --> 00:23:00,417
+00:20:05,066 --> 00:20:09,292
 A: That was my first reaction too. The answer is a picture.
 
 283
-00:23:00,567 --> 00:23:09,198
+00:20:09,442 --> 00:20:17,383
 A: x² + 4yz is the area of a windmill: a square with four rectangular blades.
 
 284
-00:23:09,348 --> 00:23:16,287
-A: The outline of a windmill can be cut into a square and four blades in
+00:20:17,533 --> 00:20:21,638
+A: The outline of a windmill can be cut into a square and four blades
 
 285
-00:23:16,287 --> 00:23:21,162
-A: exactly two ways, and Zagier's map just switches between them.
+00:20:21,638 --> 00:20:26,519
+A: in exactly two ways, and Zagier's map just switches between them.
 
 286
-00:23:21,312 --> 00:23:25,853
+00:20:26,669 --> 00:20:31,501
 A: Once you see the picture, the formula feels inevitable.
 
 287
-00:23:25,933 --> 00:23:27,802
+00:20:31,600 --> 00:20:33,598
 Q: Your proof shows existence.
 
 288
-00:23:27,802 --> 00:23:33,656
+00:20:33,598 --> 00:20:37,155
 Q: How would you actually find a and b for a large prime?
 
 289
-00:23:33,733 --> 00:23:38,341
+00:20:37,233 --> 00:20:42,128
 A: There are two answers. The proof itself gives an algorithm:
 
 290
-00:23:38,341 --> 00:23:42,488
+00:20:42,128 --> 00:20:46,737
 A: alternate the two involutions, starting from the cross-shaped windmill,
 
 291
-00:23:42,488 --> 00:23:48,729
+00:20:46,737 --> 00:20:50,960
 A: and you'll walk to a solution. But that can take a long time.
 
 292
-00:23:48,879 --> 00:23:55,817
+00:20:51,110 --> 00:20:55,638
 A: A much faster method is to find a square root of minus one mod p,
 
 293
-00:23:55,817 --> 00:24:00,692
+00:20:55,638 --> 00:20:59,263
 A: and run the Euclidean algorithm on p and that number.
 
 294
-00:24:00,842 --> 00:24:05,989
+00:20:59,413 --> 00:21:04,082
 A: The first remainder below the square root of p gives a,
 
 295
-00:24:05,989 --> 00:24:08,111
+00:21:04,082 --> 00:21:05,938
 A: and then b follows.
 
 296
-00:24:08,261 --> 00:24:12,437
+00:21:06,088 --> 00:21:11,111
 A: For thirteen: five squared is minus one mod thirteen,
 
 297
-00:24:12,437 --> 00:24:18,256
+00:21:11,111 --> 00:21:16,105
 A: the first small remainder is three, and thirteen is nine plus four.
 
 298
-00:24:18,333 --> 00:24:20,602
+00:21:16,200 --> 00:21:18,201
 Q: Is the representation unique?
 
 299
-00:24:20,700 --> 00:24:23,877
+00:21:18,300 --> 00:21:20,974
 A: Yes, up to order and signs.
 
 300
-00:24:24,027 --> 00:24:28,755
-A: The cleanest reason is that the Gaussian integers have unique
+00:21:21,124 --> 00:21:23,527
+A: The cleanest reason is that the Gaussian
 
 301
-00:24:28,755 --> 00:24:29,477
-A: factorization.
+00:21:23,527 --> 00:21:26,050
+A: integers have unique factorization.
 
 302
-00:24:29,627 --> 00:24:35,182
+00:21:26,200 --> 00:21:32,140
 A: Writing a² + b² = (a + bi)(a − bi),
 
 303
-00:24:35,182 --> 00:24:41,848
-A: a prime that's one mod four splits into exactly two conjugate Gaussian
+00:21:32,140 --> 00:21:36,749
+A: a prime that's one mod four splits into exactly two
 
 304
-00:24:41,848 --> 00:24:45,986
-A: primes, so there's essentially only one way.
+00:21:36,749 --> 00:21:41,303
+A: conjugate Gaussian primes, so there's essentially only one way.
 
 305
-00:24:46,067 --> 00:24:49,244
+00:21:41,400 --> 00:21:43,528
 Q: How would you generalize the theorem?
 
 306
-00:24:49,333 --> 00:24:51,602
+00:21:43,600 --> 00:21:45,755
 A: There are several directions.
 
 307
-00:24:51,752 --> 00:24:53,608
+00:21:45,905 --> 00:21:47,908
 A: One is composite numbers,
 
 308
-00:24:53,608 --> 00:24:58,249
+00:21:47,908 --> 00:21:51,908
 A: using the identity for products of sums of two squares,
 
 309
-00:24:58,249 --> 00:25:01,747
+00:21:51,908 --> 00:21:55,646
 A: which is really multiplication of complex numbers.
 
 310
-00:25:01,897 --> 00:25:05,924
+00:21:55,796 --> 00:22:00,567
 A: Another is other forms, like x² + 2y²,
 
 311
-00:25:05,924 --> 00:25:11,462
+00:22:00,567 --> 00:22:04,045
 A: which works for primes that are one or three mod eight.
 
 312
-00:25:11,462 --> 00:25:18,256
+00:22:04,045 --> 00:22:09,105
 A: And Lagrange proved that every positive integer is a sum of four squares.
 
 313
-00:25:18,406 --> 00:25:23,018
+00:22:09,255 --> 00:22:13,683
 A: The deepest direction is x² + ny² in general,
 
 314
-00:25:23,018 --> 00:25:28,655
+00:22:13,683 --> 00:22:17,683
 A: which leads to class field theory. I haven't studied that yet,
 
 315
-00:25:28,655 --> 00:25:32,492
+00:22:17,683 --> 00:22:20,407
 A: but it's something I'm really curious about.
 
 316
-00:25:32,567 --> 00:25:36,653
+00:22:20,500 --> 00:22:23,337
 Q: Is the theorem useful for anything beyond itself?
 
 317
-00:25:36,733 --> 00:25:39,976
+00:22:23,433 --> 00:22:27,607
 A: One example I like is Pythagorean triples:
 
 318
-00:25:39,976 --> 00:25:45,998
-A: a prime is the hypotenuse of an integer right triangle exactly when it's
+00:22:27,607 --> 00:22:32,998
+A: a prime is the hypotenuse of an integer right triangle exactly
 
 319
-00:25:45,998 --> 00:25:47,638
-A: one mod four.
+00:22:32,998 --> 00:22:34,965
+A: when it's one mod four.
 
 320
-00:25:47,788 --> 00:25:51,027
+00:22:35,115 --> 00:22:37,845
 A: A more surprising one is pi.
 
 321
-00:25:51,027 --> 00:25:57,505
-A: Counting lattice points in a circle with the two-square formula gives the
+00:22:37,845 --> 00:22:41,672
+A: Counting lattice points in a circle with the two-square formula gives
 
 322
-00:25:57,505 --> 00:26:03,692
-A: Leibniz series: π/4 = 1 − 1/3 + 1/5 − ….
+00:22:41,672 --> 00:22:47,968
+A: the Leibniz series: π/4 = 1 − 1/3 + 1/5 − ….
 
 323
-00:26:03,767 --> 00:26:11,035
+00:22:48,066 --> 00:22:52,295
 Q: If you had to keep only one idea from this proof, what would it be?
 
 324
-00:26:11,133 --> 00:26:15,324
+00:22:52,366 --> 00:22:56,428
 A: Probably the parity trick: to prove that something exists,
 
 325
-00:26:15,324 --> 00:26:19,765
+00:22:56,428 --> 00:22:59,485
 A: show that the number of such things is odd.
 
 326
-00:26:19,915 --> 00:26:21,319
+00:22:59,635 --> 00:23:02,297
 A: It's surprisingly general.
 
 327
-00:26:21,319 --> 00:26:27,183
+00:23:02,297 --> 00:23:06,880
 A: The same idea appears in the handshake lemma and in Sperner's lemma.
 
 328
-00:26:27,333 --> 00:26:31,962
+00:23:07,030 --> 00:23:10,919
 A: And what I find beautiful is that a counting argument,
 
 329
-00:26:31,962 --> 00:26:33,814
+00:23:10,919 --> 00:23:13,789
 A: which seems totally non-constructive,
 
 330
-00:26:33,814 --> 00:26:38,692
+00:23:13,789 --> 00:23:17,819
 A: can be turned into an algorithm by following the pairs.
 
 331
-00:26:38,767 --> 00:26:43,762
+00:23:17,900 --> 00:23:21,988
 Q: Quick one: is 2027 a sum of two squares?
 
 332
-00:26:43,833 --> 00:26:50,647
+00:23:22,066 --> 00:23:29,954
 A: No. 2027 is a prime, and it's three mod four, so it's impossible.
 
 333
-00:26:50,797 --> 00:26:55,792
+00:23:30,104 --> 00:23:35,972
 A: But 2026 is: it's forty-five squared plus one squared.
 
 334
-00:26:55,867 --> 00:27:01,317
+00:23:36,066 --> 00:23:41,737
 Notice the pattern: conclusion first, then the reason, then a hook.
 
 335
-00:27:01,467 --> 00:27:06,917
+00:23:41,887 --> 00:23:45,753
 That's how you lead the conversation toward what you know best.
 
 336
-00:27:10,400 --> 00:27:14,032
+00:23:49,233 --> 00:23:51,461
 Let me end with a personal thought.
 
 337
-00:27:14,182 --> 00:27:19,287
+00:23:51,611 --> 00:23:55,659
 What moves me about this theorem is not just the result,
 
 338
-00:27:19,287 --> 00:27:24,177
+00:23:55,659 --> 00:24:00,046
 but how many different eyes have seen the same fact.
 
 339
-00:27:24,327 --> 00:27:29,449
+00:24:00,196 --> 00:24:08,011
 Fermat and Euler saw descent. Gauss saw factorization of complex numbers.
 
 340
-00:27:29,449 --> 00:27:32,959
+00:24:08,011 --> 00:24:13,111
 Minkowski saw lattice points. Zagier saw pairing.
 
 341
-00:27:33,633 --> 00:27:37,354
+00:24:13,800 --> 00:24:17,756
 A good proof doesn't just verify a result.
 
 342
-00:27:37,354 --> 00:27:42,720
+00:24:17,756 --> 00:24:21,372
 It tells you why the result could not have been otherwise.
 
 343
-00:27:42,870 --> 00:27:46,159
+00:24:21,522 --> 00:24:24,192
 Zagier's sentence made me believe the theorem.
 
 344
-00:27:46,159 --> 00:27:49,229
+00:24:24,192 --> 00:24:26,708
 The windmill made me understand it.
 
 345
-00:27:49,900 --> 00:27:54,103
+00:24:27,400 --> 00:24:30,348
 So if an interviewer asks for your favorite theorem,
 
 346
-00:27:54,103 --> 00:27:57,623
+00:24:30,348 --> 00:24:32,669
 the best answer isn't a memorized proof.
 
 347
-00:27:57,773 --> 00:28:05,041
+00:24:32,819 --> 00:24:38,049
 It's what you saw, where you got stuck, and what you still want to ask.
 
 348
-00:28:05,733 --> 00:28:12,092
+00:24:38,733 --> 00:24:43,163
 Every prime that is one mod four is a sum of two squares.
 
 349
-00:28:12,242 --> 00:28:15,055
+00:24:43,313 --> 00:24:45,492
 Next time you see thirteen, twenty-nine,
 
 350
-00:28:15,055 --> 00:28:19,056
+00:24:45,492 --> 00:24:48,421
 or forty-one, I hope you see a windmill.

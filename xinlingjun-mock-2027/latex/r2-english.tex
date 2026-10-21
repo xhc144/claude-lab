@@ -1,0 +1,214 @@
+% !TEX program = xelatex
+% 2027 新领军学科能力二试 · 语言 · 英语（预测训练卷）
+\documentclass[cjk=noto, seal=first]{mojing-exam}
+
+\examtitle{2027 新领军学科能力测试 · 预测训练卷}
+\secret{训练用卷 ★ 非官方试题}
+
+\begin{document}
+
+\begin{paper}[time={建议 2 小时（训练设置）}, full=100]{二试 · 语言 · 英语}
+
+\begin{instructions}
+  \item 本卷共 3 部分 13 题，满分 100 分，建议用时 2 小时。2027 年简章列出二试“语言（语文、英语）”，未公布题型、时长与分值；本卷安排均为训练设置。
+  \item 全部阅读与翻译材料为本卷编写。2027 年的面试含英文面试，本卷侧重学术阅读、准确翻译与论证性写作。
+\end{instructions}
+
+\begin{gradingnotes}
+  \item 本评分标准为训练用建议标准。简答题按要点给分；翻译按“准确—通顺—得体”分档；写作按内容、结构、语言综合评定。
+\end{gradingnotes}
+
+\scoretable{I,II,III}
+
+% -----------------------------------------------------------------------------
+\examsection*{Part I\quad Reading Comprehension}{40 分。选择题每题 4 分，简答题每题 4 分}
+
+\noindent\textbf{Passage A}
+
+\begin{center}\textbf{The Quiet Power of the Counterexample}\end{center}
+
+Mathematics is often presented as a tower of theorems, each resting firmly on the ones below. Students learn the statements,
+practise the proofs, and move on. What this picture leaves out is the scaffolding that was taken down once the tower was finished:
+the failed attempts, the plausible conjectures that turned out to be false, and above all the counterexamples that showed exactly
+where an idea broke.
+
+A counterexample is a single case in which a general claim fails. It may seem a purely negative object --- it destroys rather than
+builds --- but working mathematicians value it highly. One reason is economy. A conjecture about infinitely many objects can never be
+confirmed by checking examples, however many we check; a single well-chosen counterexample settles the matter at once. Another reason
+is precision. When a statement fails, the way it fails usually tells us which hypothesis was missing. A function that is continuous
+everywhere but differentiable nowhere does not merely refute the belief that continuity implies differentiability; it forces us to say
+clearly what extra conditions differentiability requires.
+
+There is also a less obvious benefit. Searching for a counterexample is an excellent way to understand a theorem that is true.
+If you try to break a result and fail, the reasons for your failure are, very often, the ideas of the proof. A student who has tried
+to construct a bounded increasing sequence that does not converge, and has seen why every attempt collapses, understands the
+completeness of the real numbers better than one who has only memorised the definition.
+
+None of this means that examples are more important than proofs. A counterexample can only show that something is false; it cannot,
+on its own, tell us what is true. But it changes the attitude with which we read mathematics. Instead of asking ``How do I remember
+this?'', we begin to ask ``What would it take to make this fail?'' That second question is slower, and sometimes uncomfortable, yet it
+is the one that turns a list of results into a landscape we can find our way around.
+
+\begin{questions}
+\question[4] In the first paragraph, ``the scaffolding'' refers to \paren[B]
+\choices{the axioms on which all theorems rest}
+        {the failed attempts and false conjectures behind finished results}
+        {the textbooks students use to practise proofs}
+        {the diagrams used to illustrate theorems}
+\begin{solution}
+B。下文冒号后直接解释：the failed attempts, the plausible conjectures that turned out to be false, and \dots\ the counterexamples。
+\end{solution}
+
+\question[4] Why does the author mention a function that is continuous everywhere but differentiable nowhere? \paren[B]
+\choices{To show that continuity and differentiability are unrelated.}
+        {To illustrate how a counterexample reveals a missing hypothesis.}
+        {To prove that smooth functions are rare.}
+        {To argue that examples matter more than proofs.}
+\begin{solution}
+B。该例紧接 ``the way it fails usually tells us which hypothesis was missing''，用来说明 precision。
+\end{solution}
+
+\question[4] The word ``settles'' in the second paragraph is closest in meaning to \paren[B]
+\choices{delays}{decides}{complicates}{records}
+\begin{solution}
+B。一个反例就能立即“解决、定论”整个问题。
+\end{solution}
+
+\question[4] Which of the following best describes the author's attitude towards counterexamples? \paren[B]
+\choices{Dismissive.}{Appreciative but balanced.}{Uncritically enthusiastic.}{Indifferent.}
+\begin{solution}
+B。作者高度评价反例，但最后一段指出 ``None of this means that examples are more important than proofs''。
+\end{solution}
+
+\question[4] In about 30 words, explain how trying to find a counterexample can help a student understand a theorem that is true.
+\answerspace{2.5cm}
+\begin{solution}
+When every attempt to break a true theorem fails, the reasons for the failures are usually the key ideas of its proof,
+so the student sees why the result must hold.\score{4}
+（要点：尝试失败 2 分；失败的原因即证明的思路 2 分。）
+\end{solution}
+\end{questions}
+
+\medskip
+\noindent\textbf{Passage B}
+
+\begin{center}\textbf{Thinking in Orders of Magnitude}\end{center}
+
+How many piano tuners work in Chicago? The question, which the physicist Enrico Fermi is said to have enjoyed posing to his students,
+seems unanswerable without a directory. Yet a reasonable estimate can be reached in a few minutes. Suppose the city has about three
+million people, and roughly one household in twenty owns a piano. With perhaps three people per household, that gives some fifty
+thousand pianos. If each piano is tuned once a year, and a tuner can service four pianos a day for about two hundred and fifty working
+days, one tuner handles a thousand pianos a year --- so the city needs on the order of fifty tuners.
+
+Every number in this chain is uncertain, some of them by a factor of two or more. Why, then, should the answer be trusted at all?
+Part of the reason is that errors tend to cancel: an overestimate in one step is often balanced by an underestimate in another.
+If each factor is off by an independent random amount, with no systematic bias, the error in the logarithm of the final answer is a
+sum of independent errors, and the typical size of such a sum grows only like the square root of the number of terms. The other part of the reason is more important. The value of the estimate lies less in its exact
+figure than in its order of magnitude. Knowing that the answer is fifty rather than five or five thousand is already a real piece of
+knowledge.
+
+Scientists use the same habit of mind constantly. Before running an expensive experiment or a long computation, they ask what size of
+result to expect. If the final number differs wildly from the rough estimate, either the estimate rested on a wrong assumption or
+something has gone wrong in the detailed work --- and both possibilities are worth knowing about. In this sense an estimate is not a
+substitute for careful measurement but a check on it, a way of keeping our more elaborate reasoning honest.
+
+\begin{questions}
+\question[4] What is the main purpose of the first paragraph? \paren[B]
+\choices{To describe the piano industry in Chicago.}
+        {To show how a seemingly impossible question can be estimated step by step.}
+        {To criticise the way Fermi taught his students.}
+        {To list reliable statistics about households.}
+\begin{solution}
+B。
+\end{solution}
+
+\question[4] Using the passage's figures, if a tuner could service only two pianos a day (everything else unchanged), the estimate would
+become about \paren[C]
+\choices{25}{50}{100}{200}
+\begin{solution}
+C。每人每年只能调 $2\times250=500$ 台，$50\,000/500=100$。
+\end{solution}
+
+\question[4] According to the passage, why can the estimate be trusted although its inputs are uncertain? \paren[B]
+\choices{Every input is checked against a directory.}
+        {Errors in different steps partly cancel, and what matters most is the order of magnitude.}
+        {Fermi's figures were exact.}
+        {Pianos are tuned at regular intervals.}
+\begin{solution}
+B。第二段给出两点理由：误差部分抵消；估算的价值在于数量级。
+\end{solution}
+
+\question[4] The phrase ``keeping our more elaborate reasoning honest'' most nearly means \paren[B]
+\choices{preventing scientists from lying}
+        {detecting errors in detailed work by comparing it with a rough expectation}
+        {making long computations faster}
+        {replacing measurement with guesswork}
+\begin{solution}
+B。上文：最终结果与粗估相差悬殊时，说明假设有误或细致计算出错。
+\end{solution}
+
+\question[4] In about 40 words, explain in your own words why the errors in the separate steps of such an estimate do not simply pile up.
+\answerspace{2.5cm}
+\begin{solution}
+Each factor is as likely to be too high as too low, and the errors are independent. Multiplying the factors adds their errors on a
+logarithmic scale, so errors of opposite sign partly cancel, and the total error grows only like the square root of the number of
+steps, not in proportion to it.\score{4}
+（要点：各步误差独立、无系统偏差，方向不一 1 分；相乘即对数相加 1 分；正负部分抵消 1 分；总误差按步数的平方根而非线性增长 1 分。）
+\end{solution}
+\end{questions}
+
+% -----------------------------------------------------------------------------
+\examsection*{Part II\quad Translation}{30 分，每题 15 分}
+
+\begin{questions}
+\question[15] 把下面的英文译成中文。
+
+A proof does more than certify that a statement is true. It explains why it is true, and in doing so it often reveals connections
+that were invisible before. This is why mathematicians sometimes publish new proofs of old theorems: the result is not in doubt,
+but a different argument may illuminate a different side of it, or suggest how it might be generalised.
+\answerspace{4cm}
+\begin{solution}
+\textbf{参考译文}　证明不只是确认一个命题为真。它解释命题为什么成立，并且常常在这个过程中揭示出此前看不见的联系。正因如此，
+数学家有时会为古老的定理发表新的证明：结论本身毋庸置疑，但另一种论证也许能照亮它的另一个侧面，或者提示它可以怎样推广。
+
+\textbf{评分}　13—15 分：意思准确完整，译文通顺，“certify / illuminate / generalised”等处理得当；9—12 分：个别词句欠准确；
+5—8 分：有明显误译或漏译；0—4 分：大部分不能达意。\score{15}
+\end{solution}
+
+\question[15] 把下面的中文译成英文。
+
+{\kaishu 学习数学的乐趣，往往不在于记住了多少公式，而在于某一刻突然看清了事物之间的联系。这样的时刻不会凭空出现，它需要长时间的思考、
+反复的尝试，甚至一次次的失败。但正是这些看似没有结果的努力，让最后的理解变得牢固。\par}
+\answerspace{4cm}
+\begin{solution}
+\textbf{参考译文}　The pleasure of learning mathematics seldom lies in how many formulas one has memorised; it lies in the moment when
+the connections between things suddenly become clear. Such moments do not come out of nowhere. They require long periods of thought,
+repeated attempts and even failure after failure. Yet it is precisely these apparently fruitless efforts that make the final
+understanding secure.
+
+\textbf{评分}　同上题分档。“不在于……而在于……”“凭空”“看似没有结果”“正是……让……”等结构须准确传达。\score{15}
+\end{solution}
+\end{questions}
+
+% -----------------------------------------------------------------------------
+\examsection*{Part III\quad Writing}{30 分}
+
+\begin{questions}
+\question[30] Some people believe that the best way to learn mathematics is to solve as many problems as possible.
+Others argue that it is better to study fewer problems in greater depth. Discuss both views and give your own opinion.
+Support your argument with reasons and, if possible, with an example from your own learning. Write 200--250 words.
+\answerspace{3cm}
+\begin{solution}
+\textbf{评分维度}（建议）　内容与论证 12 分：准确概括两种观点，立场明确，理由充分，最好有具体例子；结构与衔接 8 分：段落清楚，过渡自然；
+语言 10 分：用词准确，句式多样，语法错误少。
+
+\textbf{参考思路}　Quantity builds fluency and exposes the learner to many patterns, but without reflection it produces recognition rather
+than understanding; depth --- reworking a single problem, changing its hypotheses, looking for counterexamples --- builds the ability to
+transfer ideas, but may leave the learner slow. A balanced view: enough practice to make routine steps automatic, combined with regular
+``deep dives'' in which one problem is studied until one can explain why every step is necessary.
+\score{30}
+\end{solution}
+\end{questions}
+
+\end{paper}
+\end{document}
