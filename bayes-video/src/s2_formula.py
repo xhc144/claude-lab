@@ -75,7 +75,7 @@ class Formula(VScene):
         bayes[2].set_color(MAGENTA)
         bayes[4].set_color(CYAN)
         bayes[6].set_color(VIOLET)
-        bayes.move_to(RIGHT * 3.5 + DOWN * 1.75)
+        bayes.scale_to_fit_width(5.8).move_to(RIGHT * 3.75 + DOWN * 1.75)
         with self.say("f04") as d:
             self.play(Indicate(eq2[2], color=VIOLET), run_time=0.7)
             self.play(TransformMatchingTex(VGroup(eq1.copy(), eq2.copy()), bayes), run_time=1.6)
