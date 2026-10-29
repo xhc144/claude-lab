@@ -219,3 +219,8 @@ git push origin recovered-project
 - 桌面软件栏目说明改为：签名安装包发布在 GitHub Releases，装好后自动更新（五个软件都已有 `<软件>-v*` 发布）。
 - `node scripts/check-pages.mjs` 通过（179 个白名单文件、493 个相对引用）；桌面与 390px 宽度下新卡片无脚本错误、无横向滚动。
 - Pages 自 2026-10-14 之后没有再部署（最后一次「pages build and deployment」是 `c649733`），之后的 `main` 推送都没有触发构建；Ship 用内置令牌推送的合并也不会触发 Pages。新增「Pages · 部署」工作流（`.github/workflows/pages.yml`）：读取 Pages 发布来源，GitHub Actions 来源时打包 `docs/` 并用 `actions/deploy-pages` 部署，「Deploy from a branch」时请求重新构建 `main:/docs` 并等待结果，未启用时报错并说明去哪里打开。`main` 上 `docs/` 改动时自动运行，Ship 合并分支后用 workflow_dispatch 触发，也可手动运行。
+
+## 2026-10-29 新收录《贝叶斯统计：让证据改变判断》
+
+- 新增 `bayes-video/`：约 11 分钟的贝叶斯统计讲解影片（Manim，深色霓虹画面），配音用通义千问语音合成（`qwen-audio-3.0-tts-plus`，龙安灵心），合成后用 `qwen3-asr-flash` 回听核对（84 句，平均字错误率约 1.7%，差异均为同音字）。成片 `bayes-video/output/bayes.mp4`（1080p，约 38 MB，11 个章节）与字幕 SRT 一并提交。
+- 站点收录为第 26 个项目、第 10 部影片：`site/projects.mjs` 新增条目，封面 `site/covers/bayes-video.jpg`；`node scripts/build-site.mjs` 生成 `docs/films/bayes-video/`，`node scripts/check-pages.mjs` 通过（220 个白名单文件、577 个相对引用）。本地浏览器检查：播放器读到 11:01 与 11 个章节，390px 宽度无横向滚动，无脚本错误。
