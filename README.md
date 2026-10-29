@@ -6,7 +6,7 @@
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
-站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 25 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；九部影片都有带版本切换、章节跳转和下载链接的在线播放器。
+站点已公开上线，GitHub Pages 从 `main` 分支的 `/docs` 发布。主页按「浏览器交互 / AI 与产品原型 / 桌面软件 / 影片 / 写作与工具」五类收录仓库中的 26 个项目，支持关键词搜索、分类筛选、深浅色主题与手机浏览；十部影片都有带版本切换、章节跳转和下载链接的在线播放器。
 
 ## 浏览器交互项目
 
@@ -64,6 +64,7 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 | 《差了 3.3 分，算不算数》 | 约 14 分钟的双样本检验教学视频，中文配音与字幕 | [播放器](https://xhc144.github.io/claude-lab/films/two-sample-test-video/) | [two-sample-test-video/](two-sample-test-video/)；Manim、sherpa-onnx、FFmpeg；`bash build.sh` |
 | 《线性回归：从一条直线，到一次投影》 | 约 12 分钟的中文讲解视频：残差平方和、两个偏导条件、正交投影与正规方程、R²、“线性”与“回归”的含义；通义千问语音合成配音 | [播放器](https://xhc144.github.io/claude-lab/films/linear-regression-video/) | [linear-regression-video/](linear-regression-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
 | 《统计的符号与术语》 | 约 36 分钟的中文讲解视频：统计里的符号与专有名词怎么读、是什么意思、为什么这样写——总体与样本、描述统计、概率、随机变量、常见分布、抽样分布、估计、检验、回归，最后是一字多义的记号和常见缩写；通义千问语音合成配音 | [播放器](https://xhc144.github.io/claude-lab/films/stats-notation-video/) | [stats-notation-video/](stats-notation-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
+| 《贝叶斯统计：让证据改变判断》 | 约 12 分钟的中文讲解视频，深色霓虹画面：阳性化验单与一千个人、贝叶斯公式的来历、后验变先验、命中率一球一球地更新、先验随数据收拢、可信区间与置信区间、MCMC 抽样；通义千问语音合成配音，语音识别回听核对 | [播放器](https://xhc144.github.io/claude-lab/films/bayes-video/) | [bayes-video/](bayes-video/)；Manim、Qwen TTS、FFmpeg；`bash build.sh` |
 
 站点播放器使用已经生成的 H.264/AAC 成片（与仓库内 `output/` 中的文件相同），不在浏览器执行 Python 渲染；影片制作脚本需要本地依赖与计算资源。双语影片可在播放器里切换中文版 / 英文版，带章节标记的影片可点击章节跳转，字幕 SRT 与讲稿可直接下载。《一架风车》（windmill-theorem）与《风车里的素数》（fermat-windmill）是同一主题的两个独立版本，均保留。
 

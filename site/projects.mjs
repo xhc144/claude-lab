@@ -246,6 +246,16 @@ export const projects = [
     ],
   },
   {
+    id: 'bayes-video', category: 'film', title: '贝叶斯统计：让证据改变判断', en: 'Bayesian Statistics', cover: 'bayes-video',
+    summary: '从一张阳性化验单讲起：准确率九成的检测，阳性后有病的概率为什么只有 9%。一千个人看清先验，交集的两种写法推出贝叶斯公式，命中率曲线一球一球地更新，三种先验随数据收拢，可信区间与置信区间的区别，最后用 MCMC 在后验地形图上抽样。深色霓虹画面，粒子标题。',
+    tags: ['统计', '贝叶斯', '11 个章节', '通义千问配音'],
+    keywords: 'bayes bayesian statistics prior likelihood posterior base rate fallacy beta binomial conjugate credible interval confidence interval mcmc metropolis sampling 贝叶斯 贝叶斯统计 先验 似然 后验 基础比率 可信区间 置信区间 共轭 马尔可夫链蒙特卡洛 抽样 qwen tts',
+    tools: 'Manim · 通义千问语音合成（qwen-audio-3.0-tts-plus）· 通义千问语音识别核对 · FFmpeg', build: 'bash build.sh',
+    versions: [
+      { id: 'zh', label: '中文版', src: 'bayes-video/output/bayes.mp4', srt: 'bayes-video/output/bayes.srt', note: '中文配音（龙安灵心），字幕压在画面里' },
+    ],
+  },
+  {
     id: 'symmetry-film', category: 'film', title: '对称的语言', en: 'The Language of Symmetry', cover: 'symmetry-film',
     summary: '从雪花、十二平均律与魔方，到双曲铺砌、五次方程、椭圆曲线和 E₈：一次关于群与对称的视觉旅行。',
     tags: ['抽象代数', '程序化影片', '合成配乐'],

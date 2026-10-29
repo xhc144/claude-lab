@@ -1,0 +1,7 @@
+# 已验证：Python 3.13，manim 0.22.0
+manim>=0.19
+soundfile
+numpy
+scipy
+requests
+pillow
