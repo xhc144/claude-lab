@@ -1,6 +1,8 @@
 # claude-lab · Claude 实验仓库
 
-这是多个独立实验的合集：交互数学、创世沙盒、卡牌策略游戏、三维游戏、AI 基础设施控制台原型、多智能体研究实验室、Windows 桌面软件、数学讲解影片与 Claude 数学技能。每个项目保留自己的目录、依赖、构建脚本与 Git 历史。
+这是一个什么都可以放的实验仓库：用 Claude 做出来的东西，不论是网页小实验、游戏、产品原型、研究工具、数学影片、排版模板、讲义试卷、技能，还是桌面软件，都放在这里。项目之间互不依赖，每个项目一个目录，保留自己的依赖、构建脚本与 Git 历史；以后有新的点子，再加一个目录就行。
+
+桌面软件只是其中一类。GitHub 侧栏的 Releases 只是那几个软件的安装包，不代表整个仓库。
 
 **公开入口：[项目导航](https://xhc144.github.io/claude-lab/)**
 
@@ -31,17 +33,17 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 ## Windows 桌面软件
 
-仓库只保存源码；安装包不提交到仓库，也不发布到 Pages。五个 Windows 软件（Motif、音乐粒子宇宙、声准、墨誊、鸿雁邮箱）由「Ship · 自动合并与发布」流水线统一处理：AI 推送到 `claude/**` 分支后，在 Windows 上构建、测试并用仓库证书签名，通过后自动合并进 `main`，只发布有改动的软件（Releases 标签 `<软件>-v<版本>`），已安装的软件随后自动更新。流程、版本号规则、手动发布方式见 [scripts/windows-release/](scripts/windows-release/README.md)。
+| 软件 | 用途 | 发布标签 |
+| --- | --- | --- |
+| [律影 Motif](motif/) | 动态视觉创作：导入 PPT/Word/Excel/PDF 素材，做动画并导出视频、HTML 演示或 PDF，AI 可通过 Skill、CLI 或 MCP 参与；附录屏与剪辑 | `motif-v*` |
+| [音乐粒子宇宙 Particle Universe](particle-universe/) | 导入本地音乐，分析节拍与段落，驱动百万级 GPU 粒子场景，可导出 MP4 / WebM | `particle-universe-v*` |
+| [声准 Phonica](phonica/) | 英语口语训练与本机发音评测（音素级对齐与 GOP 评分） | `phonica-v*` |
+| [墨誊 Moteng](moteng/) | 把保存的 AI 对话网页、Markdown 或导出记录转成 LaTeX、PDF 与 HTML，可选[墨经](mojing/)讲义版式 | `moteng-v*` |
+| [鸿雁邮箱 Hongyan Mail](hongyan-mail/) | 本地多账户邮件客户端（IMAP / SMTP、SQLite） | `hongyan-mail-v*` |
 
-[律影 Motif](motif/) 是一个可安装的 Windows 动态视觉创作软件。人可以在可视化编辑器中导入 PPT/Word/Excel/PDF 等素材，编辑、选择风格、做动画、预览并导出视频、HTML 交互演示或 PDF；Claude、DeepSeek、Qwen、Codex 等模型可以通过 Skill、CLI 或 MCP 创建和修改同一批作品。软件内置 10 套设计系统、38 种内容组件和确定性渲染引擎，AI 只需提供内容与数据；还能录屏（自动运镜、平滑光标与点击特效、背景美化、摄像头画中画）并在录屏编辑器里剪辑导出。安装包由 GitHub Actions 的「Motif · Windows build」构建。
+仓库只保存源码；安装包不提交到仓库，也不发布到 Pages，而是由「Ship · 自动合并与发布」流水线在 Windows 上构建、测试、签名后发布到 Releases，已安装的软件会自动更新。流程与版本号规则见 [scripts/windows-release/](scripts/windows-release/README.md)，各软件的功能与本地构建见各自目录的 README。
 
-[音乐粒子宇宙 Particle Universe](particle-universe/) 是 Electron / WebGL2 的 Windows 音乐可视化程序：导入本地音乐后，离线分析频谱、鼓点、节拍网格、段落与高潮，驱动 13 万–419 万颗 GPU 粒子组成的 8 个场景（星云、黑洞、银河、能量风暴、流体丝绸、共振星球、超空间、奇异吸引子），带自动运镜、自适应画质与逐帧离线的 MP4 / WebM 视频导出。Windows 安装版与便携版 zip（约 129 MB，超过仓库单文件上限）由 `particle-universe · Windows build` 工作流构建并自检；本地可用 `npm run dist:win` 生成。
-
-[声准 Phonica](phonica/) 是 Windows 英语口语训练与发音评测软件（Electron + onnxruntime）：本机完成音素级强制对齐与 GOP 评测，评分模型在 speechocean762 上校准；离线标准发音（英音 / 美音）、历史进步对比、薄弱音素专项练习；可选接入 OpenAI / Claude / DeepSeek 等 AI，或一键导出高压缩 MP3 + 完整评测 JSON + 提示词的 ZIP。安装包由 GitHub Actions 在 Windows 上构建并自检后发布在 Releases（`phonica-v*`）。
-
-五个软件的安装版都会自动更新：每次发布都会刷新 `<软件>-latest` 发布里的更新信息，已安装的软件后台下载、核对校验码与签名后，在重启或关闭时安装（便携版 zip 不自动更新）。安装包与程序都用仓库 Secrets 里的证书签名；没有导入这张自签名证书的电脑也能自动更新，因为软件会确认新版本与自己出自同一张证书。
-
-[墨誊 Moteng](moteng/) 是 Windows 上的 AI 对话转 LaTeX 软件（Electron）：把浏览器保存的 ChatGPT、Claude、Gemini、DeepSeek、Grok、Copilot、Kimi、豆包、通义千问、腾讯元宝等对话网页（.html / .mhtml / .zip，或直接从剪贴板粘贴），以及 Markdown 记录和 ChatGPT / Claude 导出的 conversations.json，转换成 `main.tex`、PDF 和可交互的 HTML。可以单选、多选文件或选整个文件夹；即时预览里点击公式可在行内与行间之间切换，标题、图片、分页都能单独调整，右侧面板设置纸张、页边距、字体、行距、标题与公式编号，PDF 标签页随改动自动重新编译。ChatGPT 回答里的图表、示意图和滑块组件按保存时的画面截取放进 PDF（示意图保留为矢量图）。公式取自网页里保存的 TeX 源码；表格、高亮代码、列表和图片一并转换。版式可选对话体或[墨经](mojing/)讲义体。编译出错时，按行号找到出错的那一处，只把它改为源码显示，其余内容照常排版。安装包内置 Tectonic 排版引擎和离线 TeX 缓存，也可以改用本机的 TeX Live / MiKTeX。安装包由「moteng · Windows build」工作流构建并自检，发布标签为 `moteng-v*`。
+鸿雁邮箱早先提交在分支里的历史安装包曾被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`（未签名 Electron 程序常见的机器学习误报类型，真伪未确认），它仍然隔离、不提供下载，详见[隔离记录](hongyan-mail/QUARANTINE.md)。
 
 ## 数学排版模板
 
@@ -76,12 +78,6 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 ## Claude 技能
 
 [.claude/skills/](.claude/skills/) 收录六个数学教学相关的 Claude Code 技能：数学讲义写作（math-lecture-writing）、题目难度评估（assess-math-difficulty）、数学 LaTeX 排版（math-latex-typesetting）、墨经模板排版（mojing-latex）、概念讲解（explain-concepts-clearly）与新领军面试专家（xinlingjun-exam-expert）。在本仓库打开 Claude Code 时自动可用。
-
-## 鸿雁邮箱与隔离记录
-
-[鸿雁邮箱 Hongyan Mail](hongyan-mail/) 是 Electron / Node.js 的本地多账户邮件客户端，需要本地程序、SQLite 与 IMAP / SMTP，无法在 Pages 上运行。
-
-早先提交在分支里的历史安装包曾被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`（未签名 Electron 程序常见的机器学习误报类型，真伪未确认），它仍然隔离、不提供下载，详情见 [隔离记录](hongyan-mail/QUARANTINE.md)。现在的安装包改由「hongyan-mail · Windows build」从源码在 GitHub Actions 上重新构建、测试并签名，与其他软件一样通过流水线发布（`hongyan-mail-v*`）。源码审查发现的本地凭据/缓存存储限制仍然有效，详见项目 README。Pages 不包含邮件界面、测试截图、安装包或用户邮件数据。
 
 ## 构建公开站点
 
