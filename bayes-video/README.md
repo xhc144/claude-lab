@@ -4,7 +4,7 @@
 
 画面、字幕、铺底音乐全部由本目录的代码生成；配音用阿里云百炼的通义千问语音合成（模型 `qwen-audio-3.0-tts-plus`，音色龙安灵心），密钥读环境变量 `DASHSCOPE_API_KEY`；配音合成后，再用通义千问语音识别（`qwen3-asr-flash`）回听核对。
 
-成片：[`output/bayes.mp4`](output/bayes.mp4)（时长待填，1080p30，H.264 + AAC，11 个章节，中文配音，字幕压在画面里），字幕另附 [`output/bayes.srt`](output/bayes.srt)。
+成片：[`output/bayes.mp4`](output/bayes.mp4)（11 分 01 秒，1080p30，H.264 + AAC，约 38 MB，11 个章节，中文配音，字幕压在画面里），字幕另附 [`output/bayes.srt`](output/bayes.srt)。
 
 讲法沿用仓库里 [`explain-concepts-clearly`](../.claude/skills/explain-concepts-clearly/SKILL.md) 的要求：先说清对象（假设与证据、参数 θ、它的分布），再从定义推出公式（交集的两种写法 → 贝叶斯公式；先验 × 似然 → Beta 的加法规则），历史只保留与公式有关的两件事（贝叶斯遗稿 1763 年发表，拉普拉斯 1774 年独立提出），并标出边界：结论依赖先验，所以先验要写明、要换着试；频率学派的置信区间回答的是另一个问题。
 
