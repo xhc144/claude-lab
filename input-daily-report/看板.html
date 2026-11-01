@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>输入日报</title>
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png">
+<link rel="icon" type="image/png" sizes="64x64" href="/icons/icon-64.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#c2603a">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f6f5f2; --card: #ffffff; --text: #1f1e1c; --muted: #75716a; --line: #e4e1da;
+  --accent: #c2603a; --accent-soft: #f3e2d9; --blue: #3d6fb6; --green: #3f8a5a; --warn: #b8452f;
+  --heat0: #efede8;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1b1a18; --card: #252421; --text: #ecebe7; --muted: #a29e96; --line: #3a3833;
+    --accent: #e08a62; --accent-soft: #4a3329; --blue: #7aa5e0; --green: #74bb8b; --warn: #e2765e;
+    --heat0: #2f2e2a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font: 15px/1.6 "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 24px 16px 60px; }
+h1 { font-size: 24px; margin: 0; }
+h2 { font-size: 16px; margin: 0 0 12px; }
+.sub { color: var(--muted); font-size: 13px; }
+header { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+.card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; min-width: 0; }
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(12, 1fr); }
+.s12 { grid-column: span 12; } .s8 { grid-column: span 8; } .s6 { grid-column: span 6; } .s4 { grid-column: span 4; } .s3 { grid-column: span 3; }
+@media (max-width: 860px) { .s8, .s6, .s4 { grid-column: span 12; } .s3 { grid-column: span 6; } }
+.tile .num { font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tile .lbl { color: var(--muted); font-size: 13px; }
+button { font: inherit; border: 1px solid var(--line); background: var(--card); color: var(--text);
+  border-radius: 8px; padding: 6px 12px; cursor: pointer; }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; padding: 9px 16px; }
+button:disabled { opacity: .55; cursor: default; }
+.chart { position: relative; height: 260px; }
+/* DeepSeek 状态面板：固定在右下角，滚到哪都看得见 */
+#job { display: none; position: fixed; right: 16px; bottom: 16px; width: min(380px, calc(100vw - 32px)); z-index: 10;
+  box-shadow: 0 8px 30px rgba(0,0,0,.18); }
+#job .top { display: flex; align-items: center; gap: 10px; }
+#job .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--green); flex: none; }
+#job.run .dot { background: var(--accent); animation: pulse 1.2s infinite; }
+#job.bad .dot { background: var(--warn); }
+@keyframes pulse { 50% { opacity: .25; transform: scale(.7); } }
+#job .x { margin-left: auto; border: none; padding: 0 4px; font-size: 18px; line-height: 1; color: var(--muted); }
+#job .now { margin: 8px 0 6px; font-size: 14px; }
+#job .nums { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin: 8px 0; text-align: center; }
+#job .nums b { display: block; font-size: 18px; font-variant-numeric: tabular-nums; }
+#job .nums span { color: var(--muted); font-size: 12px; }
+#job details { margin-top: 8px; font-size: 13px; }
+#job pre { background: var(--bg); border-radius: 8px; padding: 10px; max-height: 160px; overflow: auto;
+  font-size: 12px; white-space: pre-wrap; margin: 6px 0 0; }
+.b-writing { background: var(--accent); color: #fff; }
+.bar { height: 6px; background: var(--line); border-radius: 3px; overflow: hidden; }
+.bar > div { height: 100%; background: var(--accent); width: 0; transition: width .4s; }
+/* 作息热力图 */
+.heat { display: grid; grid-template-columns: 74px repeat(24, 1fr); gap: 2px; font-size: 11px; }
+.heat .c { aspect-ratio: 1.6; border-radius: 2px; background: var(--heat0); }
+.heat .rl { color: var(--muted); white-space: nowrap; line-height: 1; align-self: center; }
+.heat .hl { color: var(--muted); text-align: center; }
+.heat-wrap { overflow-x: auto; }
+.heat-inner { min-width: 520px; }
+/* 日报浏览 */
+.browser { display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
+@media (max-width: 860px) { .browser { grid-template-columns: 1fr; } }
+.days { max-height: 640px; overflow: auto; display: flex; flex-direction: column; gap: 4px; }
+.day { text-align: left; border: 1px solid transparent; background: none; padding: 8px 10px; border-radius: 8px; }
+.day:hover { background: var(--bg); }
+.day.on { background: var(--accent-soft); border-color: var(--accent); }
+.day .t { display: flex; justify-content: space-between; gap: 8px; font-weight: 600; }
+.day .s { color: var(--muted); font-size: 12px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.badge { font-size: 11px; font-weight: 500; border-radius: 10px; padding: 0 7px; white-space: nowrap; }
+.b-Claude { background: var(--accent-soft); color: var(--accent); }
+.b-DeepSeek { background: color-mix(in srgb, var(--blue) 18%, transparent); color: var(--blue); }
+.b-none { background: var(--line); color: var(--muted); }
+.doc { max-height: 640px; overflow: auto; padding-right: 6px; }
+.doc h1 { font-size: 20px; } .doc h2 { font-size: 17px; margin-top: 18px; } .doc h3 { font-size: 15px; margin: 14px 0 4px; }
+.doc table { border-collapse: collapse; width: 100%; font-size: 13px; margin: 8px 0; }
+.doc td, .doc th { border: 1px solid var(--line); padding: 5px 8px; text-align: left; vertical-align: top; }
+.doc blockquote { margin: 8px 0; padding: 4px 12px; border-left: 3px solid var(--line); color: var(--muted); font-size: 13px; }
+.doc ul { padding-left: 22px; margin: 6px 0; }
+.doc-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+.todos { max-height: 360px; overflow: auto; }
+.todos .d { color: var(--muted); font-size: 12px; margin: 10px 0 2px; }
+.todos label { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; }
+.todos input { margin-top: 5px; }
+.todos .done { text-decoration: line-through; color: var(--muted); }
+.empty { color: var(--muted); padding: 20px 0; }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <h1>输入日报看板</h1>
+      <div class="sub" id="range">读取中…</div>
+    </div>
+    <div style="text-align:right">
+      <button class="primary" id="genAll">一键整理所有没写的日报（DeepSeek）</button>
+      <div class="sub" id="missing"></div>
+    </div>
+  </header>
+
+  <div class="card" id="job">
+    <div class="top"><span class="dot"></span><b id="jobLabel"></b><button class="x" id="jobClose" title="关掉这个面板">×</button></div>
+    <div class="now" id="jobNow"></div>
+    <div class="bar"><div id="jobBar"></div></div>
+    <div class="nums">
+      <div><b id="jobThought">0</b><span>思考了（字）</span></div>
+      <div><b id="jobWritten">0</b><span>写出了（字）</span></div>
+      <div><b id="jobTime">0:00</b><span>用时</span></div>
+    </div>
+    <details><summary>详细记录</summary><pre id="jobLog"></pre></details>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <div class="card tile s3"><div class="num" id="tDays">–</div><div class="lbl">有记录的天数</div></div>
+    <div class="card tile s3"><div class="num" id="tSeg">–</div><div class="lbl">输入段数（日均 <span id="tSegAvg">–</span>）</div></div>
+    <div class="card tile s3"><div class="num" id="tChars">–</div><div class="lbl">字数（长粘贴已折叠）</div></div>
+    <div class="card tile s3"><div class="num" id="tRep">–</div><div class="lbl">日报：Claude <span id="tC">0</span> · DeepSeek <span id="tD">0</span></div></div>
+
+    <div class="card s8"><h2>每天输入量</h2><div class="chart"><canvas id="cDaily"></canvas></div></div>
+    <div class="card s4"><h2>用在哪些软件</h2><div class="chart"><canvas id="cApps"></canvas></div></div>
+
+    <div class="card s12"><h2>作息热力图 <span class="sub">每格 = 这一小时里的输入段数，越深越多</span></h2>
+      <div class="heat-wrap"><div class="heat-inner"><div class="heat" id="heat"></div></div></div></div>
+
+    <div class="card s6"><h2>一天中的时段 <span class="sub">所有天加起来</span></h2><div class="chart"><canvas id="cHours"></canvas></div></div>
+    <div class="card s6"><h2>烦躁信号 <span class="sub">抱怨、骂人的词每天出现几次</span></h2><div class="chart"><canvas id="cAnnoyed"></canvas></div></div>
+
+    <div class="card s6"><h2>常出现的事 <span class="sub">日报「按事情分」里的小标题</span></h2><div class="chart" style="height:340px"><canvas id="cTopics"></canvas></div></div>
+    <div class="card s6"><h2>待办汇总 <span class="sub">勾掉的只记在这个浏览器里</span></h2><div class="todos" id="todos"></div></div>
+
+    <div class="card s12"><h2>日报</h2>
+      <div class="browser">
+        <div class="days" id="days"></div>
+        <div><div class="doc-head"><b id="docDay"></b><button id="redo" style="display:none">让 DeepSeek 重写这天</button></div>
+          <div class="doc" id="doc"><div class="empty">点左边的日期看日报</div></div></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmt = n => n.toLocaleString("zh-CN");
+const WD = "日一二三四五六";
+let DATA = [], charts = {}, current = null;
+
+function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || "null"); localStorage.setItem(k, JSON.stringify(v)); } catch { return null; } }
+
+async function load() {
+  DATA = await (await fetch("/api/data")).json();
+  render();
+}
+
+function render() {
+  const days = DATA.filter(d => d.segments > 0);
+  const seg = days.reduce((a, d) => a + d.segments, 0), chars = days.reduce((a, d) => a + d.chars, 0);
+  const reps = DATA.filter(d => d.report);
+  const missing = DATA.filter(d => !d.report && d.segments > 0).map(d => d.day);
+  $("range").textContent = days.length ? `${days[0].day} 到 ${days.at(-1).day} · 数据只在本机` : "还没有输入记录";
+  $("tDays").textContent = days.length;
+  $("tSeg").textContent = fmt(seg);
+  $("tSegAvg").textContent = days.length ? Math.round(seg / days.length) : 0;
+  $("tChars").textContent = fmt(chars);
+  $("tRep").textContent = `${reps.length}/${days.length}`;
+  $("tC").textContent = reps.filter(d => d.report.author === "Claude").length;
+  $("tD").textContent = reps.filter(d => d.report.author === "DeepSeek").length;
+  $("missing").textContent = missing.length ? `还有 ${missing.length} 天没写：${missing.join("、")}` : "所有日报都写好了";
+
+  Chart.defaults.color = css("--muted");
+  Chart.defaults.borderColor = css("--line");
+  Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
+  const labels = days.map(d => d.day.slice(5));
+  const accent = css("--accent"), blue = css("--blue"), warn = css("--warn");
+
+  draw("cDaily", {
+    type: "bar",
+    data: { labels, datasets: [
+      { label: "段数", data: days.map(d => d.segments), backgroundColor: accent, yAxisID: "y", borderRadius: 3 },
+      { label: "字数", data: days.map(d => d.chars), type: "line", borderColor: blue, backgroundColor: blue, yAxisID: "y1", pointRadius: 2, tension: .3 },
+    ]},
+    options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+      scales: { y: { title: { display: true, text: "段数" } }, y1: { position: "right", grid: { display: false }, title: { display: true, text: "字数" } } } },
+  });
+
+  const apps = {};
+  days.forEach(d => Object.entries(d.apps).forEach(([k, v]) => apps[k] = (apps[k] || 0) + v));
+  const sorted = Object.entries(apps).sort((a, b) => b[1] - a[1]);
+  const top = sorted.slice(0, 6), rest = sorted.slice(6).reduce((a, x) => a + x[1], 0);
+  if (rest) top.push(["其他", rest]);
+  const pal = [accent, blue, css("--green"), "#c9a227", "#8e6bbf", "#4aa3a3", css("--muted")];
+  draw("cApps", {
+    type: "doughnut",
+    data: { labels: top.map(x => x[0]), datasets: [{ data: top.map(x => x[1]), backgroundColor: pal, borderColor: css("--card"), borderWidth: 2 }] },
+    options: { maintainAspectRatio: false, cutout: "58%", plugins: { legend: { position: "right", labels: { boxWidth: 12 } } } },
+  });
+
+  const hours = Array(24).fill(0);
+  days.forEach(d => d.hours.forEach((v, h) => hours[h] += v));
+  draw("cHours", {
+    type: "bar",
+    data: { labels: hours.map((_, h) => h + "点"), datasets: [{ label: "段数", data: hours, backgroundColor: blue, borderRadius: 3 }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false } } },
+  });
+
+  draw("cAnnoyed", {
+    type: "bar",
+    data: { labels, datasets: [{ label: "次数", data: days.map(d => d.annoyed), backgroundColor: warn, borderRadius: 3 }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false } } },
+  });
+
+  const topics = {};
+  reps.forEach(d => new Set(d.report.topics).forEach(t => topics[t] = (topics[t] || 0) + 1));
+  const tt = Object.entries(topics).filter(x => x[1] > 1).sort((a, b) => b[1] - a[1]).slice(0, 15);
+  draw("cTopics", {
+    type: "bar",
+    data: { labels: tt.map(x => x[0]), datasets: [{ label: "出现天数", data: tt.map(x => x[1]), backgroundColor: accent, borderRadius: 3 }] },
+    options: { indexAxis: "y", maintainAspectRatio: false, plugins: { legend: { display: false } } },
+  });
+
+  renderHeat(days);
+  renderTodos(reps);
+  renderDays();
+}
+
+function draw(id, cfg) {
+  if (charts[id]) charts[id].destroy();
+  charts[id] = new Chart($(id), cfg);
+}
+
+function renderHeat(days) {
+  const max = Math.max(1, ...days.flatMap(d => d.hours));
+  const accent = css("--accent");
+  let html = "<div></div>" + Array.from({ length: 24 }, (_, h) => `<div class="hl">${h % 3 ? "" : h}</div>`).join("");
+  for (const d of days) {
+    const wd = WD[new Date(d.day + "T00:00:00").getDay()];
+    html += `<div class="rl">${d.day.slice(5)} 周${wd}</div>`;
+    html += d.hours.map((v, h) => {
+      const bg = v ? `color-mix(in srgb, ${accent} ${Math.round(15 + 85 * v / max)}%, transparent)` : "";
+      return `<div class="c" title="${d.day} ${h}:00–${h + 1}:00 · ${v} 段"${bg ? ` style="background:${bg}"` : ""}></div>`;
+    }).join("");
+  }
+  $("heat").innerHTML = html;
+}
+
+function renderTodos(reps) {
+  const done = store("todosDone") || {};
+  const box = $("todos");
+  box.innerHTML = "";
+  const list = reps.filter(d => d.report.todos.length).reverse();
+  if (!list.length) { box.innerHTML = '<div class="empty">日报里还没有待办</div>'; return; }
+  for (const d of list) {
+    box.insertAdjacentHTML("beforeend", `<div class="d">${d.day}</div>`);
+    d.report.todos.forEach((t, i) => {
+      const key = d.day + "#" + i;
+      const lab = document.createElement("label");
+      lab.innerHTML = `<input type="checkbox"${done[key] ? " checked" : ""}><span class="${done[key] ? "done" : ""}"></span>`;
+      lab.querySelector("span").textContent = t;
+      lab.querySelector("input").onchange = e => {
+        done[key] = e.target.checked; store("todosDone", done);
+        lab.querySelector("span").className = e.target.checked ? "done" : "";
+      };
+      box.appendChild(lab);
+    });
+  }
+}
+
+function renderDays() {
+  const box = $("days");
+  box.innerHTML = "";
+  for (const d of [...DATA].reverse()) {
+    const b = document.createElement("button");
+    b.className = "day" + (d.day === current ? " on" : "");
+    const who = d.day === writing ? "writing" : d.report ? d.report.author : "none";
+    const tag = d.day === writing ? "DeepSeek 写作中…" : d.report ? who : "没写";
+    b.innerHTML = `<div class="t"><span>${d.day.slice(5)} 周${WD[new Date(d.day + "T00:00:00").getDay()]}</span><span class="badge b-${who}">${tag}</span></div><div class="s"></div>`;
+    b.querySelector(".s").textContent = d.report ? d.report.summary : `${d.segments} 段输入，还没有日报`;
+    b.onclick = () => openDay(d.day);
+    box.appendChild(b);
+  }
+}
+
+async function openDay(day) {
+  current = day;
+  renderDays();
+  $("docDay").textContent = day;
+  $("redo").style.display = "";
+  const { text } = await (await fetch("/api/report?day=" + day)).json();
+  $("doc").innerHTML = text ? md(text) : '<div class="empty">这天还没有日报。点上面的按钮让 DeepSeek 写。</div>';
+  $("redo").textContent = text ? "让 DeepSeek 重写这天" : "让 DeepSeek 写这天";
+}
+
+// 够用的 Markdown：标题、表格、列表、勾选框、引用、粗体
+function md(src) {
+  const esc = s => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, "<b>$1</b>").replace(/`([^`]+)`/g, "<code>$1</code>");
+  const lines = src.split(/\r?\n/), out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (/^\|/.test(l)) {
+      const rows = [];
+      while (i < lines.length && /^\|/.test(lines[i])) rows.push(lines[i++]);
+      i--;
+      const cells = r => r.replace(/^\||\|$/g, "").split("|").map(c => inline(c.trim()));
+      const body = rows.filter(r => !/^\|\s*:?-{2,}/.test(r));
+      out.push("<table>" + body.map((r, k) => "<tr>" + cells(r).map(c => k ? `<td>${c}</td>` : `<th>${c}</th>`).join("") + "</tr>").join("") + "</table>");
+    } else if (/^[-*] /.test(l)) {
+      const items = [];
+      while (i < lines.length && /^[-*] /.test(lines[i])) items.push(lines[i++].slice(2));
+      i--;
+      out.push("<ul>" + items.map(t => "<li>" + inline(t).replace(/^\[ \]/, "☐").replace(/^\[x\]/i, "☑") + "</li>").join("") + "</ul>");
+    } else if (/^#{1,3} /.test(l)) {
+      const n = l.match(/^#+/)[0].length;
+      out.push(`<h${n}>${inline(l.slice(n + 1))}</h${n}>`);
+    } else if (/^> ?/.test(l)) {
+      out.push(`<blockquote>${inline(l.replace(/^> ?/, ""))}</blockquote>`);
+    } else if (l.trim()) {
+      out.push(`<p>${inline(l)}</p>`);
+    }
+  }
+  return out.join("");
+}
+
+async function generate(day) {
+  const r = await (await fetch("/api/generate" + (day ? "?day=" + day : ""), { method: "POST" })).json();
+  if (!r.started) alert("已经在整理了，等这一轮跑完。");
+  poll();
+}
+
+let polling = false, writing = "";
+async function poll() {
+  if (polling) return;
+  polling = true;
+  const job = $("job");
+  job.style.display = "block";
+  $("genAll").disabled = $("redo").disabled = true;
+  $("genAll").textContent = "DeepSeek 正在运行…";
+  let lastDone = -1;
+  while (true) {
+    let s;
+    try { s = await (await fetch("/api/status")).json(); } catch { await new Promise(r => setTimeout(r, 2000)); continue; }
+    const failed = s.failed.length;
+    job.className = "card " + (s.running ? "run" : failed ? "bad" : "");
+    $("jobLabel").textContent = s.running ? "DeepSeek 正在运行" : failed ? `完成了，但有 ${failed} 天失败` : "DeepSeek 已完成";
+    const step = s.total ? `第 ${Math.min(s.done + 1, s.total)}/${s.total} 天` : "";
+    $("jobNow").textContent = s.running
+      ? (s.current ? `正在写 ${s.current}（${step}）· ` + (s.written ? "正在写正文" : s.thought ? "正在思考" : "等 DeepSeek 回应") : "正在整理输入记录…")
+      : `${s.label}：写好 ${s.done - failed} 天` + (failed ? `，失败 ${s.failed.join("、")}（展开详细记录看原因）` : "");
+    $("jobBar").style.width = s.total ? (100 * s.done / s.total) + "%" : s.running ? "3%" : "100%";
+    $("jobThought").textContent = fmt(s.thought);
+    $("jobWritten").textContent = fmt(s.written);
+    $("jobTime").textContent = `${Math.floor(s.elapsed / 60)}:${String(s.elapsed % 60).padStart(2, "0")}`;
+    $("jobLog").textContent = s.log.join("\n");
+    $("jobLog").scrollTop = 1e9;
+    if (s.current !== writing || s.done !== lastDone) {  // 写完一天就刷新列表
+      writing = s.current; lastDone = s.done;
+      await load();
+      if (current) openDay(current);
+    }
+    if (!s.running) break;
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  polling = false;
+  writing = "";
+  $("genAll").disabled = $("redo").disabled = false;
+  $("genAll").textContent = "一键整理所有没写的日报（DeepSeek）";
+  await load();
+  if (current) openDay(current);
+}
+$("jobClose").onclick = () => { $("job").style.display = "none"; };
+
+$("genAll").onclick = () => {
+  if (confirm("把所有还没有日报的日子交给 DeepSeek 整理？\n（Claude 写好的不会被覆盖；发给 DeepSeek 的是打码后的输入记录）")) generate();
+};
+$("redo").onclick = () => {
+  if (current && confirm(`让 DeepSeek 写 ${current} 的日报？已有的那篇会被替换。`)) generate(current);
+};
+
+// 告诉后台「窗口还开着」；窗口关了它会自己退出
+const ping = () => fetch("/api/ping").catch(() => {});
+ping();
+setInterval(ping, 10000);
+
+load().then(async () => {
+  const s = await (await fetch("/api/status")).json();
+  if (s.running) poll();
+  const last = [...DATA].reverse().find(d => d.report);
+  if (last) openDay(last.day);
+});
+</script>
+</body>
+</html>

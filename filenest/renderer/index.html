@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>文件管家</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z"/><path d="M3 11h18"/></symbol>
+    <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9Z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+    <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h16M4 17h16"/><circle cx="9" cy="7" r="3"/><circle cx="15" cy="17" r="3"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+    <symbol id="i-chevron" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m8 4 12 8-12 8Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="M3 10h11a6 6 0 0 1 0 12M3 10l6-6M3 10l6 6"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><path d="m12 3 10 18H2Z"/><path d="M12 9v5M12 17h.01"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 8V4a1 1 0 0 1 1-1h4M16 3h4a1 1 0 0 1 1 1v4M21 16v4a1 1 0 0 1-1 1h-4M8 21H4a1 1 0 0 1-1-1v-4M3 12h18"/></symbol>
+    <symbol id="i-save" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V3m-5 5 5-5 5 5M4 16v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4"/></symbol>
+    <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 15 6-6 6 6"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="i-open" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9Z"/><path d="M14 3v6h6"/></symbol>
+  </svg>
+
+  <aside class="sidebar">
+    <div class="brand"><span class="brand-mark"><svg><use href="#i-folder"/></svg></span><span>文件管家<small>FILENEST</small></span></div>
+    <nav aria-label="主导航">
+      <button class="nav-item active" data-page="organize"><svg><use href="#i-grid"/></svg><span>整理</span><span id="nav-status" class="nav-status"></span></button>
+      <button class="nav-item" data-page="search"><svg><use href="#i-search"/></svg><span>查找文件</span></button>
+      <button class="nav-item" data-page="categories"><svg><use href="#i-tag"/></svg><span>分类规则</span></button>
+      <button class="nav-item" data-page="settings"><svg><use href="#i-settings"/></svg><span>设置</span></button>
+    </nav>
+    <div class="sidebar-bottom"><div class="local-label"><span class="status-dot" id="side-dot"></span><span id="side-status">本地运行</span></div><p>只在你的电脑上整理，不联网</p><span class="version">版本 <span id="app-version">3.0</span></span></div>
+  </aside>
+
+  <main class="main-shell">
+    <!-- 整理 -->
+    <section class="page" id="page-organize">
+      <div class="page-heading">
+        <div><h1>整理</h1><p>新下载的文件会自动放进 <strong>学科大类 / 月份</strong> 文件夹。已经整理好的文件夹不会被再动。</p></div>
+        <div class="heading-actions"><button class="button secondary" id="pause-all"><svg><use href="#i-pause"/></svg><span>暂停自动整理</span></button><button class="button primary" id="add-rule"><svg><use href="#i-plus"/></svg>添加文件夹</button></div>
+      </div>
+      <div class="status-banner" id="status-banner"><span class="status-dot" id="automation-dot"></span><span id="automation-status">暂无任务</span></div>
+      <div id="rule-list" class="rule-list"></div>
+      <div class="section-heading"><h2>最近整理</h2><span class="muted-small">每一批都可以单独撤销</span></div>
+      <div id="activity-list" class="activity-list"></div>
+    </section>
+
+    <!-- 查找 -->
+    <section class="page" id="page-search" hidden>
+      <div class="page-heading"><div><h1>查找文件</h1><p>在所有整理文件夹里按名字找文件，包括以前按日期归档的。</p></div></div>
+      <div class="search-bar">
+        <div class="search-field big"><svg><use href="#i-search"/></svg><input id="search-input" type="search" placeholder="输入文件名里的字，空格分隔多个词" autocomplete="off" spellcheck="false"></div>
+        <select id="search-type" aria-label="文件类型"><option value="all">全部类型</option><option value="pdf">PDF</option><option value="doc">文档/表格/演示</option><option value="archive">压缩包</option><option value="image">图片</option><option value="media">视频音频</option><option value="web">网页</option><option value="app">程序</option><option value="folder">文件夹</option><option value="other">其他</option></select>
+        <select id="search-top" aria-label="所在分类"><option value="">所有分类</option></select>
+      </div>
+      <div class="search-meta"><span id="search-summary">正在建立索引…</span><button class="button text small" id="search-rebuild">重新扫描</button></div>
+      <div id="search-results" class="search-results"></div>
+    </section>
+
+    <!-- 分类规则 -->
+    <section class="page" id="page-categories" hidden>
+      <div class="page-heading">
+        <div><h1>分类规则</h1><p>文件名里出现哪个大类的关键词，就放进哪个大类；都没出现的放进“<span id="fallback-name">其他</span>”。命中越多越优先，同分时排在上面的优先。</p></div>
+        <div class="heading-actions"><button class="button secondary" id="reset-categories">恢复默认</button><button class="button primary" id="add-category"><svg><use href="#i-plus"/></svg>添加分类</button></div>
+      </div>
+      <div class="try-card">
+        <label for="try-name"><strong>试一试</strong><span>输入一个文件名，看看会被分到哪里</span></label>
+        <input id="try-name" placeholder="例如：三个渐近估计问题_解答.pdf" autocomplete="off" spellcheck="false">
+        <div id="try-result" class="try-result"></div>
+      </div>
+      <div id="category-list" class="category-list"></div>
+    </section>
+
+    <!-- 设置 -->
+    <section class="page" id="page-settings" hidden>
+      <div class="page-heading"><div><h1>设置</h1><p>后台运行、备份与自检。</p></div></div>
+      <div class="settings-card"><h2>运行方式</h2>
+        <div class="setting-row"><div><h3>开机后在后台启动</h3><p>登录 Windows 后自动运行。关掉窗口后仍在右下角托盘里继续整理。</p></div><button id="startup-switch" class="switch" role="switch" aria-checked="false" aria-label="开机后在后台启动"><span></span></button></div>
+      </div>
+      <div class="settings-card"><h2>机器翻译</h2>
+        <div class="setting-row"><div><h3>英文名自动加中文</h3><p>内容里找不到中文的英文文件名，翻成中文后改名为“中文_英文名”。只发送文件名（和 PDF 的英文标题），不发送文件内容。</p><p id="translate-status" class="path-text"></p></div><button id="translate-switch" class="switch" role="switch" aria-checked="false" aria-label="英文名自动加中文"><span></span></button></div>
+        <div class="form-field"><label for="translate-url">接口地址（OpenAI 兼容）</label><input id="translate-url" autocomplete="off" spellcheck="false" placeholder="http://127.0.0.1:8787/v1"></div>
+        <div class="form-field"><label for="translate-model">模型</label><input id="translate-model" autocomplete="off" spellcheck="false" placeholder="xhc-deepseek-v4-flash"></div>
+        <div class="form-field"><label for="translate-key">密钥</label><input id="translate-key" type="password" autocomplete="off" spellcheck="false" placeholder="在网关里新建一个密钥粘贴到这里"></div>
+        <div id="translate-error" class="inline-error" role="alert" hidden></div>
+        <div class="button-pair"><button class="button secondary small" id="translate-test">测试</button><button class="button primary small" id="translate-save">保存</button></div>
+      </div>
+      <div class="settings-card"><h2>配置与数据</h2>
+        <div class="setting-row"><div><h3>程序数据文件夹</h3><p id="data-directory" class="path-text">读取中…</p></div><button class="button secondary small" id="open-data"><svg><use href="#i-folder"/></svg>打开</button></div>
+        <div class="setting-row"><div><h3>备份设置</h3><p>导出或导入任务和分类规则，不包含你的文件。</p></div><div class="button-pair"><button class="button secondary small" id="export-settings"><svg><use href="#i-save"/></svg>导出</button><button class="button secondary small" id="import-settings"><svg><use href="#i-upload"/></svg>导入</button></div></div>
+      </div>
+      <div class="settings-card"><h2>检查与退出</h2>
+        <div class="setting-row"><div><h3>运行自检</h3><p>在临时文件夹里试一次整理和撤销，并检查每个任务文件夹能否访问。</p></div><button class="button secondary small" id="run-diagnostics"><svg><use href="#i-scan"/></svg><span>开始自检</span></button></div>
+        <div class="setting-row"><div><h3>完全退出</h3><p>退出后自动整理也会停止，直到下次打开。</p></div><button class="button ghost small danger-text" id="quit-app">退出程序</button></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 任务对话框 -->
+  <dialog id="rule-dialog" class="modal">
+    <form id="rule-form">
+      <div class="modal-header"><h2 id="rule-dialog-title">添加整理文件夹</h2><button type="button" class="icon-button" data-close="rule-dialog" aria-label="关闭"><svg><use href="#i-close"/></svg></button></div>
+      <div class="modal-body">
+        <div class="form-field"><label for="rule-root">要整理的文件夹</label><div class="input-with-button"><input id="rule-root" autocomplete="off" spellcheck="false" placeholder="例如 E:\下载" required><button id="rule-pick" type="button" class="button secondary small">选择…</button></div></div>
+        <div class="form-field"><label for="rule-name">名称</label><input id="rule-name" maxlength="100" placeholder="例如：ChatGPT 下载" required></div>
+        <div class="form-columns">
+          <div class="form-field"><label for="rule-mode">整理方式</label><select id="rule-mode"><option value="4">学科大类 → 日期（推荐）</option><option value="1">只按学科大类</option><option value="0">只按日期</option><option value="5">日期 → 学科大类</option></select></div>
+          <div class="form-field" id="rule-granularity-field"><label for="rule-granularity">日期文件夹</label><select id="rule-granularity"><option value="month">按月（2026-10）</option><option value="day">按天（2026-10-18）</option></select></div>
+        </div>
+        <p class="example-path" id="rule-example"></p>
+        <div class="form-columns">
+          <div class="form-field"><label for="rule-schedule">什么时候整理</label><select id="rule-schedule"><option value="0">一直监测，新文件稳定后就整理</option><option value="1">每天定时</option><option value="2">只在我点“立即整理”时</option></select></div>
+          <div class="form-field" id="rule-time-field" hidden><label for="rule-time">每天几点</label><input id="rule-time" type="text" inputmode="numeric" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" maxlength="5" value="20:00"></div>
+          <div class="form-field" id="rule-date-field"><label for="rule-date">日期依据</label><select id="rule-date"><option value="0">下载/创建日期</option><option value="1">修改日期</option></select></div>
+        </div>
+        <details class="advanced"><summary>更多选项<svg><use href="#i-chevron"/></svg></summary>
+          <div class="advanced-body">
+            <label class="check-row"><input type="checkbox" id="rule-folders"><span>下载下来的文件夹也一起整理<small>整个文件夹作为一项移动，内部不拆开。</small></span></label>
+            <div class="form-field inline-number"><label for="rule-stable">新文件稳定多久后再整理</label><div><input id="rule-stable" type="number" min="10" max="3600" step="5" value="30" required><span>秒</span></div></div>
+            <div class="form-field"><label for="rule-excludes">不要整理这些（每行一个名字）</label><textarea id="rule-excludes" rows="3" spellcheck="false" placeholder="例如：我的收藏"></textarea><p class="field-hint">日期文件夹、分类文件夹、带自定义图标（desktop.ini）的文件夹会自动跳过。</p></div>
+          </div>
+        </details>
+        <label class="check-row enable-rule"><input type="checkbox" id="rule-enabled"><span>保存后开启自动整理<small>不确定的话先不勾，保存后点“预览”看看效果。</small></span></label>
+        <div id="rule-error" class="inline-error" role="alert" hidden></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="button secondary" data-close="rule-dialog">取消</button><button type="submit" id="rule-save" class="button primary">保存</button></div>
+    </form>
+  </dialog>
+
+  <!-- 分类对话框 -->
+  <dialog id="category-dialog" class="modal">
+    <form id="category-form">
+      <div class="modal-header"><h2 id="category-dialog-title">编辑分类</h2><button type="button" class="icon-button" data-close="category-dialog" aria-label="关闭"><svg><use href="#i-close"/></svg></button></div>
+      <div class="modal-body">
+        <div class="form-field"><label for="category-name">分类名称（也是文件夹名）</label><input id="category-name" maxlength="40" required></div>
+        <div class="form-field"><label for="category-keywords">关键词</label><textarea id="category-keywords" rows="7" spellcheck="false"></textarea><p class="field-hint">用逗号、顿号或空格隔开。英文不区分大小写，按词开头匹配（写 geometr 能匹配 geometry、geometric）。</p></div>
+        <div class="form-field"><label for="category-exts">扩展名（可选）</label><input id="category-exts" spellcheck="false" placeholder="例如 mp4, mp3"><p class="field-hint">扩展名只算弱证据：文件名里命中了其他分类的关键词时，以关键词为准。</p></div>
+        <div id="category-error" class="inline-error" role="alert" hidden></div>
+      </div>
+      <div class="modal-footer"><button type="button" class="button ghost danger-text" id="category-delete">删除这个分类</button><span class="spacer"></span><button type="button" class="button secondary" data-close="category-dialog">取消</button><button type="submit" class="button primary">保存</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detail-dialog" class="modal wide"><div class="modal-header"><div><span class="eyebrow" id="detail-eyebrow"></span><h2 id="detail-title">详情</h2></div><button type="button" class="icon-button" data-close="detail-dialog" aria-label="关闭"><svg><use href="#i-close"/></svg></button></div><div class="modal-body" id="detail-body"></div><div class="modal-footer" id="detail-footer"></div></dialog>
+  <dialog id="confirm-dialog" class="modal small"><div class="modal-header"><h2 id="confirm-title">确认</h2></div><div class="modal-body"><p id="confirm-message"></p></div><div class="modal-footer"><button class="button secondary" id="confirm-no">取消</button><button class="button primary" id="confirm-yes">确认</button></div></dialog>
+  <div id="toast-stack" class="toast-stack" aria-live="polite"></div>
+  <div id="fatal-overlay" class="fatal-overlay" hidden><h2>界面暂时无法连接程序</h2><p id="fatal-message">请通过桌面上的“文件管家”打开。</p><button id="retry-connect" class="button primary">重新连接</button></div>
+</body>
+</html>

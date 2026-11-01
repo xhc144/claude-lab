@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+build/
+dist/
+*.spec.bak
+.venv/
+venv/
+*.log
+配置.txt
+日报/
+输入记录/
+运行日志.txt

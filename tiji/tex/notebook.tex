@@ -1,0 +1,296 @@
+% !TEX program = xelatex
+% ============================================================================
+%   << title >> —— 由「题记」导出于 << now >>
+%   编译：xelatex main.tex（跑两遍，目录里的页码才会对上）
+%   Overleaf：Menu → Compiler 选 XeLaTeX。
+%   想改配色、字体：看下面「配色」「字体」两节，改完重新编译即可。
+% ============================================================================
+\documentclass[11pt,a4paper]{article}
+\usepackage[UTF8,fontset=none,scheme=plain,linespread=1.42]{ctex}
+\usepackage[a4paper,top=27mm,bottom=25mm,left=24mm,right=24mm,headsep=9mm,footskip=13mm]{geometry}
+\usepackage{amsmath,mathtools}
+\usepackage{unicode-math}
+\usepackage[table]{xcolor}
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage[most]{tcolorbox}
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{fancyhdr}
+\usepackage{needspace}
+\usepackage[hidelinks,bookmarksopen=true]{hyperref}
+\hypersetup{pdftitle={<< title >>},pdfauthor={<< author >>},pdfcreator={题记}}
+
+% ---------------------------------------------------------------- 配色
+\definecolor{tjink}{HTML}{141C2E}    % 正文墨色
+\definecolor{tjink2}{HTML}{465168}   % 次要文字
+\definecolor{tjink3}{HTML}{737D91}   % 注释、页眉
+\definecolor{tjrule}{HTML}{D6DCE5}   % 细线、边框
+\definecolor{tjgrid}{HTML}{E9EDF3}   % 网格
+\definecolor{tjpaper}{HTML}{F3F5F8}  % 封面底色
+\definecolor{tjlvl}{HTML}{8196B5}    % 等高线、编号
+\definecolor{tjhl}{HTML}{EBF1FA}     % 浅色底
+\definecolor{tjaccent}{HTML}{2A78D6} % 强调蓝：想法
+\definecolor{tjred}{HTML}{E34948}    % 强调红
+
+% ---------------------------------------------------------------- 字体
+% 西文 STIX Two、数学 STIX Two Math、等宽 IBM Plex Mono，都是 TeX Live 自带。
+% 中文正文霞鹜新致宋，想法用霞鹜文楷，标题用思源宋体 Heavy；找不到时退回 Fandol 字体。
+\setmainfont{STIX Two Text}
+\setsansfont{IBM Plex Sans}
+\setmonofont{IBM Plex Mono}
+\setmathfont{STIX Two Math}
+\IfFontExistsTF{LXGW Neo ZhiSong}
+  {\setCJKmainfont{LXGW Neo ZhiSong}[AutoFakeBold=2.4]}
+  {\setCJKmainfont{FandolSong-Regular.otf}[BoldFont=FandolSong-Bold.otf]}
+\IfFontExistsTF{LXGW Neo XiHei}
+  {\setCJKsansfont{LXGW Neo XiHei}[AutoFakeBold=2]\setCJKmonofont{LXGW Neo XiHei}}
+  {\setCJKsansfont{FandolHei-Regular.otf}[BoldFont=FandolHei-Bold.otf]\setCJKmonofont{FandolHei-Regular.otf}}
+\IfFontExistsTF{LXGW WenKai GB Lite}
+  {\setCJKfamilyfont{tjkai}{LXGW WenKai GB Lite}[AutoFakeBold=2]}
+  {\setCJKfamilyfont{tjkai}{FandolKai-Regular.otf}}
+\IfFontExistsTF{Source Han Serif SC Heavy}
+  {\setCJKfamilyfont{tjdisplay}{Source Han Serif SC Heavy}}
+  {\setCJKfamilyfont{tjdisplay}{FandolSong-Bold.otf}[AutoFakeBold=3]}
+\newcommand\tjkai{\CJKfamily{tjkai}}
+\newcommand\tjdisplay{\CJKfamily{tjdisplay}\bfseries}
+
+% ---------------------------------------------------------------- 常见的 KaTeX 写法，补上定义免得报错
+\providecommand\R{\mathbb{R}}\providecommand\N{\mathbb{N}}\providecommand\Z{\mathbb{Z}}
+\providecommand\Q{\mathbb{Q}}\providecommand\C{\mathbb{C}}
+\providecommand\bm[1]{\symbf{#1}}
+\providecommand\argmin{\operatorname*{arg\,min}}\providecommand\argmax{\operatorname*{arg\,max}}
+\providecommand\rank{\operatorname{rank}}\providecommand\tr{\operatorname{tr}}
+\providecommand\diag{\operatorname{diag}}\providecommand\sgn{\operatorname{sgn}}
+\providecommand\dif{\mathop{}\!\mathrm{d}}
+
+% ---------------------------------------------------------------- 版面
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{.4em}
+\setlength{\emergencystretch}{3em}
+\AtBeginDocument{\color{tjink}%
+  \setlength{\abovedisplayskip}{6pt plus 2pt}\setlength{\belowdisplayskip}{6pt plus 2pt}%
+  \setlength{\abovedisplayshortskip}{3pt}\setlength{\belowdisplayshortskip}{4pt}}
+\newcommand\tjmeta{\sffamily\footnotesize\color{tjink3}}
+\newcommand\tjdots{\leaders\hbox to .85em{\hss\textcolor{tjrule}{·}\hss}\hfill}
+\newcommand\tjdoublerule{\par{\color{tjink}\hrule height 1.1pt}\vspace{1.6pt}{\color{tjink}\hrule height .35pt}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\tjmeta\rightmark}
+\fancyhead[R]{\tjmeta << title >>}
+\fancyfoot[C]{\ttfamily\footnotesize\color{tjink3}\thepage}
+\renewcommand\headrulewidth{.4pt}
+\renewcommand\headrule{{\color{tjrule}\hrule height\headrulewidth width\headwidth}\vskip-\headrulewidth}
+
+% ---------------------------------------------------------------- 组件
+% 关键词标签；本章的关键词用实心
+\newtcbox{\tjchip}{on line, enhanced, boxrule=.5pt, arc=6pt, colframe=tjrule, colback=white,
+  left=5pt, right=5pt, top=1.2pt, bottom=1.2pt, boxsep=0pt, fontupper=\sffamily\scriptsize\color{tjink2}}
+\newtcbox{\tjchipon}{on line, enhanced, boxrule=.5pt, arc=6pt, colframe=tjink, colback=tjink,
+  left=5pt, right=5pt, top=1.2pt, bottom=1.2pt, boxsep=0pt, fontupper=\sffamily\scriptsize\color{white}}
+
+% 原题框：左上角贴一个深色「原题」标签；原图放在虚线下方
+\newtcolorbox{tjproblem}{enhanced, breakable,
+  colback=white, colframe=tjrule, boxrule=.6pt, arc=3pt,
+  left=14pt, right=14pt, top=14pt, bottom=10pt, middle=8pt,
+  before skip=13pt, after skip=0pt,
+  title={原\,题}, fonttitle=\sffamily\scriptsize\bfseries, coltitle=white,
+  attach boxed title to top left={xshift=13pt, yshift=-\tcboxedtitleheight/2},
+  boxed title style={colback=tjink, colframe=tjink, boxrule=0pt, arc=1.5pt,
+    left=5pt, right=5pt, top=1.4pt, bottom=1.4pt},
+  segmentation style={tjrule, dashed, line width=.5pt},
+  before upper={\setlength{\parskip}{.45em}},
+  before lower={\setlength{\parskip}{0pt}}}
+
+\newcommand\tjimage[2]{%
+  {\tjmeta\scriptsize 原图\par}\vspace{4pt}%
+  {\centering\includegraphics[width=#2\linewidth,height=7.5cm,keepaspectratio]{#1}\par}}
+
+% 想法：左侧一道竖线，文楷。#1 标签（我的想法 / 想法 2 / AI 思路）  #2 颜色
+% 自己写的用蓝线，AI 给的思路用灰线、正文略淡，一眼分得清
+\newtcolorbox{tjidea}[2]{enhanced, breakable, blanker,
+  borderline west={1.8pt}{0pt}{#2},
+  left=14pt, right=4pt, top=1pt, bottom=1pt, before skip=11pt, after skip=0pt,
+  fontupper=\tjkai\fontsize{11.5}{15}\selectfont,
+  before upper={{\sffamily\scriptsize\bfseries\color{#2}#1\par}\vspace{-1pt}\setlength{\parskip}{.35em}}}
+\newenvironment{tjaiidea}{\begin{tjidea}{AI 思路}{tjink3}\color{tjink2}}{\end{tjidea}}
+
+% 每道题的抬头：编号、出处、日期、关键词
+\newcommand\tjhead[4]{% #1 编号  #2 出处  #3 日期  #4 书签文字
+  \par\needspace{9\baselineskip}\vspace{20pt}%
+  \pdfbookmark[1]{#4}{tjbm#1}%
+  \noindent{\ttfamily\fontsize{9}{9}\selectfont\color{tjlvl}No.}\hspace{1.5pt}%
+  {\ttfamily\fontsize{19}{19}\selectfont\color{tjink}#1}\hspace{11pt}%
+  {\bfseries\large #2}\hfill{\ttfamily\scriptsize\color{tjink3}#3}\par}
+\newcommand\tjkeywords[1]{\vspace{4pt}\noindent#1\par}
+
+% 关键词一章的开头
+\newcommand\tjchapter[4]{% #1 序号  #2 关键词  #3 题数  #4 锚点
+  \par\needspace{16\baselineskip}\vspace{30pt}%
+  \pdfbookmark[0]{#2}{tjkwbm#1}\phantomsection\label{#4}%
+  \markboth{#2}{#2}%
+  \noindent{\ttfamily\scriptsize\color{tjink3}KEYWORD\,·\,#1}\par\vspace{2pt}%
+  \noindent{\tjdisplay\fontsize{25}{32}\selectfont #2}\hfill{\ttfamily\small\color{tjink3}#3\,题}%
+  \vspace{6pt}\tjdoublerule\vspace{2pt}}
+
+% 一道题属于多个关键词时，在其余几章里留一条「另见」
+\newtcolorbox{tjsee}{enhanced, colback=tjhl, colframe=tjhl, boxrule=0pt, arc=3pt,
+  left=11pt, right=11pt, top=7pt, bottom=7pt, before skip=22pt, after skip=0pt,
+  before upper={{\sffamily\scriptsize\bfseries\color{tjaccent}本章另见\par}\vspace{4pt}\setlength{\parskip}{3pt}}}
+\newcommand\tjseeitem[4]{% #1 编号  #2 出处  #3 摘要  #4 锚点
+  \noindent\hyperref[#4]{{\ttfamily\small No.#1}}\hspace{9pt}{\small #2}\hspace{7pt}%
+  {\small\color{tjink2}#3}\tjdots{\ttfamily\small\color{tjink3}\pageref{#4}}\par}
+
+% 目录
+\newcommand\tjtockw[3]{% #1 关键词  #2 题数  #3 锚点
+  \par\needspace{4\baselineskip}\vspace{11pt}%
+  \noindent\hyperref[#3]{{\sffamily\bfseries\color{tjink} #1}}\hspace{7pt}{\ttfamily\scriptsize\color{tjink3}#2\,题}%
+  \tjdots{\ttfamily\small\pageref{#3}}\par\vspace{1pt}}
+\newcommand\tjtocitem[4]{% #1 编号  #2 出处  #3 摘要  #4 锚点
+  \noindent\hspace{1.4em}\hyperref[#4]{{\ttfamily\small\color{tjink2}No.#1}}\hspace{9pt}%
+  {\small #2}\hspace{7pt}{\small\color{tjink3}#3}\tjdots{\ttfamily\small\color{tjink3}\pageref{#4}}\par}
+
+\begin{document}
+
+% ============================================================== 封面
+\begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+  \fill[tjpaper] (current page.south west) rectangle (current page.north east);
+  % 封面小图：f(x,y)=(x^2+4y^2)/2 的等高线，和从 (2,1) 出发的最速下降折线
+  \begin{scope}[shift={($(current page.south)+(0,6.9cm)$)}, x=1.45cm, y=1.45cm]
+    \filldraw[fill=white, draw=tjrule, line width=.5pt, rounded corners=7pt] (-3.75,-2.05) rectangle (3.75,2.05);
+    \begin{scope}
+      \clip[rounded corners=7pt] (-3.75,-2.05) rectangle (3.75,2.05);
+      \draw[step=.5, tjgrid, line width=.4pt] (-4,-2.5) grid (4,2.5);
+      \draw[tjrule!80!tjink3, line width=.45pt] (-4,0) -- (4,0) (0,-2.5) -- (0,2.5);
+      \foreach \c in {3.6,2.8284,1.4553,0.7487,0.3852,0.1982}
+        \draw[tjlvl, line width=.55pt, fill=tjlvl, fill opacity=.05] (0,0) ellipse ({\c} and {\c/2});
+      \draw[tjink3, line width=.5pt, dash pattern=on .8pt off 3pt, line cap=round] (-4,-2) -- (4,2) (-4,2) -- (4,-2);
+      \fill[tjink, opacity=.045] (0,0) -- (2,1) -- (1.2,-.6) -- cycle;
+      \draw[line width=1.5pt, line cap=round, tjaccent] (2,1) -- (1.4118,-.1765);
+      \draw[line width=1.5pt, line cap=round, tjred] (1.4118,-.1765) -- (.5294,.2647);
+      \draw[line width=1.5pt, line cap=round, tjaccent] (.5294,.2647) -- (.3737,-.0467);
+      \draw[line width=1.5pt, line cap=round, tjred] (.3737,-.0467) -- (.1401,.0701);
+      \draw[line width=1.5pt, line cap=round, tjaccent] (.1401,.0701) -- (.0989,-.0124);
+      \foreach \p in {(1.4118,-.1765),(.5294,.2647),(.3737,-.0467)}
+        \filldraw[fill=white, draw=tjink, line width=.6pt] \p circle (2.3pt);
+      \fill[tjink] (2,1) circle (3pt);
+      \node[font=\itshape\small, text=tjink, above right=1pt] at (2,1) {$z_0$};
+      \node[font=\itshape\small, text=tjink, below right=1pt] at (1.4118,-.1765) {$z_1$};
+    \end{scope}
+  \end{scope}
+  \node[anchor=north, font=\sffamily\scriptsize, text=tjink3] at ($(current page.south)+(0,3.65cm)$)
+    {$f(x,y)=\tfrac12(x^2+4y^2)$ 的等高线与最速下降折线：每一步都和上一步垂直};
+  \node[anchor=south west, font=\sffamily\footnotesize, text=tjink3] at ($(current page.south west)+(24mm,13mm)$)
+    {导出于 << now >><% if author %>\quad·\quad << author >><% endif %>};
+  \node[anchor=south east, font=\ttfamily\footnotesize, text=tjink3] at ($(current page.south east)+(-24mm,13mm)$)
+    {PROBLEM NOTEBOOK};
+\end{tikzpicture}
+
+\vspace*{12mm}
+{\ttfamily\footnotesize\color{tjink3}PROBLEM\ \ NOTEBOOK\ \ ·\ \ << year >>}\par
+\vspace{10mm}
+{\tjdisplay\fontsize{58}{66}\selectfont << title >>}\par
+<% if subtitle %>
+\vspace{6mm}
+{\fontsize{14}{22}\selectfont\color{tjink2}<< subtitle >>}\par
+<% endif %>
+\vspace{13mm}
+{\color{tjrule}\hrule height .5pt}
+\vspace{7mm}
+\noindent\begin{tabular}{@{}l@{\hspace{17pt}}!{\color{tjrule}\vrule width .5pt}@{\hspace{17pt}}l@{\hspace{17pt}}!{\color{tjrule}\vrule width .5pt}@{\hspace{17pt}}l@{}}
+{\tjmeta 收录} & {\tjmeta 关键词} & {\tjmeta 时间} \\[3pt]
+{\ttfamily\fontsize{24}{26}\selectfont << count >>}\,{\small 题} &
+{\ttfamily\fontsize{24}{26}\selectfont << kw_count >>}\,{\small 个} &
+{\ttfamily\fontsize{13}{26}\selectfont << span >>}
+\end{tabular}
+<% if kw_counts %>
+
+\vspace{9mm}
+\begingroup\setlength{\parskip}{5pt}\noindent
+<% for k, c in kw_counts %>
+\tjchip{<< k >>\,\textcolor{tjink3}{<< c >>}}\hspace{3pt}%
+<% endfor %>
+\par\endgroup
+<% endif %>
+\end{titlepage}
+
+% ============================================================== 目录
+\markboth{目录}{目录}
+\pdfbookmark[0]{目录}{tjtoc}
+\noindent{\tjdisplay\fontsize{22}{28}\selectfont 目录}\hfill{\tjmeta <% if grouped %>按关键词 · <% endif %>共 << count >> 题}%
+\vspace{6pt}\tjdoublerule\vspace{4pt}
+<% for g in groups %>
+<% if g.name %>
+\tjtockw{<< g.name >>}{<< g.count >>}{<< g.anchor >>}
+<% endif %>
+<% for e in g.toc %>
+% @@note << e.seq >>
+\tjtocitem{<< e.no >>}{<< e.source >>}{<< e.excerpt >>}{<< e.label >>}
+% @@end
+<% endfor %>
+<% endfor %>
+% @@end
+\clearpage
+
+% ============================================================== 正文
+<% for g in groups %>
+<% if layout != 'compact' and not loop.first %>
+\clearpage
+<% endif %>
+<% if g.name %>
+\tjchapter{<< '%02d' % g.index >>}{<< g.name >>}{<< g.count >>}{<< g.anchor >>}
+<% else %>
+\markboth{全部题目}{全部题目}\pdfbookmark[0]{全部题目}{tjall}\phantomsection\label{<< g.anchor >>}
+<% endif %>
+<% for e in g['items'] %>
+<% if layout == 'single' and not loop.first %>
+\clearpage
+<% endif %>
+% @@note << e.seq >>
+\tjhead{<< e.no >>}{<< e.source >>}{<< e.date >>}{No.<< e.no >><% if e.source %> << e.source >><% endif %>}
+\phantomsection\label{<< e.label >>}%
+<% if e.keywords %>
+\tjkeywords{<% for k in e.keywords %><% if g.name and k == g.name %>\tjchipon{<< k >>}<% else %>\tjchip{<< k >>}<% endif %>\hspace{3pt}<% endfor %>}
+<% endif %>
+\begin{tjproblem}
+<% if e.problem %>
+<< e.problem >>
+<% if e.image %>
+\tcblower
+\tjimage{<< e.image >>}{<< e.image_width >>}
+<% endif %>
+<% elif e.image %>
+\tjimage{<< e.image >>}{<< e.image_width >>}
+<% else %>
+{\color{tjink3}（还没有填写题目）}
+<% endif %>
+\end{tjproblem}
+<% for i in e.ideas %>
+<% if i.ai %>
+\begin{tjaiidea}
+<< i.text >>
+\end{tjaiidea}
+<% else %>
+\begin{tjidea}{<< i.label >>}{tjaccent}
+<< i.text >>
+\end{tjidea}
+<% endif %>
+<% endfor %>
+% @@end
+<% endfor %>
+<% if g.see %>
+\begin{tjsee}
+<% for e in g.see %>
+% @@note << e.seq >>
+\tjseeitem{<< e.no >>}{<< e.source >>}{<< e.excerpt >>}{<< e.label >>}
+% @@end
+<% endfor %>
+\end{tjsee}
+<% endif %>
+<% endfor %>
+
+\par\vspace{28pt}
+\begin{center}\tikz\fill[tjlvl] (0,0) -- (3pt,3.6pt) -- (6pt,0) -- (3pt,-3.6pt) -- cycle;\end{center}
+\end{document}

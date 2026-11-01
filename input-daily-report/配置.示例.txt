@@ -1,0 +1,17 @@
+# 输入日报的配置。改完保存就行，下次运行自动生效。
+# 「#」开头的行是说明，不用管。
+
+# 1. DeepSeek API key：去 https://platform.deepseek.com/api_keys 创建一个，粘贴在等号后面（不要加引号）。
+#    它只用来调用 DeepSeek 写日报。这个文件别发给别人。
+DEEPSEEK_API_KEY=
+
+# 2. 用哪个模型，一般不用改。
+模型=deepseek-flash
+
+# 3. 电脑时区：输入法按电脑时钟记时间，你的电脑现在是美东时区，脚本会自动换算成北京时间。
+#    一般写「跟随系统」就行；如果以后把电脑时区改回北京时间，旧记录会算错，到时候让 AI 改这里。
+电脑时区=跟随系统
+
+# 4. 这些软件里打的字整条不记录，也不会发给 DeepSeek。写软件的 .exe 名字，用逗号隔开。
+#    密码管理器默认已经加上了；网银、公司内部系统之类的也可以加进来。
+不记录的软件=keepass.exe, keepassxc.exe, bitwarden.exe, 1password.exe, enpass.exe, dashlane.exe, lastpass.exe

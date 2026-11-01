@@ -1,0 +1,30 @@
+{
+  "name": "royal-rift-field-guide",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "start:game": "vite --host 127.0.0.1 --port 5173 --open",
+    "build": "vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src --ext .ts",
+    "test:playwright": "node tests/playtest.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "lucide-react": "latest",
+    "phaser": "^4.2.1",
+    "react": "latest",
+    "react-dom": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.1",
+    "playwright": "^1.62.1",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "latest"
+  }
+}

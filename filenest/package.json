@@ -1,0 +1,12 @@
+{
+  "name": "filenest-desktop",
+  "version": "3.0.0",
+  "description": "文件管家：下载文件夹自动按学科大类整理，支持查找与撤销",
+  "author": "FileNest",
+  "license": "UNLICENSED",
+  "private": true,
+  "main": "app/main.cjs",
+  "scripts": {
+    "test": "node --test tests/engine.test.cjs tests/pdf.test.cjs tests/naming.test.cjs tests/translate.test.cjs tests/search.test.cjs tests/state.test.cjs"
+  }
+}

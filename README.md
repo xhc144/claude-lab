@@ -45,6 +45,23 @@ MathScape、Myriad 与 Emberstack 的 `dist/*.html` 可下载后离线打开。E
 
 鸿雁邮箱早先提交在分支里的历史安装包曾被 Defender 报告 `Trojan:Win32/Sabsik.FL.A!ml`（未签名 Electron 程序常见的机器学习误报类型，真伪未确认），它仍然隔离、不提供下载，详见[隔离记录](hongyan-mail/QUARANTINE.md)。
 
+## 其他自制工具
+
+这些工具没有接入 Ship 自动发布流水线；打包好的 Windows 程序统一放在 Release [`tools-v1.0.0`](https://github.com/xhc144/claude-lab/releases/tag/tools-v1.0.0)。
+
+| 工具 | 用途 | 可执行文件 |
+| --- | --- | --- |
+| [Claude 账号切换器](claude-account-switcher/) | Claude 桌面版多账号切换（Python） | `ClaudeAccountSwitcher.exe` |
+| [SnapTool 截图](snaptool/) | 区域截图、长截图拼接、标注、贴图、导出 PNG/PDF（WPF / .NET 10） | `SnapTool.exe`（需 .NET 10 桌面运行时） |
+| [微信客服控制台](wechat-customer-control/) | 微信客服控制台（Python） | `WeChatCustomerControl.exe` |
+| [题记](tiji/) | 本地题目记录与 LaTeX 排版（Flask + pywebview） | `tiji-windows.zip`，解压后运行 `题记.exe` |
+| [文件管家 FileNest](filenest/) | 下载文件夹按学科自动分类整理，支持查找与撤销（Electron） | `FileNest-windows.zip`，解压后运行 `FileNest2.exe` |
+| [大模型统一 API 网关](llm-api-gateway/) | 多模型统一 API 网关（Tauri） | `llm-api-gateway_0.3.3_x64-setup.exe` |
+| [输入日报](input-daily-report/) | 输入记录整理与 DeepSeek 日报生成（Python） | 源码运行，见使用说明 |
+| [综合项目管理系统](project-management-system/) | 项目管理系统（FastAPI + 前端） | 源码运行，见 README |
+| [冲刺日历](sprint-calendar/) | 学习计划与资料执行看板 | 源码运行，见 README |
+| [潮汐王座](tide-throne/) | Phaser 即时卡牌对战小游戏（浏览器） | `npm install && npm run start:game` |
+
 ## 数学排版模板
 
 [墨经 Mojing：PDF 预览与 ZIP 下载](https://xhc144.github.io/claude-lab/mojing/) 提供讲义、习题与解答、竞赛试卷、数学论文、数学书籍、翻译对照六套 LaTeX 模板。十份示例 PDF 包含学生版、答案版与双栏对照等变体；六个 ZIP 各自包含完整源码和 ASCII 文件名的 `README.txt`。
